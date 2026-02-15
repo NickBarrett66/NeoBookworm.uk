@@ -182,25 +182,23 @@
             margin-bottom: 1rem;
             border-radius: 4px;
         }
+        /* Accessible visually-hidden class for screen-reader-only headings */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <!-- Replace this placeholder with your actual logo -->
-            <img src="logo.png" alt="NeoBookworm.uk Logo" class="logo">
-        </div>
-        <h1>NeoBookworm.uk</h1>
-        <p>Digital App Development & Support</p>
-    </header>
-    
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#services">Services</a>
-        <a href="#contact">Contact</a>
-        <a href="#privacy">Privacy Policy</a>
-        <a href="#terms">Terms of Service</a>
-    </nav>
+    <div id="site-header"></div>
+    <script src="include-header.js"></script>
     
     <div class="container">
         <section id="home">
@@ -209,7 +207,7 @@
         </section>
         
         <section id="services">
-            <h2>Services</h2>
+            <h2 class="sr-only">Services</h2>
             <div class="services-grid">
                 <div class="service-card">
                     <h3>Development</h3>
@@ -231,8 +229,8 @@
         </section>
         
         <section id="contact">
+            <h2 class="sr-only">Get In Touch</h2>
             <div class="contact-box">
-                <h2>Get In Touch</h2>
                 <p>Ready to discuss your project? Contact us today.</p>
                 <p style="font-size: 1.2rem; margin-top: 1rem;">
                     <strong>Email:</strong> <a href="mailto:Nick@NeoBookworm.uk">Nick@NeoBookworm.uk</a>
@@ -240,143 +238,12 @@
             </div>
         </section>
         
-        <section id="privacy" class="legal-section">
-            <h2>Privacy Policy</h2>
-            <p><strong>Last updated:</strong> February 2025</p>
-            
-            <div class="plain-english-note">
-                <strong>Plain English:</strong> We have written this policy in plain English. If anything is unclear, please contact us and we will explain it.
-            </div>
-            
-            <h3>1. Who We Are</h3>
-            <p>NeoBookworm.uk is a sole trader business based in England, providing digital application development and support services.</p>
-            <p><strong>Email:</strong> Nick@NeoBookworm.uk</p>
-            
-            <h3>2. Information We Collect</h3>
-            <p>When you contact us or use our services, we may collect:</p>
-            <ul>
-                <li>Contact information (name, email address, phone number)</li>
-                <li>Project-related information you provide</li>
-                <li>Payment information (processed securely through third-party payment providers such as Stripe)</li>
-            </ul>
-            
-            <h3>3. How We Use Your Information</h3>
-            <p>We use your information to:</p>
-            <ul>
-                <li>Provide the services you have requested</li>
-                <li>Communicate with you about your project</li>
-                <li>Process payments</li>
-                <li>Improve our services</li>
-            </ul>
-            
-            <h3>4. Data Protection</h3>
-            <p>We take appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
-            <p>If you are based in the UK or European Union, you have rights under UK GDPR and data protection law. Users in other countries may have similar rights under their local laws.</p>
-            
-            <h3>5. Data Sharing</h3>
-            <p>We will not sell or share your personal information with third parties for marketing purposes.</p>
-            <p>We may share your information with:</p>
-            <ul>
-                <li>Payment processors (e.g., Stripe) for transaction processing</li>
-                <li>Third parties when required by law</li>
-                <li>Service providers who assist us in delivering our services (only with your consent)</li>
-            </ul>
-            
-            <h3>6. Your Rights</h3>
-            <p>If you are based in the UK or EU, under data protection law you have the right to:</p>
-            <ul>
-                <li>Access your personal data</li>
-                <li>Correct inaccurate data</li>
-                <li>Request deletion of your data</li>
-                <li>Object to processing of your data</li>
-                <li>Data portability</li>
-            </ul>
-            <p>Users in other countries may have similar rights under their local laws.</p>
-            
-            <h3>7. Cookies</h3>
-            <p>This website does not currently use cookies. If this changes, we will update this policy accordingly.</p>
-            
-            <h3>8. Changes to This Policy</h3>
-            <p>We may update this policy from time to time. If we make important changes, we will notify you by email before the changes take effect.</p>
-            
-            <h3>9. Questions?</h3>
-            <p>If you have any questions about this privacy policy or wish to exercise your rights, please contact: <a href="mailto:Nick@NeoBookworm.uk">Nick@NeoBookworm.uk</a></p>
-        </section>
-        
-        <section id="terms" class="legal-section">
-            <h2>Terms of Service</h2>
-            <p><strong>Last updated:</strong> February 2025</p>
-            
-            <div class="plain-english-note">
-                <strong>Plain English:</strong> We have written these terms in plain English. If anything is unclear, please contact us and we will explain it.
-            </div>
-            
-            <h3>1. Who We Are</h3>
-            <p>NeoBookworm.uk is a sole trader business providing digital application development, testing, implementation, and support services.</p>
-            <p><strong>Email:</strong> Nick@NeoBookworm.uk</p>
-            
-            <h3>2. Where These Terms Apply</h3>
-            <p>Our services are available to clients anywhere in the world. By engaging our services, you agree to these terms.</p>
-            <p>Please note: the laws of England and Wales govern these terms (see Section 10). If you are based outside the UK, you may have additional rights under the laws of your own country that we are not able to limit.</p>
-            
-            <h3>3. What You Are Buying</h3>
-            <p>Specific deliverables, timelines, and costs will be agreed upon in writing before work commences. This agreement will outline exactly what you are purchasing.</p>
-            
-            <h3>4. Client Responsibilities</h3>
-            <p>Clients agree to:</p>
-            <ul>
-                <li>Provide accurate information and requirements</li>
-                <li>Respond to queries in a timely manner</li>
-                <li>Provide necessary access to systems and resources</li>
-                <li>Make payments according to agreed terms</li>
-            </ul>
-            
-            <h3>5. Payment Terms</h3>
-            <ul>
-                <li>Payment terms will be specified in individual project agreements</li>
-                <li>Invoices are due within 14 days unless otherwise agreed</li>
-                <li>We accept payment via bank transfer or Stripe</li>
-                <li>Late payments may result in suspension of services</li>
-            </ul>
-            
-            <h3>6. Intellectual Property</h3>
-            <p>Unless otherwise agreed in writing:</p>
-            <ul>
-                <li>Upon full payment, clients receive ownership of custom-developed code created specifically for their project</li>
-                <li>Pre-existing code, frameworks, and third-party libraries remain under their respective licenses</li>
-                <li>We may showcase completed work in our portfolio unless confidentiality is agreed</li>
-            </ul>
-            
-            <h3>7. Our Responsibility to You</h3>
-            <p>We will do our best to deliver services on time and to a high standard. However:</p>
-            <ul>
-                <li>We cannot guarantee that services will always be available without interruption — for example, during maintenance or due to technical issues outside our control</li>
-                <li>We are not liable for losses arising from client-provided content, specifications, or third-party services</li>
-                <li>Our liability is limited to the amount paid for the specific service in question</li>
-            </ul>
-            <p><strong>Important:</strong> Nothing in these terms limits our responsibility for fraud, death, or personal injury caused by our negligence. If you are a consumer, you may also have rights under consumer protection laws in your country that we are not able to exclude.</p>
-            
-            <h3>8. Confidentiality</h3>
-            <p>We will keep confidential any proprietary information shared during the course of our work, except as required by law or with your permission.</p>
-            
-            <h3>9. Termination</h3>
-            <p>Either party may terminate services with written notice. Clients remain responsible for payment for work completed up to the termination date.</p>
-            
-            <h3>10. Which Law Applies</h3>
-            <p>These terms are governed by the laws of England and Wales. Any disputes will be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
-            <p>However, if you are a consumer living in another country, you may also have rights under the laws of that country which these terms cannot override.</p>
-            
-            <h3>11. Changes to These Terms</h3>
-            <p>We may update these terms from time to time. If we make any important changes, we will notify you by email before the changes take effect. Continuing to use our services after that point means you accept the updated terms.</p>
-            
-            <h3>12. Questions?</h3>
-            <p>If you have any questions about these terms, please contact: <a href="mailto:Nick@NeoBookworm.uk">Nick@NeoBookworm.uk</a></p>
-        </section>
+        <!-- Privacy and Terms moved to separate pages: privacy.html and terms.html -->
     </div>
     
     <footer>
         <p>&copy; 2025 NeoBookworm.uk - All Rights Reserved</p>
-        <p><a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+        <p><a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
         <p>Registered Sole Trader - England & Wales</p>
     </footer>
 </body>
