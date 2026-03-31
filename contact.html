@@ -81,19 +81,7 @@
       text-decoration: none;
       flex-shrink: 0;
     }
-    .nav-logo-mark {
-      width: 38px; height: 38px;
-      border-radius: 8px;
-      background: var(--amber);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-weight: 900;
-      font-size: 20px;
-      color: var(--navy);
-      line-height: 1;
-    }
+    
     .nav-wordmark {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
@@ -456,18 +444,7 @@
       flex-wrap: wrap;
     }
     .footer-brand { display: flex; align-items: center; gap: 10px; }
-    .footer-logo-mark {
-      width: 36px; height: 36px;
-      border-radius: 7px;
-      background: var(--amber);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-weight: 900;
-      font-size: 18px;
-      color: var(--navy);
-    }
+    
     .footer-name {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
@@ -494,7 +471,19 @@
     }
     .footer-links a:hover { color: var(--amber); }
     .footer-sep { width: 1px; height: 16px; background: var(--border); }
-  </style>
+  
+.nav-logo-img, .footer-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+.nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+.nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
+
+</style>
 </head>
 <body>
 
@@ -502,9 +491,9 @@
   <nav>
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
-        <div class="nav-logo-mark">N</div>
-        <span class="nav-wordmark">NeoBookworm.uk</span>
-      </a>
+  <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
+  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+</a>
       <ul class="nav-links">
         <li><a href="how-it-works.html">How It Works</a></li>
         <li><a href="about.html">About</a></li>
@@ -664,9 +653,9 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="footer-logo-mark">N</div>
+        
         <div>
-          <div class="footer-name">NeoBookworm.uk</div>
+          <div class="footer-name">Neo<span>Bookworm.uk</span></div>
           <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
         </div>
       </div>

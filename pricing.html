@@ -44,11 +44,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .nav-logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
-    .logo-mark {
-      width: 36px; height: 36px; background: var(--amber); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--serif); font-weight: 900; font-size: 1.1rem; color: var(--navy);
-    }
+    
     .logo-wordmark { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--white); }
     .logo-wordmark span { color: var(--amber); }
     .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
@@ -289,16 +285,28 @@
       .extras-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; align-items: flex-start; padding: 1.5rem 1.25rem; }
     }
-  </style>
+  
+.nav-logo-img, .footer-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+.nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+.nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
+
+</style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="nav-logo">
-    <div class="logo-mark">N</div>
-    <span class="logo-wordmark">Neo<span>Bookworm</span></span>
-  </a>
+  <a href="index.html" class="nav-logo">
+  <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
+  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+</a>
   <ul class="nav-links">
     <li><a href="how-it-works.html">How It Works</a></li>
     <li><a href="about.html">About</a></li>
@@ -630,7 +638,7 @@
   <div class="footer-left">
     <a href="/" class="footer-logo">
       <div class="footer-mark">N</div>
-      <span class="footer-name">NeoBookworm.uk</span>
+      <span class="footer-name">Neo<span>Bookworm.uk</span></span>
     </a>
     <span class="footer-copy">© 2026 Nick Barrett, Swindon</span>
   </div>

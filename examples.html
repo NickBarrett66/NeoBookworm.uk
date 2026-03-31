@@ -244,12 +244,27 @@ footer{border-top:1px solid var(--bd);padding:28px 32px;display:flex;flex-wrap:w
 /* REVEAL */
 .html-rv .rv{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
 .html-rv .rv.in{opacity:1;transform:none}
+
+.nav-logo-img, .footer-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+.nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+.nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
+
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">NeoBookworm</a>
+  <a href="index.html" class="nav-logo">
+  <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
+  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+</a>
   <div class="nav-links">
     <a href="how-it-works.html" class="hs">How It Works</a>
     <a href="examples.html">Examples</a>
