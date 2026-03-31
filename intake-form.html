@@ -583,7 +583,7 @@ document.getElementById('submit-error').style.display='none';
 function v(id){var el=document.getElementById(id);return el?el.value:'';}
 var contact=[];var cc=document.querySelectorAll('#cr_contact .chip.on');for(var i=0;i<cc.length;i++) contact.push(cc[i].textContent.trim());
 var payload={fullName:v('f_name'),bizName:v('f_biz'),trade:v('f_trade'),phone:v('f_phone'),email:v('f_email'),area:v('f_area'),years:v('f_years'),services:v('f_svcs'),accreditations:v('f_accred'),freeQuotes:togVals['fq']||'',emergency:togVals['em']||'',exclusions:v('f_excl'),story:v('f_story'),teamSize:teamVal,idealWork:v('f_ideal'),colourPref:v('f_colour'),websiteStyle:styleVal,siteInspo:v('f_inspo'),testimonials:v('f_reviews'),googleBiz:togVals['gb']||'',trustmarks:v('f_trust'),domainStatus:domainVal,domainName:v('f_domain'),contactMethods:contact.join(', '),hours:v('f_hours'),extra:v('f_extra')};
-fetch('/.netlify/functions/submit-intake',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+fetch('/api/submit-intake',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
 .then(function(res){if(!res.ok) throw new Error('server_error');return res.json();})
 .then(function(){
 var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++) pages[i].classList.remove('act');
