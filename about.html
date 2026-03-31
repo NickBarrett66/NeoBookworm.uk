@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Nick | NeoBookworm.uk — Websites for Swindon Tradespeople</title>
+  <meta name="description" content="I'm Nick Barrett, based in Swindon. I build professional websites for local tradespeople at a fixed price of £499." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ---- Reset & Base ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #0f1f3d;
+      --navy-light:  #162848;
+      --navy-mid:    #1a3260;
+      --amber:       #f5a623;
+      --amber-dark:  #d4891a;
+      --amber-pale:  rgba(245,166,35,0.12);
+      --white:       #ffffff;
+      --muted:       rgba(255,255,255,0.55);
+      --border:      rgba(245,166,35,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /*
+     * Scroll Reveal — progressive enhancement.
+     * Elements are visible by default. JS adds .js-reveal to <html>
+     * which opts in to the animation. Nothing invisible if JS fails.
+     */
+    html.js-reveal .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    html.js-reveal .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.10s; }
+    .reveal-delay-2 { transition-delay: 0.20s; }
+    .reveal-delay-3 { transition-delay: 0.30s; }
+    .reveal-delay-4 { transition-delay: 0.40s; }
+
+    /* ---- Nav ---- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,31,61,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .nav-wordmark {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--amber) !important;
+      color: var(--navy) !important;
+      font-weight: 600 !important;
+      padding: 10px 20px;
+      border-radius: 6px;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--amber-dark) !important; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      position: relative;
+      padding: 96px 24px 80px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -100px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 65%);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--amber);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    /* ---- Sections ---- */
+    section { padding: 80px 24px; }
+    section.alt { background: var(--navy-light); }
+
+    .inner {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    /* ---- Story grid ---- */
+    .story-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .story-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* Photo placeholder */
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 4/5;
+      background: var(--navy-mid);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .photo-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,166,35,0.05) 0%, transparent 50%);
+    }
+    .photo-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--amber-pale);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 32px;
+      color: var(--amber);
+    }
+    .photo-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .photo-hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .photo-badge {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--amber);
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* Story copy */
+    .story-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 16px;
+    }
+
+    .story-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(26px, 3.5vw, 38px);
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .story-content p {
+      font-size: 17px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.82);
+      margin-bottom: 18px;
+      max-width: 580px;
+    }
+    .story-content p strong {
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    /* ---- Why Different cards ---- */
+    .section-heading {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-heading h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(26px, 3.5vw, 38px);
+      margin-bottom: 12px;
+    }
+    .section-heading p {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 768px) { .cards { grid-template-columns: 1fr; } }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      transition: border-color 0.3s, transform 0.3s, background 0.3s;
+    }
+    .card:hover {
+      border-color: rgba(245,166,35,0.45);
+      transform: translateY(-4px);
+      background: rgba(255,255,255,0.06);
+    }
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      background: var(--amber-pale);
+      border: 1px solid rgba(245,166,35,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .card p {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.65;
+    }
+
+    /* ---- Stats bar ---- */
+    .stats-bar {
+      background: linear-gradient(135deg, var(--amber) 0%, var(--amber-dark) 100%);
+      padding: 0;
+    }
+    .stats-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 640px) { .stats-inner { grid-template-columns: 1fr; } }
+
+    .stat {
+      padding: 52px 40px;
+      text-align: center;
+      position: relative;
+    }
+    .stat + .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%;
+      height: 60%; width: 1px;
+      background: rgba(15,31,61,0.2);
+    }
+    @media (max-width: 640px) { .stat + .stat::before { display: none; } }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(42px, 6vw, 64px);
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(15,31,61,0.75);
+    }
+    .stat-note {
+      font-size: 12px;
+      color: rgba(15,31,61,0.55);
+      margin-top: 4px;
+    }
+
+    /* ---- CTA ---- */
+    .cta-section {
+      text-align: center;
+      padding: 96px 24px;
+    }
+    .cta-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(26px, 3.5vw, 40px);
+      margin-bottom: 16px;
+    }
+    .cta-section p {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--amber-dark); transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 16px 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      margin-left: 12px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(245,166,35,0.5); background: var(--amber-pale); }
+
+    @media (max-width: 480px) {
+      .cta-buttons { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .btn-ghost { margin-left: 0; }
+    }
+
+    /* ---- Footer ---- */
+    footer {
+      background: rgba(0,0,0,0.25);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+    }
+    .footer-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-logo-mark {
+      width: 36px; height: 36px;
+      border-radius: 7px;
+      background: var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--navy);
+    }
+    .footer-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--amber); }
+    .footer-sep {
+      width: 1px; height: 16px;
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-mark">N</div>
+        <span class="nav-wordmark">NeoBookworm.uk</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="how-it-works.html">How It Works</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="contact.html" class="nav-cta">Get in touch</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg">
+      <div class="hero-grid"></div>
+    </div>
+    <div class="hero-inner">
+      <div class="eyebrow reveal">About</div>
+      <h1 class="reveal reveal-delay-1">The person behind<br><em>the site</em></h1>
+    </div>
+  </header>
+
+  <!-- STORY -->
+  <section>
+    <div class="inner">
+      <div class="story-grid">
+
+        <div class="reveal">
+          <div class="photo-placeholder">
+            <div class="photo-avatar">N</div>
+            <div class="photo-name">Nick Barrett</div>
+            <div class="photo-hint">Replace with your photo</div>
+            <div class="photo-badge">&#128205; Swindon</div>
+          </div>
+        </div>
+
+        <div class="story-content">
+          <div class="story-label reveal">My story</div>
+          <h2 class="reveal reveal-delay-1">I got fed up watching good tradespeople lose work online</h2>
+
+          <p class="reveal reveal-delay-2">
+            I spent 25 years working in technology &mdash; building and delivering software for a major French bank. For most of that career I was deep in the technical side; more recently I moved into project and programme management, overseeing large, complex builds from brief to delivery.
+          </p>
+
+          <p class="reveal reveal-delay-2">
+            That background taught me two things: how to build things properly, and how to keep a project on track without letting it spiral into something expensive and overdrawn.
+          </p>
+
+          <p class="reveal reveal-delay-3">
+            But after all those years in big institutions, I kept noticing the same problem closer to home &mdash; <strong>brilliant local tradespeople</strong>, people who genuinely knew their craft, losing work to competitors with shinier websites. Not because those competitors were better. Just because they looked more professional online.
+          </p>
+
+          <p class="reveal reveal-delay-3">
+            So I decided to do something about it. I started building websites specifically for local tradespeople in and around Swindon &mdash; <strong>fast, affordable, no agency nonsense</strong>. A fixed price, plain English, and no disappearing act once the site goes live.
+          </p>
+
+          <p class="reveal reveal-delay-3">
+            I&rsquo;m not an agency. I&rsquo;m one person, working locally, who responds personally to every message. If something needs changing, you email me &mdash; not a helpdesk in another time zone.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY DIFFERENT -->
+  <section class="alt">
+    <div class="inner">
+      <div class="section-heading">
+        <h2 class="reveal">Why I do things differently</h2>
+        <p class="reveal reveal-delay-1">No fluff, no hidden costs, no middlemen. Just a website that works &mdash; built by someone who lives here too.</p>
+      </div>
+      <div class="cards">
+        <div class="card reveal">
+          <div class="card-icon">&#127959;&#65039;</div>
+          <h3>Local knowledge</h3>
+          <p>I&rsquo;m based in Swindon. I know the area, I know the trades, and I know what your customers are actually searching for when they need someone like you.</p>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <div class="card-icon">&#129309;</div>
+          <h3>No middlemen</h3>
+          <p>You deal directly with me &mdash; the person building your site. No account managers, no hand-offs, no &ldquo;I&rsquo;ll check with the team&rdquo;. If you have a question, I&rsquo;ll answer it.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="card-icon">&#128172;</div>
+          <h3>Honest about what you need</h3>
+          <p>I&rsquo;m not here to upsell you on things you don&rsquo;t need. If a simple, clean website will do the job, that&rsquo;s what I&rsquo;ll recommend. No padding the invoice.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat reveal">
+        <div class="stat-value">&pound;499</div>
+        <div class="stat-label">Fixed price</div>
+        <div class="stat-note">No surprises, ever</div>
+      </div>
+      <div class="stat reveal reveal-delay-1">
+        <div class="stat-value">1 wk</div>
+        <div class="stat-label">Typical turnaround</div>
+        <div class="stat-note">From brief to live</div>
+      </div>
+      <div class="stat reveal reveal-delay-2">
+        <div class="stat-value">&pound;20</div>
+        <div class="stat-label">Monthly maintenance</div>
+        <div class="stat-note">Optional &mdash; not mandatory</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="inner">
+      <h2 class="reveal">Sounds like a good fit?</h2>
+      <p class="reveal reveal-delay-1">Drop me a message and I&rsquo;ll get back to you within 24 hours. No obligation, no sales pitch &mdash; just a straightforward conversation.</p>
+      <div class="cta-buttons reveal reveal-delay-2">
+        <a href="contact.html" class="btn-primary">Get in touch &rarr;</a>
+        <a href="pricing.html" class="btn-ghost">See pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-mark">N</div>
+        <div>
+          <div class="footer-name">NeoBookworm.uk</div>
+          <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="how-it-works.html">How It Works</a></li>
+        <li class="footer-sep"></li>
+        <li><a href="about.html">About</a></li>
+        <li class="footer-sep"></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li class="footer-sep"></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="footer-sep"></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li class="footer-sep"></li>
+        <li><a href="mailto:nick&#64;neobookworm.uk">nick&#64;neobookworm.uk</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // Mark <html> so CSS animation opt-in is safe
+    document.documentElement.classList.add('js-reveal');
+
+    var reveals = document.querySelectorAll('.reveal');
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+
+      reveals.forEach(function(el) { io.observe(el); });
+
+      // Immediately reveal anything already in view
+      reveals.forEach(function(el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight) { el.classList.add('visible'); }
+      });
+    } else {
+      // No IntersectionObserver support — just show everything
+      reveals.forEach(function(el) { el.classList.add('visible'); });
+    }
+  </script>
+
+</body>
+</html>
