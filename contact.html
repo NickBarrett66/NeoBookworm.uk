@@ -178,6 +178,18 @@
       color: var(--muted);
       max-width: 460px;
       line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 860px;
+    }
+    .hero-meta .contact-meta-item {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
     }
 
     /* ---- Sections ---- */
@@ -429,57 +441,46 @@
       <div class="eyebrow reveal">Contact</div>
       <h1 class="reveal reveal-delay-1">Start the conversation</h1>
       <p class="hero-sub reveal reveal-delay-2">No obligation, no sales pitch. Fill in the short form below and I'll come back to you by email — no phone calls, no pressure.</p>
+      <div class="hero-meta reveal reveal-delay-2">
+        <div class="contact-meta-item">
+          <div class="detail-icon">&#9993;&#65039;</div>
+          <div class="detail-text">
+            <strong>Email</strong>
+            <a href="mailto:nick&#64;neobookworm.uk">nick&#64;neobookworm.uk</a>
+          </div>
+        </div>
+        <div class="contact-meta-item">
+          <div class="detail-icon">&#128205;</div>
+          <div class="detail-text">
+            <strong>Based in</strong>
+            <span>Swindon, Wiltshire</span>
+          </div>
+        </div>
+        <div class="contact-meta-item">
+          <div class="detail-icon">&#9201;&#65039;</div>
+          <div class="detail-text">
+            <strong>Response time</strong>
+            <span>Within 24 hours</span>
+          </div>
+        </div>
+        <div class="contact-meta-item">
+          <div class="detail-icon">&#128176;</div>
+          <div class="detail-text">
+            <strong>Fixed price</strong>
+            <span>&pound;499 &mdash; no surprises</span>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- FORM + SIDEBAR -->
+  <!-- FORM -->
   <section>
     <div class="inner">
-
-      <!-- Reassurance -->
-      <div class="reassurance reveal">
-        <div class="reassurance-icon">&#128172;</div>
-        <div class="reassurance-text">
-          <strong>I&rsquo;ll get back to you within 24 hours</strong>
-          <p>If you just want to ask a question before committing to anything, that&rsquo;s absolutely fine. Fill in the form and I&rsquo;ll reply by email &mdash; no pressure, no pitch.</p>
-        </div>
-      </div>
 
       <div class="form-block">
         <h2 class="reveal">Tell me about your business</h2>
         <p class="form-intro reveal reveal-delay-1">Fill in the short form below and I&rsquo;ll come back to you by email &mdash; no jargon, no hard sell.</p>
-
-        <!-- Contact meta strip -->
-        <div class="contact-meta reveal reveal-delay-1">
-          <div class="contact-meta-item">
-            <div class="detail-icon">&#9993;&#65039;</div>
-            <div class="detail-text">
-              <strong>Email</strong>
-              <a href="mailto:nick&#64;neobookworm.uk">nick&#64;neobookworm.uk</a>
-            </div>
-          </div>
-          <div class="contact-meta-item">
-            <div class="detail-icon">&#128205;</div>
-            <div class="detail-text">
-              <strong>Based in</strong>
-              <span>Swindon, Wiltshire</span>
-            </div>
-          </div>
-          <div class="contact-meta-item">
-            <div class="detail-icon">&#9201;&#65039;</div>
-            <div class="detail-text">
-              <strong>Response time</strong>
-              <span>Within 24 hours</span>
-            </div>
-          </div>
-          <div class="contact-meta-item">
-            <div class="detail-icon">&#128176;</div>
-            <div class="detail-text">
-              <strong>Fixed price</strong>
-              <span>&pound;499 &mdash; no surprises</span>
-            </div>
-          </div>
-        </div>
 
         <div class="tally-embed-wrapper reveal reveal-delay-2">
           <iframe src="intake-form.html" title="New website enquiry form"></iframe>
