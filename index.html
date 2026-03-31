@@ -7,7 +7,7 @@
   <meta name="description" content="Professional websites for Swindon tradespeople. Fixed price £499. Optional £20/month if you'd like me to keep it running. No jargon, no hidden costs. Live within a week." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -728,6 +728,66 @@
       color: rgba(255,255,255,0.4);
     }
 
+    /* ── Mini previews ── */
+    .example-thumb { height: 160px; position: relative; overflow: hidden; }
+
+    /* Electrician — split panel */
+    .p-elec{height:100%;display:flex;font-family:'DM Sans',sans-serif;background:#f5f7fa}
+    .p-elec .left{width:38%;background:#0d2244;display:flex;flex-direction:column;justify-content:space-between;padding:10px 8px;border-right:2px solid #f5a623}
+    .p-elec .left .brand{font-size:6.5px;font-weight:700;color:#f5a623;letter-spacing:.14em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);margin:0 auto}
+    .p-elec .left .certs{display:flex;flex-direction:column;gap:4px}
+    .p-elec .left .cert{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);padding:3px 5px;font-size:5px;color:#f5a623;text-align:center;border-radius:2px;letter-spacing:.06em;font-weight:700}
+    .p-elec .right{flex:1;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
+    .p-elec .right .rtop .tag{font-size:5px;color:#4a6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+    .p-elec .right .rtop h2{font-size:11.5px;font-weight:600;color:#0d2244;line-height:1.25;margin-bottom:5px}
+    .p-elec .right .rtop p{font-size:6px;color:#6a8aaa;line-height:1.4}
+    .p-elec .right .rbot{display:flex;justify-content:space-between;align-items:flex-end}
+    .p-elec .right .rbot .num{font-size:9px;font-weight:700;color:#0d2244}
+    .p-elec .right .rbot .btn{background:#0d2244;color:#fff;font-size:5.5px;padding:3px 8px;border-radius:2px;font-weight:600}
+
+    /* Plumber — giant phone number */
+    .p-plumb{height:100%;background:#fff;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+    .p-plumb .emerg{background:#dc2626;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .p-plumb .emerg span{font-size:6px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.1em}
+    .p-plumb .emerg .dot{width:5px;height:5px;background:#fff;border-radius:50%;animation:blink 1.2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    .p-plumb .body{flex:1;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between}
+    .p-plumb .body .bname{font-size:7px;font-weight:700;color:#1a3a5c;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+    .p-plumb .body .bsub{font-size:5.5px;color:#7a9ab0;margin-bottom:5px}
+    .p-plumb .body .bignum{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#1a3a5c;line-height:1;letter-spacing:.04em}
+    .p-plumb .body .bignum span{color:#dc2626}
+    .p-plumb .body .bfoot{display:flex;gap:8px;align-items:center}
+    .p-plumb .body .bfoot .gs{background:#1a3a5c;color:#fff;font-size:5px;padding:2px 6px;border-radius:2px;font-weight:700}
+    .p-plumb .body .bfoot .gstxt{font-size:5.5px;color:#7a9ab0}
+    .p-plumb .amber-bar{background:#f5a623;padding:4px 10px;display:flex;gap:10px;flex-shrink:0}
+    .p-plumb .amber-bar span{font-size:5.5px;font-weight:700;color:#1a3a5c}
+
+    /* Painter — diagonal slash */
+    .p-paint{height:100%;background:#fdf8f3;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+    .p-paint .slash{position:absolute;top:-20px;right:-30px;width:160px;height:250px;background:linear-gradient(135deg,#c4622d 0%,#e07840 100%);transform:rotate(-12deg);transform-origin:top right;opacity:.92}
+    .p-paint .swatches{position:absolute;top:0;right:0;height:100%;width:34px;display:flex;flex-direction:column}
+    .p-paint .sw{flex:1}
+    .p-paint .content{position:relative;z-index:2;padding:11px 12px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+    .p-paint .pname{font-size:7.5px;font-weight:700;color:#3a2010;letter-spacing:.06em;text-transform:uppercase}
+    .p-paint .pmid h2{font-size:13px;color:#3a2010;line-height:1.25;max-width:58%;font-weight:400;font-family:'Crimson Pro',serif}
+    .p-paint .pmid h2 em{font-style:italic;color:#c4622d}
+    .p-paint .pbot .stars{color:#c4622d;font-size:8px;letter-spacing:1px}
+    .p-paint .pbot .rev{font-size:5.5px;color:#7a5040;margin-top:1px}
+
+    /* Roofer — brutalist */
+    .p-roof{height:100%;background:#111;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+    .p-roof .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);font-family:'Bebas Neue',sans-serif;font-size:72px;color:rgba(229,62,26,.07);white-space:nowrap;letter-spacing:.08em;pointer-events:none}
+    .p-roof .stripe{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(to right,#e53e1a,#ff7040)}
+    .p-roof .content{position:relative;z-index:2;padding:12px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+    .p-roof .rtop{display:flex;justify-content:space-between;align-items:flex-start}
+    .p-roof .rname{font-size:7px;font-weight:700;color:#fff;letter-spacing:.2em;text-transform:uppercase}
+    .p-roof .r247{font-size:6px;color:#e53e1a;font-weight:700;border:1px solid #e53e1a;padding:1px 5px;border-radius:2px}
+    .p-roof h2{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;line-height:.95;letter-spacing:.04em}
+    .p-roof h2 span{color:#e53e1a}
+    .p-roof .rbot{display:flex;gap:10px;border-top:1px solid rgba(229,62,26,.2);padding-top:6px}
+    .p-roof .stat strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#e53e1a;line-height:1}
+    .p-roof .stat small{font-size:5px;color:#555;text-transform:uppercase;letter-spacing:.1em}
+
     .examples-note {
       text-align: center;
       margin-top: 2.5rem;
@@ -1357,7 +1417,7 @@
       <div>
         <span class="section-label reveal">The process</span>
         <h2 class="section-title reveal">From first conversation<br>to live website in days</h2>
-        <p class="section-sub reveal" style="margin-bottom: 3rem;">No lengthy briefs, no back-and-forth proposals. Just a quick chat, a custom build, and a site you're proud of.</p>
+        <p class="section-sub reveal" style="margin-bottom: 3rem;">No lengthy briefs, no endless back-and-forth. Just a simple process, a custom build, and a site you're proud of.</p>
         <div class="how-steps">
           <div class="how-step reveal">
             <div class="step-num">1</div>
@@ -1430,80 +1490,122 @@
       <p class="section-sub" style="margin: 0 auto;">Every site is built for the specific trade and location — not a template with the logo swapped out.</p>
     </div>
     <div class="examples-grid">
-      <a href="#" class="example-card reveal">
-        <div class="example-thumb thumb-plumber">
-          <div class="thumb-inner">
-            <div class="thumb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M16 2v6h6"/></svg>
+      <a href="examples.html" class="example-card reveal">
+        <div class="example-thumb">
+          <div class="p-elec">
+            <div class="left">
+              <div class="brand">Swift Electrical</div>
+              <div class="certs">
+                <div class="cert">NICEIC</div>
+                <div class="cert">Part P</div>
+                <div class="cert">EIC Certs</div>
+                <div class="cert">18th Edition</div>
+              </div>
             </div>
-            <div class="thumb-lines">
-              <div class="thumb-line"></div>
-              <div class="thumb-line short"></div>
-              <div class="thumb-btn-mock"></div>
+            <div class="right">
+              <div class="rtop">
+                <div class="tag">Approved Contractor · Swindon</div>
+                <h2>Safe, reliable electrical work — done right first time</h2>
+                <p>Domestic &amp; commercial. Consumer units, rewires, EV chargers, testing.</p>
+              </div>
+              <div class="rbot">
+                <div class="num">07700 900 000</div>
+                <div class="btn">Free quote</div>
+              </div>
             </div>
           </div>
         </div>
         <div class="example-info">
-          <div class="example-trade">Plumbing</div>
-          <div class="example-name">Swindon Plumbing Co.</div>
-          <div class="example-tag">Demo site — view live →</div>
+          <div class="example-trade">Electrician</div>
+          <div class="example-name">Swift Electrical</div>
+          <div class="example-tag">Cert-led split panel →</div>
         </div>
       </a>
-      <a href="#" class="example-card reveal">
-        <div class="example-thumb thumb-electric">
-          <div class="thumb-inner">
-            <div class="thumb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <a href="examples.html" class="example-card reveal">
+        <div class="example-thumb">
+          <div class="p-plumb">
+            <div class="emerg">
+              <span>24hr Emergency Plumber</span>
+              <div class="dot"></div>
             </div>
-            <div class="thumb-lines">
-              <div class="thumb-line"></div>
-              <div class="thumb-line short"></div>
-              <div class="thumb-btn-mock"></div>
+            <div class="body">
+              <div>
+                <div class="bname">Hartley Plumbing</div>
+                <div class="bsub">Swindon &amp; Wiltshire · Gas Safe registered</div>
+              </div>
+              <div class="bignum">0770<span>0</span><br>900 000</div>
+              <div class="bfoot">
+                <div class="gs">Gas Safe</div>
+                <div class="gstxt">Reg. No. 000000</div>
+              </div>
+            </div>
+            <div class="amber-bar">
+              <span>&#9733; 4.9 Google</span>
+              <span>Boilers</span>
+              <span>Bathrooms</span>
+              <span>Emergencies</span>
             </div>
           </div>
         </div>
         <div class="example-info">
-          <div class="example-trade">Electrical</div>
-          <div class="example-name">Barrett Electrical</div>
-          <div class="example-tag">Demo site — view live →</div>
+          <div class="example-trade">Plumber</div>
+          <div class="example-name">Hartley Plumbing</div>
+          <div class="example-tag">Phone-first layout →</div>
         </div>
       </a>
-      <a href="#" class="example-card reveal">
-        <div class="example-thumb thumb-painter">
-          <div class="thumb-inner">
-            <div class="thumb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13.5V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5.5"/><path d="M2 13.5A10 10 0 0 0 12 4a10 10 0 0 0 10 9.5"/><line x1="12" y1="4" x2="12" y2="2"/></svg>
+      <a href="examples.html" class="example-card reveal">
+        <div class="example-thumb">
+          <div class="p-paint">
+            <div class="slash"></div>
+            <div class="swatches">
+              <div class="sw" style="background:#c4622d"></div>
+              <div class="sw" style="background:#e07840"></div>
+              <div class="sw" style="background:#4a6fa5"></div>
+              <div class="sw" style="background:#6b9e6b"></div>
+              <div class="sw" style="background:#e8d5a3"></div>
+              <div class="sw" style="background:#2e2e2e"></div>
             </div>
-            <div class="thumb-lines">
-              <div class="thumb-line"></div>
-              <div class="thumb-line short"></div>
-              <div class="thumb-btn-mock"></div>
+            <div class="content">
+              <div class="pname">Sarah Brooks Decorating</div>
+              <div class="pmid">
+                <h2>Colour advice &amp; a finish you'll <em>love</em></h2>
+              </div>
+              <div class="pbot">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="rev">214 reviews · Swindon</div>
+              </div>
             </div>
           </div>
         </div>
         <div class="example-info">
-          <div class="example-trade">Painting &amp; Decorating</div>
-          <div class="example-name">Perfect Finish Painters</div>
-          <div class="example-tag">Demo site — view live →</div>
+          <div class="example-trade">Painter &amp; Decorator</div>
+          <div class="example-name">Sarah Brooks Decorating</div>
+          <div class="example-tag">Diagonal colour layout →</div>
         </div>
       </a>
-      <a href="#" class="example-card reveal">
-        <div class="example-thumb thumb-roofer">
-          <div class="thumb-inner">
-            <div class="thumb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </div>
-            <div class="thumb-lines">
-              <div class="thumb-line"></div>
-              <div class="thumb-line short"></div>
-              <div class="thumb-btn-mock"></div>
+      <a href="examples.html" class="example-card reveal">
+        <div class="example-thumb">
+          <div class="p-roof">
+            <div class="wm">ROOFING</div>
+            <div class="stripe"></div>
+            <div class="content">
+              <div class="rtop">
+                <div class="rname">Apex Roofing</div>
+                <div class="r247">24/7</div>
+              </div>
+              <h2>WE <span>FIX</span><br>ROOFS.</h2>
+              <div class="rbot">
+                <div class="stat"><strong>500+</strong><small>Jobs done</small></div>
+                <div class="stat"><strong>18yr</strong><small>Experience</small></div>
+                <div class="stat"><strong>24/7</strong><small>Callouts</small></div>
+              </div>
             </div>
           </div>
         </div>
         <div class="example-info">
-          <div class="example-trade">Roofing</div>
-          <div class="example-name">Wiltshire Roofing</div>
-          <div class="example-tag">Demo site — view live →</div>
+          <div class="example-trade">Roofer</div>
+          <div class="example-name">Apex Roofing</div>
+          <div class="example-tag">Bold, high-impact design →</div>
         </div>
       </a>
     </div>
