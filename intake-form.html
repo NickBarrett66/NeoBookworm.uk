@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoBookworm</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1c1510;--bg2:#251c14;--bg3:#2e231a;--gold:#c49040;--gm:#d4a050;--gp:rgba(196,144,64,.12);--bd:rgba(196,144,64,.22);--tx:#f0e8da;--mu:#a08870;--er:#e07060}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 70% 0%,rgba(196,144,64,.07) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(196,144,64,.05) 0%,transparent 50%);color:var(--tx);min-height:100vh;overflow-x:hidden}
+.pt{position:fixed;top:0;left:0;right:0;height:3px;background:var(--bg3);z-index:100}
+.pf{height:100%;background:linear-gradient(to right,var(--gm),var(--gold));transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px rgba(154,104,32,.35)}
+.topbar{position:fixed;top:3px;left:0;right:0;height:52px;background:rgba(24,17,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:99}
+.tlogo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;letter-spacing:.06em;color:var(--gold)}
+.tstep{font-size:11px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--mu)}
+.shell{position:relative;min-height:100vh;padding-top:55px}
+.page{display:none;min-height:calc(100vh - 55px);padding:44px 24px 100px;max-width:640px;margin:0 auto;animation:fu .35s ease both}
+.page.act{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.ey{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,6vw,42px);font-weight:400;line-height:1.12;color:#f0e8da;margin-bottom:10px}
+.stitle em{font-style:italic;font-weight:400;color:var(--gold)}
+.sdesc{font-size:14px;font-weight:300;color:var(--mu);line-height:1.65;margin-bottom:30px;padding-bottom:26px;border-bottom:1px solid var(--bd)}
+.fi{margin-bottom:18px}
+.fi.hid{display:none}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+label .opt{font-size:10px;font-weight:400;color:var(--mu);text-transform:none;letter-spacing:0;margin-left:5px}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=url],textarea,select{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:12px 15px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;color:var(--tx);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+input::placeholder,textarea::placeholder{color:var(--mu)}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gp)}
+textarea{resize:vertical;min-height:108px;line-height:1.6}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a6820' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+select option{background:#fff;color:var(--tx)}
+.fhint{font-size:12px;color:var(--mu);margin-top:5px;font-style:italic;line-height:1.5}
+.ferr{font-size:12px;color:var(--er);margin-top:5px;display:none}
+.ferr.show{display:block}
+@media(min-width:480px){.tcol{display:grid;grid-template-columns:1fr 1fr;gap:16px}.tcol .fi{margin-bottom:0}}
+.togrow{display:flex;gap:10px;flex-wrap:wrap}
+.tog{flex:1;min-width:80px;padding:11px 12px;text-align:center;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .18s}
+.tog:hover{border-color:var(--gm);color:var(--tx)}
+.tog.on{background:var(--gp);border-color:var(--gold);color:var(--gold)}
+.chiprow{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 15px;background:var(--bg2);border:1px solid var(--bd);border-radius:50px;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .18s;user-select:none}
+.chip:hover{border-color:var(--gm);color:var(--tx)}
+.chip.on{background:var(--gp);border-color:var(--gold);color:var(--gold)}
+.upbox{border:1.5px dashed var(--bd);border-radius:8px;padding:26px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.upbox:hover{border-color:var(--gold);background:var(--gp)}
+.upbox input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upico{font-size:26px;margin-bottom:6px;display:block}
+.uptxt{font-size:13px;color:var(--mu);line-height:1.5}
+.uptxt strong{color:var(--gold)}
+.flist{margin-top:8px;font-size:12px;color:var(--gold)}
+.divr{height:1px;background:linear-gradient(to right,transparent,var(--bd),transparent);margin:26px 0}
+.sintro{font-size:14px;color:var(--mu);line-height:1.6;margin-bottom:14px}
+.scat{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--mu);margin:18px 0 10px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* === STYLE CARD SHELL === */
+.scard{border:1px solid var(--bd);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:transform .18s,border-color .18s,box-shadow .18s;background:var(--bg2)}
+.scard:hover{border-color:var(--gm);transform:translateY(-2px)}
+.scard.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gp),0 4px 14px rgba(154,104,32,.12)}
+.stick{display:none;position:absolute;top:7px;right:7px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;z-index:5}
+.scard.on .stick{display:flex}
+.sprv{height:118px;overflow:hidden;pointer-events:none;position:relative}
+.slbl{padding:8px 10px;font-size:11px;font-weight:500;color:var(--tx);background:var(--bg2);border-top:1px solid var(--bd);line-height:1.3}
+.slbl span{display:block;font-size:10px;color:var(--mu);font-weight:300;margin-top:1px}
+
+/* =============================================
+   STYLE PREVIEW PANELS — each is a different trade
+   ============================================= */
+
+/* 1. MINIMAL / CORPORATE → Electrician (clean, NICEIC, trustworthy) */
+.prev-electric{background:#f8f9fb;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
+.prev-electric .nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #e4e8ef}
+.prev-electric .nav .brand{font-size:8px;font-weight:700;color:#0d2244;letter-spacing:.06em}
+.prev-electric .nav .links{display:flex;gap:6px}
+.prev-electric .nav .links span{font-size:6px;color:#8a9ab0}
+.prev-electric .hero{background:#0d2244;padding:8px;margin-bottom:5px}
+.prev-electric .hero .tag{font-size:5.5px;color:#f5a623;text-transform:uppercase;letter-spacing:.14em;margin-bottom:3px}
+.prev-electric .hero h2{font-size:11px;font-weight:600;color:#fff;line-height:1.25;margin-bottom:3px}
+.prev-electric .hero .sub{font-size:6px;color:#8fa3c0}
+.prev-electric .badges{display:flex;gap:4px;margin-top:4px}
+.prev-electric .badge{background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);padding:2px 5px;font-size:5px;color:#f5a623;border-radius:2px}
+
+/* 2. EDITORIAL → Kitchen Fitter (magazine-style, aspirational) */
+.prev-kitchen{background:#faf7f2;padding:0;height:100%;overflow:hidden;font-family:Georgia,serif}
+.prev-kitchen .khead{padding:6px 8px;border-bottom:2px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center}
+.prev-kitchen .khead .brand{font-size:9px;font-weight:700;color:#1a1a1a;letter-spacing:.1em;text-transform:uppercase}
+.prev-kitchen .khead .issue{font-size:5.5px;color:#888;font-family:'DM Sans',sans-serif}
+.prev-kitchen .kbody{display:grid;grid-template-columns:55% 45%}
+.prev-kitchen .kimg{background:linear-gradient(160deg,#c8b9a2 0%,#a09080 100%);position:relative;min-height:82px}
+.prev-kitchen .kimg .over{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:5px 6px}
+.prev-kitchen .kimg .over .kcat{font-size:5px;color:#d4a050;text-transform:uppercase;letter-spacing:.12em;font-family:'DM Sans',sans-serif}
+.prev-kitchen .kimg .over .kttl{font-size:9px;color:#fff;line-height:1.2}
+.prev-kitchen .kside{padding:6px 6px;background:#fff}
+.prev-kitchen .kside .ks1{font-size:5.5px;text-transform:uppercase;letter-spacing:.1em;color:#888;font-family:'DM Sans',sans-serif;margin-bottom:3px}
+.prev-kitchen .kside .ks2{font-size:9px;color:#1a1a1a;line-height:1.3;margin-bottom:4px}
+.prev-kitchen .kside .ks3{font-size:6px;color:#666;line-height:1.4;font-family:'DM Sans',sans-serif}
+
+/* 3. FRIENDLY / ROUNDED → Handyman (warm, local, approachable) */
+.prev-handy{background:#fffbf5;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
+.prev-handy .hbar{display:flex;align-items:center;gap:5px;margin-bottom:7px}
+.prev-handy .hico{width:20px;height:20px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.prev-handy .hbrand{font-size:8px;font-weight:700;color:#1a1a1a}
+.prev-handy .hbrand span{display:block;font-size:5.5px;font-weight:400;color:#888}
+.prev-handy .hcta{background:#f97316;padding:7px 8px;border-radius:8px;text-align:center;margin-bottom:6px}
+.prev-handy .hcta .hh{font-size:10px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:2px}
+.prev-handy .hcta .hs{font-size:6px;color:rgba(255,255,255,.8)}
+.prev-handy .hpills{display:flex;flex-wrap:wrap;gap:3px}
+.prev-handy .hpill{padding:2px 6px;background:#fff0e6;border:1px solid #fcd9be;border-radius:20px;font-size:5.5px;color:#c2440f}
+.prev-handy .hstar{color:#f59e0b;font-size:7px;margin-top:5px}
+
+/* 4. ORGANIC / NATURAL → Landscaper (earthy, green, outdoors) */
+.prev-land{background:#f2ede7;padding:10px;height:100%;position:relative;overflow:hidden;font-family:Georgia,serif}
+.prev-land .lbg{position:absolute;top:-8px;right:-12px;width:60px;height:60px;background:#6b9e6b;border-radius:50%;opacity:.2}
+.prev-land .lbg2{position:absolute;bottom:-10px;left:-6px;width:40px;height:40px;background:#4a7c59;border-radius:50%;opacity:.15}
+.prev-land .lname{font-size:8px;color:#4a7c59;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Sans',sans-serif;margin-bottom:3px}
+.prev-land .ldiv{height:1px;width:30px;background:#a8c097;margin-bottom:5px}
+.prev-land .lh{font-size:13px;color:#2d3d2a;line-height:1.2;margin-bottom:4px}
+.prev-land .lp{font-size:6.5px;color:#5a6e52;line-height:1.4;margin-bottom:6px}
+.prev-land .lbtn{display:inline-block;background:#4a7c59;padding:3px 8px;border-radius:2px;font-size:6px;color:#fff;font-family:'DM Sans',sans-serif;letter-spacing:.06em}
+.prev-land .ltag{position:absolute;bottom:9px;right:9px;font-size:5.5px;color:#a8c097;font-style:italic}
+
+/* 5. BOLD / STRIKING → Roofer (strong, no-nonsense, impact) */
+.prev-roof{background:#111;padding:10px;height:100%;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+.prev-roof .rline{height:3px;background:linear-gradient(to right,#e53e1a,#ff6b3d);margin-bottom:7px}
+.prev-roof .rname{font-size:7px;font-weight:700;color:#fff;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.prev-roof .rh{font-size:14px;font-weight:800;color:#fff;text-transform:uppercase;line-height:1.05;margin-bottom:2px}
+.prev-roof .rh .ra{color:#e53e1a}
+.prev-roof .rsub{font-size:6px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.prev-roof .rstats{display:flex;gap:8px}
+.prev-roof .rstat strong{display:block;font-size:12px;font-weight:800;color:#e53e1a;line-height:1}
+.prev-roof .rstat span{font-size:5.5px;color:#666;text-transform:uppercase;letter-spacing:.06em}
+.prev-roof .rshape{position:absolute;top:-5px;right:-5px;width:35px;height:35px;background:#e53e1a;opacity:.12;transform:rotate(15deg)}
+
+/* 6. RETRO / VINTAGE → Carpenter / Joiner (craft, heritage) */
+.prev-carp{background:#f5e6c8;padding:10px;height:100%;overflow:hidden;background-image:repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(139,94,60,.06) 10px,rgba(139,94,60,.06) 11px)}
+.prev-carp .cbar{height:3px;background:#8b5e3c;margin-bottom:6px}
+.prev-carp .cbar2{height:1px;background:#c4956a;margin-bottom:5px}
+.prev-carp .cname{font-family:Georgia,serif;font-size:8px;font-style:italic;color:#8b5e3c;margin-bottom:2px}
+.prev-carp .cest{display:inline-block;padding:1px 6px;border:1px solid #8b5e3c;font-size:5px;color:#8b5e3c;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;font-family:'DM Sans',sans-serif}
+.prev-carp .ch{font-family:Georgia,serif;font-size:12px;line-height:1.25;color:#2e1a0a;margin-bottom:3px}
+.prev-carp .cp{font-size:6.5px;color:#6b4c30;line-height:1.4}
+.prev-carp .ctree{position:absolute;bottom:28px;right:9px;font-size:16px;opacity:.15}
+
+/* 7. LUXURY / REFINED → Bathroom Fitter (spa, premium) */
+.prev-bath{background:#0c0c0e;padding:10px;height:100%;font-family:Georgia,serif;position:relative}
+.prev-bath .bglow{position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle,rgba(180,160,120,.15) 0%,transparent 70%)}
+.prev-bath .bname{font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:#b4a078;margin-bottom:4px}
+.prev-bath .bdiv{height:1px;background:linear-gradient(to right,#b4a078,transparent);width:40px;margin-bottom:6px}
+.prev-bath .bcat{font-size:5.5px;color:#b4a078;text-transform:uppercase;letter-spacing:.18em;margin-bottom:3px;font-family:'DM Sans',sans-serif}
+.prev-bath .bh{font-size:12px;font-weight:400;line-height:1.25;color:#ede0d0;margin-bottom:4px}
+.prev-bath .bh em{font-style:italic;color:#b4a078}
+.prev-bath .bp{font-size:6px;color:#3e3629;line-height:1.4;font-family:'DM Sans',sans-serif}
+.prev-bath .baward{position:absolute;bottom:8px;right:9px;text-align:right}
+.prev-bath .baward span{display:block;font-size:5px;color:#b4a078;letter-spacing:.1em}
+
+/* 8. TECHNICAL / PRECISE → Heating Engineer / Gas Safe */
+.prev-heat{background:#f0f4f8;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
+.prev-heat .htop{display:flex;justify-content:space-between;border-bottom:1px solid #d0dce8;padding-bottom:4px;margin-bottom:5px}
+.prev-heat .htop .hbrand{font-size:8px;font-weight:600;color:#0f2d54;letter-spacing:.04em}
+.prev-heat .htop .hid{font-size:5.5px;color:#7a9ab8;font-family:'Courier New',monospace}
+.prev-heat .hcert{display:flex;gap:3px;margin-bottom:5px}
+.prev-heat .hc{background:#e8f0f8;border:1px solid #b8d0e8;padding:2px 5px;font-size:5px;color:#2563aa;border-radius:2px;font-weight:600;letter-spacing:.04em}
+.prev-heat .hhead{font-size:10px;font-weight:500;color:#0f2d54;margin-bottom:2px;line-height:1.3}
+.prev-heat .hstats{display:flex;gap:8px;margin-top:5px}
+.prev-heat .hst strong{display:block;font-size:11px;color:#2563aa;font-family:'Courier New',monospace;line-height:1}
+.prev-heat .hst span{font-size:5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}
+
+/* =============================================
+   NAV / BUTTONS
+   ============================================= */
+.nav{position:fixed;bottom:0;left:0;right:0;padding:14px 24px;background:linear-gradient(to top,rgba(24,17,10,.98) 65%,transparent);display:flex;gap:12px;justify-content:flex-end;z-index:50;max-width:640px;margin-left:auto;margin-right:auto}
+.bbk{padding:12px 22px;background:transparent;border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .18s}
+.bbk:hover{border-color:var(--gold);color:var(--tx)}
+.bnx{flex:1;padding:13px 22px;background:var(--gold);border:none;border-radius:6px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.03em;cursor:pointer;transition:all .2s}
+.bnx:hover{background:var(--gm);box-shadow:0 4px 18px rgba(154,104,32,.28)}
+.owrap{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 55px);padding:44px 24px 80px;max-width:560px;margin:0 auto;animation:fu .5s ease both}
+.okick{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;position:relative}
+.otitle{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,9vw,56px);font-weight:600;line-height:1.08;color:#f0e8da;margin-bottom:22px;position:relative}
+.otitle em{font-style:italic;font-weight:400;color:var(--gold)}
+.obody{font-size:15px;font-weight:300;color:#9e8e7c;line-height:1.7;margin-bottom:30px;max-width:430px;position:relative}
+.ometa{display:flex;gap:24px;margin-bottom:34px;padding:16px 0;border-top:1px solid rgba(154,104,32,.25);border-bottom:1px solid rgba(154,104,32,.25);position:relative}
+.ometa strong{display:block;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--gold);letter-spacing:.02em}
+.ometa span{font-size:10px;color:#7a6a58;text-transform:uppercase;letter-spacing:.08em}
+.bstart{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;background:var(--gold);border:none;border-radius:6px;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;letter-spacing:.02em;cursor:pointer;transition:all .22s;align-self:flex-start;position:relative}
+.bstart:hover{background:var(--gm);transform:translateY(-2px);box-shadow:0 6px 22px rgba(154,104,32,.4)}
+.bstart .arr{font-size:17px;transition:transform .2s}
+.bstart:hover .arr{transform:translateX(4px)}
+.tywrap{display:none;flex-direction:column;justify-content:center;min-height:calc(100vh - 55px);padding:48px 24px;max-width:540px;margin:0 auto;animation:fu .4s ease both}
+.tywrap.show{display:flex}
+.tyico{width:52px;height:52px;border-radius:50%;background:var(--gp);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:26px}
+.tytitle{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,7vw,46px);font-weight:400;line-height:1.12;color:#f0e8da;margin-bottom:14px}
+.tytitle em{font-style:italic;font-weight:400;color:var(--gold)}
+.tybody{font-size:15px;font-weight:300;color:var(--mu);line-height:1.7;margin-bottom:26px}
+.tyline{height:1px;background:linear-gradient(to right,var(--gold),transparent);width:56px;margin-bottom:22px}
+.tyct{font-size:13px;color:var(--mu);line-height:1.6}
+.tyct a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="pt"><div class="pf" id="pbar" style="width:0%"></div></div>
+<div class="topbar" id="topbar">
+  <div class="tlogo">NeoBookworm</div>
+  <div class="tstep" id="steplbl">&nbsp;</div>
+</div>
+<div class="shell">
+
+<!-- OPENING -->
+<div class="owrap" id="owrap">
+  <div class="okick">Your new website starts here</div>
+  <h1 class="otitle">Let's build something<br><em>you're proud of.</em></h1>
+  <p class="obody">Thanks for choosing NeoBookworm! This short form helps me understand your business so I can build a site that genuinely reflects who you are — not a template that could belong to anyone.<br><br>Fill in what you can. If you're unsure about anything, just leave it blank and I'll follow up.</p>
+  <div class="ometa">
+    <div><strong>4-5 min</strong><span>To complete</span></div>
+    <div><strong>5 steps</strong><span>Easy sections</span></div>
+    <div><strong>Mobile</strong><span>Friendly</span></div>
+  </div>
+  <button class="bstart" onclick="startForm()">Let's get started <span class="arr">&#8594;</span></button>
+</div>
+
+<!-- STEP 1 -->
+<div class="page" id="p1">
+  <div class="ey">Step 1 of 5</div>
+  <h2 class="stitle">The <em>basics</em></h2>
+  <p class="sdesc">Easy wins first — just your details and what you do. This goes in the header and footer of your site.</p>
+  <div class="tcol">
+    <div class="fi"><label for="f_name">Your full name</label><input type="text" id="f_name" placeholder="e.g. James Hartley"><div class="ferr" id="e_name">Please enter your name</div></div>
+    <div class="fi"><label for="f_biz">Business name</label><input type="text" id="f_biz" placeholder="e.g. Hartley Plumbing"><div class="ferr" id="e_biz">Please enter your business name</div></div>
+  </div>
+  <div class="fi">
+    <label for="f_trade">Your trade</label>
+    <select id="f_trade"><option value="" disabled selected>Select your trade...</option><option>Plumber</option><option>Electrician</option><option>Painter and Decorator</option><option>Roofer</option><option>Plasterer</option><option>Kitchen Fitter</option><option>Bathroom Fitter</option><option>Landscaper / Gardener</option><option>Carpenter / Joiner</option><option>Builder / General Contractor</option><option>Heating Engineer / Gas Safe</option><option>Tiler</option><option>Flooring Specialist</option><option>Handyman</option><option>Other</option></select>
+    <div class="ferr" id="e_trade">Please select your trade</div>
+  </div>
+  <div class="tcol">
+    <div class="fi"><label for="f_phone">Phone <span class="opt">(for the site)</span></label><input type="tel" id="f_phone" placeholder="e.g. 07700 900 000"><div class="ferr" id="e_phone">Please enter a phone number</div></div>
+    <div class="fi"><label for="f_email">Email address</label><input type="email" id="f_email" placeholder="e.g. james@hartleyplumbing.co.uk"><div class="ferr" id="e_email">Please enter a valid email</div></div>
+  </div>
+  <div class="tcol">
+    <div class="fi"><label for="f_area">Area you cover</label><input type="text" id="f_area" placeholder="e.g. Swindon and Wiltshire"><div class="ferr" id="e_area">Please enter your coverage area</div></div>
+    <div class="fi"><label for="f_years">Years trading <span class="opt">optional</span></label><input type="number" id="f_years" placeholder="e.g. 12" min="0" max="60"></div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="page" id="p2">
+  <div class="ey">Step 2 of 5</div>
+  <h2 class="stitle">Your <em>services</em></h2>
+  <p class="sdesc">This becomes the heart of your services page. The more specific you are, the more useful it is.</p>
+  <div class="fi"><label for="f_svcs">List your main services</label><textarea id="f_svcs" placeholder="e.g. Full bathroom installations, boiler servicing, emergency callouts, landlord safety checks..."></textarea><div class="ferr" id="e_svcs">Please tell me about your services</div></div>
+  <div class="fi"><label for="f_accred">Accreditations and specialist skills <span class="opt">optional</span></label><input type="text" id="f_accred" placeholder="e.g. Gas Safe registered, NICEIC approved, FENSA installer"></div>
+  <div class="fi"><label>Do you offer free quotes?</label><div class="togrow"><button type="button" class="tog" data-grp="fq" data-val="yes" onclick="setTog(this)">Yes</button><button type="button" class="tog" data-grp="fq" data-val="no" onclick="setTog(this)">No</button></div></div>
+  <div class="fi"><label>Emergency / out-of-hours call-outs?</label><div class="togrow"><button type="button" class="tog" data-grp="em" data-val="yes" onclick="setTog(this)">Yes</button><button type="button" class="tog" data-grp="em" data-val="no" onclick="setTog(this)">No</button></div></div>
+  <div class="fi"><label for="f_excl">Jobs you don't take on <span class="opt">optional</span></label><input type="text" id="f_excl" placeholder="e.g. Commercial only, no new builds, no social housing"></div>
+</div>
+
+<!-- STEP 3 -->
+<div class="page" id="p3">
+  <div class="ey">Step 3 of 5</div>
+  <h2 class="stitle">Your <em>story</em></h2>
+  <p class="sdesc">This feeds your About page — the most underrated part of any tradesperson's site. People hire tradespeople they trust.</p>
+  <div class="fi"><label for="f_story">Tell me about yourself and your business</label><textarea id="f_story" style="min-height:135px" placeholder="How did you get started? What makes you different? What do your customers say about you?"></textarea><div class="ferr" id="e_story">Please tell me a bit about yourself</div></div>
+  <div class="fi"><label>Do you work alone or have a team? <span class="opt">optional</span></label><div class="chiprow" id="cr_team"><div class="chip" onclick="setSingle(this,'cr_team')">Sole trader</div><div class="chip" onclick="setSingle(this,'cr_team')">Small team (2-4)</div><div class="chip" onclick="setSingle(this,'cr_team')">Growing business (5+)</div></div></div>
+  <div class="fi"><label for="f_ideal">Types of customer or work you enjoy most <span class="opt">optional</span></label><textarea id="f_ideal" style="min-height:78px" placeholder="e.g. Older homeowners, new builds, listed buildings, high-end refurbs..."></textarea></div>
+</div>
+
+<!-- STEP 4 -->
+<div class="page" id="p4">
+  <div class="ey">Step 4 of 5</div>
+  <h2 class="stitle">Photos <em>and look</em></h2>
+  <p class="sdesc">Upload what you have, then pick a style that feels right for your business.</p>
+  <div class="fi"><label>Photos of your work</label><div class="upbox"><input type="file" id="f_photos" multiple accept="image/*" onchange="showFiles(this,'fl_photos')"><span class="upico">&#128248;</span><div class="uptxt"><strong>Tap to upload photos</strong><br>Even phone photos are great. Before/after shots work brilliantly. Aim for 5-10.</div></div><div class="flist" id="fl_photos"></div></div>
+  <div class="fi"><label>Do you have a logo?</label><div class="togrow"><button type="button" class="tog" data-grp="logo" data-val="yes" onclick="setTog(this);revealField('logoFi',true)">Yes</button><button type="button" class="tog" data-grp="logo" data-val="no" onclick="setTog(this);revealField('logoFi',false)">No</button></div></div>
+  <div class="fi hid" id="logoFi"><label>Upload your logo</label><div class="upbox"><input type="file" id="f_logo" accept="image/*,.svg,.eps,.pdf" onchange="showFiles(this,'fl_logo')"><span class="upico">&#127912;</span><div class="uptxt"><strong>Tap to upload</strong><br>PNG, SVG or PDF preferred. Any size is fine.</div></div><div class="flist" id="fl_logo"></div></div>
+  <div class="fi"><label for="f_colour">Preferred colours <span class="opt">optional</span></label><input type="text" id="f_colour" placeholder="e.g. Navy and white, or 'I trust your judgement'"></div>
+  <div class="divr"></div>
+
+  <label style="margin-bottom:6px">Website style — pick one that feels right</label>
+  <p class="sintro">Each example below shows a real trade in that style. Don't overthink it — go with your gut. We can always refine it together.</p>
+
+  <!-- CLEAN AND PROFESSIONAL -->
+  <div class="scat">Clean and Professional</div>
+  <div class="sgrid">
+
+    <!-- Card 1: Minimal / Corporate → Electrician -->
+    <div class="scard" onclick="pickStyle(this,'Minimal / Corporate')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-electric">
+          <div class="nav">
+            <div class="brand">SWIFT ELECTRICAL</div>
+            <div class="links"><span>Services</span><span>About</span><span>Contact</span></div>
+          </div>
+          <div class="hero">
+            <div class="tag">NICEIC Approved Contractor</div>
+            <h2>Safe, reliable electrical work — done right first time</h2>
+            <div class="sub">Domestic &amp; commercial · Swindon &amp; Wiltshire</div>
+            <div class="badges"><span class="badge">NICEIC</span><span class="badge">Part P</span><span class="badge">Free quote</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="slbl">Minimal / Corporate<span>Clean, trustworthy, credential-led</span></div>
+    </div>
+
+    <!-- Card 2: Editorial → Kitchen Fitter -->
+    <div class="scard" onclick="pickStyle(this,'Editorial')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-kitchen">
+          <div class="khead">
+            <div class="brand">HARPER KITCHENS</div>
+            <div class="issue">Swindon · Est. 2009</div>
+          </div>
+          <div class="kbody">
+            <div class="kimg">
+              <div class="over">
+                <div class="kcat">Featured Project</div>
+                <div class="kttl">The Marlowe Shaker Kitchen</div>
+              </div>
+            </div>
+            <div class="kside">
+              <div class="ks1">Latest Work</div>
+              <div class="ks2">Handcrafted kitchens you'll love for decades</div>
+              <div class="ks3">Bespoke design, supply and installation. From first sketch to final fit.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slbl">Editorial<span>Magazine-style, project-led</span></div>
+    </div>
+
+  </div>
+
+  <!-- WARM AND APPROACHABLE -->
+  <div class="scat">Warm and Approachable</div>
+  <div class="sgrid">
+
+    <!-- Card 3: Friendly / Rounded → Handyman -->
+    <div class="scard" onclick="pickStyle(this,'Friendly / Rounded')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-handy">
+          <div class="hbar">
+            <div class="hico">🔧</div>
+            <div class="hbrand">Dave's Odd Jobs<span>Swindon · 07700 900 123</span></div>
+          </div>
+          <div class="hcta">
+            <div class="hh">No job too small — just call Dave!</div>
+            <div class="hs">Flat-pack · fencing · painting · shelves &amp; more</div>
+          </div>
+          <div class="hpills">
+            <div class="hpill">Flat-pack assembly</div>
+            <div class="hpill">Garden fencing</div>
+            <div class="hpill">Painting</div>
+            <div class="hpill">Shelving</div>
+          </div>
+          <div class="hstar">★★★★★ 5.0 on Google (84 reviews)</div>
+        </div>
+      </div>
+      <div class="slbl">Friendly / Rounded<span>Warm, local, easy to contact</span></div>
+    </div>
+
+    <!-- Card 4: Organic / Natural → Landscaper -->
+    <div class="scard" onclick="pickStyle(this,'Organic / Natural')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-land">
+          <div class="lbg"></div><div class="lbg2"></div>
+          <div class="lname">Green Acre Landscapes</div>
+          <div class="ldiv"></div>
+          <div class="lh">Gardens designed to breathe</div>
+          <div class="lp">Planting, patios, water features and full garden transformations across Wiltshire.</div>
+          <div class="lbtn">View our work</div>
+          <div class="ltag">Swindon &amp; surrounding villages</div>
+        </div>
+      </div>
+      <div class="slbl">Organic / Natural<span>Earthy, outdoor, calm</span></div>
+    </div>
+
+  </div>
+
+  <!-- BOLD AND DISTINCTIVE -->
+  <div class="scat">Bold and Distinctive</div>
+  <div class="sgrid">
+
+    <!-- Card 5: Bold / Striking → Roofer -->
+    <div class="scard" onclick="pickStyle(this,'Bold / Striking')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-roof">
+          <div class="rshape"></div>
+          <div class="rline"></div>
+          <div class="rname">Apex Roofing</div>
+          <div class="rh">WE <span class="ra">PROTECT</span><br>YOUR HOME</div>
+          <div class="rsub">Swindon · 24/7 emergency cover</div>
+          <div class="rstats">
+            <div class="rstat"><strong>500+</strong><span>Roofs fixed</span></div>
+            <div class="rstat"><strong>18yr</strong><span>Experience</span></div>
+            <div class="rstat"><strong>24/7</strong><span>Callouts</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="slbl">Bold / Striking<span>Confident, high-impact, urgent</span></div>
+    </div>
+
+    <!-- Card 6: Retro / Vintage → Carpenter -->
+    <div class="scard" onclick="pickStyle(this,'Retro / Vintage')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-carp">
+          <div class="cbar"></div><div class="cbar2"></div>
+          <div class="cname">Hartwood Joinery</div>
+          <div class="cest">Est. Since 1987</div>
+          <div class="ch">Bespoke timber work, made to last a lifetime</div>
+          <div class="cp">Staircases · fitted wardrobes · oak framing · restoration work. Swindon &amp; Wiltshire.</div>
+          <div class="ctree">🪵</div>
+        </div>
+      </div>
+      <div class="slbl">Retro / Vintage<span>Heritage, craft, character</span></div>
+    </div>
+
+  </div>
+
+  <!-- PREMIUM AND SPECIALIST -->
+  <div class="scat">Premium and Specialist</div>
+  <div class="sgrid">
+
+    <!-- Card 7: Luxury / Refined → Bathroom Fitter -->
+    <div class="scard" onclick="pickStyle(this,'Luxury / Refined')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-bath">
+          <div class="bglow"></div>
+          <div class="bname">Atelier Bathrooms</div>
+          <div class="bdiv"></div>
+          <div class="bcat">Luxury Bathroom Design &amp; Installation</div>
+          <div class="bh">Where every detail is <em>considered</em></div>
+          <div class="bp">Bespoke wet rooms, freestanding baths and walk-in showers. Swindon.</div>
+          <div class="baward"><span>⭑ Checkatrade</span><span>Top Rated 2024</span></div>
+        </div>
+      </div>
+      <div class="slbl">Luxury / Refined<span>Premium, spa-like, dark &amp; elegant</span></div>
+    </div>
+
+    <!-- Card 8: Technical / Precise → Heating Engineer -->
+    <div class="scard" onclick="pickStyle(this,'Technical / Precise')">
+      <div class="stick">&#10003;</div>
+      <div class="sprv">
+        <div class="prev-heat">
+          <div class="htop">
+            <div class="hbrand">Meridian Heating</div>
+            <div class="hid">GS#4412-SW</div>
+          </div>
+          <div class="hcert">
+            <div class="hc">Gas Safe</div>
+            <div class="hc">Worcester Accredited</div>
+            <div class="hc">OFTEC</div>
+          </div>
+          <div class="hhead">Boiler installs, servicing &amp; full heating systems</div>
+          <div class="hstats">
+            <div class="hst"><strong>10yr</strong><span>Guarantee</span></div>
+            <div class="hst"><strong>24hr</strong><span>Response</span></div>
+            <div class="hst"><strong>A-rated</strong><span>Boilers only</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="slbl">Technical / Precise<span>Accreditation-led, data-driven</span></div>
+    </div>
+
+  </div>
+
+  <div class="fi" style="margin-top:18px"><label for="f_inspo">Any websites you like the look of? <span class="opt">optional</span></label><input type="url" id="f_inspo" placeholder="https://..."><div class="fhint">Gives me a feel for what catches your eye.</div></div>
+</div>
+
+<!-- STEP 5 -->
+<div class="page" id="p5">
+  <div class="ey">Step 5 of 5</div>
+  <h2 class="stitle">Almost <em>there</em></h2>
+  <p class="sdesc">A few final details — everything I need to get started.</p>
+  <div class="fi"><label for="f_reviews">Customer testimonials <span class="opt">optional</span></label><textarea id="f_reviews" style="min-height:115px" placeholder="Copy/paste 2-3 reviews from Google, Checkatrade, or things customers have said directly..."></textarea><div class="fhint">Even one strong testimonial makes a real difference.</div></div>
+  <div class="fi"><label>Do you have a Google Business profile?</label><div class="togrow"><button type="button" class="tog" data-grp="gb" data-val="yes" onclick="setTog(this)">Yes</button><button type="button" class="tog" data-grp="gb" data-val="no" onclick="setTog(this)">No</button><button type="button" class="tog" data-grp="gb" data-val="unsure" onclick="setTog(this)">Not sure</button></div></div>
+  <div class="fi"><label for="f_trust">Other trust marks or memberships <span class="opt">optional</span></label><input type="text" id="f_trust" placeholder="e.g. Which? Trusted Trader, Trading Standards, Checkatrade"></div>
+  <div class="divr"></div>
+  <div class="fi"><label>Do you have a domain name?</label><div class="chiprow" id="cr_domain"><div class="chip" onclick="setDomain(this,'yes')">Yes, I have one</div><div class="chip" onclick="setDomain(this,'no')">No, help me choose</div><div class="chip" onclick="setDomain(this,'unsure')">Not sure what this means</div></div></div>
+  <div class="fi hid" id="domainFi"><label for="f_domain">Your domain name</label><input type="text" id="f_domain" placeholder="e.g. hartleyplumbing.co.uk"></div>
+  <div class="fi"><label>How should customers contact you? <span class="opt">pick all that apply</span></label><div class="chiprow" id="cr_contact"><div class="chip" onclick="this.classList.toggle('on')">Phone call</div><div class="chip" onclick="this.classList.toggle('on')">Text message</div><div class="chip" onclick="this.classList.toggle('on')">Email</div><div class="chip" onclick="this.classList.toggle('on')">Contact form</div><div class="chip" onclick="this.classList.toggle('on')">WhatsApp</div></div></div>
+  <div class="fi"><label for="f_hours">Working hours <span class="opt">optional</span></label><input type="text" id="f_hours" placeholder="e.g. Mon-Fri 7am-6pm, emergency callouts 24/7"></div>
+  <div class="fi"><label for="f_extra">Anything else you'd like on the site? <span class="opt">optional</span></label><textarea id="f_extra" style="min-height:85px" placeholder="Anything not covered - pricing, gallery, FAQ, booking link..."></textarea></div>
+</div>
+
+<!-- THANK YOU -->
+<div class="tywrap" id="tywrap">
+  <div class="tyico">&#10022;</div>
+  <h2 class="tytitle">You're all <em>done.</em></h2>
+  <p class="tybody">That's everything I need to get started. I'll be in touch within 2 working days to confirm I've received everything and to let you know next steps.</p>
+  <div class="tyline"></div>
+  <p class="tyct">Want to send additional photos or have a question?<br>You can reach me at <span id="ctaEmail"></span></p>
+</div>
+
+<!-- NAV -->
+<div class="nav" id="navbar" style="display:none">
+  <button class="bbk" id="bbk" onclick="goBack()">&#8592; Back</button>
+  <button class="bnx" id="bnx" onclick="goNext()">Continue &#8594;</button>
+</div>
+
+</div>
+<script data-cfasync="false">
+var curStep=0,togVals={},styleVal='',teamVal='',domainVal='';
+
+(function(){
+var p=[110,105,99,107,64,110,101,111,98,111,111,107,119,111,114,109,46,117,107];
+var addr=p.map(function(c){return String.fromCharCode(c);}).join('');
+var el=document.getElementById('ctaEmail');
+if(el){var a=document.createElement('a');a.href='mail'+'to:'+addr;a.textContent=addr;a.style.color='var(--gold)';el.appendChild(a);}
+})();
+
+function isValidEmail(s){var parts=s.split(String.fromCharCode(64));return parts.length===2&&parts[0].length>0&&parts[1].indexOf('.')>0;}
+
+function startForm(){
+document.getElementById('owrap').style.display='none';
+document.getElementById('navbar').style.display='flex';
+goToStep(1);
+}
+
+function goToStep(n){
+var pages=document.querySelectorAll('.page');
+for(var i=0;i<pages.length;i++) pages[i].classList.remove('act');
+var pg=document.getElementById('p'+n);
+if(pg){pg.classList.add('act');window.scrollTo(0,0);}
+curStep=n;
+document.getElementById('pbar').style.width=Math.round(((n-1)/5)*100)+'%';
+document.getElementById('steplbl').textContent='Step '+n+' of 5';
+document.getElementById('bbk').style.display=n>1?'block':'none';
+document.getElementById('bnx').textContent=n===5?'Submit \u2192':'Continue \u2192';
+}
+
+function goNext(){if(!validate(curStep)) return;if(curStep>=5){submitForm();}else{goToStep(curStep+1);}}
+function goBack(){if(curStep>1) goToStep(curStep-1);}
+
+function validate(n){
+var ok=true;
+var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_email','e_email'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
+var pairs=map[n]||[];
+for(var i=0;i<pairs.length;i++){
+var el=document.getElementById(pairs[i][0]);
+var err=document.getElementById(pairs[i][1]);
+if(el&&!el.value.trim()){if(err) err.classList.add('show');if(ok) el.focus();ok=false;}
+else{if(err) err.classList.remove('show');}
+}
+if(n===1){var em=document.getElementById('f_email');var ee=document.getElementById('e_email');if(em&&em.value&&!isValidEmail(em.value)){ee.textContent='Please enter a valid email address';ee.classList.add('show');ok=false;}}
+return ok;
+}
+
+document.addEventListener('input',function(ev){var id=ev.target.id;if(!id) return;var key=id.replace('f_','');var err=document.getElementById('e_'+key);if(err) err.classList.remove('show');});
+
+function setTog(btn){var grp=btn.getAttribute('data-grp');var row=btn.parentNode;var btns=row.querySelectorAll('.tog');for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');btn.classList.add('on');togVals[grp]=btn.getAttribute('data-val');}
+function setSingle(chip,rowId){var chips=document.querySelectorAll('#'+rowId+' .chip');for(var i=0;i<chips.length;i++) chips[i].classList.remove('on');chip.classList.add('on');if(rowId==='cr_team') teamVal=chip.textContent.trim();}
+function setDomain(chip,val){var chips=document.querySelectorAll('#cr_domain .chip');for(var i=0;i<chips.length;i++) chips[i].classList.remove('on');chip.classList.add('on');domainVal=val;revealField('domainFi',val==='yes');}
+function revealField(id,show){var el=document.getElementById(id);if(!el) return;if(show){el.classList.remove('hid');}else{el.classList.add('hid');}}
+function pickStyle(card,name){var cards=document.querySelectorAll('.scard');for(var i=0;i<cards.length;i++) cards[i].classList.remove('on');card.classList.add('on');styleVal=name;}
+function showFiles(input,listId){var list=document.getElementById(listId);if(!list) return;if(!input.files||input.files.length===0){list.textContent='';return;}var names=[];for(var i=0;i<input.files.length;i++) names.push(input.files[i].name);list.textContent='\u2713 '+input.files.length+' file(s): '+names.join(', ');}
+
+function submitForm(){
+function v(id){var el=document.getElementById(id);return el?el.value:'';}
+var contact=[];var cc=document.querySelectorAll('#cr_contact .chip.on');for(var i=0;i<cc.length;i++) contact.push(cc[i].textContent.trim());
+var payload={fullName:v('f_name'),bizName:v('f_biz'),trade:v('f_trade'),phone:v('f_phone'),email:v('f_email'),area:v('f_area'),years:v('f_years'),services:v('f_svcs'),accreditations:v('f_accred'),freeQuotes:togVals['fq']||'',emergency:togVals['em']||'',exclusions:v('f_excl'),story:v('f_story'),teamSize:teamVal,idealWork:v('f_ideal'),colourPref:v('f_colour'),websiteStyle:styleVal,siteInspo:v('f_inspo'),testimonials:v('f_reviews'),googleBiz:togVals['gb']||'',trustmarks:v('f_trust'),domainStatus:domainVal,domainName:v('f_domain'),contactMethods:contact.join(', '),hours:v('f_hours'),extra:v('f_extra')};
+console.log('NeoBookworm submission:',payload);
+var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++) pages[i].classList.remove('act');
+document.getElementById('navbar').style.display='none';
+document.getElementById('pbar').style.width='100%';
+document.getElementById('steplbl').textContent='Complete';
+document.getElementById('tywrap').classList.add('show');
+window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
