@@ -433,18 +433,25 @@
     .how-steps {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 0.75rem;
     }
 
     .how-step {
       display: flex;
       gap: 1.5rem;
-      padding: 1.75rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 1.5rem 1.5rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
       position: relative;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
     }
 
-    .how-step:last-child { border-bottom: none; }
+    .how-step:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245,166,35,0.35);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+    }
 
     .step-num {
       width: 40px; height: 40px;
@@ -493,6 +500,19 @@
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+      height: 340px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mock-plumb-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mock-plumb-wrap .p-plumb {
+      height: 100%;
     }
 
     .mock-bar {
@@ -1456,23 +1476,32 @@
             <div class="mock-dot"></div>
             <div class="mock-dot"></div>
             <div class="mock-dot"></div>
-            <div class="mock-url">swindonplumbing.co.uk</div>
+            <div class="mock-url">hartleyplumbing.co.uk</div>
           </div>
-          <div class="mock-hero-block">
-            <div class="mock-h">Swindon's Trusted Plumber</div>
-            <div class="mock-p">Fast, reliable plumbing across Swindon &amp; surrounding areas</div>
-            <div class="mock-btn">Get a free quote →</div>
-          </div>
-          <div class="mock-body">
-            <div class="mock-cards">
-              <div class="mock-card"><div class="mc-icon"></div><div class="mc-line"></div><div class="mc-line short"></div></div>
-              <div class="mock-card"><div class="mc-icon"></div><div class="mc-line"></div><div class="mc-line short"></div></div>
-              <div class="mock-card"><div class="mc-icon"></div><div class="mc-line"></div><div class="mc-line short"></div></div>
+          <div class="mock-plumb-wrap">
+            <div class="p-plumb">
+              <div class="emerg">
+                <span>24hr Emergency Plumber</span>
+                <div class="dot"></div>
+              </div>
+              <div class="body">
+                <div>
+                  <div class="bname">Hartley Plumbing</div>
+                  <div class="bsub">Swindon &amp; Wiltshire · Gas Safe registered</div>
+                </div>
+                <div class="bignum">0770<span>0</span><br>900 000</div>
+                <div class="bfoot">
+                  <div class="gs">Gas Safe</div>
+                  <div class="gstxt">Reg. No. 000000</div>
+                </div>
+              </div>
+              <div class="amber-bar">
+                <span>&#9733; 4.9 Google</span>
+                <span>Boilers</span>
+                <span>Bathrooms</span>
+                <span>Emergencies</span>
+              </div>
             </div>
-          </div>
-          <div class="mock-footer-strip">
-            <div class="mock-footer-line"></div>
-            <div class="mock-footer-line" style="flex: 0.6"></div>
           </div>
         </div>
         <div class="mock-label">✓ Live within a week</div>
