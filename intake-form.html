@@ -505,6 +505,7 @@ select option{background:#fff;color:#1a1a1a}
 
 <!-- NAV -->
 <div class="nav" id="navbar" style="display:none">
+  <div id="submit-error" style="display:none;width:100%;text-align:center;font-size:13px;color:var(--er);padding:0 0 8px">Something went wrong &mdash; please try again.</div>
   <button class="bbk" id="bbk" onclick="goBack()">&#8592; Back</button>
   <button class="bnx" id="bnx" onclick="goNext()">Continue &#8594;</button>
 </div>
@@ -576,16 +577,26 @@ function pickStyle(card,name){var cards=document.querySelectorAll('.scard');for(
 function showFiles(input,listId){var list=document.getElementById(listId);if(!list) return;if(!input.files||input.files.length===0){list.textContent='';return;}var names=[];for(var i=0;i<input.files.length;i++) names.push(input.files[i].name);list.textContent='\u2713 '+input.files.length+' file(s): '+names.join(', ');}
 
 function submitForm(){
+var btn=document.getElementById('bnx');
+btn.disabled=true;btn.textContent='Sending\u2026';
+document.getElementById('submit-error').style.display='none';
 function v(id){var el=document.getElementById(id);return el?el.value:'';}
 var contact=[];var cc=document.querySelectorAll('#cr_contact .chip.on');for(var i=0;i<cc.length;i++) contact.push(cc[i].textContent.trim());
 var payload={fullName:v('f_name'),bizName:v('f_biz'),trade:v('f_trade'),phone:v('f_phone'),email:v('f_email'),area:v('f_area'),years:v('f_years'),services:v('f_svcs'),accreditations:v('f_accred'),freeQuotes:togVals['fq']||'',emergency:togVals['em']||'',exclusions:v('f_excl'),story:v('f_story'),teamSize:teamVal,idealWork:v('f_ideal'),colourPref:v('f_colour'),websiteStyle:styleVal,siteInspo:v('f_inspo'),testimonials:v('f_reviews'),googleBiz:togVals['gb']||'',trustmarks:v('f_trust'),domainStatus:domainVal,domainName:v('f_domain'),contactMethods:contact.join(', '),hours:v('f_hours'),extra:v('f_extra')};
-console.log('NeoBookworm submission:',payload);
+fetch('/.netlify/functions/submit-intake',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+.then(function(res){if(!res.ok) throw new Error('server_error');return res.json();})
+.then(function(){
 var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++) pages[i].classList.remove('act');
 document.getElementById('navbar').style.display='none';
 document.getElementById('pbar').style.width='100%';
 document.getElementById('steplbl').textContent='Complete';
 document.getElementById('tywrap').classList.add('show');
 window.scrollTo(0,0);
+})
+.catch(function(){
+btn.disabled=false;btn.textContent='Submit \u2192';
+document.getElementById('submit-error').style.display='block';
+});
 }
 </script>
 </body>
