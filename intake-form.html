@@ -6,16 +6,16 @@
 <title>NeoBookworm</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#1c1510;--bg2:#251c14;--bg3:#2e231a;--gold:#c49040;--gm:#d4a050;--gp:rgba(196,144,64,.12);--bd:rgba(196,144,64,.22);--tx:#f0e8da;--mu:#a08870;--er:#e07060}
+:root{--bg:#0f1f3d;--bg2:#162848;--bg3:#1a3260;--gold:#f5a623;--gm:#d4891a;--gp:rgba(245,166,35,.12);--bd:rgba(245,166,35,.22);--tx:#ffffff;--mu:rgba(255,255,255,0.5);--er:#e07060}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 70% 0%,rgba(196,144,64,.07) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(196,144,64,.05) 0%,transparent 50%);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 70% 0%,rgba(245,166,35,.06) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(245,166,35,.04) 0%,transparent 50%);color:var(--tx);min-height:100vh;overflow-x:hidden}
 .pt{position:fixed;top:0;left:0;right:0;height:3px;background:var(--bg3);z-index:100}
 .pf{height:100%;background:linear-gradient(to right,var(--gm),var(--gold));transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px rgba(154,104,32,.35)}
-.topbar{position:fixed;top:3px;left:0;right:0;height:52px;background:rgba(24,17,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:99}
+.topbar{display:none}
 .tlogo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;letter-spacing:.06em;color:var(--gold)}
 .tstep{font-size:11px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--mu)}
-.shell{position:relative;min-height:100vh;padding-top:55px}
+.shell{position:relative;min-height:100vh;padding-top:3px}
 .page{display:none;min-height:calc(100vh - 55px);padding:44px 24px 100px;max-width:640px;margin:0 auto;animation:fu .35s ease both}
 .page.act{display:block}
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}

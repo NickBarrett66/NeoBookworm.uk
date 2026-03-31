@@ -213,16 +213,6 @@
     }
 
     /* ---- Two-column contact layout ---- */
-    .contact-layout {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 64px;
-      align-items: start;
-    }
-    @media (max-width: 960px) {
-      .contact-layout { grid-template-columns: 1fr; gap: 48px; }
-    }
-
     /* ---- Form block ---- */
     .form-block h2 {
       font-family: 'Playfair Display', serif;
@@ -234,144 +224,70 @@
       font-size: 15px;
       font-weight: 300;
       color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* Contact meta strip */
+    .contact-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-bottom: 32px;
     }
-
-    /* Tally embed wrapper */
-    .tally-embed-wrapper {
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed rgba(245,166,35,0.35);
-      border-radius: 16px;
-      overflow: hidden;
-      min-height: 480px;
-      position: relative;
-    }
-
-    /* Placeholder shown until Tally iframe is pasted in */
-    .tally-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 40px;
-      text-align: center;
-    }
-    .tally-placeholder-icon {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      background: var(--amber-pale);
-      border: 1px solid rgba(245,166,35,0.3);
+    .contact-meta-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 28px;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      flex: 1;
+      min-width: 180px;
     }
-    .tally-placeholder h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .tally-placeholder p {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--muted);
-      max-width: 340px;
-      line-height: 1.6;
-    }
-    .tally-code-hint {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      font-size: 13px;
-      color: rgba(245,166,35,0.85);
-      font-family: 'Courier New', monospace;
-      white-space: pre-wrap;
-      text-align: left;
-      width: 100%;
-      max-width: 380px;
-      line-height: 1.5;
-    }
-
-    /* ---- Sidebar ---- */
-    .sidebar-label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 16px;
-    }
-    .contact-detail {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .contact-detail:first-of-type { border-top: 1px solid rgba(255,255,255,0.06); }
-    .detail-icon {
-      width: 36px; height: 36px;
-      border-radius: 8px;
+    .contact-meta-item .detail-icon {
+      width: 32px; height: 32px;
+      border-radius: 7px;
       background: var(--amber-pale);
       border: 1px solid rgba(245,166,35,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
       flex-shrink: 0;
-      margin-top: 2px;
     }
-    .detail-text strong {
+    .contact-meta-item .detail-text strong {
       display: block;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 500;
       color: var(--muted);
-      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1px;
     }
-    .detail-text a,
-    .detail-text span {
-      font-size: 16px;
+    .contact-meta-item .detail-text a,
+    .contact-meta-item .detail-text span {
+      font-size: 13px;
       font-weight: 500;
       color: var(--white);
       text-decoration: none;
       transition: color 0.2s;
     }
-    .detail-text a:hover { color: var(--amber); }
+    .contact-meta-item .detail-text a:hover { color: var(--amber); }
 
-    .quick-facts {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 22px;
-      margin-top: 32px;
+    /* Form entry wrapper */
+    .tally-embed-wrapper {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(245,166,35,0.25);
+      box-shadow: 0 0 0 4px rgba(245,166,35,0.05);
     }
-    .quick-facts ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .quick-facts li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.78);
-      line-height: 1.5;
-    }
-    .quick-facts li .tick {
-      color: var(--amber);
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-    .quick-facts li strong {
-      font-weight: 600;
-      color: var(--white);
+
+    .tally-embed-wrapper iframe {
+      display: block;
+      width: 100%;
+      height: 800px;
+      border: none;
     }
 
     /* ---- What happens next ---- */
@@ -529,85 +445,44 @@
         </div>
       </div>
 
-      <div class="contact-layout">
+      <div class="form-block">
+        <h2 class="reveal">Tell me about your business</h2>
+        <p class="form-intro reveal reveal-delay-1">Fill in the short form below and I&rsquo;ll come back to you by email &mdash; no jargon, no hard sell.</p>
 
-        <!-- FORM -->
-        <div class="form-block">
-          <h2 class="reveal">Tell me about your business</h2>
-          <p class="form-intro reveal reveal-delay-1">Fill in a few details below and I&rsquo;ll come back to you with some thoughts &mdash; no jargon, no hard sell.</p>
-
-          <!--
-          =================================================================
-          TALLY FORM EMBED
-          -----------------------------------------------------------------
-          1. Go to https://tally.so and build your form with these fields:
-               - Name
-               - Trade / business type
-               - What they are looking for
-               - How they heard about you
-          2. Click Share then Embed
-          3. Copy the iframe snippet
-          4. Paste it inside .tally-embed-wrapper below,
-             replacing the entire .tally-placeholder div
-          =================================================================
-          -->
-
-          <div class="tally-embed-wrapper reveal reveal-delay-2">
-
-            <!-- REPLACE this div with your Tally iframe -->
-            <div class="tally-placeholder">
-              <div class="tally-placeholder-icon">&#128203;</div>
-              <h3>Tally form goes here</h3>
-              <p>Build your form at tally.so, then paste the embed code here to replace this box.</p>
-              <div class="tally-code-hint">1. Go to tally.so, build your form
-2. Click Share &gt; Embed
-3. Copy the iframe snippet
-4. Paste it here, replacing
-   this .tally-placeholder div</div>
-            </div>
-            <!-- END PLACEHOLDER -->
-
-          </div>
-        </div>
-
-        <!-- SIDEBAR -->
-        <div class="reveal reveal-delay-2">
-
-          <div class="sidebar-label">Contact details</div>
-
-          <div class="contact-detail">
+        <!-- Contact meta strip -->
+        <div class="contact-meta reveal reveal-delay-1">
+          <div class="contact-meta-item">
             <div class="detail-icon">&#9993;&#65039;</div>
             <div class="detail-text">
               <strong>Email</strong>
               <a href="mailto:nick&#64;neobookworm.uk">nick&#64;neobookworm.uk</a>
             </div>
           </div>
-
-          <div class="contact-detail">
+          <div class="contact-meta-item">
             <div class="detail-icon">&#128205;</div>
             <div class="detail-text">
               <strong>Based in</strong>
               <span>Swindon, Wiltshire</span>
             </div>
           </div>
-
-          <div class="contact-detail">
+          <div class="contact-meta-item">
             <div class="detail-icon">&#9201;&#65039;</div>
             <div class="detail-text">
               <strong>Response time</strong>
               <span>Within 24 hours</span>
             </div>
           </div>
-
-          <div class="quick-facts">
-            <ul>
-              <li><span class="tick">&#10003;</span> Fixed price of <strong>&pound;499</strong> &mdash; no surprises</li>
-              <li><span class="tick">&#10003;</span> Typical turnaround of about <strong>one week</strong></li>
-              <li><span class="tick">&#10003;</span> <strong>&pound;20/month</strong> maintenance available &mdash; but it&rsquo;s optional</li>
-              <li><span class="tick">&#10003;</span> You deal directly with me &mdash; no middlemen</li>
-            </ul>
+          <div class="contact-meta-item">
+            <div class="detail-icon">&#128176;</div>
+            <div class="detail-text">
+              <strong>Fixed price</strong>
+              <span>&pound;499 &mdash; no surprises</span>
+            </div>
           </div>
+        </div>
 
+        <div class="tally-embed-wrapper reveal reveal-delay-2">
+          <iframe src="intake-form.html" title="New website enquiry form"></iframe>
         </div>
       </div>
     </div>
