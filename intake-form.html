@@ -542,7 +542,7 @@ function goBack(){if(curStep>1) goToStep(curStep-1);}
 
 function validate(n){
 var ok=true;
-var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_email','e_email'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
+var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
 var pairs=map[n]||[];
 for(var i=0;i<pairs.length;i++){
 var el=document.getElementById(pairs[i][0]);
@@ -550,7 +550,16 @@ var err=document.getElementById(pairs[i][1]);
 if(el&&!el.value.trim()){if(err) err.classList.add('show');if(ok) el.focus();ok=false;}
 else{if(err) err.classList.remove('show');}
 }
-if(n===1){var em=document.getElementById('f_email');var ee=document.getElementById('e_email');if(em&&em.value&&!isValidEmail(em.value)){ee.textContent='Please enter a valid email address';ee.classList.add('show');ok=false;}}
+if(n===1){
+  var em=document.getElementById('f_email');
+  var ee=document.getElementById('e_email');
+  if(em&&em.value.trim() && !isValidEmail(em.value)){
+    ee.textContent='Please enter a valid email address';
+    ee.classList.add('show');
+    if(ok) em.focus();
+    ok=false;
+  }
+}
 return ok;
 }
 
