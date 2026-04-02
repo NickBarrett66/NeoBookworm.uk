@@ -156,10 +156,10 @@ so keeping it current is essential. Do not wait to be asked.
 
 | Page | Status | Notes |
 |---|---|---|
-| index.html | Complete | — |
+| index.html | Complete | Complete — accreditation badges upgraded |
 | how-it-works.html | Complete | — |
 | pricing.html | Complete | — |
-| examples.html | Complete | Preview cards built; real Midjourney images not yet integrated |
+| examples.html | Complete | Complete — accreditation badges upgraded; real Midjourney images not yet integrated |
 | about.html | Complete | — |
 | contact.html | Complete | Form provider TBD — Tally was dropped, replacement intake-form.html |
 | privacy.html | Complete | — |

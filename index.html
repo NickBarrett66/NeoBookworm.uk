@@ -1354,6 +1354,72 @@
 .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
 .nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
 
+  /* ── ACCREDITATION BADGE COMPONENTS ── */
+  .nb-badge {
+    display: flex;
+    align-items: stretch;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 52px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nb-badge .nb-mark {
+    width: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nb-badge .nb-mark svg { display: block; }
+  .nb-badge .nb-text {
+    background: #fff;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nb-badge .nb-top {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1;
+  }
+  .nb-badge .nb-bot {
+    font-size: 7.5px;
+    color: #555;
+    letter-spacing: .03em;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
+  .nb-gassafe .nb-mark { background: #1a6db5; }
+  .nb-gassafe .nb-top { color: #1a6db5; }
+  .nb-gassafe.dk .nb-text { background: #1a2f55; }
+  .nb-gassafe.dk .nb-top { color: #60aaef; }
+  .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+  .nb-niceic { border: 1.5px solid #d32f2f; min-width: 130px; }
+  .nb-niceic .nb-mark { background: #d32f2f; }
+  .nb-niceic .nb-top { font-size: 13px; color: #d32f2f; }
+  .nb-niceic.dk .nb-text { background: #1a2f55; }
+  .nb-niceic.dk .nb-top { color: #ef9595; }
+  .nb-niceic.dk .nb-bot { color: #a0b4cc; }
+  .nb-partp { border: 1.5px solid #2e7d32; min-width: 115px; }
+  .nb-partp .nb-mark { background: #2e7d32; }
+  .nb-partp .nb-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; }
+  .nb-partp .nb-circle span { font-size: 9px; font-weight: 800; color: #fff; }
+  .nb-partp .nb-top { font-size: 11px; color: #2e7d32; }
+  .nb-partp.dk .nb-text { background: #1a2f55; }
+  .nb-partp.dk .nb-top { color: #97c459; }
+  .nb-partp.dk .nb-bot { color: #a0b4cc; }
+  .nb-insured { display: inline-flex; align-items: center; gap: 8px; border-radius: 6px; border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff; font-family: 'DM Sans', sans-serif; min-width: 180px; }
+  .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+  .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+  .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+  .nb-insured.dk .nb-top { color: #e0eaf5; }
+  .nb-insured.dk .nb-bot { color: #a0b4cc; }
+  .nb-insured.dk svg path { stroke: #a0b4cc; }
+
 </style>
 </head>
 <body>
@@ -1551,11 +1617,28 @@
             <img src="Images/NeoBookworm_Swift_Electrical_card_preview_Professional_electr_1f944d1c-8d25-4d34-a37c-23f00c7ad92a_3.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;z-index:0;">
             <div class="left" style="position:relative;z-index:1;background:rgba(13,34,68,0.65);">
               <div class="brand">Swift Electrical</div>
-              <div class="certs">
-                <div class="cert">NICEIC</div>
-                <div class="cert">Part P</div>
-                <div class="cert">EIC Certs</div>
-                <div class="cert">18th Edition</div>
+              <div style="display:flex;flex-direction:column;gap:5px;padding:4px 0;">
+                <div class="nb-badge nb-niceic dk" style="min-width:unset;height:38px;">
+                  <div class="nb-mark" style="width:28px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/>
+                      <path d="M12 7v5l3 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="nb-text" style="padding:0 6px;">
+                    <div class="nb-top" style="font-size:9px;">NICEIC</div>
+                    <div class="nb-bot" style="font-size:6px;">Approved Contractor</div>
+                  </div>
+                </div>
+                <div class="nb-badge nb-partp dk" style="min-width:unset;height:38px;">
+                  <div class="nb-mark" style="width:28px;">
+                    <div class="nb-circle" style="width:16px;height:16px;"><span style="font-size:7px;">P</span></div>
+                  </div>
+                  <div class="nb-text" style="padding:0 6px;">
+                    <div class="nb-top" style="font-size:9px;">Part P</div>
+                    <div class="nb-bot" style="font-size:6px;">Compliant</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="right" style="position:relative;z-index:1;background:rgba(245,247,250,0.58);">
@@ -1590,9 +1673,17 @@
                 <div class="bsub">Swindon &amp; Wiltshire · Gas Safe registered</div>
               </div>
               <div class="bignum">0770<span>0</span><br>900 000</div>
-              <div class="bfoot">
-                <div class="gs">Gas Safe</div>
-                <div class="gstxt">Reg. No. 000000</div>
+              <div class="nb-badge nb-gassafe" style="height:36px;min-width:unset;border-color:#1a6db5;">
+                <div class="nb-mark" style="width:26px;background:#1a6db5;">
+                  <svg width="12" height="15" viewBox="0 0 24 30" fill="none">
+                    <path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/>
+                    <path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/>
+                  </svg>
+                </div>
+                <div class="nb-text" style="padding:0 6px;background:#fff;">
+                  <div class="nb-top" style="font-size:8px;color:#1a6db5;">GAS SAFE</div>
+                  <div class="nb-bot" style="font-size:6px;">Reg. No. 000000</div>
+                </div>
               </div>
             </div>
             <div class="amber-bar">
