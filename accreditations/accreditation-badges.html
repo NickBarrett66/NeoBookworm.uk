@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoBookworm — Accreditation Badge Snippets</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     NEOBOOKWORM — ACCREDITATION BADGE SNIPPET LIBRARY
+     Version: 1.0 | April 2026
+     Usage: Copy the CSS block and any badge HTML into your
+            client site. Add class "dk" for dark backgrounds.
+     Note:  Swap placeholder values (reg numbers, review counts)
+            for real client data when building live sites.
+  ============================================================ */
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f5f3;
+    color: #1a1a1a;
+    padding: 2rem;
+  }
+
+  /* ── PAGE LAYOUT (preview only — not needed in client sites) ── */
+  .preview-section { margin-bottom: 2.5rem; }
+  .preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid #ddd;
+  }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .dark-preview {
+    background: #0f1f3d;
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: .25rem; color: #0f1f3d; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 2.5rem; }
+  code { font-family: monospace; font-size: 12px; background: #eee; padding: 2px 6px; border-radius: 4px; }
+
+
+  /* ============================================================
+     BADGE CSS — COPY EVERYTHING BELOW THIS LINE INTO CLIENT SITES
+  ============================================================ */
+
+  /* ── SHARED BASE ── */
+  .nb-badge {
+    display: flex;
+    align-items: stretch;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 52px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nb-badge .nb-mark {
+    width: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nb-badge .nb-mark svg { display: block; }
+  .nb-badge .nb-text {
+    background: #fff;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nb-badge .nb-top {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1;
+  }
+  .nb-badge .nb-bot {
+    font-size: 7.5px;
+    color: #555;
+    letter-spacing: .03em;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  /* ── GAS SAFE REGISTER ── */
+  .nb-gassafe {
+    border: 1.5px solid #1a6db5;
+    min-width: 130px;
+  }
+  .nb-gassafe .nb-mark { background: #1a6db5; }
+  .nb-gassafe .nb-top { color: #1a6db5; }
+  /* Dark version */
+  .nb-gassafe.dk .nb-text { background: #1a2f55; }
+  .nb-gassafe.dk .nb-top { color: #60aaef; }
+  .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── NICEIC ── */
+  .nb-niceic {
+    border: 1.5px solid #d32f2f;
+    min-width: 130px;
+  }
+  .nb-niceic .nb-mark { background: #d32f2f; }
+  .nb-niceic .nb-top { font-size: 13px; color: #d32f2f; }
+  /* Dark version */
+  .nb-niceic.dk .nb-text { background: #1a2f55; }
+  .nb-niceic.dk .nb-top { color: #ef9595; }
+  .nb-niceic.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── TRUSTMARK ── */
+  .nb-trustmark {
+    border: 1.5px solid #00529b;
+    min-width: 140px;
+  }
+  .nb-trustmark .nb-mark { background: #00529b; }
+  .nb-trustmark .nb-top { color: #00529b; }
+  /* Dark version */
+  .nb-trustmark.dk .nb-text { background: #1a2f55; }
+  .nb-trustmark.dk .nb-top { color: #60aaef; }
+  .nb-trustmark.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── FENSA ── */
+  .nb-fensa {
+    border: 1.5px solid #006737;
+    min-width: 120px;
+  }
+  .nb-fensa .nb-mark { background: #006737; }
+  .nb-fensa .nb-top { font-size: 14px; color: #006737; }
+  /* Dark version */
+  .nb-fensa.dk .nb-text { background: #1a2f55; }
+  .nb-fensa.dk .nb-top { color: #5dca90; }
+  .nb-fensa.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── CHECKATRADE ── */
+  .nb-checkatrade {
+    border: 1.5px solid #00a69c;
+    min-width: 160px;
+    background: #fff;
+  }
+  .nb-checkatrade .nb-mark { background: #00a69c; height: 100%; }
+  .nb-checkatrade .nb-text { padding: 0 10px; display: flex; flex-direction: column; justify-content: center; }
+  .nb-checkatrade .nb-top { font-size: 10px; color: #00a69c; }
+  .nb-checkatrade .nb-stars { color: #f5a623; font-size: 11px; letter-spacing: 1px; margin-top: 2px; }
+  .nb-checkatrade .nb-bot { font-size: 7.5px; color: #555; margin-top: 1px; }
+  /* Dark version */
+  .nb-checkatrade.dk { background: #1a2f55; }
+  .nb-checkatrade.dk .nb-top { color: #00d4c8; }
+  .nb-checkatrade.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── WHICH? TRUSTED TRADER ── */
+  .nb-which {
+    border: 1.5px solid #e4022d;
+    min-width: 150px;
+  }
+  .nb-which .nb-mark { background: #e4022d; }
+  .nb-which .nb-top { font-size: 9px; color: #e4022d; }
+  /* Dark version */
+  .nb-which.dk .nb-text { background: #1a2f55; }
+  .nb-which.dk .nb-top { color: #ef9595; }
+  .nb-which.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── PART P ── */
+  .nb-partp {
+    border: 1.5px solid #2e7d32;
+    min-width: 115px;
+  }
+  .nb-partp .nb-mark { background: #2e7d32; }
+  .nb-partp .nb-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nb-partp .nb-circle span { font-size: 9px; font-weight: 800; color: #fff; }
+  .nb-partp .nb-top { font-size: 11px; color: #2e7d32; }
+  /* Dark version */
+  .nb-partp.dk .nb-text { background: #1a2f55; }
+  .nb-partp.dk .nb-top { color: #97c459; }
+  .nb-partp.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── CHAS ── */
+  .nb-chas {
+    border: 1.5px solid #004f9e;
+    min-width: 110px;
+  }
+  .nb-chas .nb-mark { background: #004f9e; }
+  .nb-chas .nb-mark span { font-size: 11px; font-weight: 800; color: #fff; letter-spacing: .02em; }
+  .nb-chas .nb-top { font-size: 12px; color: #004f9e; }
+  /* Dark version */
+  .nb-chas.dk .nb-text { background: #1a2f55; }
+  .nb-chas.dk .nb-top { color: #60aaef; }
+  .nb-chas.dk .nb-bot { color: #a0b4cc; }
+
+  /* ── FULLY INSURED (generic trust signal) ── */
+  .nb-insured {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 6px;
+    border: 1.5px solid #5f5e5a;
+    padding: 0 12px;
+    height: 52px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    min-width: 180px;
+  }
+  .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+  .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+  /* Dark version */
+  .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+  .nb-insured.dk .nb-top { color: #e0eaf5; }
+  .nb-insured.dk .nb-bot { color: #a0b4cc; }
+  .nb-insured.dk svg path { stroke: #a0b4cc; }
+
+  /* ============================================================
+     END OF CLIENT-SITE CSS
+  ============================================================ */
+</style>
+</head>
+<body>
+
+<h1>NeoBookworm — Accreditation Badge Library</h1>
+<p class="subtitle">
+  Copy the CSS from this file into your client site stylesheet, then copy the HTML snippet for each badge you need.<br>
+  Add class <code>dk</code> to any badge for the dark-background (navy) version.<br>
+  Replace placeholder values (reg numbers, review counts) with real client data on live sites.
+</p>
+
+
+<!-- ============================================================
+     GAS & HEATING
+============================================================ -->
+<div class="preview-section">
+  <div class="preview-label">Gas &amp; Heating</div>
+  <div class="badge-row">
+
+    <!-- GAS SAFE REGISTER
+         Swap: Reg. No. 000000 → client's actual Gas Safe registration number
+         Used on: Hartley Plumbing, Meridian Heating
+    -->
+    <div class="nb-badge nb-gassafe">
+      <div class="nb-mark">
+        <svg width="18" height="22" viewBox="0 0 24 30" fill="none">
+          <path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/>
+          <path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">GAS SAFE</div>
+        <div class="nb-bot">REGISTER<br>Reg. No. 000000</div>
+      </div>
+    </div>
+
+    <!-- CHECKATRADE
+         Swap: 4.9 and 94 reviews → client's actual Checkatrade score and review count
+         Used on: any demo site with strong review history
+    -->
+    <div class="nb-badge nb-checkatrade">
+      <div class="nb-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12L10 17L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">CHECKATRADE</div>
+        <div class="nb-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="nb-bot">4.9 · 94 reviews</div>
+      </div>
+    </div>
+
+    <!-- CHAS (health & safety accreditation — common for larger heating/roofing contractors) -->
+    <div class="nb-badge nb-chas">
+      <div class="nb-mark"><span>HS</span></div>
+      <div class="nb-text">
+        <div class="nb-top">CHAS</div>
+        <div class="nb-bot">Health &amp; Safety<br>Accredited</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     ELECTRICAL
+============================================================ -->
+<div class="preview-section">
+  <div class="preview-label">Electrical</div>
+  <div class="badge-row">
+
+    <!-- NICEIC
+         Used on: Swift Electrical
+    -->
+    <div class="nb-badge nb-niceic">
+      <div class="nb-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/>
+          <path d="M12 7v5l3 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">NICEIC</div>
+        <div class="nb-bot">Approved Contractor<br>Domestic &amp; Commercial</div>
+      </div>
+    </div>
+
+    <!-- PART P
+         Used on: Swift Electrical and any electrician demo
+    -->
+    <div class="nb-badge nb-partp">
+      <div class="nb-mark">
+        <div class="nb-circle"><span>P</span></div>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">Part P</div>
+        <div class="nb-bot">Compliant Electrician<br>Building Regs Notified</div>
+      </div>
+    </div>
+
+    <!-- WHICH? TRUSTED TRADER
+         Used on: any demo site — works across trades
+    -->
+    <div class="nb-badge nb-which">
+      <div class="nb-mark">
+        <svg width="20" height="16" viewBox="0 0 28 22" fill="none">
+          <path d="M2 11L10 19L26 3" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">WHICH?<br>TRUSTED TRADER</div>
+        <div class="nb-bot">Endorsed &amp; Reviewed</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     WINDOWS, DOORS & GLAZING
+============================================================ -->
+<div class="preview-section">
+  <div class="preview-label">Windows, Doors &amp; Glazing</div>
+  <div class="badge-row">
+
+    <!-- FENSA
+         Used on: any window/door installer demo
+    -->
+    <div class="nb-badge nb-fensa">
+      <div class="nb-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+          <rect x="13" y="3" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+          <rect x="3" y="13" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+          <rect x="13" y="13" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">FENSA</div>
+        <div class="nb-bot">Approved Installer<br>Glazing &amp; Windows</div>
+      </div>
+    </div>
+
+    <!-- TRUSTMARK
+         Used on: any trade site — government-backed, works for all trades
+    -->
+    <div class="nb-badge nb-trustmark">
+      <div class="nb-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="white" stroke-width="2" fill="none"/>
+          <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="nb-text">
+        <div class="nb-top">TRUSTMARK</div>
+        <div class="nb-bot">Government Endorsed<br>Quality Scheme</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     GENERIC TRUST SIGNALS (any trade)
+============================================================ -->
+<div class="preview-section">
+  <div class="preview-label">General Trust Signals</div>
+  <div class="badge-row">
+
+    <!-- FULLY INSURED
+         Works on any trade site. Adjust cover amount if needed.
+    -->
+    <div class="nb-insured">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#5f5e5a" stroke-width="1.5" fill="none"/>
+        <path d="M9 12L11 14L15 10" stroke="#5f5e5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>
+        <div class="nb-top">Fully Insured</div>
+        <div class="nb-bot">Public liability cover<br>up to £5 million</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     DARK BACKGROUND VERSIONS (add class "dk" to any badge)
+     These are used on navy #0f1f3d client site backgrounds.
+============================================================ -->
+<div class="preview-section">
+  <div class="preview-label">Dark background versions — add class "dk"</div>
+  <div class="dark-preview">
+    <div class="badge-row">
+
+      <div class="nb-badge nb-gassafe dk">
+        <div class="nb-mark">
+          <svg width="18" height="22" viewBox="0 0 24 30" fill="none">
+            <path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/>
+            <path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/>
+          </svg>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">GAS SAFE</div>
+          <div class="nb-bot">REGISTER · Reg. No. 000000</div>
+        </div>
+      </div>
+
+      <div class="nb-badge nb-niceic dk">
+        <div class="nb-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/>
+            <path d="M12 7v5l3 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">NICEIC</div>
+          <div class="nb-bot">Approved Contractor</div>
+        </div>
+      </div>
+
+      <div class="nb-badge nb-trustmark dk">
+        <div class="nb-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="white" stroke-width="2" fill="none"/>
+            <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">TRUSTMARK</div>
+          <div class="nb-bot">Government Endorsed</div>
+        </div>
+      </div>
+
+      <div class="nb-badge nb-fensa dk">
+        <div class="nb-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+            <rect x="13" y="3" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+            <rect x="3" y="13" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+            <rect x="13" y="13" width="8" height="8" stroke="white" stroke-width="2" rx="1"/>
+          </svg>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">FENSA</div>
+          <div class="nb-bot">Approved Installer</div>
+        </div>
+      </div>
+
+      <div class="nb-badge nb-partp dk">
+        <div class="nb-mark">
+          <div class="nb-circle"><span>P</span></div>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">Part P</div>
+          <div class="nb-bot">Compliant Electrician</div>
+        </div>
+      </div>
+
+      <div class="nb-badge nb-checkatrade dk">
+        <div class="nb-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12L10 17L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="nb-text">
+          <div class="nb-top">CHECKATRADE</div>
+          <div class="nb-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div class="nb-bot">4.9 · 94 reviews</div>
+        </div>
+      </div>
+
+      <div class="nb-insured dk">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#a0b4cc" stroke-width="1.5" fill="none"/>
+          <path d="M9 12L11 14L15 10" stroke="#a0b4cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <div class="nb-top">Fully Insured</div>
+          <div class="nb-bot">Public liability £5m</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     USAGE NOTES
+============================================================ -->
+<div style="margin-top:3rem;padding:1.5rem;background:#fff;border-radius:10px;border:1px solid #ddd;font-size:13px;line-height:1.8;color:#333">
+  <strong style="display:block;margin-bottom:.75rem;font-size:14px;color:#0f1f3d">Usage notes</strong>
+  <ul style="padding-left:1.25rem">
+    <li><strong>Demo sites:</strong> Use placeholder reg numbers and review counts — they're clearly fictional.</li>
+    <li><strong>Live client sites:</strong> Ask the client for their actual accreditation logos from their member portal — Gas Safe, NICEIC, FENSA, TrustMark all provide official files to registered members.</li>
+    <li><strong>Dark background:</strong> Add class <code>dk</code> to any <code>.nb-badge</code> or <code>.nb-insured</code> element.</li>
+    <li><strong>Font:</strong> Requires DM Sans. Already loaded on all NeoBookworm client sites.</li>
+    <li><strong>Checkatrade stars:</strong> Swap <code>4.9 · 94 reviews</code> for real figures if the client has a Checkatrade profile.</li>
+    <li><strong>Gas Safe reg number:</strong> Replace <code>000000</code> with the client's actual 6-digit registration number.</li>
+  </ul>
+</div>
+
+</body>
+</html>
