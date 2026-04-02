@@ -414,6 +414,136 @@
 .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
 .nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
 
+/* ---- Direct email form ---- */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 56px 0 48px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(245,166,35,0.18);
+}
+.or-divider span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  white-space: nowrap;
+}
+
+.email-form-block {
+  max-width: 640px;
+}
+.email-form-block h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.email-form-block p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.cf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cf-field.full { grid-column: 1 / -1; }
+.cf-field label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+.cf-field input,
+.cf-field textarea,
+.cf-field select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  width: 100%;
+}
+.cf-field input::placeholder,
+.cf-field textarea::placeholder { color: rgba(255,255,255,0.25); }
+.cf-field input:focus,
+.cf-field textarea:focus,
+.cf-field select:focus {
+  border-color: rgba(245,166,35,0.5);
+  background: rgba(255,255,255,0.07);
+}
+.cf-field select option { background: #0f1f3d; color: #fff; }
+.cf-field textarea { min-height: 130px; resize: vertical; }
+
+.cf-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--amber);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s, transform 0.15s;
+}
+.cf-submit:hover { background: var(--amber-dark); transform: translateY(-1px); }
+.cf-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.cf-notice {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.cf-notice.success {
+  display: block;
+  background: rgba(245,166,35,0.1);
+  border: 1px solid rgba(245,166,35,0.3);
+  color: var(--amber);
+}
+.cf-notice.error {
+  display: block;
+  background: rgba(220,38,38,0.1);
+  border: 1px solid rgba(220,38,38,0.3);
+  color: #fca5a5;
+}
+
+@media (max-width: 560px) {
+  .cf-row { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -482,6 +612,56 @@
           <iframe src="intake-form.html" title="New website enquiry form"></iframe>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ── SIMPLE EMAIL OPTION ── -->
+  <section>
+    <div class="inner">
+
+      <div class="or-divider reveal">
+        <span>Or send a quick message</span>
+      </div>
+
+      <div class="email-form-block reveal">
+        <h2>Prefer to keep it brief?</h2>
+        <p>Not ready to fill in the full form? Just drop me a quick message below — name, what you're after, and the best way to reach you. I'll come back to you within 24 hours.</p>
+
+        <form id="contact-form" novalidate>
+          <div class="cf-row">
+            <div class="cf-field">
+              <label for="cf-name">Your name</label>
+              <input type="text" id="cf-name" name="name" placeholder="e.g. Dave Smith" required>
+            </div>
+            <div class="cf-field">
+              <label for="cf-trade">Your trade</label>
+              <input type="text" id="cf-trade" name="trade" placeholder="e.g. Plumber, Electrician">
+            </div>
+          </div>
+          <div class="cf-row">
+            <div class="cf-field">
+              <label for="cf-email">Your email</label>
+              <input type="email" id="cf-email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="cf-field">
+              <label for="cf-phone">Your phone (optional)</label>
+              <input type="tel" id="cf-phone" name="phone" placeholder="07700 000 000">
+            </div>
+          </div>
+          <div class="cf-row">
+            <div class="cf-field full">
+              <label for="cf-message">What would you like to know?</label>
+              <textarea id="cf-message" name="message" placeholder="Tell me a bit about what you're looking for — no need to write an essay." required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="cf-submit" id="cf-btn">
+            Send message
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <div class="cf-notice" id="cf-notice"></div>
+        </form>
+      </div>
+
     </div>
   </section>
 
@@ -571,6 +751,62 @@
     } else {
       reveals.forEach(function(el) { el.classList.add('visible'); });
     }
+  </script>
+
+
+  <script>
+    (function () {
+      var form   = document.getElementById('contact-form');
+      var btn    = document.getElementById('cf-btn');
+      var notice = document.getElementById('cf-notice');
+
+      if (!form) return;
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        notice.className = 'cf-notice';
+        notice.textContent = '';
+
+        var name    = document.getElementById('cf-name').value.trim();
+        var trade   = document.getElementById('cf-trade').value.trim();
+        var email   = document.getElementById('cf-email').value.trim();
+        var phone   = document.getElementById('cf-phone').value.trim();
+        var message = document.getElementById('cf-message').value.trim();
+
+        if (!name || !email || !message) {
+          notice.className = 'cf-notice error';
+          notice.textContent = 'Please fill in your name, email and message before sending.';
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Sending\u2026';
+
+        try {
+          var res = await fetch('/.netlify/functions/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, trade, email, phone, message }),
+          });
+
+          var json = await res.json();
+
+          if (res.ok && (json.ok || json.note)) {
+            notice.className = 'cf-notice success';
+            notice.textContent = 'Message sent \u2014 I\'ll come back to you within 24 hours.';
+            form.reset();
+          } else {
+            throw new Error(json.error || 'Unexpected error');
+          }
+        } catch (err) {
+          notice.className = 'cf-notice error';
+          notice.textContent = err.message || 'Something went wrong. Please try again or email nick@neobookworm.uk directly.';
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = 'Send message <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        }
+      });
+    })();
   </script>
 
 </body>

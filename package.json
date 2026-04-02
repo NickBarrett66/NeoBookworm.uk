@@ -1,0 +1,8 @@
+{
+  "name": "neobookworm-uk",
+  "version": "1.0.0",
+  "description": "NeoBookworm.uk — Websites for Swindon Tradespeople",
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}

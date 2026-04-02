@@ -161,7 +161,7 @@ so keeping it current is essential. Do not wait to be asked.
 | pricing.html | Complete | — |
 | examples.html | Complete | Complete — accreditation badges upgraded; real Midjourney images not yet integrated |
 | about.html | Complete | — |
-| contact.html | Complete | Form provider TBD — Tally was dropped, replacement intake-form.html |
+| contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |
 | terms.html | Complete | — |
 | intake-form.html | Complete | — |
@@ -184,6 +184,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Item | Priority | Notes |
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
+| SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in Netlify dashboard to activate email sending (Brevo recommended) |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |
 | Examples page image integration | Medium | Swap CSS previews for real images once generated |
