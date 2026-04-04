@@ -12,6 +12,7 @@
 //   R2_PUBLIC_URL        (https://pub-<token>.r2.dev)
 
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const Busboy = require('busboy');
 
 const DATABASE_ID    = '4b45078a341941bcb5877e52f3d27c6c';
 const NOTION_VERSION = '2022-06-28';
@@ -93,91 +94,72 @@ async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
 }
 
 /**
- * Parse multipart/form-data manually (works in both Vercel and Netlify
- * edge/serverless environments without extra deps).
+ * Parse multipart/form-data using busboy.
+ *
+ * Vercel's Node.js runtime may pre-consume req as a stream, so we handle
+ * two cases:
+ *   1. req.body is already a Buffer (body pre-read by the runtime)
+ *   2. req is still a readable stream (we collect it ourselves)
  *
  * Returns { fields: {}, files: { fieldName: { buffer, filename, mimeType }[] } }
  */
 async function parseMultipart(req) {
   const contentType = req.headers['content-type'] || '';
-  const boundaryMatch = contentType.match(/boundary=([^\s;]+)/);
-  if (!boundaryMatch) throw new Error('No multipart boundary found');
 
-  const boundary = boundaryMatch[1];
-
-  // Collect raw body
-  const chunks = [];
-  await new Promise((resolve, reject) => {
-    req.on('data', (c) => chunks.push(c));
-    req.on('end', resolve);
-    req.on('error', reject);
-  });
-  const raw = Buffer.concat(chunks);
+  // Obtain the raw body buffer
+  let rawBody;
+  if (req.body instanceof Buffer) {
+    rawBody = req.body;
+  } else if (typeof req.body === 'string') {
+    rawBody = Buffer.from(req.body, 'binary');
+  } else {
+    // Stream not yet consumed — read it
+    const chunks = [];
+    await new Promise((resolve, reject) => {
+      req.on('data', (c) => chunks.push(c));
+      req.on('end', resolve);
+      req.on('error', reject);
+    });
+    rawBody = Buffer.concat(chunks);
+  }
 
   const fields = {};
   const files  = {};
 
-  // Split on boundary
-  const sep   = Buffer.from(`--${boundary}`);
-  const parts = splitBuffer(raw, sep);
+  await new Promise((resolve, reject) => {
+    const bb = Busboy({ headers: { 'content-type': contentType } });
+    const filePromises = [];
 
-  for (const part of parts) {
-    if (part.length < 4) continue;
+    bb.on('field', (name, value) => {
+      fields[name] = value;
+    });
 
-    // Find the blank line separating headers from body (\r\n\r\n)
-    const headerEnd = indexOfBuffer(part, Buffer.from('\r\n\r\n'));
-    if (headerEnd === -1) continue;
+    bb.on('file', (name, stream, info) => {
+      const { filename, mimeType } = info;
+      const chunks = [];
+      const p = new Promise((res, rej) => {
+        stream.on('data', (d) => chunks.push(d));
+        stream.on('end', () => {
+          if (filename) {
+            if (!files[name]) files[name] = [];
+            files[name].push({ buffer: Buffer.concat(chunks), filename, mimeType });
+          }
+          res();
+        });
+        stream.on('error', rej);
+      });
+      filePromises.push(p);
+    });
 
-    const headerStr = part.slice(0, headerEnd).toString('utf8');
-    const body      = part.slice(headerEnd + 4);
+    bb.on('finish', () => {
+      Promise.all(filePromises).then(resolve, reject);
+    });
+    bb.on('error', reject);
 
-    // Strip trailing \r\n
-    const bodyTrimmed = body.slice(0, body.length - 2);
-
-    const nameMatch = headerStr.match(/name="([^"]+)"/);
-    if (!nameMatch) continue;
-    const fieldName = nameMatch[1];
-
-    const fileMatch = headerStr.match(/filename="([^"]*)"/);
-    if (fileMatch) {
-      const filename  = fileMatch[1];
-      const ctMatch   = headerStr.match(/Content-Type:\s*([^\r\n]+)/i);
-      const mimeType  = ctMatch ? ctMatch[1].trim() : 'application/octet-stream';
-      if (filename) {
-        if (!files[fieldName]) files[fieldName] = [];
-        files[fieldName].push({ buffer: bodyTrimmed, filename, mimeType });
-      }
-    } else {
-      fields[fieldName] = bodyTrimmed.toString('utf8');
-    }
-  }
+    bb.end(rawBody);
+  });
 
   return { fields, files };
-}
-
-function splitBuffer(buf, sep) {
-  const parts = [];
-  let start = 0;
-  let pos;
-  while ((pos = indexOfBuffer(buf, sep, start)) !== -1) {
-    parts.push(buf.slice(start, pos));
-    start = pos + sep.length;
-    // skip \r\n after boundary
-    if (buf[start] === 0x0d && buf[start + 1] === 0x0a) start += 2;
-    // check for final boundary (--)
-    if (buf[start] === 0x2d && buf[start + 1] === 0x2d) break;
-  }
-  return parts.filter((p) => p.length > 0);
-}
-
-function indexOfBuffer(haystack, needle, start = 0) {
-  outer: for (let i = start; i <= haystack.length - needle.length; i++) {
-    for (let j = 0; j < needle.length; j++) {
-      if (haystack[i + j] !== needle[j]) continue outer;
-    }
-    return i;
-  }
-  return -1;
 }
 
 // ─── Notion helper ────────────────────────────────────────────────────────────
@@ -318,6 +300,11 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
+
+// Tell Vercel NOT to pre-parse the body — we need the raw stream for busboy
+module.exports.config = {
+  api: { bodyParser: false },
+};
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
