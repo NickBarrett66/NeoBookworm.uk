@@ -1,96 +1,397 @@
-// Vercel serverless function — receives intake form POST and creates a row
-// in the Notion "Client Sites" database.
+// Netlify/Vercel serverless function — receives intake form POST,
+// uploads images to Cloudflare R2, and creates a row in the Notion
+// "Client Sites" database.
 //
-// Required environment variable: NOTION_API_KEY
+// Required environment variables:
+//   NOTION_API_KEY
+//   R2_ACCOUNT_ID
+//   R2_ACCESS_KEY_ID
+//   R2_SECRET_ACCESS_KEY
+//   R2_BUCKET_NAME
+//   R2_ENDPOINT          (https://<account_id>.r2.cloudflarestorage.com)
+//   R2_PUBLIC_URL        (https://pub-<token>.r2.dev)
 
-const DATABASE_ID = '4b45078a341941bcb5877e52f3d27c6c';
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+
+const DATABASE_ID    = '4b45078a341941bcb5877e52f3d27c6c';
 const NOTION_VERSION = '2022-06-28';
+const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB per file
+const ALLOWED_TYPES  = ['image/jpeg', 'image/png', 'image/webp', 'image/gif',
+                        'image/svg+xml', 'application/pdf'];
 
 const TRADE_MAP = {
-  'Plumber':                      'Plumber',
-  'Electrician':                  'Electrician',
-  'Painter and Decorator':        'Painter / Decorator',
-  'Painter / Decorator':          'Painter / Decorator',
-  'Roofer':                       'Roofer',
-  'Kitchen Fitter':               'Kitchen Fitter',
-  'Bathroom Fitter':              'Bathroom Fitter',
-  'Landscaper / Gardener':        'Landscaper',
-  'Landscaper':                   'Landscaper',
-  'Carpenter / Joiner':           'Carpenter / Joiner',
-  'Builder / General Contractor': 'Builder',
-  'Builder':                      'Builder',
-  'Other':                        'Other',
+  'Plumber':                         'Plumber',
+  'Electrician':                     'Electrician',
+  'Painter and Decorator':           'Painter / Decorator',
+  'Painter / Decorator':             'Painter / Decorator',
+  'Roofer':                          'Roofer',
+  'Plasterer':                       'Plasterer',
+  'Kitchen Fitter':                  'Kitchen Fitter',
+  'Bathroom Fitter':                 'Bathroom Fitter',
+  'Landscaper / Gardener':           'Landscaper',
+  'Landscaper':                      'Landscaper',
+  'Carpenter / Joiner':              'Carpenter / Joiner',
+  'Builder / General Contractor':    'Builder',
+  'Builder':                         'Builder',
+  'Heating Engineer / Gas Safe':     'Heating Engineer',
+  'Tiler':                           'Tiler',
+  'Flooring Specialist':             'Flooring Specialist',
+  'Handyman':                        'Handyman',
+  'Other':                           'Other',
 };
 
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).send('Method Not Allowed');
+// ─── R2 client (lazy singleton) ───────────────────────────────────────────────
+
+let _s3;
+function getS3() {
+  if (!_s3) {
+    _s3 = new S3Client({
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT,
+      credentials: {
+        accessKeyId:     process.env.R2_ACCESS_KEY_ID,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+      },
+    });
+  }
+  return _s3;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Sanitise a filename so it's safe for R2 keys */
+function safeFilename(name) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100);
+}
+
+/**
+ * Upload a single file (Buffer) to R2.
+ * Returns the public URL string, or null if no file supplied.
+ */
+async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
+  if (!fileBuffer || fileBuffer.length === 0) return null;
+
+  if (fileBuffer.length > MAX_FILE_BYTES) {
+    throw new Error(`File "${originalName}" exceeds 10 MB limit`);
+  }
+  if (!ALLOWED_TYPES.includes(mimeType)) {
+    throw new Error(`File type "${mimeType}" is not allowed`);
   }
 
-  const apiKey = process.env.NOTION_API_KEY;
-  if (!apiKey) {
-    console.error('NOTION_API_KEY environment variable is not set');
-    return res.status(500).json({ error: 'Server configuration error' });
+  const timestamp = Date.now();
+  const safe      = safeFilename(originalName);
+  const key       = `${folder}/${timestamp}-${safe}`;
+
+  await getS3().send(new PutObjectCommand({
+    Bucket:      process.env.R2_BUCKET_NAME,
+    Key:         key,
+    Body:        fileBuffer,
+    ContentType: mimeType,
+  }));
+
+  return `${process.env.R2_PUBLIC_URL}/${key}`;
+}
+
+/**
+ * Parse multipart/form-data manually (works in both Vercel and Netlify
+ * edge/serverless environments without extra deps).
+ *
+ * Returns { fields: {}, files: { fieldName: { buffer, filename, mimeType }[] } }
+ */
+async function parseMultipart(req) {
+  const contentType = req.headers['content-type'] || '';
+  const boundaryMatch = contentType.match(/boundary=([^\s;]+)/);
+  if (!boundaryMatch) throw new Error('No multipart boundary found');
+
+  const boundary = boundaryMatch[1];
+
+  // Collect raw body
+  const chunks = [];
+  await new Promise((resolve, reject) => {
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', resolve);
+    req.on('error', reject);
+  });
+  const raw = Buffer.concat(chunks);
+
+  const fields = {};
+  const files  = {};
+
+  // Split on boundary
+  const sep   = Buffer.from(`--${boundary}`);
+  const parts = splitBuffer(raw, sep);
+
+  for (const part of parts) {
+    if (part.length < 4) continue;
+
+    // Find the blank line separating headers from body (\r\n\r\n)
+    const headerEnd = indexOfBuffer(part, Buffer.from('\r\n\r\n'));
+    if (headerEnd === -1) continue;
+
+    const headerStr = part.slice(0, headerEnd).toString('utf8');
+    const body      = part.slice(headerEnd + 4);
+
+    // Strip trailing \r\n
+    const bodyTrimmed = body.slice(0, body.length - 2);
+
+    const nameMatch = headerStr.match(/name="([^"]+)"/);
+    if (!nameMatch) continue;
+    const fieldName = nameMatch[1];
+
+    const fileMatch = headerStr.match(/filename="([^"]*)"/);
+    if (fileMatch) {
+      const filename  = fileMatch[1];
+      const ctMatch   = headerStr.match(/Content-Type:\s*([^\r\n]+)/i);
+      const mimeType  = ctMatch ? ctMatch[1].trim() : 'application/octet-stream';
+      if (filename) {
+        if (!files[fieldName]) files[fieldName] = [];
+        files[fieldName].push({ buffer: bodyTrimmed, filename, mimeType });
+      }
+    } else {
+      fields[fieldName] = bodyTrimmed.toString('utf8');
+    }
   }
 
-  // Vercel automatically parses JSON bodies when Content-Type is application/json
-  const data = req.body;
-  if (!data) {
-    return res.status(400).json({ error: 'Invalid request body' });
+  return { fields, files };
+}
+
+function splitBuffer(buf, sep) {
+  const parts = [];
+  let start = 0;
+  let pos;
+  while ((pos = indexOfBuffer(buf, sep, start)) !== -1) {
+    parts.push(buf.slice(start, pos));
+    start = pos + sep.length;
+    // skip \r\n after boundary
+    if (buf[start] === 0x0d && buf[start + 1] === 0x0a) start += 2;
+    // check for final boundary (--)
+    if (buf[start] === 0x2d && buf[start + 1] === 0x2d) break;
   }
+  return parts.filter((p) => p.length > 0);
+}
 
-  const tradeName = TRADE_MAP[data.trade] || 'Other';
+function indexOfBuffer(haystack, needle, start = 0) {
+  outer: for (let i = start; i <= haystack.length - needle.length; i++) {
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) continue outer;
+    }
+    return i;
+  }
+  return -1;
+}
 
-  const notes = [data.services, data.extra]
+// ─── Notion helper ────────────────────────────────────────────────────────────
+
+function richText(value) {
+  const str = (value || '').toString().trim().slice(0, 2000);
+  if (!str) return null;
+  return { rich_text: [{ text: { content: str } }] };
+}
+
+function notionUrl(value) {
+  const str = (value || '').toString().trim();
+  return str ? { url: str } : null;
+}
+
+async function createNotionRecord(fields, photoUrls, logoUrl) {
+  const apiKey    = process.env.NOTION_API_KEY;
+  const tradeName = TRADE_MAP[fields.trade] || 'Other';
+
+  const notes = [fields.services, fields.extra]
     .map((s) => (s || '').trim())
     .filter(Boolean)
     .join('\n\n---\n\n')
     .slice(0, 2000);
 
-  const notionBody = {
-    parent: { database_id: DATABASE_ID },
-    properties: {
-      'Business Name': {
-        title: [{ text: { content: data.bizName || 'Unknown' } }],
-      },
-      'Client Email': {
-        email: data.email || null,
-      },
-      'Phone': {
-        phone_number: data.phone || null,
-      },
-      'Trade Category': {
-        select: { name: tradeName },
-      },
-      'Status': {
-        select: { name: 'Pending Launch' },
-      },
-      ...(notes
-        ? { 'Notes': { rich_text: [{ text: { content: notes } }] } }
-        : {}),
-    },
+  // Build the full intake snapshot as a rich-text "Brief" field
+  const brief = [
+    fields.story        && `**About:** ${fields.story}`,
+    fields.area         && `**Area:** ${fields.area}`,
+    fields.years        && `**Years trading:** ${fields.years}`,
+    fields.accreditations && `**Accreditations:** ${fields.accreditations}`,
+    fields.freeQuotes   && `**Free quotes:** ${fields.freeQuotes}`,
+    fields.emergency    && `**Emergency callouts:** ${fields.emergency}`,
+    fields.exclusions   && `**Exclusions:** ${fields.exclusions}`,
+    fields.teamSize     && `**Team:** ${fields.teamSize}`,
+    fields.idealWork    && `**Ideal work:** ${fields.idealWork}`,
+    fields.websiteStyle && `**Website style:** ${fields.websiteStyle}`,
+    fields.colourPref   && `**Colours:** ${fields.colourPref}`,
+    fields.siteInspo    && `**Inspiration URL:** ${fields.siteInspo}`,
+    fields.testimonials && `**Testimonials:** ${fields.testimonials}`,
+    fields.googleBiz    && `**Google Business:** ${fields.googleBiz}`,
+    fields.trustmarks   && `**Trust marks:** ${fields.trustmarks}`,
+    fields.domainStatus && `**Domain status:** ${fields.domainStatus}`,
+    fields.domainName   && `**Domain:** ${fields.domainName}`,
+    fields.contactMethods && `**Contact methods:** ${fields.contactMethods}`,
+    fields.hours        && `**Hours:** ${fields.hours}`,
+    photoUrls.length    && `**Work photos (${photoUrls.length}):**\n${photoUrls.join('\n')}`,
+    logoUrl             && `**Logo:** ${logoUrl}`,
+  ].filter(Boolean).join('\n\n').slice(0, 2000);
+
+  // Build services text for the dedicated Services field
+  const servicesText = (fields.services || '').trim().slice(0, 2000);
+
+  const props = {
+    'Business Name':  { title: [{ text: { content: fields.bizName || 'Unknown' } }] },
+    'Client Email':   { email: fields.email || null },
+    'Phone':          { phone_number: fields.phone || null },
+    'Trade Category': { select: { name: tradeName } },
+    'Status':         { select: { name: 'Pending Launch' } },
   };
 
-  try {
-    const response = await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'Notion-Version': NOTION_VERSION,
-      },
-      body: JSON.stringify(notionBody),
-    });
+  if (notes)        props['Notes']       = richText(notes);
+  if (brief)        props['Brief']       = richText(brief);
+  if (servicesText) props['Services']    = richText(servicesText);
+  if (logoUrl)      props['Logo URL']    = notionUrl(logoUrl);
+  if (photoUrls.length) {
+    // Store first photo URL in the dedicated field; rest live in Brief
+    props['Work Photos'] = notionUrl(photoUrls[0]);
+  }
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Notion API error:', response.status, errText);
-      return res.status(500).json({ error: 'Failed to create Notion record' });
+  // Remove undefined entries
+  Object.keys(props).forEach((k) => {
+    if (props[k] === undefined || props[k] === null) delete props[k];
+  });
+
+  // Build page body content — full photo list as clickable links
+  const children = [];
+
+  if (photoUrls.length > 1) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [{ type: 'text', text: { content: `Work Photos (${photoUrls.length})` } }],
+      },
+    });
+    for (const url of photoUrls) {
+      children.push({
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          rich_text: [{ type: 'text', text: { content: url, link: { url } } }],
+        },
+      });
+    }
+  }
+
+  if (logoUrl) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [{ type: 'text', text: { content: 'Logo' } }],
+      },
+    });
+    children.push({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [{ type: 'text', text: { content: logoUrl, link: { url: logoUrl } } }],
+      },
+    });
+  }
+
+  const body = {
+    parent:     { database_id: DATABASE_ID },
+    properties: props,
+    ...(children.length > 0 ? { children } : {}),
+  };
+
+  const response = await fetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: {
+      Authorization:    `Bearer ${apiKey}`,
+      'Content-Type':   'application/json',
+      'Notion-Version': NOTION_VERSION,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error('Notion API error:', response.status, errText);
+    throw new Error('Failed to create Notion record');
+  }
+
+  return response.json();
+}
+
+// ─── Main handler ─────────────────────────────────────────────────────────────
+
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const apiKey = process.env.NOTION_API_KEY;
+  if (!apiKey) {
+    console.error('NOTION_API_KEY is not set');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  try {
+    const contentType = req.headers['content-type'] || '';
+    let fields = {};
+    let photoFiles = [];
+    let logoFile   = null;
+
+    if (contentType.includes('multipart/form-data')) {
+      // ── Multipart: parse fields + files ──────────────────────────────────
+      const parsed = await parseMultipart(req);
+      fields     = parsed.fields;
+      photoFiles = parsed.files['photos'] || parsed.files['f_photos'] || [];
+      const logoArr = parsed.files['logo'] || parsed.files['f_logo'] || [];
+      logoFile   = logoArr[0] || null;
+
+    } else if (contentType.includes('application/json')) {
+      // ── JSON-only fallback (backwards-compatible with old form) ───────────
+      fields = req.body || {};
+
+    } else {
+      return res.status(415).json({ error: 'Unsupported Content-Type' });
     }
 
-    return res.status(200).json({ success: true });
+    if (!fields.bizName && !fields.email) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // ── Upload photos to R2 ───────────────────────────────────────────────
+    const safeBiz  = safeFilename((fields.bizName || 'client').toLowerCase());
+    const folder   = `clients/${safeBiz}`;
+    const photoUrls = [];
+
+    for (const file of photoFiles) {
+      try {
+        const url = await uploadToR2(file.buffer, file.filename, file.mimeType, `${folder}/photos`);
+        if (url) photoUrls.push(url);
+      } catch (uploadErr) {
+        console.warn('Photo upload skipped:', uploadErr.message);
+        // Non-fatal — skip bad files, don't fail the whole submission
+      }
+    }
+
+    let logoUrl = null;
+    if (logoFile) {
+      try {
+        logoUrl = await uploadToR2(logoFile.buffer, logoFile.filename, logoFile.mimeType, `${folder}/logo`);
+      } catch (uploadErr) {
+        console.warn('Logo upload skipped:', uploadErr.message);
+      }
+    }
+
+    // ── Create Notion record ──────────────────────────────────────────────
+    await createNotionRecord(fields, photoUrls, logoUrl);
+
+    return res.status(200).json({
+      success:    true,
+      photoCount: photoUrls.length,
+      logoUrl:    logoUrl || null,
+      message:    'Intake form received successfully',
+    });
+
   } catch (err) {
-    console.error('Unexpected error:', err);
-    return res.status(500).json({ error: 'Unexpected server error' });
+    console.error('submit-intake error:', err);
+    return res.status(500).json({ error: 'Unexpected server error', detail: err.message });
   }
 };
