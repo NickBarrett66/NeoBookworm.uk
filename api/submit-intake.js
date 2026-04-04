@@ -301,12 +301,7 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
 
-// Tell Vercel NOT to pre-parse the body — we need the raw stream for busboy
-module.exports.config = {
-  api: { bodyParser: false },
-};
-
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -330,6 +325,8 @@ module.exports = async (req, res) => {
       photoFiles = parsed.files['photos'] || parsed.files['f_photos'] || [];
       const logoArr = parsed.files['logo'] || parsed.files['f_logo'] || [];
       logoFile   = logoArr[0] || null;
+      console.log('[intake] parsed fields:', Object.keys(fields));
+      console.log('[intake] photo files:', photoFiles.length, '| logo:', !!logoFile);
 
     } else if (contentType.includes('application/json')) {
       // ── JSON-only fallback (backwards-compatible with old form) ───────────
@@ -353,19 +350,20 @@ module.exports = async (req, res) => {
         const url = await uploadToR2(file.buffer, file.filename, file.mimeType, `${folder}/photos`);
         if (url) photoUrls.push(url);
       } catch (uploadErr) {
-        console.warn('Photo upload skipped:', uploadErr.message);
-        // Non-fatal — skip bad files, don't fail the whole submission
+        console.warn('[intake] Photo upload skipped:', uploadErr.message);
       }
     }
+    console.log('[intake] R2 photo URLs:', photoUrls);
 
     let logoUrl = null;
     if (logoFile) {
       try {
         logoUrl = await uploadToR2(logoFile.buffer, logoFile.filename, logoFile.mimeType, `${folder}/logo`);
       } catch (uploadErr) {
-        console.warn('Logo upload skipped:', uploadErr.message);
+        console.warn('[intake] Logo upload skipped:', uploadErr.message);
       }
     }
+    console.log('[intake] R2 logo URL:', logoUrl);
 
     // ── Create Notion record ──────────────────────────────────────────────
     await createNotionRecord(fields, photoUrls, logoUrl);
@@ -382,3 +380,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Unexpected server error', detail: err.message });
   }
 };
+
+// Tell Vercel NOT to pre-parse the body — we need the raw multipart stream
+handler.config = { api: { bodyParser: false } };
+
+module.exports = handler;
