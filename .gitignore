@@ -4,3 +4,4 @@ node_modules/
 # Environment variables — never commit these
 .env
 .env.*
+.Claude/settings.local.json
