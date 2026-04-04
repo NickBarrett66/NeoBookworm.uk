@@ -783,13 +783,18 @@
         btn.textContent = 'Sending\u2026';
 
         try {
-          var res = await fetch('/.netlify/functions/contact', {
+          var res = await fetch('/api/contact', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, trade, email, phone, message }),
           });
 
-          var json = await res.json();
+          var json;
+          try {
+            json = await res.json();
+          } catch {
+            throw new Error('Something went wrong. Please try again or email nick@neobookworm.uk directly.');
+          }
 
           if (res.ok && (json.ok || json.note)) {
             notice.className = 'cf-notice success';
