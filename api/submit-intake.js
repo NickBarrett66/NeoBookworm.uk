@@ -68,11 +68,13 @@ function safeFilename(name) {
 
 /** Infer image MIME from magic bytes (mobile uploads often send octet-stream or wrong type). */
 function sniffImageMime(buf) {
-  if (!buf || buf.length < 12) return null;
+  if (!buf || buf.length < 3) return null;
   if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
-  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  if (buf.length >= 4 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
+    return 'image/png';
+  }
   if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return 'image/gif';
-  if (buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') {
+  if (buf.length >= 12 && buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') {
     return 'image/webp';
   }
   if (buf.length >= 12 && buf.slice(4, 8).toString('ascii') === 'ftyp') {
@@ -461,5 +463,8 @@ const handler = async (req, res) => {
 
 // Tell Vercel NOT to pre-parse the body — we need the raw multipart stream
 handler.config = { api: { bodyParser: false } };
+
+/** @internal Local verification: `node scripts/verify-intake-multipart.js` */
+handler._test = { parseMultipart, sniffMime };
 
 module.exports = handler;
