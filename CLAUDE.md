@@ -164,7 +164,7 @@ so keeping it current is essential. Do not wait to be asked.
 | contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |
 | terms.html | Complete | — |
-| intake-form.html | Complete | — |
+| intake-form.html | Complete | Multipart uploads: api/submit-intake.js reads raw body before req.body fallback; HEIC/sniff MIME; Notion Brief no longer truncates long photo URL lists |
 
 ### Demo sites
 

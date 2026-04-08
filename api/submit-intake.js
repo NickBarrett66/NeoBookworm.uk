@@ -18,6 +18,7 @@ const DATABASE_ID    = '4b45078a341941bcb5877e52f3d27c6c';
 const NOTION_VERSION = '2022-06-28';
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB per file
 const ALLOWED_TYPES  = ['image/jpeg', 'image/png', 'image/webp', 'image/gif',
+                        'image/heic', 'image/heif',
                         'image/svg+xml', 'application/pdf'];
 
 const TRADE_MAP = {
@@ -65,6 +66,52 @@ function safeFilename(name) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100);
 }
 
+/** Infer image MIME from magic bytes (mobile uploads often send octet-stream or wrong type). */
+function sniffImageMime(buf) {
+  if (!buf || buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return 'image/gif';
+  if (buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') {
+    return 'image/webp';
+  }
+  if (buf.length >= 12 && buf.slice(4, 8).toString('ascii') === 'ftyp') {
+    const brand = buf.slice(8, 12).toString('ascii');
+    if (['heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'].includes(brand)) {
+      return 'image/heic';
+    }
+  }
+  return null;
+}
+
+/** PDF / SVG / images — for unnamed uploads and type correction. */
+function sniffMime(buf) {
+  const img = sniffImageMime(buf);
+  if (img) return img;
+  if (buf && buf.length >= 5 && buf.slice(0, 5).toString('ascii') === '%PDF-') {
+    return 'application/pdf';
+  }
+  if (buf && buf.length >= 3) {
+    const head = buf.toString('utf8', 0, Math.min(buf.length, 256)).trimStart();
+    if (head.startsWith('<svg') || head.startsWith('<?xml')) return 'image/svg+xml';
+  }
+  return null;
+}
+
+function extForMime(mime) {
+  const m = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/heic': 'heic',
+    'image/heif': 'heif',
+    'image/svg+xml': 'svg',
+    'application/pdf': 'pdf',
+  };
+  return m[mime] || 'bin';
+}
+
 /**
  * Upload a single file (Buffer) to R2.
  * Returns the public URL string, or null if no file supplied.
@@ -75,7 +122,13 @@ async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
   if (fileBuffer.length > MAX_FILE_BYTES) {
     throw new Error(`File "${originalName}" exceeds 10 MB limit`);
   }
-  if (!ALLOWED_TYPES.includes(mimeType)) {
+
+  let ct = (mimeType || '').toLowerCase().split(';')[0].trim() || 'application/octet-stream';
+  if (!ALLOWED_TYPES.includes(ct)) {
+    const sniffed = sniffMime(fileBuffer);
+    if (sniffed && ALLOWED_TYPES.includes(sniffed)) ct = sniffed;
+  }
+  if (!ALLOWED_TYPES.includes(ct)) {
     throw new Error(`File type "${mimeType}" is not allowed`);
   }
 
@@ -87,7 +140,7 @@ async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
     Bucket:      process.env.R2_BUCKET_NAME,
     Key:         key,
     Body:        fileBuffer,
-    ContentType: mimeType,
+    ContentType: ct,
   }));
 
   return `${process.env.R2_PUBLIC_URL}/${key}`;
@@ -103,24 +156,35 @@ async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
  *
  * Returns { fields: {}, files: { fieldName: { buffer, filename, mimeType }[] } }
  */
+async function readRawMultipartBody(req) {
+  try {
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
+  } catch {
+    return Buffer.alloc(0);
+  }
+}
+
 async function parseMultipart(req) {
   const contentType = req.headers['content-type'] || '';
 
-  // Obtain the raw body buffer
+  // Read the stream first. On Vercel, accessing req.body before the stream can
+  // leave multipart payloads empty or mis-handled; fall back to req.body if needed.
   let rawBody;
-  if (req.body instanceof Buffer) {
-    rawBody = req.body;
-  } else if (typeof req.body === 'string') {
-    rawBody = Buffer.from(req.body, 'binary');
-  } else {
-    // Stream not yet consumed — read it
-    const chunks = [];
-    await new Promise((resolve, reject) => {
-      req.on('data', (c) => chunks.push(c));
-      req.on('end', resolve);
-      req.on('error', reject);
-    });
-    rawBody = Buffer.concat(chunks);
+  try {
+    rawBody = await readRawMultipartBody(req);
+  } catch {
+    rawBody = Buffer.alloc(0);
+  }
+  if (!rawBody.length) {
+    if (req.body instanceof Buffer) {
+      rawBody = req.body;
+    } else if (typeof req.body === 'string') {
+      rawBody = Buffer.from(req.body, 'binary');
+    }
   }
 
   const fields = {};
@@ -135,15 +199,29 @@ async function parseMultipart(req) {
     });
 
     bb.on('file', (name, stream, info) => {
-      const { filename, mimeType } = info;
+      let { filename, mimeType } = info;
       const chunks = [];
       const p = new Promise((res, rej) => {
         stream.on('data', (d) => chunks.push(d));
         stream.on('end', () => {
-          if (filename) {
-            if (!files[name]) files[name] = [];
-            files[name].push({ buffer: Buffer.concat(chunks), filename, mimeType });
+          const buffer = Buffer.concat(chunks);
+          if (!buffer.length) {
+            res();
+            return;
           }
+          const guessed = sniffMime(buffer);
+          const safeName = (filename && String(filename).trim())
+            ? filename
+            : `upload-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${
+              guessed ? extForMime(guessed) : 'bin'
+            }`;
+          let mime = (mimeType || '').toLowerCase().split(';')[0].trim();
+          if (!mime || mime === 'application/octet-stream') {
+            if (guessed) mime = guessed;
+            else if (!mime) mime = 'application/octet-stream';
+          }
+          if (!files[name]) files[name] = [];
+          files[name].push({ buffer, filename: safeName, mimeType: mime });
           res();
         });
         stream.on('error', rej);
@@ -206,7 +284,7 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     fields.domainName   && `**Domain:** ${fields.domainName}`,
     fields.contactMethods && `**Contact methods:** ${fields.contactMethods}`,
     fields.hours        && `**Hours:** ${fields.hours}`,
-    photoUrls.length    && `**Work photos (${photoUrls.length}):**\n${photoUrls.join('\n')}`,
+    photoUrls.length    && `**Work photos:** ${photoUrls.length} file(s) uploaded — URLs are in the page content below (keeps this field within Notion limits).`,
     logoUrl             && `**Logo:** ${logoUrl}`,
   ].filter(Boolean).join('\n\n').slice(0, 2000);
 
@@ -238,7 +316,7 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
   // Build page body content — full photo list as clickable links
   const children = [];
 
-  if (photoUrls.length > 1) {
+  if (photoUrls.length) {
     children.push({
       object: 'block',
       type: 'heading_3',
