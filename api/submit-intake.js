@@ -255,6 +255,56 @@ function notionUrl(value) {
   return str ? { url: str } : null;
 }
 
+/** Notion can embed these as image blocks; HEIC/PDF etc. get a link paragraph instead. */
+function notionEmbeddableImageUrl(url) {
+  const path = (url || '').split('?')[0].toLowerCase();
+  return /\.(jpe?g|png|gif|webp|svg)$/.test(path);
+}
+
+function paragraphLinkBlock(url, label) {
+  const text = label ? `${label}: ${url}` : url;
+  return {
+    object: 'block',
+    type: 'paragraph',
+    paragraph: {
+      rich_text: [{ type: 'text', text: { content: text, link: { url } } }],
+    },
+  };
+}
+
+function externalImageBlock(url) {
+  return {
+    object: 'block',
+    type: 'image',
+    image: {
+      caption: [],
+      type: 'external',
+      external: { url },
+    },
+  };
+}
+
+const APPEND_BLOCKS_BATCH = 90;
+
+async function appendNotionBlockChildren(pageId, blocks, apiKey) {
+  for (let i = 0; i < blocks.length; i += APPEND_BLOCKS_BATCH) {
+    const chunk = blocks.slice(i, i + APPEND_BLOCKS_BATCH);
+    const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
+      method: 'PATCH',
+      headers: {
+        Authorization:    `Bearer ${apiKey}`,
+        'Content-Type':   'application/json',
+        'Notion-Version': NOTION_VERSION,
+      },
+      body: JSON.stringify({ children: chunk }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Notion append blocks ${res.status}: ${errText}`);
+    }
+  }
+}
+
 async function createNotionRecord(fields, photoUrls, logoUrl) {
   const apiKey    = process.env.NOTION_API_KEY;
   const tradeName = TRADE_MAP[fields.trade] || 'Other';
@@ -286,7 +336,7 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     fields.domainName   && `**Domain:** ${fields.domainName}`,
     fields.contactMethods && `**Contact methods:** ${fields.contactMethods}`,
     fields.hours        && `**Hours:** ${fields.hours}`,
-    photoUrls.length    && `**Work photos:** ${photoUrls.length} file(s) uploaded — URLs are in the page content below (keeps this field within Notion limits).`,
+    photoUrls.length    && `**Work photos:** ${photoUrls.length} file(s) uploaded — open this row as a page to see embedded images (JPEG/PNG/WebP/GIF/SVG).`,
     logoUrl             && `**Logo:** ${logoUrl}`,
   ].filter(Boolean).join('\n\n').slice(0, 2000);
 
@@ -315,7 +365,8 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     if (props[k] === undefined || props[k] === null) delete props[k];
   });
 
-  // Build page body content — full photo list as clickable links
+  // Page body: use real image blocks (visible in Notion) + a second API call.
+  // Inline `children` on database rows is often empty in the UI; append works reliably.
   const children = [];
 
   if (photoUrls.length) {
@@ -323,17 +374,15 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
       object: 'block',
       type: 'heading_3',
       heading_3: {
-        rich_text: [{ type: 'text', text: { content: `Work Photos (${photoUrls.length})` } }],
+        rich_text: [{ type: 'text', text: { content: `Work photos (${photoUrls.length})` } }],
       },
     });
     for (const url of photoUrls) {
-      children.push({
-        object: 'block',
-        type: 'paragraph',
-        paragraph: {
-          rich_text: [{ type: 'text', text: { content: url, link: { url } } }],
-        },
-      });
+      if (notionEmbeddableImageUrl(url)) {
+        children.push(externalImageBlock(url));
+      } else {
+        children.push(paragraphLinkBlock(url, 'Download / open'));
+      }
     }
   }
 
@@ -345,19 +394,16 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
         rich_text: [{ type: 'text', text: { content: 'Logo' } }],
       },
     });
-    children.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [{ type: 'text', text: { content: logoUrl, link: { url: logoUrl } } }],
-      },
-    });
+    if (notionEmbeddableImageUrl(logoUrl)) {
+      children.push(externalImageBlock(logoUrl));
+    } else {
+      children.push(paragraphLinkBlock(logoUrl, null));
+    }
   }
 
   const body = {
     parent:     { database_id: DATABASE_ID },
     properties: props,
-    ...(children.length > 0 ? { children } : {}),
   };
 
   const response = await fetch('https://api.notion.com/v1/pages', {
@@ -376,7 +422,18 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     throw new Error('Failed to create Notion record');
   }
 
-  return response.json();
+  const page = await response.json();
+
+  if (children.length) {
+    try {
+      await appendNotionBlockChildren(page.id, children, apiKey);
+      console.log('[intake] Notion page body: appended', children.length, 'blocks for', page.id);
+    } catch (appendErr) {
+      console.error('[intake] Notion append blocks failed (row exists; open page may be empty):', appendErr.message);
+    }
+  }
+
+  return page;
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
