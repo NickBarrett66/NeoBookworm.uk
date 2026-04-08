@@ -189,3 +189,4 @@ so keeping it current is essential. Do not wait to be asked.
 | Demo site builds | High | All 8 sites to build and deploy |
 | Examples page image integration | Medium | Swap CSS previews for real images once generated |
 | End-to-end pipeline test | Medium | Stripe Customer Portal, Netlify deploy, handover docs |
+| Intake → R2 uploads (Vercel) | High | Hobby project `neo-bookworm-uk`: set R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL for Production; “Unauthorized” in logs = bad/expired R2 API token or wrong bucket/endpoint |
