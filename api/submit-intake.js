@@ -50,6 +50,9 @@ function getS3() {
     _s3 = new S3Client({
       region: 'auto',
       endpoint: process.env.R2_ENDPOINT,
+      // R2’s S3-compatible API expects path-style URLs for many SDK setups; without
+      // this, PutObject can fail with generic "Unauthorized" / signature errors.
+      forcePathStyle: true,
       credentials: {
         accessKeyId:     process.env.R2_ACCESS_KEY_ID,
         secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
@@ -120,6 +123,13 @@ function extForMime(mime) {
  */
 async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
   if (!fileBuffer || fileBuffer.length === 0) return null;
+
+  const r2Missing = ['R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'R2_PUBLIC_URL'].filter(
+    (k) => !process.env[k] || !String(process.env[k]).trim(),
+  );
+  if (r2Missing.length) {
+    throw new Error(`R2 configuration missing on server: ${r2Missing.join(', ')}`);
+  }
 
   if (fileBuffer.length > MAX_FILE_BYTES) {
     throw new Error(`File "${originalName}" exceeds 10 MB limit`);
@@ -487,7 +497,14 @@ const handler = async (req, res) => {
         const url = await uploadToR2(file.buffer, file.filename, file.mimeType, `${folder}/photos`);
         if (url) photoUrls.push(url);
       } catch (uploadErr) {
-        console.warn('[intake] Photo upload skipped:', uploadErr.message);
+        const meta = uploadErr.$metadata || {};
+        console.warn(
+          '[intake] Photo upload skipped:',
+          uploadErr.message,
+          uploadErr.name || '',
+          meta.httpStatusCode != null ? `HTTP ${meta.httpStatusCode}` : '',
+          meta.requestId ? `req ${meta.requestId}` : '',
+        );
       }
     }
     console.log('[intake] R2 photo URLs:', photoUrls);
@@ -497,7 +514,14 @@ const handler = async (req, res) => {
       try {
         logoUrl = await uploadToR2(logoFile.buffer, logoFile.filename, logoFile.mimeType, `${folder}/logo`);
       } catch (uploadErr) {
-        console.warn('[intake] Logo upload skipped:', uploadErr.message);
+        const meta = uploadErr.$metadata || {};
+        console.warn(
+          '[intake] Logo upload skipped:',
+          uploadErr.message,
+          uploadErr.name || '',
+          meta.httpStatusCode != null ? `HTTP ${meta.httpStatusCode}` : '',
+          meta.requestId ? `req ${meta.requestId}` : '',
+        );
       }
     }
     console.log('[intake] R2 logo URL:', logoUrl);
