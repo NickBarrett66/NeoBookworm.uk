@@ -4,6 +4,7 @@
 //
 // Required environment variables:
 //   NOTION_API_KEY
+//   NOTION_MAX_ATTEMPTS   optional, 1–10 (default 4) — retries on 429/503/etc.
 //   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY  (R2 → Manage API Tokens → S3 credentials)
 //   R2_BUCKET_NAME
 //   R2_PUBLIC_URL        (public bucket URL base, no trailing slash)
@@ -301,6 +302,75 @@ async function parseMultipart(req) {
 
 // ─── Notion helper ────────────────────────────────────────────────────────────
 
+function getNotionMaxAttempts() {
+  const n = parseInt(process.env.NOTION_MAX_ATTEMPTS || '', 10);
+  if (Number.isFinite(n) && n >= 1 && n <= 10) return n;
+  return 4;
+}
+
+/**
+ * Notion intermittently returns 502/503/504 (e.g. PgPoolWaitConnectionTimeout).
+ * Short retries with backoff usually succeed without user intervention.
+ */
+async function notionFetchWithRetry(url, init, label) {
+  const maxAttempts = getNotionMaxAttempts();
+  let lastStatus = 0;
+  let lastText = '';
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let res;
+    try {
+      res = await fetch(url, init);
+    } catch (netErr) {
+      if (attempt === maxAttempts - 1) throw netErr;
+      const waitMs = Math.min(3500, 400 * Math.pow(2, attempt));
+      console.warn(
+        `[intake] Notion ${label} network error (attempt ${attempt + 1}/${maxAttempts}):`,
+        netErr.message,
+        `retry in ${waitMs}ms`,
+      );
+      await new Promise((r) => setTimeout(r, waitMs));
+      continue;
+    }
+
+    if (res.ok) return res;
+
+    lastText = await res.text();
+    lastStatus = res.status;
+
+    const transient =
+      res.status === 429 ||
+      res.status === 502 ||
+      res.status === 503 ||
+      res.status === 504 ||
+      (res.status === 500 &&
+        /service_unavailable|temporarily unavailable|try again|timeout|PgPool|overloaded/i.test(lastText));
+
+    if (!transient || attempt === maxAttempts - 1) {
+      console.error(`[intake] Notion ${label} failed:`, lastStatus, lastText);
+      const err = new Error(`Notion ${label} failed: ${lastStatus}`);
+      err.notionStatus = lastStatus;
+      err.notionBody = lastText;
+      throw err;
+    }
+
+    const ra = res.headers.get('retry-after');
+    let waitMs = ra != null ? parseInt(ra, 10) * 1000 : NaN;
+    if (!Number.isFinite(waitMs) || waitMs < 0) {
+      waitMs = Math.min(5000, 350 * Math.pow(2, attempt)) + Math.floor(Math.random() * 300);
+    }
+    console.warn(
+      `[intake] Notion ${label} HTTP ${lastStatus} (transient), retry ${attempt + 2}/${maxAttempts} in ${waitMs}ms`,
+    );
+    await new Promise((r) => setTimeout(r, waitMs));
+  }
+
+  const err = new Error(`Notion ${label} failed after ${maxAttempts} attempts`);
+  err.notionStatus = lastStatus;
+  err.notionBody = lastText;
+  throw err;
+}
+
 function richText(value) {
   const str = (value || '').toString().trim().slice(0, 2000);
   if (!str) return null;
@@ -346,19 +416,19 @@ const APPEND_BLOCKS_BATCH = 90;
 async function appendNotionBlockChildren(pageId, blocks, apiKey) {
   for (let i = 0; i < blocks.length; i += APPEND_BLOCKS_BATCH) {
     const chunk = blocks.slice(i, i + APPEND_BLOCKS_BATCH);
-    const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
-      method: 'PATCH',
-      headers: {
-        Authorization:    `Bearer ${apiKey}`,
-        'Content-Type':   'application/json',
-        'Notion-Version': NOTION_VERSION,
+    await notionFetchWithRetry(
+      `https://api.notion.com/v1/blocks/${pageId}/children`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization:    `Bearer ${apiKey}`,
+          'Content-Type':   'application/json',
+          'Notion-Version': NOTION_VERSION,
+        },
+        body: JSON.stringify({ children: chunk }),
       },
-      body: JSON.stringify({ children: chunk }),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Notion append blocks ${res.status}: ${errText}`);
-    }
+      `appendBlocks[${i}]`,
+    );
   }
 }
 
@@ -463,21 +533,19 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     properties: props,
   };
 
-  const response = await fetch('https://api.notion.com/v1/pages', {
-    method: 'POST',
-    headers: {
-      Authorization:    `Bearer ${apiKey}`,
-      'Content-Type':   'application/json',
-      'Notion-Version': NOTION_VERSION,
+  const response = await notionFetchWithRetry(
+    'https://api.notion.com/v1/pages',
+    {
+      method: 'POST',
+      headers: {
+        Authorization:    `Bearer ${apiKey}`,
+        'Content-Type':   'application/json',
+        'Notion-Version': NOTION_VERSION,
+      },
+      body: JSON.stringify(body),
     },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('Notion API error:', response.status, errText);
-    throw new Error('Failed to create Notion record');
-  }
+    'createPage',
+  );
 
   const page = await response.json();
 
