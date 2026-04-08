@@ -2,6 +2,9 @@
 // uploads images to Cloudflare R2, and creates a row in the Notion
 // "Client Sites" database.
 //
+// Notion columns must match NOTION_PROP in this file. Add missing properties with:
+//   node scripts/ensure-notion-intake-properties.js  (requires NOTION_API_KEY)
+//
 // Required environment variables:
 //   NOTION_API_KEY
 //   NOTION_MAX_ATTEMPTS   optional, 1–10 (default 4) — retries on 429/503/etc.
@@ -428,6 +431,84 @@ function notionUrl(value) {
   return str ? { url: str } : null;
 }
 
+// Notion "Client Sites" property names — must match database columns (see scripts/ensure-notion-intake-properties.js).
+const NOTION_PROP = {
+  businessName:        'Business Name',
+  fullName:            'Full name',
+  clientEmail:         'Client Email',
+  phone:               'Phone',
+  tradeCategory:       'Trade Category',
+  status:              'Status',
+  area:                'Area',
+  yearsTrading:        'Years trading',
+  services:            'Services',
+  accreditations:      'Accreditations',
+  freeQuotes:          'Free quotes',
+  emergencyCallouts:   'Emergency callouts',
+  workExclusions:      'Work exclusions',
+  about:               'About',
+  teamSize:            'Team size',
+  idealWork:           'Ideal work',
+  colourPreferences:   'Colour preferences',
+  websiteStyle:        'Website style',
+  inspirationUrl:      'Inspiration URL',
+  testimonials:        'Testimonials',
+  googleBusiness:      'Google Business profile',
+  trustMarks:          'Trust marks',
+  domainStatus:        'Domain status',
+  domainName:          'Domain name',
+  contactMethods:      'Contact methods',
+  workingHours:        'Working hours',
+  additionalNotes:     'Additional notes',
+  workPhotos:          'Work photos',
+  logoUrl:             'Logo URL',
+};
+
+const MAX_FILES_PER_PAGE = 40;
+
+function assignNotionRichText(props, propName, value) {
+  const rt = richText(value);
+  if (rt) props[propName] = rt;
+}
+
+function notionSelectYesNo(raw) {
+  const v = (raw || '').toString().trim().toLowerCase();
+  if (v === 'yes') return { select: { name: 'Yes' } };
+  if (v === 'no') return { select: { name: 'No' } };
+  return null;
+}
+
+function notionSelectTri(raw) {
+  const v = (raw || '').toString().trim().toLowerCase();
+  if (v === 'yes') return { select: { name: 'Yes' } };
+  if (v === 'no') return { select: { name: 'No' } };
+  if (v === 'unsure') return { select: { name: 'Unsure' } };
+  return null;
+}
+
+function notionYearsNumber(raw) {
+  const n = parseInt(String(raw || '').trim(), 10);
+  if (!Number.isFinite(n) || n < 0 || n > 120) return null;
+  return { number: n };
+}
+
+/** Build Notion Files property from public R2 URLs. */
+function notionWorkPhotosFiles(urls) {
+  if (!urls || !urls.length) return null;
+  const slice = urls.slice(0, MAX_FILES_PER_PAGE);
+  const files = slice.map((url, i) => {
+    let name = `work-${i + 1}`;
+    try {
+      const pathPart = url.split('?')[0].split('/').pop();
+      if (pathPart && pathPart.length < 120) {
+        name = pathPart.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100) || name;
+      }
+    } catch { /* ignore */ }
+    return { type: 'external', name, external: { url } };
+  });
+  return { files };
+}
+
 /** Notion can embed these as image blocks; HEIC/PDF etc. get a link paragraph instead. */
 function notionEmbeddableImageUrl(url) {
   const path = (url || '').split('?')[0].toLowerCase();
@@ -551,58 +632,58 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
   const apiKey    = process.env.NOTION_API_KEY;
   const tradeName = TRADE_MAP[fields.trade] || 'Other';
 
-  const notes = [fields.services, fields.extra]
-    .map((s) => (s || '').trim())
-    .filter(Boolean)
-    .join('\n\n---\n\n')
-    .slice(0, 2000);
-
-  // Build the full intake snapshot as a rich-text "Brief" field
-  const brief = [
-    fields.story        && `**About:** ${fields.story}`,
-    fields.area         && `**Area:** ${fields.area}`,
-    fields.years        && `**Years trading:** ${fields.years}`,
-    fields.accreditations && `**Accreditations:** ${fields.accreditations}`,
-    fields.freeQuotes   && `**Free quotes:** ${fields.freeQuotes}`,
-    fields.emergency    && `**Emergency callouts:** ${fields.emergency}`,
-    fields.exclusions   && `**Exclusions:** ${fields.exclusions}`,
-    fields.teamSize     && `**Team:** ${fields.teamSize}`,
-    fields.idealWork    && `**Ideal work:** ${fields.idealWork}`,
-    fields.websiteStyle && `**Website style:** ${fields.websiteStyle}`,
-    fields.colourPref   && `**Colours:** ${fields.colourPref}`,
-    fields.siteInspo    && `**Inspiration URL:** ${fields.siteInspo}`,
-    fields.testimonials && `**Testimonials:** ${fields.testimonials}`,
-    fields.googleBiz    && `**Google Business:** ${fields.googleBiz}`,
-    fields.trustmarks   && `**Trust marks:** ${fields.trustmarks}`,
-    fields.domainStatus && `**Domain status:** ${fields.domainStatus}`,
-    fields.domainName   && `**Domain:** ${fields.domainName}`,
-    fields.contactMethods && `**Contact methods:** ${fields.contactMethods}`,
-    fields.hours        && `**Hours:** ${fields.hours}`,
-    photoUrls.length    && `**Work photos:** ${photoUrls.length} file(s) uploaded — open this row as a page to see embedded images (JPEG/PNG/WebP/GIF/SVG).`,
-    logoUrl             && `**Logo:** ${logoUrl}`,
-  ].filter(Boolean).join('\n\n').slice(0, 2000);
-
-  // Build services text for the dedicated Services field
-  const servicesText = (fields.services || '').trim().slice(0, 2000);
-
   const props = {
-    'Business Name':  { title: [{ text: { content: fields.bizName || 'Unknown' } }] },
-    'Client Email':   { email: fields.email || null },
-    'Phone':          { phone_number: fields.phone || null },
-    'Trade Category': { select: { name: tradeName } },
-    'Status':         { select: { name: 'Pending Launch' } },
+    [NOTION_PROP.businessName]:  { title: [{ text: { content: (fields.bizName || 'Unknown').toString().trim().slice(0, 2000) } }] },
+    [NOTION_PROP.tradeCategory]: { select: { name: tradeName } },
+    [NOTION_PROP.status]:        { select: { name: 'Pending Launch' } },
   };
 
-  if (notes)        props['Notes']       = richText(notes);
-  if (brief)        props['Brief']       = richText(brief);
-  if (servicesText) props['Services']    = richText(servicesText);
-  if (logoUrl)      props['Logo URL']    = notionUrl(logoUrl);
-  if (photoUrls.length) {
-    // Store first photo URL in the dedicated field; rest live in Brief
-    props['Work Photos'] = notionUrl(photoUrls[0]);
-  }
+  const emailTrim = (fields.email || '').trim();
+  if (emailTrim) props[NOTION_PROP.clientEmail] = { email: emailTrim };
 
-  // Remove undefined entries
+  const phoneTrim = (fields.phone || '').trim();
+  if (phoneTrim) props[NOTION_PROP.phone] = { phone_number: phoneTrim };
+
+  assignNotionRichText(props, NOTION_PROP.fullName, fields.fullName);
+  assignNotionRichText(props, NOTION_PROP.area, fields.area);
+  assignNotionRichText(props, NOTION_PROP.services, fields.services);
+  assignNotionRichText(props, NOTION_PROP.accreditations, fields.accreditations);
+  assignNotionRichText(props, NOTION_PROP.workExclusions, fields.exclusions);
+  assignNotionRichText(props, NOTION_PROP.about, fields.story);
+  assignNotionRichText(props, NOTION_PROP.teamSize, fields.teamSize);
+  assignNotionRichText(props, NOTION_PROP.idealWork, fields.idealWork);
+  assignNotionRichText(props, NOTION_PROP.colourPreferences, fields.colourPref);
+  assignNotionRichText(props, NOTION_PROP.websiteStyle, fields.websiteStyle);
+  assignNotionRichText(props, NOTION_PROP.testimonials, fields.testimonials);
+  assignNotionRichText(props, NOTION_PROP.trustMarks, fields.trustmarks);
+  assignNotionRichText(props, NOTION_PROP.domainName, fields.domainName);
+  assignNotionRichText(props, NOTION_PROP.contactMethods, fields.contactMethods);
+  assignNotionRichText(props, NOTION_PROP.workingHours, fields.hours);
+  assignNotionRichText(props, NOTION_PROP.additionalNotes, fields.extra);
+
+  const y = notionYearsNumber(fields.years);
+  if (y) props[NOTION_PROP.yearsTrading] = y;
+
+  const fq = notionSelectYesNo(fields.freeQuotes);
+  if (fq) props[NOTION_PROP.freeQuotes] = fq;
+
+  const em = notionSelectYesNo(fields.emergency);
+  if (em) props[NOTION_PROP.emergencyCallouts] = em;
+
+  const gb = notionSelectTri(fields.googleBiz);
+  if (gb) props[NOTION_PROP.googleBusiness] = gb;
+
+  const ds = notionSelectTri(fields.domainStatus);
+  if (ds) props[NOTION_PROP.domainStatus] = ds;
+
+  const inspo = notionUrl(fields.siteInspo);
+  if (inspo) props[NOTION_PROP.inspirationUrl] = inspo;
+
+  if (logoUrl) props[NOTION_PROP.logoUrl] = notionUrl(logoUrl);
+
+  const workFiles = notionWorkPhotosFiles(photoUrls);
+  if (workFiles) props[NOTION_PROP.workPhotos] = workFiles;
+
   Object.keys(props).forEach((k) => {
     if (props[k] === undefined || props[k] === null) delete props[k];
   });
@@ -667,7 +748,7 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     );
   } catch (linkErr) {
     console.error(
-      '[intake] Notion: link fallback also failed. Row still has text properties; check Work Photos / Logo URL columns for R2 links.',
+      '[intake] Notion: link fallback also failed. Row still has structured properties; check Work photos (files) / Logo URL for R2 links.',
       linkErr.message,
     );
   }
