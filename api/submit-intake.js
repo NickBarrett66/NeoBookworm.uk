@@ -4,12 +4,19 @@
 //
 // Required environment variables:
 //   NOTION_API_KEY
-//   R2_ACCOUNT_ID
-//   R2_ACCESS_KEY_ID
-//   R2_SECRET_ACCESS_KEY
+//   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY  (R2 → Manage API Tokens → S3 credentials)
 //   R2_BUCKET_NAME
-//   R2_ENDPOINT          (https://<account_id>.r2.cloudflarestorage.com)
-//   R2_PUBLIC_URL        (https://pub-<token>.r2.dev)
+//   R2_PUBLIC_URL        (public bucket URL base, no trailing slash)
+// Plus either:
+//   R2_ENDPOINT          full S3 API URL, e.g. https://<account_id>.r2.cloudflarestorage.com
+// or:
+//   R2_ACCOUNT_ID        when R2_ENDPOINT is omitted we build the default endpoint
+//
+// EU jurisdictional buckets need: R2_JURISDICTION=eu and endpoint
+//   https://<account_id>.eu.r2.cloudflarestorage.com  (or set R2_ENDPOINT to that host).
+//
+// @aws-sdk/client-s3 ≥3.729 defaults to checksum headers R2 does not support — we set
+// requestChecksumCalculation / responseChecksumValidation to WHEN_REQUIRED (see getS3()).
 
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const Busboy = require('busboy');
@@ -44,15 +51,35 @@ const TRADE_MAP = {
 
 // ─── R2 client (lazy singleton) ───────────────────────────────────────────────
 
+function getR2Endpoint() {
+  const explicit = (process.env.R2_ENDPOINT || '').trim().replace(/\/+$/, '');
+  if (explicit) return explicit;
+  const accountId = (process.env.R2_ACCOUNT_ID || '').trim();
+  if (!accountId) return '';
+  const j = (process.env.R2_JURISDICTION || 'default').toLowerCase();
+  if (j === 'eu') {
+    return `https://${accountId}.eu.r2.cloudflarestorage.com`;
+  }
+  if (j === 'fedramp') {
+    return `https://${accountId}.fedramp.r2.cloudflarestorage.com`;
+  }
+  return `https://${accountId}.r2.cloudflarestorage.com`;
+}
+
 let _s3;
 function getS3() {
   if (!_s3) {
+    const endpoint = getR2Endpoint();
+    if (!endpoint) {
+      throw new Error('R2 endpoint missing: set R2_ENDPOINT or R2_ACCOUNT_ID');
+    }
     _s3 = new S3Client({
       region: 'auto',
-      endpoint: process.env.R2_ENDPOINT,
-      // R2’s S3-compatible API expects path-style URLs for many SDK setups; without
-      // this, PutObject can fail with generic "Unauthorized" / signature errors.
-      forcePathStyle: true,
+      endpoint,
+      // Default in @aws-sdk/client-s3 ≥3.729 sends x-amz-checksum-* on PutObject; R2 returns
+      // errors that often surface as "Unauthorized". Cloudflare recommends WHEN_REQUIRED.
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
       credentials: {
         accessKeyId:     process.env.R2_ACCESS_KEY_ID,
         secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
@@ -60,6 +87,23 @@ function getS3() {
     });
   }
   return _s3;
+}
+
+function logR2UploadFailure(label, uploadErr) {
+  const meta = uploadErr.$metadata || {};
+  console.warn(
+    `[intake] ${label} upload skipped:`,
+    uploadErr.message,
+    uploadErr.name || '',
+    meta.httpStatusCode != null ? `HTTP ${meta.httpStatusCode}` : '',
+    meta.requestId ? `req ${meta.requestId}` : '',
+  );
+  const msg = `${uploadErr.message || ''} ${uploadErr.name || ''}`;
+  if (/Unauthorized|InvalidAccessKey|SignatureDoesNotMatch|403|401|NotImplemented|501/i.test(msg)) {
+    console.warn(
+      '[intake] R2 troubleshooting: EU buckets need R2_JURISDICTION=eu or R2_ENDPOINT=https://<id>.eu.r2.cloudflarestorage.com. Confirm S3 API token (not global CF API key), Object Read & Write on this bucket, exact R2_BUCKET_NAME. New AWS SDK checksum defaults are disabled in getS3() — redeploy after pull.',
+    );
+  }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -124,11 +168,14 @@ function extForMime(mime) {
 async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
   if (!fileBuffer || fileBuffer.length === 0) return null;
 
-  const r2Missing = ['R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'R2_PUBLIC_URL'].filter(
+  const r2Missing = ['R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'R2_PUBLIC_URL'].filter(
     (k) => !process.env[k] || !String(process.env[k]).trim(),
   );
   if (r2Missing.length) {
     throw new Error(`R2 configuration missing on server: ${r2Missing.join(', ')}`);
+  }
+  if (!getR2Endpoint()) {
+    throw new Error('R2 endpoint missing: set R2_ENDPOINT or R2_ACCOUNT_ID');
   }
 
   if (fileBuffer.length > MAX_FILE_BYTES) {
@@ -497,14 +544,7 @@ const handler = async (req, res) => {
         const url = await uploadToR2(file.buffer, file.filename, file.mimeType, `${folder}/photos`);
         if (url) photoUrls.push(url);
       } catch (uploadErr) {
-        const meta = uploadErr.$metadata || {};
-        console.warn(
-          '[intake] Photo upload skipped:',
-          uploadErr.message,
-          uploadErr.name || '',
-          meta.httpStatusCode != null ? `HTTP ${meta.httpStatusCode}` : '',
-          meta.requestId ? `req ${meta.requestId}` : '',
-        );
+        logR2UploadFailure('Photo', uploadErr);
       }
     }
     console.log('[intake] R2 photo URLs:', photoUrls);
@@ -514,14 +554,7 @@ const handler = async (req, res) => {
       try {
         logoUrl = await uploadToR2(logoFile.buffer, logoFile.filename, logoFile.mimeType, `${folder}/logo`);
       } catch (uploadErr) {
-        const meta = uploadErr.$metadata || {};
-        console.warn(
-          '[intake] Logo upload skipped:',
-          uploadErr.message,
-          uploadErr.name || '',
-          meta.httpStatusCode != null ? `HTTP ${meta.httpStatusCode}` : '',
-          meta.requestId ? `req ${meta.requestId}` : '',
-        );
+        logR2UploadFailure('Logo', uploadErr);
       }
     }
     console.log('[intake] R2 logo URL:', logoUrl);
