@@ -411,6 +411,75 @@ function externalImageBlock(url) {
   };
 }
 
+/** Page body: embedded images (Notion must be able to fetch each URL). */
+function buildNotionEmbeddedImageChildren(photoUrls, logoUrl) {
+  const children = [];
+  if (photoUrls.length) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [{ type: 'text', text: { content: `Work photos (${photoUrls.length})` } }],
+      },
+    });
+    for (const url of photoUrls) {
+      if (notionEmbeddableImageUrl(url)) {
+        children.push(externalImageBlock(url));
+      } else {
+        children.push(paragraphLinkBlock(url, 'Download / open'));
+      }
+    }
+  }
+  if (logoUrl) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [{ type: 'text', text: { content: 'Logo' } }],
+      },
+    });
+    if (notionEmbeddableImageUrl(logoUrl)) {
+      children.push(externalImageBlock(logoUrl));
+    } else {
+      children.push(paragraphLinkBlock(logoUrl, null));
+    }
+  }
+  return children;
+}
+
+/**
+ * Same files as clickable links only — Notion accepts these even when it cannot
+ * embed the URL as an image (common with some R2 / CDN setups).
+ */
+function buildNotionLinkOnlyChildren(photoUrls, logoUrl) {
+  const children = [];
+  if (photoUrls.length) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [
+          { type: 'text', text: { content: `Work photo links (${photoUrls.length})` } },
+        ],
+      },
+    });
+    for (let i = 0; i < photoUrls.length; i++) {
+      children.push(paragraphLinkBlock(photoUrls[i], `Photo ${i + 1}`));
+    }
+  }
+  if (logoUrl) {
+    children.push({
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        rich_text: [{ type: 'text', text: { content: 'Logo' } }],
+      },
+    });
+    children.push(paragraphLinkBlock(logoUrl, 'Logo file'));
+  }
+  return children;
+}
+
 const APPEND_BLOCKS_BATCH = 90;
 
 async function appendNotionBlockChildren(pageId, blocks, apiKey) {
@@ -492,41 +561,9 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
     if (props[k] === undefined || props[k] === null) delete props[k];
   });
 
-  // Page body: use real image blocks (visible in Notion) + a second API call.
-  // Inline `children` on database rows is often empty in the UI; append works reliably.
-  const children = [];
-
-  if (photoUrls.length) {
-    children.push({
-      object: 'block',
-      type: 'heading_3',
-      heading_3: {
-        rich_text: [{ type: 'text', text: { content: `Work photos (${photoUrls.length})` } }],
-      },
-    });
-    for (const url of photoUrls) {
-      if (notionEmbeddableImageUrl(url)) {
-        children.push(externalImageBlock(url));
-      } else {
-        children.push(paragraphLinkBlock(url, 'Download / open'));
-      }
-    }
-  }
-
-  if (logoUrl) {
-    children.push({
-      object: 'block',
-      type: 'heading_3',
-      heading_3: {
-        rich_text: [{ type: 'text', text: { content: 'Logo' } }],
-      },
-    });
-    if (notionEmbeddableImageUrl(logoUrl)) {
-      children.push(externalImageBlock(logoUrl));
-    } else {
-      children.push(paragraphLinkBlock(logoUrl, null));
-    }
-  }
+  // Page body: second API call after row exists. createPage can succeed while append fails.
+  const childrenEmbedded = buildNotionEmbeddedImageChildren(photoUrls, logoUrl);
+  const childrenLinks    = buildNotionLinkOnlyChildren(photoUrls, logoUrl);
 
   const body = {
     parent:     { database_id: DATABASE_ID },
@@ -548,14 +585,45 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
   );
 
   const page = await response.json();
+  console.log('[intake] Notion database row created (page id):', page.id);
 
-  if (children.length) {
-    try {
-      await appendNotionBlockChildren(page.id, children, apiKey);
-      console.log('[intake] Notion page body: appended', children.length, 'blocks for', page.id);
-    } catch (appendErr) {
-      console.error('[intake] Notion append blocks failed (row exists; open page may be empty):', appendErr.message);
-    }
+  if (!childrenEmbedded.length) {
+    return page;
+  }
+
+  try {
+    await appendNotionBlockChildren(page.id, childrenEmbedded, apiKey);
+    console.log(
+      '[intake] Notion page body: appended',
+      childrenEmbedded.length,
+      'blocks (embedded images) for',
+      page.id,
+    );
+    return page;
+  } catch (embedErr) {
+    console.error(
+      '[intake] Notion: row is saved; embedding images in page body failed (Notion may not be able to load the file URL).',
+      embedErr.message,
+    );
+  }
+
+  if (!childrenLinks.length) {
+    return page;
+  }
+
+  try {
+    await appendNotionBlockChildren(page.id, childrenLinks, apiKey);
+    console.log(
+      '[intake] Notion page body: appended',
+      childrenLinks.length,
+      'blocks (clickable links only — open page to access files) for',
+      page.id,
+    );
+  } catch (linkErr) {
+    console.error(
+      '[intake] Notion: link fallback also failed. Row still has text properties; check Work Photos / Logo URL columns for R2 links.',
+      linkErr.message,
+    );
   }
 
   return page;
