@@ -164,7 +164,7 @@ so keeping it current is essential. Do not wait to be asked.
 | contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |
 | terms.html | Complete | — |
-| intake-form.html | Complete | Intake → Notion uses structured Client Sites columns (NOTION_PROP) + **Work photos** (Files, multi-R2 URL); run `node scripts/ensure-notion-intake-properties.js` once with NOTION_API_KEY to add missing DB properties |
+| intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
 
 ### Demo sites
 

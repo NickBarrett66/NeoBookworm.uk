@@ -576,6 +576,20 @@ function revealField(id,show){var el=document.getElementById(id);if(!el) return;
 function pickStyle(card,name){var cards=document.querySelectorAll('.scard');for(var i=0;i<cards.length;i++) cards[i].classList.remove('on');card.classList.add('on');styleVal=name;}
 function showFiles(input,listId){var list=document.getElementById(listId);if(!list) return;if(!input.files||input.files.length===0){list.textContent='';return;}var names=[];for(var i=0;i<input.files.length;i++) names.push(input.files[i].name);list.textContent='\u2713 '+input.files.length+' file(s): '+names.join(', ');}
 
+/** Best-effort MIME when input.files[i].type is empty (common on mobile). */
+function guessMimeFromName(name){
+var n=(name||'').toLowerCase();
+if(/\.jpe?g$/.test(n)) return 'image/jpeg';
+if(/\.png$/.test(n)) return 'image/png';
+if(/\.webp$/.test(n)) return 'image/webp';
+if(/\.gif$/.test(n)) return 'image/gif';
+if(/\.heic$/.test(n)) return 'image/heic';
+if(/\.heif$/.test(n)) return 'image/heif';
+if(/\.svg$/.test(n)) return 'image/svg+xml';
+if(/\.pdf$/.test(n)) return 'application/pdf';
+return 'image/jpeg';
+}
+
 function submitForm(){
 var btn=document.getElementById('bnx');
 btn.disabled=true;btn.textContent='Sending\u2026';
@@ -583,51 +597,100 @@ document.getElementById('submit-error').style.display='none';
 function v(id){var el=document.getElementById(id);return el?el.value:'';}
 var contact=[];var cc=document.querySelectorAll('#cr_contact .chip.on');for(var i=0;i<cc.length;i++) contact.push(cc[i].textContent.trim());
 
-// Build multipart form data so photos and logo are included
-var fd=new FormData();
-fd.append('fullName',v('f_name'));
-fd.append('bizName',v('f_biz'));
-fd.append('trade',v('f_trade'));
-fd.append('phone',v('f_phone'));
-fd.append('email',v('f_email'));
-fd.append('area',v('f_area'));
-fd.append('years',v('f_years'));
-fd.append('services',v('f_svcs'));
-fd.append('accreditations',v('f_accred'));
-fd.append('freeQuotes',togVals['fq']||'');
-fd.append('emergency',togVals['em']||'');
-fd.append('exclusions',v('f_excl'));
-fd.append('story',v('f_story'));
-fd.append('teamSize',teamVal);
-fd.append('idealWork',v('f_ideal'));
-fd.append('colourPref',v('f_colour'));
-fd.append('websiteStyle',styleVal);
-fd.append('siteInspo',v('f_inspo'));
-fd.append('testimonials',v('f_reviews'));
-fd.append('googleBiz',togVals['gb']||'');
-fd.append('trustmarks',v('f_trust'));
-fd.append('domainStatus',domainVal);
-fd.append('domainName',v('f_domain'));
-fd.append('contactMethods',contact.join(', '));
-fd.append('hours',v('f_hours'));
-fd.append('extra',v('f_extra'));
-
-// Attach photos (multiple)
 var photosInput=document.getElementById('f_photos');
+var logoInput=document.getElementById('f_logo');
+var photosMeta=[];
 if(photosInput&&photosInput.files){
   for(var pi=0;pi<photosInput.files.length;pi++){
-    fd.append('photos',photosInput.files[pi]);
+    var pf=photosInput.files[pi];
+    var mt=(pf.type||'').trim()||guessMimeFromName(pf.name);
+    photosMeta.push({name:pf.name,mimeType:mt});
   }
 }
-// Attach logo (single)
-var logoInput=document.getElementById('f_logo');
+var logoMeta=null;
 if(logoInput&&logoInput.files&&logoInput.files.length>0){
-  fd.append('logo',logoInput.files[0]);
+  var lf=logoInput.files[0];
+  logoMeta={name:lf.name,mimeType:(lf.type||'').trim()||guessMimeFromName(lf.name)};
 }
 
-// No Content-Type header — browser sets it with boundary automatically
-fetch('/api/submit-intake',{method:'POST',body:fd})
-.then(function(res){if(!res.ok) throw new Error('server_error');return res.json();})
+fetch('/api/intake-upload-session',{
+  method:'POST',
+  headers:{'Content-Type':'application/json','Accept':'application/json'},
+  body:JSON.stringify({photos:photosMeta,logo:logoMeta})
+})
+.then(function(res){
+  return res.json().then(function(j){
+    if(!res.ok) throw new Error(j.error||('HTTP '+res.status));
+    return j;
+  });
+})
+.then(function(sess){
+  var uploads=sess.uploads||[];
+  var logoUp=sess.logo;
+  var session=sess.session;
+  if(!session||!session.signature) throw new Error('Invalid session response');
+
+  function putOne(item,file){
+    return fetch(item.putUrl,{
+      method:'PUT',
+      body:file,
+      headers:{'Content-Type':item.contentType||file.type||'application/octet-stream'}
+    }).then(function(r){
+      if(!r.ok) throw new Error('Photo upload failed ('+r.status+'). Check R2 CORS allows PUT from this site.');
+    });
+  }
+
+  var jobs=[];
+  for(var ui=0;ui<uploads.length;ui++){
+    jobs.push(putOne(uploads[ui],photosInput.files[ui]));
+  }
+  if(logoUp&&logoInput&&logoInput.files&&logoInput.files.length>0){
+    jobs.push(putOne(logoUp,logoInput.files[0]));
+  }
+  return Promise.all(jobs).then(function(){ return session; });
+})
+.then(function(session){
+  var payload={
+    session:session,
+    fullName:v('f_name'),
+    bizName:v('f_biz'),
+    trade:v('f_trade'),
+    phone:v('f_phone'),
+    email:v('f_email'),
+    area:v('f_area'),
+    years:v('f_years'),
+    services:v('f_svcs'),
+    accreditations:v('f_accred'),
+    freeQuotes:togVals['fq']||'',
+    emergency:togVals['em']||'',
+    exclusions:v('f_excl'),
+    story:v('f_story'),
+    teamSize:teamVal,
+    idealWork:v('f_ideal'),
+    colourPref:v('f_colour'),
+    websiteStyle:styleVal,
+    siteInspo:v('f_inspo'),
+    testimonials:v('f_reviews'),
+    googleBiz:togVals['gb']||'',
+    trustmarks:v('f_trust'),
+    domainStatus:domainVal,
+    domainName:v('f_domain'),
+    contactMethods:contact.join(', '),
+    hours:v('f_hours'),
+    extra:v('f_extra')
+  };
+  return fetch('/api/intake-finalize',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(payload)
+  });
+})
+.then(function(res){
+  return res.json().then(function(j){
+    if(!res.ok) throw new Error(j.error||('HTTP '+res.status));
+    return j;
+  });
+})
 .then(function(){
 var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++) pages[i].classList.remove('act');
 document.getElementById('navbar').style.display='none';
@@ -636,9 +699,10 @@ document.getElementById('steplbl').textContent='Complete';
 document.getElementById('tywrap').classList.add('show');
 window.scrollTo(0,0);
 })
-.catch(function(){
+.catch(function(err){
 btn.disabled=false;btn.textContent='Submit \u2192';
 document.getElementById('submit-error').style.display='block';
+if(window.console&&console.warn) console.warn(err);
 });
 }
 </script>
