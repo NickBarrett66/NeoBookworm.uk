@@ -51,7 +51,7 @@ NeoBookworm.uk/
 
 **Tone**
 - Plain English throughout — no jargon
-- "Get found on Google" not "SEO"
+- "Appear in Google search lists" / "appear higher in Google search lists" — not "SEO" or "get found on Google"
 - "Keep your site live" not "hosting"
 - Contact is email-only — no phone numbers on NeoBookworm.uk itself
 

@@ -10,7 +10,7 @@ This document describes what the site is for, how it is built as of the latest r
 
 ### What the site tries to achieve
 
-- **Explain the offer** in plain English (avoid jargon like “SEO”, “hosting”, “SSL”; prefer “get found on Google”, “keep your site live”, etc.).
+- **Explain the offer** in plain English (avoid jargon like “SEO”, “hosting”, “SSL”; prefer “appear in Google search lists”, “keep your site live”, etc.).
 - **Convert visitors** via clear pricing, process explanation, examples, and contact paths.
 - **Onboard paying clients** through a structured **intake form** that captures business details, story, style preferences, and **work photos / logo**, then records them in **Notion** with files in **Cloudflare R2**.
 - **Capture casual enquiries** via a **short contact form** that sends email over **SMTP** (when configured).
