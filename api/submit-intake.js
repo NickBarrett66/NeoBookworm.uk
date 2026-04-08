@@ -5,13 +5,20 @@
 // Required environment variables:
 //   NOTION_API_KEY
 //   NOTION_MAX_ATTEMPTS   optional, 1–10 (default 4) — retries on 429/503/etc.
-//   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY  (R2 → Manage API Tokens → S3 credentials)
+//   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY  (dashboard: Storage & databases → R2 →
+//                        Overview → Manage (API Tokens) → Create Account or User API token —
+//                        see https://developers.cloudflare.com/r2/get-started/s3/ )
 //   R2_BUCKET_NAME
 //   R2_PUBLIC_URL        (public bucket URL base, no trailing slash)
 // Plus either:
-//   R2_ENDPOINT          full S3 API URL, e.g. https://<account_id>.r2.cloudflarestorage.com
+//   R2_ENDPOINT          S3 API host only: https://<account_id>.r2.cloudflarestorage.com
+//                        (NOT your public https://pub-….r2.dev URL — that causes HTTP 401)
 // or:
 //   R2_ACCOUNT_ID        when R2_ENDPOINT is omitted we build the default endpoint
+//
+// Optional:
+//   R2_REGION            Cloudflare routing hint: auto (default), wnam, enam, weur, eeur, apac
+//   R2_FORCE_PATH_STYLE  set to "1" if uploads still fail (virtual-host vs path-style)
 //
 // EU jurisdictional buckets need: R2_JURISDICTION=eu and endpoint
 //   https://<account_id>.eu.r2.cloudflarestorage.com  (or set R2_ENDPOINT to that host).
@@ -67,6 +74,20 @@ function getR2Endpoint() {
   return `https://${accountId}.r2.cloudflarestorage.com`;
 }
 
+function warnIfR2EndpointWrong(endpoint) {
+  const e = (endpoint || '').toLowerCase();
+  if (!e) return;
+  if (e.includes('.r2.dev')) {
+    console.warn(
+      '[intake] R2: R2_ENDPOINT must be the S3 API host (….r2.cloudflarestorage.com), not the public r2.dev URL. Fix env vars or uploads will return 401.',
+    );
+  } else if (!e.includes('r2.cloudflarestorage.com')) {
+    console.warn(
+      '[intake] R2: R2_ENDPOINT should be https://<ACCOUNT_ID>.r2.cloudflarestorage.com (see Cloudflare R2 S3 API).',
+    );
+  }
+}
+
 let _s3;
 function getS3() {
   if (!_s3) {
@@ -74,18 +95,38 @@ function getS3() {
     if (!endpoint) {
       throw new Error('R2 endpoint missing: set R2_ENDPOINT or R2_ACCOUNT_ID');
     }
+    warnIfR2EndpointWrong(endpoint);
+
+    const region = (process.env.R2_REGION || 'auto').trim();
+    const forcePathStyle = process.env.R2_FORCE_PATH_STYLE === '1';
+
     _s3 = new S3Client({
-      region: 'auto',
+      // Must be a Cloudflare R2 region (auto, wnam, weur, …), not an AWS region, or SigV4 can 401.
+      region,
       endpoint,
+      forcePathStyle,
       // Default in @aws-sdk/client-s3 ≥3.729 sends x-amz-checksum-* on PutObject; R2 returns
       // errors that often surface as "Unauthorized". Cloudflare recommends WHEN_REQUIRED.
       requestChecksumCalculation: 'WHEN_REQUIRED',
       responseChecksumValidation: 'WHEN_REQUIRED',
       credentials: {
-        accessKeyId:     process.env.R2_ACCESS_KEY_ID,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+        accessKeyId:     (process.env.R2_ACCESS_KEY_ID || '').trim(),
+        secretAccessKey: (process.env.R2_SECRET_ACCESS_KEY || '').trim(),
       },
     });
+
+    try {
+      console.log(
+        '[intake] R2 S3 client:',
+        new URL(endpoint).hostname,
+        '| region',
+        region,
+        '| pathStyle',
+        forcePathStyle,
+      );
+    } catch {
+      console.log('[intake] R2 S3 client init | region', region, '| pathStyle', forcePathStyle);
+    }
   }
   return _s3;
 }
@@ -102,7 +143,7 @@ function logR2UploadFailure(label, uploadErr) {
   const msg = `${uploadErr.message || ''} ${uploadErr.name || ''}`;
   if (/Unauthorized|InvalidAccessKey|SignatureDoesNotMatch|403|401|NotImplemented|501/i.test(msg)) {
     console.warn(
-      '[intake] R2 troubleshooting: EU buckets need R2_JURISDICTION=eu or R2_ENDPOINT=https://<id>.eu.r2.cloudflarestorage.com. Confirm S3 API token (not global CF API key), Object Read & Write on this bucket, exact R2_BUCKET_NAME. New AWS SDK checksum defaults are disabled in getS3() — redeploy after pull.',
+      '[intake] R2 troubleshooting: (1) R2_ENDPOINT must be https://<ACCOUNT_ID>.r2.cloudflarestorage.com — never the public pub-….r2.dev URL. (2) Credentials from Storage & databases → R2 → Overview → Manage (API Tokens); permission Object Read & Write scoped to this bucket (not the global Cloudflare API token). (3) Try R2_REGION=weur or eeur in EU. (4) Try R2_FORCE_PATH_STYLE=1. Trim secrets in Vercel.',
     );
   }
 }
@@ -197,7 +238,7 @@ async function uploadToR2(fileBuffer, originalName, mimeType, folder) {
   const key       = `${folder}/${timestamp}-${safe}`;
 
   await getS3().send(new PutObjectCommand({
-    Bucket:      process.env.R2_BUCKET_NAME,
+    Bucket:      (process.env.R2_BUCKET_NAME || '').trim(),
     Key:         key,
     Body:        fileBuffer,
     ContentType: ct,
@@ -348,6 +389,11 @@ async function notionFetchWithRetry(url, init, label) {
 
     if (!transient || attempt === maxAttempts - 1) {
       console.error(`[intake] Notion ${label} failed:`, lastStatus, lastText);
+      if (lastStatus === 401) {
+        console.error(
+          '[intake] Notion 401: NOTION_API_KEY is invalid, revoked, or not the integration "Internal Integration Secret" from Notion → Settings → Integrations → your integration. Database must be shared with that integration.',
+        );
+      }
       const err = new Error(`Notion ${label} failed: ${lastStatus}`);
       err.notionStatus = lastStatus;
       err.notionBody = lastText;
