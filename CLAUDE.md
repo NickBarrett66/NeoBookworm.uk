@@ -18,6 +18,7 @@ NeoBookworm.uk/
 ├── contact.html            # Contact page
 ├── privacy.html            # Privacy policy
 ├── terms.html              # Terms of service
+├── WEBSITE-REFERENCE.md    # Implementation & troubleshooting reference
 ├── intake-form.html        # Client onboarding form - replaced Tally form
 ├── header.html             # Shared header partial
 ├── include-header.js       # JS to inject shared header
@@ -29,6 +30,8 @@ NeoBookworm.uk/
 └── .claude/
     └── settings.local.json # Claude Code permissions
 ```
+
+**Implementation and troubleshooting:** for a full map of pages, APIs, environment variables, and incident diagnostics, see [WEBSITE-REFERENCE.md](WEBSITE-REFERENCE.md).
 
 ---
 
