@@ -538,10 +538,15 @@
       flex: 1;
       overflow: hidden;
       position: relative;
+      min-height: 0;
     }
 
-    .mock-plumb-wrap .p-plumb {
+    .mock-plumb-wrap img {
+      width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
     }
 
     .mock-bar {
@@ -1569,29 +1574,7 @@
             <div class="mock-url">hartleyplumbing.co.uk</div>
           </div>
           <div class="mock-plumb-wrap">
-            <div class="p-plumb">
-              <div class="emerg">
-                <span>24hr Emergency Plumber</span>
-                <div class="dot"></div>
-              </div>
-              <div class="body">
-                <div>
-                  <div class="bname">Hartley Plumbing</div>
-                  <div class="bsub">Swindon &amp; Wiltshire · Gas Safe registered</div>
-                </div>
-                <div class="bignum">0770<span>0</span><br>900 000</div>
-                <div class="bfoot">
-                  <div class="gs">Gas Safe</div>
-                  <div class="gstxt">Reg. No. 000000</div>
-                </div>
-              </div>
-              <div class="amber-bar">
-                <span>&#9733; 4.9 Google</span>
-                <span>Boilers</span>
-                <span>Bathrooms</span>
-                <span>Emergencies</span>
-              </div>
-            </div>
+            <img src="Images/demo-hartley-plumbing.jpg" alt="Hartley Plumbing demo website preview">
           </div>
         </div>
         <div class="mock-label">✓ Live within a week</div>
