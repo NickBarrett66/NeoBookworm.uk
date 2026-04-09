@@ -278,6 +278,18 @@
 
     .stage-1 .stage-card::before { opacity: 1; }
 
+    .stage-1 .stage-card > .stage-title {
+      margin-bottom: 1.15rem;
+    }
+
+    .aftercare-intro {
+      margin-top: -0.35rem;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.48);
+      line-height: 1.65;
+    }
+
     .stage-header {
       display: flex;
       align-items: flex-start;
@@ -372,6 +384,48 @@
 
     .stage-when em { color: rgba(255,255,255,0.65); font-style: normal; }
 
+    /* £499 build — scoped block inside stage 1 (not aftercare) */
+    .stage-499-scope {
+      border: 1px solid rgba(245,166,35,0.35);
+      border-radius: 12px;
+      padding: 1.35rem 1.5rem 1.5rem;
+      margin-bottom: 1.75rem;
+      background: rgba(245,166,35,0.05);
+    }
+
+    .stage-499-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .stage-499-subtitle {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--white);
+      line-height: 1.35;
+      max-width: 22rem;
+    }
+
+    .stage-499-scope .stage-desc {
+      margin-bottom: 1rem;
+    }
+
+    .stage-499-scope .stage-features {
+      margin-bottom: 0;
+    }
+
+    .aftercare-divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+      margin: 0 0 1.25rem;
+    }
+
     /* ══ AFTERCARE CARDS ══ */
     .aftercare-heading {
       font-size: 0.78rem;
@@ -379,7 +433,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--amber);
-      margin: 1.75rem 0 1rem;
+      margin: 0 0 1rem;
     }
 
     .aftercare-grid {
@@ -648,20 +702,26 @@
       <div class="node-circle">1</div>
     </div>
     <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Your website — live on the internet</h2>
-        <span class="stage-pill pill-included">✓ Included in £499</span>
-      </div>
-      <p class="stage-desc">Everything you need to have a proper online presence. Five pages, your phone number front and centre, and built so it looks good whether someone's on their phone on a job site or on a laptop at home.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>5 pages: Home, About, Services, Gallery, Contact</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your phone number and a contact box so customers can reach you directly</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Looks great on phones, tablets and computers</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Set up so Google knows you exist, what you do, and where you work</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your own web address — e.g. nicksplumbing.co.uk — included in the build fee. Most cost £10–15/year. If your first choice is taken, I'll suggest alternatives.</li>
-      </ul>
+      <h2 class="stage-title">Your website — live on the internet</h2>
 
-      <div class="aftercare-heading">After the build — your choice:</div>
+      <div class="stage-499-scope">
+        <div class="stage-499-head">
+          <span class="stage-499-subtitle">What the one-off £499 build covers</span>
+          <span class="stage-pill pill-included">✓ £499 — one-off build only</span>
+        </div>
+        <p class="stage-desc">Everything you need to have a proper online presence. Five pages, your phone number front and centre, and built so it looks good whether someone's on their phone on a job site or on a laptop at home.</p>
+        <ul class="stage-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>5 pages: Home, About, Services, Gallery, Contact</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your phone number and a contact box so customers can reach you directly</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Looks great on phones, tablets and computers</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Set up so Google knows you exist, what you do, and where you work</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your own web address — e.g. nicksplumbing.co.uk — included in the build fee. Most cost £10–15/year. If your first choice is taken, I'll suggest alternatives.</li>
+        </ul>
+      </div>
+
+      <div class="aftercare-divider" aria-hidden="true"></div>
+      <div class="aftercare-heading">After the build — separate from the £499</div>
+      <p class="aftercare-intro">The £499 is for designing and building the site once. Keeping it live month to month is your choice — either I look after it or you run it yourself (costs below).</p>
       <div class="aftercare-grid">
         <div class="aftercare-card aftercare-managed">
           <div class="aftercare-top">
