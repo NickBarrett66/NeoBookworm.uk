@@ -1337,7 +1337,25 @@
         margin-left: auto;
         margin-right: auto;
       }
-      .mock-site { height: 300px; }
+      /* iOS Safari: flex + img height:100% + object-fit often mis-resolves — fixed frame + absolute img */
+      .mock-site {
+        height: auto;
+      }
+      .mock-plumb-wrap {
+        flex: 0 0 auto;
+        height: 240px;
+        min-height: 240px;
+        position: relative;
+      }
+      .mock-plumb-wrap img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top left;
+      }
       .pricing-layout { grid-template-columns: 1fr; }
       .examples-grid  { grid-template-columns: repeat(2, 1fr); }
       .about-layout   { grid-template-columns: 1fr; }
