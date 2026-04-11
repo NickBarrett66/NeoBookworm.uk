@@ -1467,26 +1467,6 @@
         letter-spacing: -0.02em;
         white-space: nowrap;
       }
-      .nav-links {
-        flex-shrink: 0;
-        margin: 0;
-        padding: 0;
-      }
-      .nav-links li:not(:last-child) { display: none; }
-      .nav-links li:last-child {
-        display: flex;
-        align-items: center;
-      }
-      .nav-cta {
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.45rem 0.75rem;
-        font-size: 0.8125rem;
-        line-height: 1.15;
-        text-align: center;
-      }
       section { padding: 4rem 1.25rem; }
       .trust-strip { gap: 1.2rem; }
       /* Show "Live within a week"; only hide the 5th item to save a line on narrow screens */
@@ -1581,16 +1561,21 @@
   .nb-insured.dk svg path { stroke: #a0b4cc; }
 
 </style>
+<link rel="stylesheet" href="/nav-mobile.css" />
 </head>
 <body>
 
 <!-- ══ NAV ══ -->
-<nav>
+<nav class="site-nav">
   <a href="index.html" class="nav-logo">
   <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
   <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
 </a>
-  <ul class="nav-links">
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <ul id="primary-nav" class="nav-links">
     <li><a href="how-it-works.html">How It Works</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="examples.html">Examples</a></li>
@@ -2023,6 +2008,7 @@
 
   reveals.forEach(el => observer.observe(el));
 </script>
+<script src="/nav-mobile.js" defer></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

@@ -636,7 +636,6 @@
     /* ══ RESPONSIVE ══ */
     @media (max-width: 640px) {
       nav { padding: 1rem 1.25rem; }
-      .nav-links li:not(:last-child) { display: none; }
       .timeline-section { padding: 0 1.25rem 5rem; }
       .timeline-section::before { left: calc(1.25rem + 24px); }
       .stage { grid-template-columns: 50px 1fr; gap: 0 1rem; }
@@ -656,16 +655,21 @@
 .nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
 
 </style>
+<link rel="stylesheet" href="/nav-mobile.css" />
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav class="site-nav">
   <a href="index.html" class="nav-logo">
   <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
   <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
 </a>
-  <ul class="nav-links">
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <ul id="primary-nav" class="nav-links">
     <li><a href="how-it-works.html" class="active">How It Works</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="examples.html">Examples</a></li>
@@ -983,6 +987,7 @@
   }, { threshold: 0.08 });
   reveals.forEach(el => observer.observe(el));
 </script>
+<script src="/nav-mobile.js" defer></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

@@ -20,6 +20,8 @@ NeoBookworm.uk/
 ├── terms.html              # Terms of service
 ├── WEBSITE-REFERENCE.md    # Implementation & troubleshooting reference
 ├── intake-form.html        # Client onboarding form - replaced Tally form
+├── nav-mobile.css          # Hamburger + full-screen menu (≤768px) for main site nav
+├── nav-mobile.js
 ├── header.html             # Shared header partial
 ├── include-header.js       # JS to inject shared header
 ├── accreditations/
