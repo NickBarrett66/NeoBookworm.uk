@@ -801,7 +801,8 @@
     /* Photo screenshots (JPG) in the same frame as 1024×654 PNGs — cover avoids stretch */
     .browser-viewport--photo img {
       object-fit: cover;
-      object-position: top center;
+      /* Nudge crop left so the left edge of the site isn’t clipped (Hartley home card only) */
+      object-position: 36% top;
     }
 
     /* Trade-specific colour blocks */
