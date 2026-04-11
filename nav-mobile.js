@@ -2,7 +2,6 @@
   function closeNav(nav) {
     nav.classList.remove('nav-open');
     document.body.classList.remove('nav-menu-open');
-    document.documentElement.classList.remove('nav-menu-open');
     var btn = nav.querySelector('.nav-toggle');
     if (btn) {
       btn.setAttribute('aria-expanded', 'false');
@@ -13,7 +12,6 @@
   function openNav(nav) {
     nav.classList.add('nav-open');
     document.body.classList.add('nav-menu-open');
-    document.documentElement.classList.add('nav-menu-open');
     var btn = nav.querySelector('.nav-toggle');
     if (btn) {
       btn.setAttribute('aria-expanded', 'true');
