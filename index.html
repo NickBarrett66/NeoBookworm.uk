@@ -725,19 +725,25 @@
       display: block;
     }
 
-    /* Full-page site screenshot — reads like a small browser window (Swift Electrical, etc.) */
+    /* Full-page site screenshot — reads like a small browser window (Swift Electrical, etc.)
+       Viewport keeps exact 1024:654 so the PNG fills with no letterboxing (chrome is fixed px, not % of height). */
     .example-thumb.example-thumb--browser {
-      display: grid;
-      grid-template-rows: clamp(24px, 6.5%, 32px) 1fr;
-      aspect-ratio: 1024 / 682;
+      display: flex;
+      flex-direction: column;
+      aspect-ratio: auto;
+      width: 100%;
+      min-height: 0;
       background: #1e2433;
     }
 
     .browser-chrome {
+      flex: 0 0 auto;
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 0 10px;
+      height: 26px;
+      min-height: 26px;
       background: linear-gradient(180deg, #3d4450 0%, #2a3038 100%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.35);
     }
@@ -776,8 +782,10 @@
 
     .browser-viewport {
       position: relative;
+      width: 100%;
+      aspect-ratio: 1024 / 654;
       overflow: hidden;
-      background: #e8eaed;
+      background: #ffffff;
     }
 
     .browser-viewport img {
@@ -785,8 +793,8 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      object-position: center center;
+      object-fit: fill;
+      object-position: top left;
       display: block;
     }
 

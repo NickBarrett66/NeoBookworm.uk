@@ -63,16 +63,16 @@ nav{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(10,20,45,.94
 .preview{aspect-ratio:16/9;height:auto;min-height:0;overflow:hidden;position:relative;flex-shrink:0}
 .preview>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 /* Full viewport + browser chrome — matches index “site in a window” cards */
-.preview.preview--browser{display:grid;grid-template-rows:clamp(24px,6.5%,32px) 1fr;aspect-ratio:1024/682;background:#1e2433}
-.preview.preview--browser .browser-chrome{display:flex;align-items:center;gap:10px;padding:0 10px;background:linear-gradient(180deg,#3d4450 0%,#2a3038 100%);border-bottom:1px solid rgba(0,0,0,.35)}
+.preview.preview--browser{display:flex;flex-direction:column;aspect-ratio:auto;background:#1e2433}
+.preview.preview--browser .browser-chrome{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:0 10px;height:26px;min-height:26px;background:linear-gradient(180deg,#3d4450 0%,#2a3038 100%);border-bottom:1px solid rgba(0,0,0,.35)}
 .preview.preview--browser .browser-dots{display:flex;gap:5px;flex-shrink:0}
 .preview.preview--browser .browser-dots span{width:9px;height:9px;border-radius:50%;display:block}
 .preview.preview--browser .browser-dots span:nth-child(1){background:#ff5f57}
 .preview.preview--browser .browser-dots span:nth-child(2){background:#febc2e}
 .preview.preview--browser .browser-dots span:nth-child(3){background:#28c840}
 .preview.preview--browser .browser-url{flex:1;min-width:0;font-size:clamp(8px,2vw,10px);color:rgba(255,255,255,.42);background:rgba(0,0,0,.22);border-radius:4px;padding:3px 8px;text-align:center;font-family:ui-monospace,'Segoe UI Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.preview.preview--browser .browser-viewport{position:relative;overflow:hidden;background:#e8eaed}
-.preview.preview--browser .browser-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;display:block}
+.preview.preview--browser .browser-viewport{position:relative;width:100%;aspect-ratio:1024/654;overflow:hidden;background:#fff}
+.preview.preview--browser .browser-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:top left;display:block}
 .meta{padding:16px 18px 18px}
 .trade{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
 .biz{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--tx);margin-bottom:4px;line-height:1.2}
