@@ -34,15 +34,22 @@
 }
 
 @media (max-width: 768px) {
+  /*
+   * Chrome (and others): backdrop-filter on an ancestor makes position:fixed descendants
+   * use that ancestor as their containing block — so the menu was clipped to ~60px nav height.
+   * Drop nav blur on small screens so the full-screen overlay can cover the viewport.
+   */
+  nav.site-nav {
+    overflow: visible;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
   .nav-toggle {
     display: inline-flex;
     flex-shrink: 0;
     position: relative;
     z-index: 320;
-  }
-
-  nav.site-nav {
-    overflow: visible;
   }
 
   nav.site-nav.nav-open {
@@ -82,8 +89,7 @@
     gap: 0;
     list-style: none;
     background: rgba(15, 31, 61, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    /* No backdrop-filter here — avoids blank GPU layers on some Chrome/Android builds */
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
@@ -91,7 +97,7 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.22s ease, visibility 0.22s ease;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
   }
 
   .site-nav.nav-open .nav-links {
@@ -99,6 +105,8 @@
     visibility: visible !important;
     pointer-events: auto;
     touch-action: pan-y;
+    /* Open state: no opacity transition delay — avoids stuck transparent layer in Chrome */
+    transition: none;
   }
 
   .site-nav .nav-links li {
