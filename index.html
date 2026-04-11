@@ -798,6 +798,12 @@
       display: block;
     }
 
+    /* Photo screenshots (JPG) in the same frame as 1024×654 PNGs — cover avoids stretch */
+    .browser-viewport--photo img {
+      object-fit: cover;
+      object-position: top center;
+    }
+
     /* Trade-specific colour blocks */
     .thumb-plumber  { background: linear-gradient(135deg, #0e2d6b 0%, #1a5296 100%); }
     .thumb-electric { background: linear-gradient(135deg, #1a2a0e 0%, #2d5a14 100%); }
@@ -1759,8 +1765,14 @@
         </div>
       </a>
       <a href="examples.html#example-hartley-plumbing" class="example-card reveal">
-        <div class="example-thumb">
-          <img src="Images/demo-hartley-plumbing.jpg" alt="Hartley Plumbing demo site preview">
+        <div class="example-thumb example-thumb--browser">
+          <div class="browser-chrome" aria-hidden="true">
+            <span class="browser-dots"><span></span><span></span><span></span></span>
+            <span class="browser-url">hartley-plumbing-njb-demo.netlify.app</span>
+          </div>
+          <div class="browser-viewport browser-viewport--photo">
+            <img src="Images/demo-hartley-plumbing.jpg" width="1024" height="654" alt="Hartley Plumbing — live demo site in a browser window">
+          </div>
         </div>
         <div class="example-info">
           <div class="example-trade">Plumber</div>

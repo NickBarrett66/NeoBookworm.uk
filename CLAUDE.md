@@ -159,7 +159,7 @@ so keeping it current is essential. Do not wait to be asked.
 
 | Page | Status | Notes |
 |---|---|---|
-| index.html | Complete | Complete — accreditation badges upgraded |
+| index.html | Complete | Complete — accreditation badges upgraded; Hartley + Swift example thumbs use matching browser frame |
 | how-it-works.html | Complete | Stage 1: £499 scoped in sub-box; aftercare explicitly separate |
 | pricing.html | Complete | — |
 | examples.html | Complete | Complete — accreditation badges upgraded; real Midjourney images not yet integrated |
