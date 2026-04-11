@@ -725,6 +725,71 @@
       display: block;
     }
 
+    /* Full-page site screenshot — reads like a small browser window (Swift Electrical, etc.) */
+    .example-thumb.example-thumb--browser {
+      display: grid;
+      grid-template-rows: clamp(24px, 6.5%, 32px) 1fr;
+      aspect-ratio: 1024 / 682;
+      background: #1e2433;
+    }
+
+    .browser-chrome {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      background: linear-gradient(180deg, #3d4450 0%, #2a3038 100%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .browser-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .browser-dots span:nth-child(1) { background: #ff5f57; }
+    .browser-dots span:nth-child(2) { background: #febc2e; }
+    .browser-dots span:nth-child(3) { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      min-width: 0;
+      font-size: clamp(8px, 2vw, 10px);
+      color: rgba(255, 255, 255, 0.42);
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 4px;
+      padding: 3px 8px;
+      text-align: center;
+      font-family: ui-monospace, 'Segoe UI Mono', monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .browser-viewport {
+      position: relative;
+      overflow: hidden;
+      background: #e8eaed;
+    }
+
+    .browser-viewport img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      display: block;
+    }
+
     /* Trade-specific colour blocks */
     .thumb-plumber  { background: linear-gradient(135deg, #0e2d6b 0%, #1a5296 100%); }
     .thumb-electric { background: linear-gradient(135deg, #1a2a0e 0%, #2d5a14 100%); }
@@ -1670,8 +1735,14 @@
     </div>
     <div class="examples-grid">
       <a href="examples.html#example-swift-electricals" class="example-card reveal">
-        <div class="example-thumb">
-          <img src="Images/demo-swift-electricals.jpg" alt="Swift Electricals demo site preview">
+        <div class="example-thumb example-thumb--browser">
+          <div class="browser-chrome" aria-hidden="true">
+            <span class="browser-dots"><span></span><span></span><span></span></span>
+            <span class="browser-url">swift-electrical-njb-demo.netlify.app</span>
+          </div>
+          <div class="browser-viewport">
+            <img src="Images/demo-swift-electricals.png" width="1024" height="654" alt="Swift Electricals — live demo site in a browser window">
+          </div>
         </div>
         <div class="example-info">
           <div class="example-trade">Electrician</div>
