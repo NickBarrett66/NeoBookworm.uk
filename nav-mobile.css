@@ -1,4 +1,4 @@
-/* Mobile navigation — full menu via hamburger (used with nav.site-nav + nav-mobile.js) */
+/* Mobile navigation — hamburger + full-screen menu (nav-mobile.js may move #primary-nav to <body> on small screens) */
 
 .nav-toggle {
   display: none;
@@ -35,9 +35,8 @@
 
 @media (max-width: 768px) {
   /*
-   * Chrome (and others): backdrop-filter on an ancestor makes position:fixed descendants
-   * use that ancestor as their containing block — so the menu was clipped to ~60px nav height.
-   * Drop nav blur on small screens so the full-screen overlay can cover the viewport.
+   * backdrop-filter on <nav> makes fixed descendants use the nav as their containing block
+   * in Chrome — blur disabled on small screens as a safety net.
    */
   nav.site-nav {
     overflow: visible;
@@ -66,8 +65,8 @@
     flex: 1 1 auto;
   }
 
-  /* Full-viewport overlay — no max-height (svh/dvh can collapse height badly on some WebKit builds) */
-  .site-nav .nav-links {
+  /* #primary-nav may be reparented to <body> — selectors must not require .site-nav ancestor */
+  #primary-nav.nav-links {
     position: fixed;
     top: 0;
     left: 0;
@@ -89,7 +88,6 @@
     gap: 0;
     list-style: none;
     background: rgba(15, 31, 61, 0.98);
-    /* No backdrop-filter here — avoids blank GPU layers on some Chrome/Android builds */
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
@@ -98,28 +96,30 @@
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.2s ease, visibility 0.2s ease;
+    /* Promote compositing — helps WebKit (incl. Chrome on iPhone) paint the overlay */
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
   }
 
-  .site-nav.nav-open .nav-links {
+  body.nav-menu-open #primary-nav.nav-links {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto;
     touch-action: pan-y;
-    /* Open state: no opacity transition delay — avoids stuck transparent layer in Chrome */
     transition: none;
   }
 
-  .site-nav .nav-links li {
+  #primary-nav.nav-links li {
     display: list-item !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .site-nav .nav-links li:last-child {
+  #primary-nav.nav-links li:last-child {
     border-bottom: none;
     padding-top: 0.35rem;
   }
 
-  .site-nav .nav-links a {
+  #primary-nav.nav-links a {
     display: block;
     padding: 0.72rem 0;
     font-size: 0.98rem;
@@ -128,13 +128,13 @@
     text-decoration: none;
   }
 
-  .site-nav .nav-links a:hover,
-  .site-nav .nav-links a:active {
+  #primary-nav.nav-links a:hover,
+  #primary-nav.nav-links a:active {
     color: #fff;
   }
 
-  .site-nav .nav-links a.nav-cta,
-  .site-nav .nav-links a.cta {
+  #primary-nav.nav-links a.nav-cta,
+  #primary-nav.nav-links a.cta {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
@@ -147,18 +147,17 @@
     font-weight: 600 !important;
   }
 
-  /* examples.html: .nav-links is a div of anchors (no <li>) */
-  .site-nav .nav-links > a:not(.cta) {
+  /* examples.html: div#primary-nav with direct anchors */
+  #primary-nav.nav-links > a:not(.cta) {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .site-nav .nav-links > a.cta {
+  #primary-nav.nav-links > a.cta {
     border-bottom: none;
     margin-top: 0.35rem;
   }
 }
 
-/* Do not set height: 100% on html/body — breaks position:fixed overlays on iOS */
 body.nav-menu-open {
   overflow: hidden;
 }
