@@ -164,7 +164,7 @@ so keeping it current is essential. Do not wait to be asked.
 | index.html | Complete | Complete — accreditation badges upgraded; Hartley + Swift example thumbs use matching browser frame |
 | how-it-works.html | Complete | Stage 1: £499 scoped in sub-box; aftercare explicitly separate |
 | pricing.html | Complete | — |
-| examples.html | Complete | Complete — accreditation badges upgraded; real Midjourney images not yet integrated |
+| examples.html | Complete | Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
 | about.html | Complete | — |
 | contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |

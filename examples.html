@@ -72,6 +72,7 @@ nav{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(10,20,45,.94
 .preview.preview--browser .browser-url{flex:1;min-width:0;font-size:clamp(8px,2vw,10px);color:rgba(255,255,255,.42);background:rgba(0,0,0,.22);border-radius:4px;padding:3px 8px;text-align:center;font-family:ui-monospace,'Segoe UI Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .preview.preview--browser .browser-viewport{position:relative;width:100%;aspect-ratio:1024/654;overflow:hidden;background:#fff}
 .preview.preview--browser .browser-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:top left;display:block}
+.preview.preview--browser .browser-viewport--photo img{object-fit:cover;object-position:22% top}
 .meta{padding:16px 18px 18px}
 .trade{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
 .biz{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--tx);margin-bottom:4px;line-height:1.2}
@@ -410,8 +411,14 @@ footer{border-top:1px solid var(--bd);padding:28px 32px;display:flex;flex-wrap:w
 
     <!-- PLUMBER — Hartley Plumbing (live demo) -->
     <a class="card rv" id="example-hartley-plumbing" href="https://hartley-plumbing-njb-demo.netlify.app/" target="_blank" rel="noopener noreferrer">
-      <div class="preview">
-        <img src="/Images/demo-hartley-plumbing.jpg" alt="Hartley Plumbing website">
+      <div class="preview preview--browser">
+        <div class="browser-chrome" aria-hidden="true">
+          <span class="browser-dots"><span></span><span></span><span></span></span>
+          <span class="browser-url">hartley-plumbing-njb-demo.netlify.app</span>
+        </div>
+        <div class="browser-viewport browser-viewport--photo">
+          <img src="/Images/demo-hartley-plumbing.jpg" width="1024" height="654" alt="Hartley Plumbing — live demo site in a browser window">
+        </div>
       </div>
       <div class="meta">
         <div class="trade">Plumber</div>
