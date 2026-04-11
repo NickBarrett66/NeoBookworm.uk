@@ -1329,7 +1329,15 @@
     @media (max-width: 900px) {
       .reasons-grid { grid-template-columns: 1fr; }
       .how-layout   { grid-template-columns: 1fr; }
-      .how-visual   { display: none; }
+      /* Keep demo mock visible on phones — was display:none, which hid screenshot + pill */
+      .how-visual {
+        margin-top: 2.75rem;
+        width: 100%;
+        max-width: 440px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .mock-site { height: 300px; }
       .pricing-layout { grid-template-columns: 1fr; }
       .examples-grid  { grid-template-columns: repeat(2, 1fr); }
       .about-layout   { grid-template-columns: 1fr; }
@@ -1341,7 +1349,14 @@
       .nav-links li:not(:last-child) { display: none; }
       section { padding: 4rem 1.25rem; }
       .trust-strip { gap: 1.2rem; }
-      .trust-item:nth-child(n+4) { display: none; }
+      /* Show "Live within a week"; only hide the 5th item to save a line on narrow screens */
+      .trust-item:nth-child(5) { display: none; }
+      .mock-label {
+        right: 0;
+        bottom: -0.75rem;
+        font-size: 0.68rem;
+        padding: 0.4rem 0.75rem;
+      }
       .examples-grid { grid-template-columns: 1fr 1fr; }
       footer { flex-direction: column; align-items: flex-start; }
     }
