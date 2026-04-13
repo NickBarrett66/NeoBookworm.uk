@@ -1,7 +1,7 @@
 # NeoBookworm.uk — Claude Code Instructions
 
 This is the NeoBookworm.uk project — a web design business that builds sites for
-local tradespeople at a fixed price of £499. This file tells Claude Code how the
+local tradespeople at a fixed price of £299. This file tells Claude Code how the
 project is structured and what conventions to follow when building or editing files.
 
 ---
@@ -162,7 +162,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Page | Status | Notes |
 |---|---|---|
 | index.html | Complete | Complete — accreditation badges upgraded; Hartley + Swift example thumbs use matching browser frame |
-| how-it-works.html | Complete | Stage 1: £499 scoped in sub-box; aftercare explicitly separate |
+| how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare explicitly separate |
 | pricing.html | Complete | — |
 | examples.html | Complete | Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
 | about.html | Complete | — |
