@@ -1104,6 +1104,27 @@
       padding-top: 0.85rem;
     }
 
+    .tax-note-subtle {
+      margin-top: 1.1rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.65;
+      max-width: 520px;
+    }
+
+    .tax-note-subtle a {
+      color: rgba(245,166,35,0.9);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245,166,35,0.25);
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tax-note-subtle a:hover {
+      color: var(--amber);
+      border-color: rgba(245,166,35,0.6);
+    }
+
     @media (max-width: 480px) {
       .aftercare-split { grid-template-columns: 1fr; }
     }
@@ -1871,6 +1892,11 @@
           </div>
         </div>
         <p class="aftercare-footnote">The optional extras are one-off additions — separate from the monthly choice above.</p>
+        <p class="tax-note-subtle">
+          By the way — if you're self-employed or running a limited company,
+          your website is likely a tax-deductible business expense.
+          <a href="/pricing#tax-relief">Find out what that means in practice →</a>
+        </p>
       </div>
       <div>
         <div class="addons-header reveal">

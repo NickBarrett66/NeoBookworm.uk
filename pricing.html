@@ -173,6 +173,67 @@
 
     .extras-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
+    /* ══ TAX RELIEF NOTE ══ */
+    .tax-relief-section {
+      padding: 4rem 2rem;
+      margin-top: 4rem;
+      background: #f2f3f5;
+      color: #1a1a1a;
+      border-top: 1px solid rgba(15,31,61,0.08);
+      border-bottom: 1px solid rgba(15,31,61,0.08);
+    }
+
+    .tax-relief-section .section-inner { max-width: 860px; }
+
+    .tax-relief-section h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3.8vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .tax-relief-section p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(26,26,26,0.82);
+      margin-bottom: 1rem;
+    }
+
+    .tax-relief-section h3 {
+      font-family: var(--sans);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin: 1.75rem 0 0.55rem;
+    }
+
+    .tax-relief-section a {
+      color: var(--navy);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(15,31,61,0.25);
+      transition: border-color 0.2s;
+    }
+
+    .tax-relief-section a:hover { border-color: rgba(15,31,61,0.55); }
+
+    .tax-caveat {
+      margin-top: 1.5rem;
+      padding: 1rem 1.1rem;
+      border-left: 3px solid rgba(15,31,61,0.22);
+      background: rgba(15,31,61,0.04);
+      border-radius: 10px;
+    }
+
+    .tax-caveat p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: rgba(26,26,26,0.75);
+    }
+
+    .tax-caveat strong { color: rgba(15,31,61,0.92); }
+
     .extra-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
@@ -456,6 +517,49 @@
     </div>
   </div>
 </div>
+
+<section class="tax-relief-section" id="tax-relief">
+  <div class="section-inner">
+    <h2>A note on tax relief</h2>
+    <p>
+      If you're self-employed or running a limited company, your website is almost
+      certainly a tax-deductible business expense — which means HMRC effectively
+      contributes a portion of the cost through reduced tax liability.
+    </p>
+    <p>
+      This isn't something we'd lead with, but it's worth knowing.
+    </p>
+
+    <h3>If you're a sole trader</h3>
+    <p>
+      The one-off build fee qualifies as a capital expense, which you can usually deduct in full in the year you pay for it under HMRC's Annual Investment Allowance.
+      The monthly hosting fee is a straightforward running cost — fully deductible each year.
+      At the basic rate of income tax (20%), a £299 build fee effectively costs you around £239 after tax relief.
+      The £19.99/month hosting works out closer to £16/month after tax.
+    </p>
+
+    <h3>If you're a limited company</h3>
+    <p>
+      The same principle applies, but the saving comes through Corporation Tax rather than income tax.
+      For most small companies, Corporation Tax is 19% on profits up to £50,000 — so a £299 website costs your company around £242 after tax relief.
+      If your company pays the higher 25% rate (profits above £250,000), the saving is even greater — the same site costs around £224.
+    </p>
+
+    <aside class="tax-caveat">
+      <p>
+        <strong>A sensible caveat:</strong> Tax rules change, and the right treatment
+        for your specific situation depends on your individual circumstances.
+        The figures above are illustrative only and assume full tax relief in the
+        year of purchase. I'm not a tax adviser, and this isn't tax advice —
+        if you're unsure, it's worth a quick word with your accountant.
+        HMRC's own guidance on self-employed expenses is at
+        <a href="https://www.gov.uk/expenses-if-youre-self-employed" target="_blank" rel="noopener">
+          gov.uk/expenses-if-youre-self-employed
+        </a>.
+      </p>
+    </aside>
+  </div>
+</section>
 
 <!-- OPTIONAL EXTRAS -->
 <div class="extras-section">
