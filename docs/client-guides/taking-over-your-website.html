@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Handover Guide — NeoBookworm</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2e4a;
+    --navy-mid: #243d61;
+    --navy-light: #2f517e;
+    --red: #c0392b;
+    --red-light: #e04535;
+    --grey-bg: #f2f3f5;
+    --grey-mid: #dde0e5;
+    --grey-text: #6b7280;
+    --white: #ffffff;
+    --body-text: #2c3440;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--body-text);
+    background: var(--grey-bg);
+  }
+
+  /* ── Page shell ── */
+  .page-wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--white);
+    box-shadow: 0 4px 40px rgba(26,46,74,0.10);
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    background: var(--navy);
+    padding: 48px 56px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.12);
+  }
+
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    right: 40px;
+    bottom: -80px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .brand-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .doc-subtitle {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Red accent bar ── */
+  .accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--red-light) 60%, transparent 100%);
+  }
+
+  /* ── Content area ── */
+  .doc-body {
+    padding: 48px 56px 56px;
+  }
+
+  /* ── Intro callout ── */
+  .intro-callout {
+    background: var(--grey-bg);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    font-size: 15px;
+    color: var(--body-text);
+  }
+
+  .intro-callout p { margin: 0; }
+
+  /* ── Section headings ── */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 48px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--grey-mid);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  h2 .section-num {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+
+  /* ── Paragraphs & lists ── */
+  p { margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul, ol {
+    margin: 10px 0 16px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  ul li, ol li {
+    padding: 5px 0 5px 28px;
+    position: relative;
+    font-size: 15px;
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  ol { counter-reset: ol-counter; }
+  ol li { counter-increment: ol-counter; }
+  ol li::before {
+    content: counter(ol-counter);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-align: center;
+  }
+
+  /* ── Step blocks ── */
+  .step-block {
+    background: var(--grey-bg);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border: 1px solid var(--grey-mid);
+  }
+
+  .step-block strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .step-block p { margin: 0; font-size: 15px; }
+
+  /* ── Registrar sections ── */
+  .registrar {
+    border: 1px solid var(--grey-mid);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .registrar-name {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .registrar-name.featured {
+    background: var(--red);
+  }
+
+  .registrar-body ol {
+    margin: 0;
+  }
+
+  .registrar-body ol li {
+    font-size: 14px;
+    padding: 3px 0 3px 26px;
+  }
+
+  /* ── Callout / blockquote ── */
+  .callout {
+    background: #fff8f7;
+    border: 1px solid rgba(192,57,43,0.2);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--body-text);
+  }
+
+  .callout p { margin: 0; }
+
+  .callout-tip {
+    background: #f0f4ff;
+    border-color: rgba(26,46,74,0.3);
+    border-left-color: var(--navy);
+  }
+
+  /* ── IP address highlight ── */
+  .ip-address {
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    background: var(--navy);
+    color: var(--white);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── Summary checklist ── */
+  .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .summary-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--grey-mid);
+    font-size: 15px;
+  }
+
+  .summary-list li:last-child { border-bottom: none; }
+
+  .summary-num {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  /* ── What I hand over ── */
+  .handover-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .handover-item {
+    background: var(--grey-bg);
+    border: 1px solid var(--grey-mid);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .handover-icon {
+    color: var(--red);
+    font-size: 16px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* ── Option cards ── */
+  .option-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .option-card {
+    border: 1.5px solid var(--grey-mid);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .option-card-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .option-card-body {
+    padding: 16px 18px;
+    font-size: 14px;
+  }
+
+  /* ── Troubleshoot steps ── */
+  .troubleshoot ol {
+    margin: 0;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1.5px solid var(--grey-mid);
+    margin: 40px 0;
+  }
+
+  /* ── Links ── */
+  a { color: var(--navy); font-weight: 500; }
+  a:hover { color: var(--red); }
+
+  /* ── Footer ── */
+  .doc-footer {
+    background: var(--navy);
+    padding: 28px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .footer-contact {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .footer-contact a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-weight: 400;
+  }
+
+  .footer-red-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    display: inline-block;
+    margin: 0 8px;
+    vertical-align: middle;
+  }
+
+  /* ── Print / PDF ── */
+  @media print {
+    body { background: white; }
+    .page-wrapper { box-shadow: none; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    .step-block, .registrar, .callout { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .doc-header, .doc-body { padding: 32px 24px; }
+    .doc-footer { padding: 24px; }
+    .doc-title { font-size: 28px; }
+    .handover-grid, .option-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <header class="doc-header">
+    <div class="brand-line">
+      <div class="brand-dot"></div>
+      <span class="brand-name">NeoBookworm</span>
+    </div>
+    <h1 class="doc-title">Customer<br>Handover Guide</h1>
+    <p class="doc-subtitle">Taking ownership of your website — step by step</p>
+  </header>
+  <div class="accent-bar"></div>
+
+  <!-- Body -->
+  <main class="doc-body">
+
+    <!-- Before we start -->
+    <div class="intro-callout">
+      <p>This guide is written for someone with no technical background. You do not need to understand how websites work to follow these steps. If anything here is unclear, just email me at <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> and I will help you through it.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <h2><span class="section-num">01</span> What 'taking over' actually means</h2>
+    <p>When I build your website, I host it on my account with a service called Netlify — think of it like a landlord renting out space on the internet. The £19.99 a month you pay me covers three things: that 'rent', keeping everything secure and making changes when you need them, <strong>and your annual domain renewal</strong> (the cost of keeping your web address, e.g. nicksplumbing.co.uk, registered in your name).</p>
+    <p>When you decide to take over, three things change:</p>
+    <ul>
+      <li><strong>You become your own landlord</strong> — you open a free Netlify account and move the website there. Hosting a straightforward site like yours is free on Netlify's basic plan, paid directly by you.</li>
+      <li><strong>You take full ownership of the files</strong> — I send you all the files that make up your website. They belong to you completely.</li>
+      <li><strong>You take over the domain renewal</strong> — your web address renews once a year, typically costing £8–15, paid directly to the registrar (the company where the domain is registered). I will give you the login details and renewal date as part of the handover so you know exactly when to expect it.</li>
+    </ul>
+    <p>The whole handover process takes about an hour, most of which is just waiting for things to update.</p>
+
+    <!-- Section 2 -->
+    <h2><span class="section-num">02</span> What you'll need</h2>
+    <ul>
+      <li>A computer, laptop or tablet (a phone will work but a larger screen is easier)</li>
+      <li>Your email address</li>
+      <li>A debit or credit card — Netlify may ask for one on file (hosting is free on the basic plan), and you will need one for your annual domain renewal (£8–15 per year)</li>
+      <li>About an hour of time — though much of it is just waiting</li>
+    </ul>
+    <p>You do not need any technical knowledge. Every step below is written in plain English.</p>
+
+    <!-- Section 3 -->
+    <h2><span class="section-num">03</span> Step-by-step: setting up your own hosting</h2>
+    <p>The service that keeps your website live is called Netlify. It's free to sign up and free to host a straightforward site like yours on their basic plan.</p>
+
+    <div class="step-block">
+      <strong>Step 1 — Create a free Netlify account</strong>
+      <p>Go to <a href="https://netlify.com">netlify.com</a> and click 'Sign up'. Enter your email address and choose a password. Netlify will send you a confirmation email — click the link in it to confirm your account.</p>
+    </div>
+
+    <div class="step-block">
+      <strong>Step 2 — Tell me your Netlify email address</strong>
+      <p>Once you have created your account, send me your Netlify email address. I will use this to transfer your website directly to your account. You do not need to do anything else at this point — I handle the transfer.</p>
+    </div>
+
+    <div class="step-block">
+      <strong>Step 3 — Accept the transfer</strong>
+      <p>You will receive an email from Netlify saying that a site has been transferred to you. Click the link in that email to accept it. Your website is now in your Netlify account.</p>
+    </div>
+
+    <div class="step-block">
+      <strong>Step 4 — Add a payment method</strong>
+      <p>Netlify may ask for a payment method on file when you add your domain. Log in to <a href="https://netlify.com">netlify.com</a>, go to 'Billing' in your account settings, and add a debit or credit card if prompted. Hosting a simple site like yours is free on Netlify's basic plan — this goes directly to Netlify, not to me.</p>
+    </div>
+
+    <div class="step-block">
+      <strong>Step 5 — Connect your web address</strong>
+      <p>This step involves logging in to wherever your web address was registered and pointing it at your new Netlify account. It takes about 10 minutes.</p>
+      <p style="margin-top:10px;">You will need two pieces of information from Netlify:</p>
+      <ul>
+        <li>An IP address: <span class="ip-address">75.2.60.5</span> (this is a fixed Netlify number — always the same)</li>
+        <li>A CNAME value: provided by Netlify when you add your domain in their settings (looks like yoursite.netlify.app)</li>
+      </ul>
+      <p style="margin-top:8px;">See Section 4 below for step-by-step instructions for the most common registrars.</p>
+    </div>
+
+    <div class="step-block">
+      <strong>Step 6 — Check your website is still working</strong>
+      <p>Go to your web address in a browser. It should look exactly as it did before. If anything looks wrong, contact me and I'll fix it at no charge — this is covered as part of the handover.</p>
+    </div>
+
+    <!-- Section 4 -->
+    <h2><span class="section-num">04</span> Connecting your web address — by registrar</h2>
+    <p>Find the company where your web address was registered. If you are not sure, check your inbox for the original registration confirmation email.</p>
+
+    <div class="registrar">
+      <div class="registrar-name">Krystal — krystal.uk</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to <a href="https://krystal.uk">krystal.uk</a> and log in to your account.</li>
+          <li>Click 'Domains' in the top navigation, then click your domain name.</li>
+          <li>Click the 'DNS' tab.</li>
+          <li>Find the 'A' record with name '@'. Click the edit (pencil) icon.</li>
+          <li>Change the value to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record with name 'www'.</li>
+          <li>Set its value to the address Netlify gave you (e.g. yoursite.netlify.app) — then save.</li>
+          <li>Changes usually take effect within an hour, though up to 48 hours is normal.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">GoDaddy — godaddy.com</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to 'My Products' and click 'DNS' or 'Manage DNS' next to your domain.</li>
+          <li>Find the 'A' record with name '@'. Click edit.</li>
+          <li>Change the value to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record with name 'www'.</li>
+          <li>Set its value to the address Netlify gave you (e.g. yoursite.netlify.app) — then save.</li>
+          <li>Changes take up to 48 hours, though usually under an hour.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">123-reg — 123-reg.co.uk</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to 'Manage Domains', click your domain, then 'Manage'.</li>
+          <li>Scroll down and click 'Advanced DNS'.</li>
+          <li>Find the 'A' record with host '@'. Click 'Edit'.</li>
+          <li>Set the destination IP to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record with host 'www'. Set its destination to the address Netlify gave you — then save.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">Namecheap — namecheap.com</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to 'Domain List' and click 'Manage' next to your domain.</li>
+          <li>Click the 'Advanced DNS' tab.</li>
+          <li>Find the 'A Record' with host '@'. Click edit.</li>
+          <li>Set the value to <span class="ip-address">75.2.60.5</span> — save with the green tick.</li>
+          <li>Find or add a 'CNAME Record' with host 'www'. Set the value to the address Netlify gave you — then save.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">Ionos (previously 1&amp;1) — ionos.co.uk</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to 'Domains &amp; SSL', click your domain, then 'DNS'.</li>
+          <li>Find the 'A' record. Click the pencil icon.</li>
+          <li>Change the IPv4 address to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record for 'www'. Set the hostname value to the address Netlify gave you — then save.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">One.com — one.com</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Click on your domain, then go to 'DNS' or 'Advanced DNS settings'.</li>
+          <li>Find the 'A' record with name '@'. Click 'Edit'.</li>
+          <li>Set the IP address to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record for 'www'. Set the value to the address Netlify gave you — then save.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="registrar">
+      <div class="registrar-name">Heart Internet — heartinternet.uk</div>
+      <div class="registrar-body">
+        <ol>
+          <li>Go to 'Manage Domains', click your domain, then 'DNS Management'.</li>
+          <li>Find the 'A' record. Click 'Edit'.</li>
+          <li>Set the IP address to <span class="ip-address">75.2.60.5</span> — then save.</li>
+          <li>Find or add a 'CNAME' record for host 'www'. Set the value to the address Netlify gave you — then save.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <p><strong>Not on this list?</strong> If your registrar isn't listed here, the steps will be very similar — you're looking for a DNS or Advanced DNS section, and you need to update an 'A' record and a 'CNAME' record. Contact me at <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> and I will send you the exact steps.</p>
+    </div>
+
+    <!-- Section 5 -->
+    <h2><span class="section-num">05</span> Making changes after handover</h2>
+
+    <div class="option-cards">
+      <div class="option-card">
+        <div class="option-card-header">Option A — Do it yourself</div>
+        <div class="option-card-body">
+          <p>Netlify has a built-in tool for editing simple things like text and images. If I set up the content management login as part of your site build, you can use that — it works like editing a Word document.</p>
+          <p style="margin-top:10px;">If your site doesn't have that login set up and you want it, I can add it for a one-off fee of <strong>£49</strong>.</p>
+        </div>
+      </div>
+      <div class="option-card">
+        <div class="option-card-header">Option B — Ask me</div>
+        <div class="option-card-body">
+          <p>Even after you've taken over hosting, I'm still happy to make changes. I charge <strong>£25 per hour</strong>, minimum half an hour. Most small changes take 15–30 minutes.</p>
+          <p style="margin-top:10px;">Just email <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> with what you need.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:20px;">
+      <p><strong>Important:</strong> After you take over, you are responsible for two recurring costs: your Netlify hosting account (free on the basic plan, but keep payment details up to date in case Netlify requires them) and your annual domain renewal (£8–15/year, paid to your domain registrar). Both will email you before anything is due — but it is worth setting a calendar reminder for each so nothing lapses unexpectedly.</p>
+    </div>
+
+    <!-- Section 6 -->
+    <h2><span class="section-num">06</span> Your web address</h2>
+    <p>Your web address has always been registered in your name — not mine. This does not change when you take over hosting.</p>
+    <p>Think of it like this: the web address is your house number and street, and the hosting is the land the house sits on. They are connected but separate.</p>
+    <p><strong>While you were on the monthly plan, I paid for your domain renewal as part of your £19.99. Once you take over, this becomes your responsibility.</strong> The domain renews once a year, usually costing £8–15 depending on the registrar. You will receive a renewal reminder by email — it is important not to let it lapse, as an expired domain means your website and email go offline immediately.</p>
+    <p>As part of the handover, I will tell you exactly where your domain is registered, the login details, and the next renewal date so you are not caught off guard.</p>
+
+    <!-- Section 7 -->
+    <h2><span class="section-num">07</span> What I hand over to you</h2>
+
+    <div class="handover-grid">
+      <div class="handover-item">
+        <span class="handover-icon">📁</span>
+        <span>All the files that make up your website (sent as a zip file by email)</span>
+      </div>
+      <div class="handover-item">
+        <span class="handover-icon">🔑</span>
+        <span>The login details for any content management system set up on your site</span>
+      </div>
+      <div class="handover-item">
+        <span class="handover-icon">🌐</span>
+        <span>Details of where your web address is registered and when it next renews</span>
+      </div>
+      <div class="handover-item">
+        <span class="handover-icon">📋</span>
+        <span>A brief summary of anything specific to your site that you might need to know</span>
+      </div>
+    </div>
+
+    <p style="margin-top:20px; font-size:14px; color: var(--grey-text);">I keep a copy of your website files for 90 days after handover in case you need anything. After that, your copies are the only ones.</p>
+
+    <!-- Section 8 -->
+    <h2><span class="section-num">08</span> If something goes wrong</h2>
+    <p>If your website goes offline or something stops working after the handover, here is what to check first:</p>
+
+    <div class="troubleshoot">
+      <ol>
+        <li>Log in to <a href="https://netlify.com">netlify.com</a> and check that your payment is up to date. A failed payment is the most common reason a site goes offline.</li>
+        <li>Check whether your domain has expired. Log in to the registrar (the company where your web address is registered) and check the renewal date. An expired domain will take your site offline even if hosting is fine.</li>
+        <li>Check your email for any messages from Netlify or your domain registrar — both usually send a warning before anything is suspended.</li>
+        <li>If you cannot find the problem, email me at <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>. I will take a look and let you know whether it is something I can fix quickly or whether it needs more work. I will always be upfront about whether there will be a charge before doing anything.</li>
+      </ol>
+    </div>
+
+    <div class="callout callout-tip">
+      <p><strong>Good to know:</strong> The two most common issues after handover are an expired payment method on Netlify, and a domain renewal that was missed. If your card details change, update them in Netlify straightaway. And keep an eye out for the annual renewal reminder from your domain registrar — if that lapses, your site goes offline instantly.</p>
+    </div>
+
+    <!-- Summary -->
+    <hr class="divider">
+    <h2><span class="section-num">✓</span> Summary — six steps</h2>
+
+    <ul class="summary-list">
+      <li><span class="summary-num">1</span> Create a free account at <a href="https://netlify.com">netlify.com</a></li>
+      <li><span class="summary-num">2</span> Send me your Netlify email address</li>
+      <li><span class="summary-num">3</span> I transfer the site to you — accept the transfer email from Netlify</li>
+      <li><span class="summary-num">4</span> Add a payment method to Netlify if prompted (hosting is free on the basic plan)</li>
+      <li><span class="summary-num">5</span> I help you connect your web address to your new account</li>
+      <li><span class="summary-num">6</span> Check your site is working — you're done</li>
+    </ul>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <div class="footer-brand">NeoBookworm.uk</div>
+    <div class="footer-contact">
+      <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>
+      <span class="footer-red-dot"></span>
+      Nick Barrett
+      <span class="footer-red-dot"></span>
+      Based in Swindon
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
