@@ -161,9 +161,9 @@ so keeping it current is essential. Do not wait to be asked.
 
 | Page | Status | Notes |
 |---|---|---|
-| index.html | Complete | Complete — accreditation badges upgraded; Hartley + Swift example thumbs use matching browser frame |
-| how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare explicitly separate |
-| pricing.html | Complete | — |
+| index.html | Complete | Accreditation badges + example thumbs; aftercare copy aligned with client handover (self-managed: Netlify basic + annual web address renewal). |
+| how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare matches handover (renewal in £19.99; self-managed Netlify + renewal). |
+| pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £19.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
 | examples.html | Complete | Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
 | about.html | Complete | — |
 | contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
