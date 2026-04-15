@@ -189,6 +189,8 @@
     .footer-links { display: flex; gap: 1.5rem; list-style: none; }
     .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.32); text-decoration: none; transition: color 0.2s; }
     .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-links a.active,
+    .footer-links a[aria-current="page"] { color: var(--amber); }
 
     @media (max-width: 640px) {
       nav { padding: 1rem 1.25rem; }
@@ -324,7 +326,7 @@
     <span class="footer-copy">© 2026 Nick Barrett, Swindon</span>
   </div>
   <ul class="footer-links">
-    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="privacy.html" class="active" aria-current="page">Privacy Policy</a></li>
     <li><a href="terms.html">Terms of service</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
