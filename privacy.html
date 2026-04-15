@@ -203,12 +203,13 @@
 
     p strong { color: rgba(255,255,255,0.85); }
 
-    ul {
+    /* Policy lists only — #primary-nav is also a <ul> and must stay unstyled */
+    .content ul {
       list-style: none;
       margin: 0.5rem 0 0.75rem;
       padding: 0;
     }
-    ul li {
+    .content ul li {
       position: relative;
       padding-left: 1.25rem;
       font-size: 0.95rem;
@@ -216,13 +217,13 @@
       line-height: 1.7;
       margin-bottom: 0.4rem;
     }
-    ul li::before {
+    .content ul li::before {
       content: '–';
       position: absolute; left: 0;
       color: var(--amber);
       font-weight: 700;
     }
-    ul li strong { color: rgba(255,255,255,0.85); }
+    .content ul li strong { color: rgba(255,255,255,0.85); }
 
     .optout-box {
       background: rgba(255,255,255,0.04);
