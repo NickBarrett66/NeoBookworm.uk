@@ -165,7 +165,7 @@ so keeping it current is essential. Do not wait to be asked.
 | how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare matches handover (renewal in £19.99; self-managed Netlify + renewal). |
 | pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £19.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
 | examples.html | Complete | Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
-| about.html | Complete | — |
+| about.html | Complete | Monthly maintenance shown as £19.99 (optional). |
 | contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |
 | terms.html | Complete | — |
