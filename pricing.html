@@ -342,8 +342,16 @@
     .footer-links a:hover { color: rgba(255,255,255,0.7); }
 
     /* ══ REVEAL ══ */
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /*
+     * Scroll Reveal -- progressive enhancement.
+     * Content is visible by default. JS adds .js-reveal to <html> to opt in.
+     */
+    html.js-reveal .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    html.js-reveal .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html.js-reveal .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
 
     /* ══ RESPONSIVE ══ */
     @media (max-width: 900px) {
@@ -783,17 +791,31 @@
 </footer>
 
 <script>
-  // Scroll reveal
+  // Scroll Reveal — progressive enhancement (content visible without JS)
+  document.documentElement.classList.add('js-reveal');
+
   const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
-      }
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Immediately reveal anything already in the viewport
+    reveals.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) el.classList.add('visible');
     });
-  }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
-  reveals.forEach(el => observer.observe(el));
+  } else {
+    // No IntersectionObserver support — just show everything
+    reveals.forEach(el => el.classList.add('visible'));
+  }
 
   // FAQ accordion
   document.querySelectorAll('.faq-question').forEach(btn => {

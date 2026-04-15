@@ -1395,15 +1395,27 @@
     /* ══════════════════════════════════════
        SCROLL REVEAL
     ══════════════════════════════════════ */
-    .reveal {
+    /*
+     * Scroll Reveal -- progressive enhancement.
+     * Content is visible by default. JS adds .js-reveal to <html> to opt in.
+     */
+    html.js-reveal .reveal {
       opacity: 0;
       transform: translateY(24px);
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
 
-    .reveal.visible {
+    html.js-reveal .reveal.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html.js-reveal .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
     }
 
     /* ══════════════════════════════════════
@@ -2016,23 +2028,43 @@
 </footer>
 
 <script>
-  // Scroll reveal
+  // Scroll Reveal — progressive enhancement (content visible without JS)
+  document.documentElement.classList.add('js-reveal');
+
   const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
         // Stagger siblings in same parent
-        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal:not(.visible)')];
+        const parent = entry.target.parentElement;
+        const siblings = parent
+          ? [...parent.querySelectorAll('.reveal:not(.visible)')]
+          : [entry.target];
         const idx = siblings.indexOf(entry.target);
+        const delay = Math.max(0, idx) * 80;
+
         setTimeout(() => {
           entry.target.classList.add('visible');
-        }, idx * 80);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
+        }, delay);
 
-  reveals.forEach(el => observer.observe(el));
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Immediately reveal anything already in the viewport (e.g. direct #pricing loads)
+    reveals.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) el.classList.add('visible');
+    });
+  } else {
+    // No IntersectionObserver support — just show everything
+    reveals.forEach(el => el.classList.add('visible'));
+  }
 </script>
 <script src="/nav-mobile.js" defer></script>
   <script defer src="/_vercel/insights/script.js"></script>
