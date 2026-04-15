@@ -2,21 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Terms of Service — NeoBookworm.uk</title>
-  <meta name="description" content="Terms of service for NeoBookworm.uk — the website build, care plan, payments, and how we work together." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://neobookworm.uk/terms.html" />
-  <meta property="og:title" content="Terms of Service — NeoBookworm.uk" />
-  <meta property="og:description" content="Terms of service for NeoBookworm.uk — the website build, care plan, payments, and how we work together." />
-  <meta property="og:image" content="https://neobookworm.uk/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background" />
-  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -24,334 +11,418 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:       #0f1f3d;
-      --navy-mid:   #1a3260;
-      --navy-light: #243d72;
-      --amber:      #f5a623;
-      --amber-dark: #d4891a;
-      --amber-pale: rgba(245,166,35,0.10);
-      --amber-glow: rgba(245,166,35,0.22);
-      --white:      #ffffff;
-      --muted:      rgba(255,255,255,0.58);
+      --navy:        #0f1f3d;
+      --navy-mid:    #1a3260;
+      --navy-light:  #243d72;
+      --amber:       #f5a623;
+      --amber-dark:  #d4891a;
+      --amber-pale:  rgba(245,166,35,0.10);
+      --amber-glow:  rgba(245,166,35,0.22);
+      --white:       #ffffff;
+      --muted:       rgba(255,255,255,0.58);
+      --muted-dim:   rgba(255,255,255,0.35);
+      --rule:        rgba(255,255,255,0.08);
       --serif: 'Playfair Display', Georgia, serif;
       --sans:  'DM Sans', system-ui, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
+
     body {
       font-family: var(--sans);
       background: var(--navy);
       color: var(--white);
+      font-size: 16px;
+      line-height: 1.75;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ══ NAV ══ */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.2rem 2.5rem;
-      background: rgba(15,31,61,0.9);
+    /* ── Nav ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(15,31,61,0.92);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--rule);
     }
-    .nav-logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
 
-    .logo-wordmark { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--white); }
-    .logo-wordmark span { color: var(--amber); }
-    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
-    .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--white); }
-    .nav-links a.active { color: var(--amber); }
-    .nav-cta { background: var(--amber) !important; color: var(--navy) !important; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
-
-    /* ══ PAGE HERO ══ */
-    .page-hero {
-      padding: 9rem 2rem 4rem; text-align: center;
-      position: relative; overflow: hidden;
+    .logo {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
     }
-    .page-hero::before {
-      content: ''; position: absolute; inset: 0;
+
+    .logo span { color: var(--amber); }
+
+    nav { display: flex; gap: 2rem; }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--white); }
+
+    /* ── Hero band ── */
+    .hero-band {
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
       background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,50,96,0.9) 0%, transparent 70%);
       pointer-events: none;
     }
-    .page-hero::after {
-      content: ''; position: absolute; inset: 0;
+
+    .hero-band::after {
+      content: '';
+      position: absolute;
+      inset: 0;
       background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
-      background-size: 32px 32px; pointer-events: none;
+      background-size: 32px 32px;
+      pointer-events: none;
       mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
     }
-    .page-hero-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
-    .page-label { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; }
-    .page-title { font-family: var(--serif); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 900; line-height: 1.08; letter-spacing: -0.025em; color: var(--white); margin-bottom: 1.25rem; }
-    .page-intro { font-size: 1.05rem; color: rgba(255,255,255,0.65); line-height: 1.75; max-width: 540px; margin: 0 auto; }
-    .last-updated { display: inline-block; margin-top: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.3); }
 
-    /* ══ CONTENT ══ */
-    .content {
+    .hero-band-inner { position: relative; z-index: 1; }
+
+    .page-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+
+    .hero-band h1 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+
+    .hero-band p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* ── Layout ── */
+    .wrapper {
       max-width: 760px;
       margin: 0 auto;
-      padding: 3rem 2rem 6rem;
+      padding: 3rem 2rem 5rem;
     }
 
-    .plain-english {
-      background: var(--amber-pale);
-      border: 1px solid rgba(245,166,35,0.25);
-      border-radius: 10px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 3rem;
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.75);
-      line-height: 1.65;
+    /* ── Section cards ── */
+    .section {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 2rem 2.25rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s;
     }
-    .plain-english strong { color: var(--amber); }
 
-    .policy-section {
-      margin-bottom: 2.5rem;
-      padding-bottom: 2.5rem;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+    .section:hover { border-color: rgba(245,166,35,0.2); }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
     }
-    .policy-section:last-child { border-bottom: none; }
 
     .section-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 26px; height: 26px;
-      background: var(--amber); color: var(--navy);
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      background: rgba(245,166,35,0.15);
+      border: 1px solid rgba(245,166,35,0.3);
+      color: var(--amber);
       border-radius: 50%;
-      font-family: var(--sans); font-size: 0.72rem; font-weight: 700;
-      margin-right: 0.6rem; flex-shrink: 0;
-    }
-
-    h2 {
-      font-family: var(--serif);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 1rem;
       display: flex;
       align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.1rem;
     }
 
-    p {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.62);
-      line-height: 1.75;
+    .section h2 {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: var(--white);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .section p {
+      color: var(--muted);
+      font-size: 0.92rem;
       margin-bottom: 0.75rem;
     }
-    p:last-child { margin-bottom: 0; }
 
-    p strong { color: rgba(255,255,255,0.85); }
+    .section p:last-child { margin-bottom: 0; }
 
-    ul {
+    .section strong { color: var(--white); }
+
+    .section ul {
       list-style: none;
-      margin: 0.5rem 0 0.75rem;
       padding: 0;
+      margin: 0.5rem 0 0.75rem;
     }
-    ul li {
-      position: relative;
-      padding-left: 1.25rem;
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.62);
-      line-height: 1.7;
-      margin-bottom: 0.4rem;
-    }
-    ul li::before {
-      content: '–';
-      position: absolute; left: 0;
-      color: var(--amber);
-      font-weight: 700;
-    }
-    ul li strong { color: rgba(255,255,255,0.85); }
 
+    .section ul li {
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 0.35rem 0 0.35rem 1.5rem;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+    }
+
+    .section ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.78rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      flex-shrink: 0;
+    }
+
+    /* ── Highlight box ── */
+    .highlight {
+      background: rgba(245,166,35,0.08);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+      padding: 0.9rem 1.1rem;
+      margin: 0.85rem 0;
+    }
+
+    .highlight p {
+      color: rgba(245,166,35,0.9) !important;
+      font-size: 0.9rem !important;
+      margin: 0 !important;
+    }
+
+    .highlight strong { color: var(--amber) !important; }
+
+    /* ── Price pill ── */
     .price-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin: 0.75rem 0 1rem;
+      margin: 0.75rem 0;
     }
+
     .price-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(245,166,35,0.35);
-      color: rgba(255,255,255,0.9);
+      background: rgba(245,166,35,0.12);
+      border: 1px solid rgba(245,166,35,0.3);
+      color: var(--white);
       border-radius: 99px;
-      padding: 0.4rem 1rem;
+      padding: 0.35rem 1rem;
       font-size: 0.88rem;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    .price-pill strong { color: var(--amber); font-weight: 700; }
 
-    a { color: var(--amber); text-decoration: none; transition: opacity 0.2s; }
-    a:hover { opacity: 0.8; }
+    .price-pill strong {
+      color: var(--amber);
+      font-weight: 700;
+    }
 
-    /* ══ FOOTER ══ */
+    /* ── Footer ── */
     footer {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 1rem;
-      padding: 2rem 2.5rem;
-      border-top: 1px solid rgba(255,255,255,0.07);
-    }
-    .footer-left { display: flex; align-items: center; gap: 1rem; }
-    .footer-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-    .footer-mark { width: 28px; height: 28px; background: var(--amber); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 900; font-size: 0.85rem; color: var(--navy); }
-    .footer-name { font-family: var(--serif); font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.5); }
-    .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.25); }
-    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.32); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: rgba(255,255,255,0.7); }
-
-    @media (max-width: 640px) {
-      nav { padding: 1rem 1.25rem; }
-      .nav-links { gap: 1rem; }
-      .content { padding: 2rem 1.25rem 4rem; }
-      footer { flex-direction: column; align-items: flex-start; padding: 1.5rem 1.25rem; }
-      .footer-links { flex-wrap: wrap; gap: 1rem; }
+      background: rgba(0,0,0,0.3);
+      border-top: 1px solid var(--rule);
+      color: var(--muted-dim);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
     }
 
-    .nav-logo-img, .footer-logo-img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      display: inline-block;
-      margin-right: 0.6rem;
-      vertical-align: middle;
+    footer a {
+      color: var(--amber);
+      text-decoration: none;
+      transition: color 0.2s;
     }
-    .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
-    .nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
+
+    footer a:hover { color: var(--amber-dark); }
+
+    @media (max-width: 600px) {
+      header { padding: 1rem 1.25rem; }
+      nav { gap: 1.25rem; }
+      .wrapper { padding: 2rem 1rem 4rem; }
+      .section { padding: 1.5rem 1.25rem; }
+    }
   </style>
-  <link rel="stylesheet" href="/nav-mobile.css" />
 </head>
 <body>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
-    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
-  </a>
-  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
-    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
-  </button>
-  <ul id="primary-nav" class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="examples.html">Examples</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contact.html" class="nav-cta">Contact</a></li>
-  </ul>
-</nav>
+  <header>
+    <a class="logo" href="/">Neo<span>Bookworm</span>.uk</a>
+    <nav>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/privacy.html">Privacy</a>
+    </nav>
+  </header>
 
-<div class="page-hero">
-  <div class="page-hero-inner">
-    <span class="page-label">Legal</span>
-    <h1 class="page-title">Terms of service</h1>
-    <p class="page-intro">What is included in the £299 build, how the optional monthly care plan works, and the practical side of working together. If anything is unclear before you go ahead, use the <a href="contact.html">contact form</a> or email <strong>nick@neobookworm.uk</strong>.</p>
-    <span class="last-updated">Last updated: April 2026 · NeoBookworm.uk is operated by Nick Barrett, Swindon, Wiltshire</span>
-  </div>
-</div>
-
-<div class="content">
-
-  <div class="policy-section">
-    <h2><span class="section-num">1</span> Who I am and what these terms cover</h2>
-    <p>NeoBookworm.uk is run by me, Nick Barrett, from Swindon, Wiltshire. I build websites for tradespeople across the UK — one person, doing the work properly.</p>
-    <p>These terms apply when you ask me to build you a website and/or when you take out a monthly care plan. By proceeding with an order you are agreeing to them.</p>
-  </div>
-
-  <div class="policy-section">
-    <h2><span class="section-num">2</span> The website build</h2>
-    <div class="price-row">
-      <div class="price-pill">Fixed price <strong>£299</strong></div>
+  <div class="hero-band">
+    <div class="hero-band-inner">
+      <span class="page-label">Legal</span>
+      <h1>Terms of Service</h1>
+      <p>Last updated: April 2026 &nbsp;·&nbsp; NeoBookworm.uk is operated by Nick Barrett, Swindon, Wiltshire</p>
     </div>
-    <p>The £299 fixed price covers the design, build, and launch of your new website. That means:</p>
-    <ul>
-      <li>A multi-page site built around your trade and how you work</li>
-      <li>Your services, contact details, and the areas you cover</li>
-      <li>A design that looks right on phones, tablets, and desktop</li>
-      <li>Setup so the site is ready for people to find online</li>
-    </ul>
-    <div class="plain-english">
-      <p><strong>You don&rsquo;t pay until you&rsquo;re happy with it.</strong> I&rsquo;ll show you the finished site before asking for payment. If it&rsquo;s not right for you, there&rsquo;s no obligation to proceed and the site won&rsquo;t go live.</p>
+  </div>
+
+  <div class="wrapper">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Who I am and what these terms cover</h2>
+      </div>
+      <p>NeoBookworm.uk is run by me, Nick Barrett, from Swindon, Wiltshire. I build websites for tradespeople across the UK — one person, doing the work properly.</p>
+      <p>These terms apply when you ask me to build you a website and/or when you take out a monthly care plan. By proceeding with an order you are agreeing to them.</p>
+      <p>If anything here is unclear before you proceed, just drop me an email: <strong>nick@neobookworm.uk</strong></p>
     </div>
-    <p>Once payment is made the site goes live and it&rsquo;s yours outright — no hidden costs, no ongoing obligations unless you choose to add the care plan.</p>
-  </div>
 
-  <div class="policy-section">
-    <h2><span class="section-num">3</span> Monthly care plan (optional)</h2>
-    <div class="price-row">
-      <div class="price-pill"><strong>£19.99</strong> / month</div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>The website build</h2>
+      </div>
+      <div class="price-row">
+        <div class="price-pill">Fixed price <strong>£299</strong></div>
+      </div>
+      <p>The £299 fixed price covers the design, build, and launch of your new website. That means:</p>
+      <ul>
+        <li>A multi-page site built around your trade and how you work</li>
+        <li>Your services, contact details, and the areas you cover</li>
+        <li>A design that looks right on phones, tablets, and desktop</li>
+        <li>Setup on hosting so it is ready for people to find</li>
+        <li>Your web address (e.g. nicksplumbing.co.uk) — most cost £10–15/year and that's included. If your preferred name is taken I'll suggest alternatives at no extra cost</li>
+        <li>Changes included until you're happy — you review the site before it goes live and I make any adjustments you need</li>
+      </ul>
+      <div class="highlight">
+        <p><strong>You don't pay until you're happy with it.</strong> I'll show you the finished site before asking for payment. If it's not right for you, there's no obligation to proceed and the site won't go live.</p>
+      </div>
+      <p>Once payment is made the site goes live and it's yours outright — no hidden costs, no ongoing obligations unless you choose to add the care plan.</p>
     </div>
-    <p>The care plan is entirely your choice — your site stays live either way. It is there if you would rather I handle the technical side so you can focus on the work you are actually paid for.</p>
-    <p>It covers:</p>
-    <ul>
-      <li>Keeping your site live, fast, and on the right setup behind the scenes</li>
-      <li>Security and software updates as they come out</li>
-      <li>Small text and content changes (up to around 30 minutes of work a month)</li>
-    </ul>
-    <p>Bigger changes — new pages, new sections, new features — are quoted separately at £25 an hour. I will always tell you the cost before starting.</p>
-    <p>You can cancel at any time with no fuss. Cancellation takes effect at the end of your current billing month, and your site files are yours regardless.</p>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Monthly care plan (optional)</h2>
+      </div>
+      <div class="price-row">
+        <div class="price-pill"><strong>£19.99</strong> / month</div>
+      </div>
+      <p>The care plan is entirely your choice — your site stays live either way. It is there if you would rather I handle the technical side so you can focus on the work you are actually paid for.</p>
+      <p>It covers:</p>
+      <ul>
+        <li>Keeping your site live, fast, and on the right hosting</li>
+        <li>Security and software updates as they come out</li>
+        <li>Small text and content changes (up to around 30 minutes of work a month)</li>
+        <li>Your annual web address renewal — I sort it so it stays registered in your name (typically £8–15/year to the registrar, covered while you're on the plan)</li>
+      </ul>
+      <p>Bigger changes — new pages, new sections, new features — are quoted separately at £25 an hour. I will always tell you the cost before starting.</p>
+      <p>You can cancel at any time with no fuss. Cancellation takes effect at the end of your current billing month, and your site files are yours regardless.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Ownership of your website</h2>
+      </div>
+      <p>Once the build fee is paid, the site is yours. The pages, the copy I have written, the design — all of it belongs to you.</p>
+      <p>Any photos or logos you supply stay yours throughout. I will not use them for anything else without asking.</p>
+      <p>If you ever want to move the site to a different provider or hand it to another developer, I will give you all the files at no extra charge.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>What I need from you</h2>
+      </div>
+      <p>To get started I need you to fill in my intake form — your business details, a description of what you do, and any photos or a logo you want to use. The more you give me, the better the result.</p>
+      <p>By sending me images and other content, you are confirming that you own them or have the right to use them on your website.</p>
+      <p>I will keep things moving at my end. If I am waiting on information or sign-off from you for more than 14 days and cannot reach you, I will put the project on hold. There is no penalty — just get back in touch when you are ready and I will pick it back up.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Payment</h2>
+      </div>
+      <p>Build payment is taken online via a secure payment link — powered by Stripe — after you have seen and approved the finished site.</p>
+      <p>Care plan payments are taken monthly by card on the same date each month. You will get a receipt by email each time.</p>
+      <p>I do not store your card details. All payments go through Stripe, which handles the security side.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>My liability</h2>
+      </div>
+      <p>I build sites carefully and test them properly before they go live. That said, no hosting setup can guarantee 100% uptime — if your site goes down for a reason within my control, I will get it fixed as quickly as I can.</p>
+      <p>I am not liable for loss of business, lost revenue, or indirect costs arising from your site being unavailable or not performing as expected.</p>
+      <p>My total liability to you in any situation is limited to the amount you have paid me in the preceding 12 months.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Changes to these terms</h2>
+      </div>
+      <p>I may update these terms occasionally. The date at the top of this page shows when they were last changed. If you are on a care plan, I will email you before any significant changes take effect.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Governing law</h2>
+      </div>
+      <p>These terms are governed by the laws of England and Wales. Any disputes are subject to the jurisdiction of the courts of England and Wales.</p>
+      <p>If something is not right, please come to me first at <strong>nick@neobookworm.uk</strong> — I would always rather sort things out directly.</p>
+    </div>
+
   </div>
 
-  <div class="policy-section">
-    <h2><span class="section-num">4</span> Ownership of your website</h2>
-    <p>Once the build fee is paid, the site is yours. The pages, the copy I have written, the design — all of it belongs to you.</p>
-    <p>Any photos or logos you supply stay yours throughout. I will not use them for anything else without asking.</p>
-    <p>If you ever want to move the site to a different provider or hand it to another developer, I will give you all the files at no extra charge.</p>
-  </div>
+  <footer>
+    <p>NeoBookworm.uk &nbsp;·&nbsp; © 2026 Nick Barrett, Swindon &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="/contact.html">Contact</a></p>
+  </footer>
 
-  <div class="policy-section">
-    <h2><span class="section-num">5</span> What I need from you</h2>
-    <p>To get started I need you to fill in my intake form — your business details, a description of what you do, and any photos or a logo you want to use. The more you give me, the better the result.</p>
-    <p>By sending me images and other content, you are confirming that you own them or have the right to use them on your website.</p>
-    <p>I will keep things moving at my end. If I am waiting on information or sign-off from you for more than 14 days and cannot reach you, I will put the project on hold. There is no penalty — just get back in touch when you are ready and I will pick it back up.</p>
-  </div>
-
-  <div class="policy-section">
-    <h2><span class="section-num">6</span> Payment</h2>
-    <p>Build payment is taken online via a secure payment link — powered by Stripe — after you have seen and approved the finished site.</p>
-    <p>Care plan payments are taken monthly by card on the same date each month. You will get a receipt by email each time.</p>
-    <p>I do not store your card details. All payments go through Stripe, which handles the security side.</p>
-  </div>
-
-  <div class="policy-section">
-    <h2><span class="section-num">7</span> My liability</h2>
-    <p>I build sites carefully and test them properly before they go live. That said, no setup behind the scenes can guarantee 100% uptime — if your site goes down for a reason within my control, I will get it fixed as quickly as I can.</p>
-    <p>I am not liable for loss of business, lost revenue, or indirect costs arising from your site being unavailable or not performing as expected.</p>
-    <p>My total liability to you in any situation is limited to the amount you have paid me in the preceding 12 months.</p>
-  </div>
-
-  <div class="policy-section">
-    <h2><span class="section-num">8</span> Changes to these terms</h2>
-    <p>I may update these terms occasionally. The date at the top of this page shows when they were last changed. If you are on a care plan, I will email you before any significant changes take effect.</p>
-  </div>
-
-  <div class="policy-section">
-    <h2><span class="section-num">9</span> Governing law</h2>
-    <p>These terms are governed by the laws of England and Wales. Any disputes are subject to the jurisdiction of the courts of England and Wales.</p>
-    <p>If something is not right, please come to me first at <strong>nick@neobookworm.uk</strong> — I would always rather sort things out directly.</p>
-  </div>
-
-</div>
-
-<footer>
-  <div class="footer-left">
-    <a href="index.html" class="footer-logo">
-      <div class="footer-mark">N</div>
-      <span class="footer-name">Neo<span>Bookworm.uk</span></span>
-    </a>
-    <span class="footer-copy">© 2026 Nick Barrett, Swindon</span>
-  </div>
-  <ul class="footer-links">
-    <li><a href="privacy.html">Privacy Policy</a></li>
-    <li><a href="terms.html">Terms of service</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-</footer>
-
-  <script src="/nav-mobile.js" defer></script>
-  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
