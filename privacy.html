@@ -46,24 +46,70 @@
       overflow-x: hidden;
     }
 
-    /* ══ NAV ══ */
+    /* NAV (matches Home / How it works / Pricing / Terms) */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 1.2rem 2.5rem;
       background: rgba(15,31,61,0.9);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: padding 0.3s;
     }
-    .nav-logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
-    
-    .logo-wordmark { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--white); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-wordmark {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
     .logo-wordmark span { color: var(--amber); }
-    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
-    .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
     .nav-links a:hover { color: var(--white); }
     .nav-links a.active { color: var(--amber); }
-    .nav-cta { background: var(--amber) !important; color: var(--navy) !important; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
+
+    .nav-cta {
+      background: var(--amber) !important;
+      color: var(--navy) !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      transition: background 0.2s !important, transform 0.15s !important;
+    }
+    .nav-cta:hover {
+      background: var(--amber-dark) !important;
+      transform: translateY(-1px);
+    }
 
     /* ══ PAGE HERO ══ */
     .page-hero {
@@ -208,7 +254,9 @@
   margin-right: 0.6rem;
   vertical-align: middle;
 }
-.nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+@media (min-width: 641px) {
+  .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+}
 .nav-wordmark span, .logo-wordmark span, .footer-name span { color: var(--amber); }
 
 </style>
@@ -218,9 +266,9 @@
 
 <nav class="site-nav">
   <a href="index.html" class="nav-logo">
-  <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
-  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
-</a>
+    <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
+    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+  </a>
   <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
     <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
