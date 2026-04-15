@@ -24,6 +24,7 @@
   --amber:#f5a623;--amber2:#e8951a;
   --ap:rgba(245,166,35,.10);--ab:rgba(245,166,35,.22);
   --tx:#f0e8da;--mu:#8fa3c0;--mu2:#5a7496;--bd:rgba(245,166,35,.18);
+  --muted:rgba(255,255,255,.58);
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--tx);overflow-x:hidden}
@@ -255,12 +256,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .btn-s{display:inline-block;padding:13px 28px;background:transparent;color:var(--mu);font-size:14px;border:1px solid var(--bd);border-radius:4px;text-decoration:none;transition:all .2s}
 .btn-s:hover{border-color:rgba(245,166,35,.4);color:var(--tx)}
 
-/* FOOTER */
-footer{border-top:1px solid var(--bd);padding:28px 32px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;position:relative;z-index:1}
-.flinks{display:flex;gap:20px}
-.flinks a{font-size:12px;color:var(--mu2);text-decoration:none;transition:color .2s}
-.flinks a:hover{color:var(--tx)}
-.fcopy{font-size:11px;color:var(--mu2)}
+/* FOOTER (match About) */
+footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24px;position:relative;z-index:1}
+.footer-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-copy{font-size:12px;font-weight:300;color:var(--muted);margin-top:2px}
+.footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.footer-links a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--amber)}
+.footer-sep{width:1px;height:16px;background:var(--bd)}
 
 /* INTRO STRIP */
 .intro{background:var(--navy3);border:1px solid var(--bd);border-radius:8px;padding:20px 26px;margin-bottom:38px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
@@ -671,11 +675,16 @@ footer{border-top:1px solid var(--bd);padding:28px 32px;display:flex;flex-wrap:w
 </div>
 
 <footer>
-  <div class="flinks">
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of service</a>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="terms.html">Terms of service</a></li>
+    </ul>
   </div>
-  <div class="fcopy">&copy; 2026 Nick Barrett, Swindon</div>
 </footer>
 
 <script>

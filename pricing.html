@@ -33,6 +33,7 @@
       --amber-glow: rgba(245,166,35,0.22);
       --white:      #ffffff;
       --muted:      rgba(255,255,255,0.58);
+      --border:     rgba(245,166,35,0.18);
       --serif: 'Playfair Display', Georgia, serif;
       --sans:  'DM Sans', system-ui, sans-serif;
     }
@@ -327,16 +328,51 @@
     .cta-email:hover { color: var(--amber); }
 
     /* ══ FOOTER ══ */
+    /* ---- Footer (match About) ---- */
     footer {
-      background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 2rem 2.5rem; display: flex; align-items: center;
-      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      background: rgba(0,0,0,0.25);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
     }
-    .footer-left { display: flex; align-items: center; gap: 1rem; }
-    .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.25); }
-    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.32); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--amber); }
+    .footer-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
 
     /* ══ REVEAL ══ */
     /*
@@ -360,7 +396,6 @@
       nav { padding: 1rem 1.25rem; }
       .aftercare-grid { grid-template-columns: 1fr; }
       .extras-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; align-items: flex-start; padding: 1.5rem 1.25rem; }
     }
   
 .nav-logo-img, .footer-logo-img {
@@ -772,13 +807,16 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">
-    <span class="footer-copy">© 2026 Nick Barrett, Swindon</span>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="terms.html">Terms of service</a></li>
+    </ul>
   </div>
-  <ul class="footer-links">
-    <li><a href="privacy.html">Privacy Policy</a></li>
-    <li><a href="terms.html">Terms of service</a></li>
-  </ul>
 </footer>
 
 <script>
