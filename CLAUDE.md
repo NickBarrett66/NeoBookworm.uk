@@ -161,10 +161,10 @@ so keeping it current is essential. Do not wait to be asked.
 
 | Page | Status | Notes |
 |---|---|---|
-| index.html | Complete | Accreditation badges + example thumbs; aftercare copy aligned with client handover (self-managed: Netlify basic + annual web address renewal). Site-wide header/footer link order standardised (nav: Home → How it works → Pricing → Examples → About → Contact; footer: Privacy → Terms). |
+| index.html | Complete | Accreditation badges + example thumbs; aftercare copy aligned with client handover (self-managed: Netlify basic + annual web address renewal). Site-wide header/footer link order standardised (nav: Home → How it works → Pricing → Examples → About → Contact; footer: Privacy → Terms). Footer shows copyright + links only (amber “N” mark and NeoBookworm.uk wordmark removed). |
 | how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare matches handover (renewal in £19.99; self-managed Netlify + renewal). |
 | pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £19.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
-| examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
+| examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated. Footer: NeoBookworm title strip removed; copyright aligned with other pages. |
 | about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £19.99 (optional). |
 | contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | Footer highlights Privacy on this page. Nav matches main site; policy `ul`/`li` rules scoped to `.content` so `#primary-nav` is not given dash bullets. |
