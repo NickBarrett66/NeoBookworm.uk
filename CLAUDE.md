@@ -164,9 +164,9 @@ so keeping it current is essential. Do not wait to be asked.
 | index.html | Complete | Accreditation badges + example thumbs; aftercare copy aligned with client handover (self-managed: Netlify basic + annual web address renewal). Site-wide header/footer link order standardised (nav: Home → How it works → Pricing → Examples → About → Contact; footer: Privacy → Terms → Contact). |
 | how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare matches handover (renewal in £19.99; self-managed Netlify + renewal). |
 | pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £19.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
-| examples.html | Complete | Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
-| about.html | Complete | Monthly maintenance shown as £19.99 (optional). |
-| contact.html | Complete | Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
+| examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
+| about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £19.99 (optional). |
+| contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | — |
 | terms.html | Complete | Layout aligned with privacy.html (navy hero, Playfair/DM Sans, site-nav + mobile menu, same footer). |
 | intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
