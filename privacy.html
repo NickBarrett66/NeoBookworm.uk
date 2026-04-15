@@ -62,6 +62,7 @@
     .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
     .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
     .nav-links a:hover { color: var(--white); }
+    .nav-links a.active { color: var(--amber); }
     .nav-cta { background: var(--amber) !important; color: var(--navy) !important; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
 
     /* ══ PAGE HERO ══ */
@@ -223,11 +224,12 @@
     <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
   <ul id="primary-nav" class="nav-links">
+    <li><a href="index.html">Home</a></li>
     <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="examples.html">Examples</a></li>
     <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="contact.html" class="nav-cta">Get in touch</a></li>
+    <li><a href="examples.html">Examples</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="nav-cta">Contact</a></li>
   </ul>
 </nav>
 
@@ -322,11 +324,9 @@
     <span class="footer-copy">© 2026 Nick Barrett, Swindon</span>
   </div>
   <ul class="footer-links">
-    <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="contact.html">Contact</a></li>
     <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of service</a></li>
+    <li><a href="contact.html">Contact</a></li>
   </ul>
 </footer>
 
