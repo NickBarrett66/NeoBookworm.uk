@@ -985,7 +985,7 @@
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.08 });
+  }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
   reveals.forEach(el => observer.observe(el));
 </script>
 <script src="/nav-mobile.js" defer></script>
