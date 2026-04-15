@@ -46,8 +46,8 @@
       overflow-x: hidden;
     }
 
-    /* NAV (matches Home / How it works / Pricing / Terms) */
-    nav {
+    /* NAV (matches site — use .site-nav for nav-mobile.css) */
+    .site-nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 200;
@@ -217,8 +217,13 @@
       margin-top: 0.75rem;
     }
 
-    a { color: var(--amber); text-decoration: none; transition: opacity 0.2s; }
-    a:hover { opacity: 0.8; }
+    /* Body links only — do not style header/footer nav anchors */
+    .content a {
+      color: var(--amber);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .content a:hover { opacity: 0.8; }
 
     /* ══ FOOTER ══ */
     footer {
@@ -239,7 +244,7 @@
     .footer-links a[aria-current="page"] { color: var(--amber); }
 
     @media (max-width: 640px) {
-      nav { padding: 1rem 1.25rem; }
+      .site-nav { padding: 1rem 1.25rem; }
       .nav-links { gap: 1rem; }
       .content { padding: 2rem 1.25rem 4rem; }
       footer { flex-direction: column; align-items: flex-start; padding: 1.5rem 1.25rem; }

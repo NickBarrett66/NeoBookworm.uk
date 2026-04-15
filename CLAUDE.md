@@ -167,7 +167,7 @@ so keeping it current is essential. Do not wait to be asked.
 | examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated |
 | about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £19.99 (optional). |
 | contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
-| privacy.html | Complete | Footer highlights Privacy on this page. Header/nav CSS matches Home / About / Terms (blur, list reset, Contact hover). |
+| privacy.html | Complete | Footer highlights Privacy on this page. Nav uses `.site-nav` like Terms; content links scoped to `.content` so global `a` rules do not affect the header. |
 | terms.html | Complete | Same header/footer as rest of site (nav + mobile menu); footer highlights Terms on this page. |
 | intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
 
