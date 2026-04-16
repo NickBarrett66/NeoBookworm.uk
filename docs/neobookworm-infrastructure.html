@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoBookworm — Infrastructure Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #0f1f3d;
+    --navy-mid: #1a3160;
+    --amber: #f5a623;
+    --amber-dark: #d4891a;
+    --white: #ffffff;
+    --off-white: #f8f6f2;
+    --muted: #8a9ab5;
+    --green: #2ecc8a;
+    --orange: #f5a623;
+    --red: #e05555;
+    --blue: #4a90d9;
+    --purple: #8b7fd4;
+    --teal: #3ab8a0;
+    --coral: #e07060;
+    --gray: #6b7a8d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 40px 24px 60px;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 1px solid rgba(245,166,35,0.3);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  .header-title span {
+    color: var(--amber);
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* Section labels */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+
+  /* Status legend */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 48px;
+  }
+
+  .flow-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+  }
+
+  .flow-row + .flow-row {
+    margin-top: 0;
+  }
+
+  .flow-connector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    position: relative;
+  }
+
+  .flow-connector::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: rgba(245,166,35,0.25);
+  }
+
+  .flow-connector-arrow {
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid rgba(245,166,35,0.5);
+    border-bottom: 1px solid rgba(245,166,35,0.5);
+    transform: rotate(45deg);
+    position: relative;
+    z-index: 1;
+    background: var(--navy);
+  }
+
+  /* Cards */
+  .card {
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-title {
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.4;
+  }
+
+  .card-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Color variants */
+  .card-teal   { background: rgba(58,184,160,0.12); border-color: rgba(58,184,160,0.3); }
+  .card-amber  { background: rgba(245,166,35,0.1);  border-color: rgba(245,166,35,0.3); }
+  .card-blue   { background: rgba(74,144,217,0.12); border-color: rgba(74,144,217,0.3); }
+  .card-purple { background: rgba(139,127,212,0.12);border-color: rgba(139,127,212,0.3);}
+  .card-gray   { background: rgba(107,122,141,0.12);border-color: rgba(107,122,141,0.3);}
+  .card-coral  { background: rgba(224,112,96,0.12); border-color: rgba(224,112,96,0.3); }
+  .card-green  { background: rgba(46,204,138,0.12); border-color: rgba(46,204,138,0.3); }
+  .card-navy   { background: rgba(26,49,96,0.4);    border-color: rgba(255,255,255,0.1);}
+
+  /* Services grid */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 48px;
+  }
+
+  .service-card {
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .service-title {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .service-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .service-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Open items */
+  .open-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .open-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(245,166,35,0.07);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+
+  .open-item-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(245,166,35,0.2);
+    border: 1px solid rgba(245,166,35,0.4);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  .open-item-done {
+    background: rgba(46,204,138,0.15);
+    border-color: rgba(46,204,138,0.3);
+  }
+
+  .open-item-done .open-item-icon {
+    background: rgba(46,204,138,0.2);
+    border-color: rgba(46,204,138,0.4);
+  }
+
+  .open-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .open-item-detail {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Env vars table */
+  .env-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 48px;
+  }
+
+  .env-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .env-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .env-table tr:last-child td { border-bottom: none; }
+
+  .env-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.08);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  /* Domains section */
+  .domains-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .domain-card {
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .domain-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .domain-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-propagating {
+    background: rgba(245,166,35,0.15);
+    color: var(--amber);
+    border: 1px solid rgba(245,166,35,0.3);
+  }
+
+  .badge-pending {
+    background: rgba(224,85,85,0.12);
+    color: #e08888;
+    border: 1px solid rgba(224,85,85,0.25);
+  }
+
+  .badge-live {
+    background: rgba(46,204,138,0.12);
+    color: var(--green);
+    border: 1px solid rgba(46,204,138,0.3);
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 36px 0;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 600px) {
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .header-meta { text-align: left; }
+    .domains-row { grid-template-columns: 1fr; }
+    .flow-row { flex-direction: column; align-items: center; }
+    .flow-row .card { width: 100%; max-width: 360px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">NeoBookworm<span>.</span>uk</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Infrastructure Reference</div>
+    </div>
+    <div class="header-meta">
+      Last updated: 16 April 2026<br>
+      Status: DNS propagation in progress
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="section-label">Status key</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Live / working</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>In progress / propagating</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Not yet connected</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Supporting service</div>
+  </div>
+
+  <!-- Domains -->
+  <div class="section-label">Domains (both at Krystal)</div>
+  <div class="domains-row" style="margin-bottom:36px;">
+    <div class="domain-card card-teal">
+      <div class="domain-name">neobookworm.uk</div>
+      <div class="domain-detail">
+        Transferred from Porkbun to Krystal today.<br>
+        DNS records set — awaiting propagation.<br>
+        Primary marketing domain.
+      </div>
+      <div class="badge badge-propagating">DNS propagating</div>
+    </div>
+    <div class="domain-card card-amber">
+      <div class="domain-name">neobookworm.co.uk</div>
+      <div class="domain-detail">
+        Always been at Krystal.<br>
+        DNS records added to Vercel today.<br>
+        Awaiting propagation.
+      </div>
+      <div class="badge badge-propagating">DNS propagating</div>
+    </div>
+  </div>
+
+  <!-- Flow -->
+  <div class="section-label">Deployment pipeline</div>
+  <div class="flow">
+
+    <div class="flow-row">
+      <div class="card card-teal" style="max-width:380px;">
+        <div class="card-status" style="background:var(--orange)"></div>
+        <div class="card-title">Domains → Krystal DNS</div>
+        <div class="card-sub">neobookworm.uk &amp; neobookworm.co.uk<br>Both pointing at Vercel via A + ALIAS records</div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow"></div></div>
+
+    <div class="flow-row">
+      <div class="card card-blue" style="max-width:380px;">
+        <div class="card-status" style="background:var(--green)"></div>
+        <div class="card-title">Vercel — production host</div>
+        <div class="card-sub">Hosts marketing site + serverless API functions<br>Auto-deploys on every GitHub push</div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow"></div></div>
+
+    <div class="flow-row">
+      <div class="card card-purple" style="max-width:380px;">
+        <div class="card-status" style="background:var(--green)"></div>
+        <div class="card-title">GitHub</div>
+        <div class="card-sub">Repo: NickBarrett66/NeoBookworm.uk<br>Source of truth for all marketing site code</div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow"></div></div>
+
+    <div class="flow-row">
+      <div class="card card-gray" style="max-width:380px;">
+        <div class="card-status" style="background:var(--green)"></div>
+        <div class="card-title">Local machine (Windows)</div>
+        <div class="card-sub">Cursor / VS Code / GitHub Desktop<br>D:\Dropbox\01 Information\Claude\NeoBookworm.uk</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Services -->
+  <div class="section-label">Connected services</div>
+  <div class="services-grid">
+
+    <div class="service-card card-coral">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Cloudflare R2
+      </div>
+      <div class="service-detail">Client photo &amp; logo storage. Intake form uploads directly to R2 via presigned PUT URLs. Public URLs written to Notion.</div>
+    </div>
+
+    <div class="service-card card-purple">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Notion
+      </div>
+      <div class="service-detail">CRM + pipeline state. Client Sites DB receives intake form submissions. Also planning hub for all agent pipeline work.</div>
+    </div>
+
+    <div class="service-card card-green">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Netlify
+      </div>
+      <div class="service-detail">Demo sites only (separate repos). Marketing site deployment removed today. Hartley Plumbing + Swift Electricals live here.</div>
+    </div>
+
+    <div class="service-card card-teal">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Stripe
+      </div>
+      <div class="service-detail">Client payments. Stripe Connect Express setup (£149 fee). Subscription management via Customer Portal.</div>
+    </div>
+
+    <div class="service-card card-navy">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Gmail SMTP
+      </div>
+      <div class="service-detail">Contact form email notifications via App Password + Nodemailer. Env vars required in Vercel.</div>
+    </div>
+
+    <div class="service-card card-navy">
+      <div class="service-title">
+        <div class="service-dot" style="background:var(--green)"></div>
+        Google Analytics 4
+      </div>
+      <div class="service-detail">Analytics + CookieYes consent banner. Vercel Insights also active via /_vercel/insights/script.js.</div>
+    </div>
+
+  </div>
+
+  <!-- Open items -->
+  <div class="section-label">Open items — as of 16 April 2026</div>
+  <div class="open-items">
+
+    <div class="open-item open-item-done">
+      <div class="open-item-icon" style="color:var(--green)">✓</div>
+      <div>
+        <div class="open-item-title">Remove marketing site from Netlify</div>
+        <div class="open-item-detail">Done — rogue deployment deleted. Netlify bandwidth no longer being consumed by the marketing site.</div>
+      </div>
+    </div>
+
+    <div class="open-item">
+      <div class="open-item-icon" style="color:var(--amber)">⏳</div>
+      <div>
+        <div class="open-item-title">neobookworm.uk DNS propagation</div>
+        <div class="open-item-detail">Transferred from Porkbun → Krystal today. DNS records set (A, ALIAS ×2, CAA ×3). Monitor via dnschecker.org — run ipconfig /flushdns if browser still fails after UK servers go green.</div>
+      </div>
+    </div>
+
+    <div class="open-item">
+      <div class="open-item-icon" style="color:var(--amber)">⏳</div>
+      <div>
+        <div class="open-item-title">neobookworm.co.uk DNS propagation</div>
+        <div class="open-item-detail">DNS records added to Krystal today. Same record set as .uk. Verify in Vercel dashboard that both domains show as verified once live.</div>
+      </div>
+    </div>
+
+    <div class="open-item">
+      <div class="open-item-icon" style="color:var(--muted)">○</div>
+      <div>
+        <div class="open-item-title">Remaining 6 demo sites</div>
+        <div class="open-item-detail">Sarah Brooks Decorating, Green Acre Landscapes, Apex Roofing, Hartwood Joinery, Wiltshire Pest Control, Clean Sweep Window Cleaning. Each deploys to its own Netlify repo.</div>
+      </div>
+    </div>
+
+    <div class="open-item">
+      <div class="open-item-icon" style="color:var(--muted)">○</div>
+      <div>
+        <div class="open-item-title">Agent pipeline build</div>
+        <div class="open-item-detail">Agents 1–15 designed, none yet built. Start with Agent 1 (Scraper). Runtime: Cloudflare Workers. State: Notion. See Pipeline_Rebuild.md for full spec.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Env vars -->
+  <div class="section-label">Vercel environment variables</div>
+  <table class="env-table">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Purpose</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>NOTION_API_KEY</code></td>
+        <td>Intake form → Notion CRM writes</td>
+        <td style="color:var(--green);font-size:11px;">Required</td>
+      </tr>
+      <tr>
+        <td><code>INTAKE_UPLOAD_SECRET</code></td>
+        <td>HMAC signing for upload sessions</td>
+        <td style="color:var(--green);font-size:11px;">Required</td>
+      </tr>
+      <tr>
+        <td><code>R2_ACCESS_KEY_ID</code> / <code>R2_SECRET_ACCESS_KEY</code></td>
+        <td>Cloudflare R2 file storage</td>
+        <td style="color:var(--green);font-size:11px;">Required</td>
+      </tr>
+      <tr>
+        <td><code>R2_BUCKET_NAME</code> / <code>R2_PUBLIC_URL</code></td>
+        <td>R2 bucket config + public URLs</td>
+        <td style="color:var(--green);font-size:11px;">Required</td>
+      </tr>
+      <tr>
+        <td><code>R2_ENDPOINT</code> or <code>R2_ACCOUNT_ID</code></td>
+        <td>R2 S3-compatible API endpoint</td>
+        <td style="color:var(--green);font-size:11px;">Required</td>
+      </tr>
+      <tr>
+        <td><code>SMTP_HOST</code> / <code>SMTP_USER</code> / <code>SMTP_PASS</code></td>
+        <td>Contact form email delivery</td>
+        <td style="color:var(--orange);font-size:11px;">Check configured</td>
+      </tr>
+      <tr>
+        <td><code>TO_EMAIL</code></td>
+        <td>Inbound contact form recipient</td>
+        <td style="color:var(--orange);font-size:11px;">Default: nick@neobookworm.uk</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- DNS records quick ref -->
+  <div class="section-label">DNS records (both domains — Krystal)</div>
+  <table class="env-table" style="margin-bottom:48px;">
+    <thead>
+      <tr><th>Type</th><th>Name</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>A</td><td><code>@</code></td><td><code>76.76.21.21</code></td></tr>
+      <tr><td>ALIAS</td><td><code>@</code></td><td><code>99e9329beb98bf7d.vercel-dns-017.com</code></td></tr>
+      <tr><td>ALIAS</td><td><code>*</code></td><td><code>cname.vercel-dns-017.com</code></td></tr>
+      <tr><td>CAA</td><td><code>@</code></td><td><code>0 issue "letsencrypt.org"</code></td></tr>
+      <tr><td>CAA</td><td><code>@</code></td><td><code>0 issue "pki.goog"</code></td></tr>
+      <tr><td>CAA</td><td><code>@</code></td><td><code>0 issue "sectigo.com"</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>NeoBookworm.uk — Infrastructure Reference</div>
+    <div>Generated 16 April 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
