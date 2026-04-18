@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examples — NeoBookworm</title>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neobookworm.uk/examples.html">
+<meta property="og:title" content="Examples — NeoBookworm">
+<meta property="og:description" content="Demo trade websites built for local businesses — see layouts, colours, and how your site could look.">
+<meta property="og:image" content="https://neobookworm.uk/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f1f3d;--navy2:#162840;--navy3:#1e3352;
+  --amber:#f5a623;--amber2:#e8951a;
+  --ap:rgba(245,166,35,.10);--ab:rgba(245,166,35,.22);
+  --tx:#f0e8da;--mu:#8fa3c0;--mu2:#5a7496;--bd:rgba(245,166,35,.18);
+  --muted:rgba(255,255,255,.58);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--tx);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+/* NAV — match Home / How it works / Pricing */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;background:rgba(15,31,61,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);transition:padding .3s}
+.nav-logo{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.logo-wordmark{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.logo-wordmark span{color:var(--amber)}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none;margin:0;padding:0}
+.nav-links a{font-size:.875rem;font-weight:500;color:rgba(255,255,255,.58);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:var(--amber)}
+.nav-cta{background:var(--amber)!important;color:var(--navy)!important;padding:.5rem 1.2rem;border-radius:6px;font-weight:600!important;transition:background .2s!important,transform .15s!important}
+.nav-cta:hover{background:#d4891a!important;transform:translateY(-1px)}
+@media (max-width:640px){nav{padding:1rem 1.25rem}}
+
+/* HERO */
+.hero{padding:9rem 32px 64px;text-align:center;position:relative;z-index:1;max-width:720px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,54px);font-weight:600;line-height:1.1;margin-bottom:18px}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--amber)}
+.hero p{font-size:16px;font-weight:300;color:var(--mu);line-height:1.7;max-width:500px;margin:0 auto 28px}
+.hero-note{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--mu2);border:1px solid var(--bd);border-radius:4px;padding:8px 16px}
+.hero-note strong{color:var(--amber);font-weight:500}
+
+/* LAYOUT */
+.wrap{position:relative;z-index:1;padding:0 24px 80px;max-width:1060px;margin:0 auto}
+.group-label{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--tx);margin-bottom:5px}
+.group-label em{font-style:italic;color:var(--amber)}
+.group-sub{font-size:13px;color:var(--mu);margin-bottom:26px;line-height:1.6}
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--bd),transparent);margin:50px 0 44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
+
+/* CARD SHELL */
+.card{background:var(--navy2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s;cursor:pointer;text-decoration:none;display:block}
+.card:hover{transform:translateY(-4px);border-color:rgba(245,166,35,.45);box-shadow:0 10px 36px rgba(0,0,0,.4),0 0 0 1px rgba(245,166,35,.12)}
+/* 16:9 landscape frame — same idea as index example thumbs; fair crop for varied hero layouts */
+.preview{aspect-ratio:16/9;height:auto;min-height:0;overflow:hidden;position:relative;flex-shrink:0}
+.preview>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+/* Full viewport + browser chrome — matches index “site in a window” cards */
+.preview.preview--browser{display:flex;flex-direction:column;aspect-ratio:auto;background:#1e2433}
+.preview.preview--browser .browser-chrome{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:0 10px;height:26px;min-height:26px;background:linear-gradient(180deg,#3d4450 0%,#2a3038 100%);border-bottom:1px solid rgba(0,0,0,.35)}
+.preview.preview--browser .browser-dots{display:flex;gap:5px;flex-shrink:0}
+.preview.preview--browser .browser-dots span{width:9px;height:9px;border-radius:50%;display:block}
+.preview.preview--browser .browser-dots span:nth-child(1){background:#ff5f57}
+.preview.preview--browser .browser-dots span:nth-child(2){background:#febc2e}
+.preview.preview--browser .browser-dots span:nth-child(3){background:#28c840}
+.preview.preview--browser .browser-url{flex:1;min-width:0;font-size:clamp(8px,2vw,10px);color:rgba(255,255,255,.42);background:rgba(0,0,0,.22);border-radius:4px;padding:3px 8px;text-align:center;font-family:ui-monospace,'Segoe UI Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview.preview--browser .browser-viewport{position:relative;width:100%;aspect-ratio:1024/654;overflow:hidden;background:#fff}
+.preview.preview--browser .browser-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:top left;display:block}
+.preview.preview--browser .browser-viewport--photo img{object-fit:cover;object-position:22% top}
+.meta{padding:16px 18px 18px}
+.trade{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+.biz{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--tx);margin-bottom:4px;line-height:1.2}
+.desc{font-size:12px;color:var(--mu);line-height:1.55;margin-bottom:12px}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tag{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px}
+.arrow{font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.04em;display:flex;align-items:center;gap:5px;transition:gap .18s}
+.card:hover .arrow{gap:9px}
+
+/* TAG COLOURS */
+.tg-min{background:rgba(100,140,200,.1);color:#8ab0d8;border:1px solid rgba(100,140,200,.2)}
+.tg-bold{background:rgba(220,60,40,.1);color:#e05040;border:1px solid rgba(220,60,40,.2)}
+.tg-org{background:rgba(80,160,100,.1);color:#6ab880;border:1px solid rgba(80,160,100,.2)}
+.tg-ret{background:rgba(180,120,60,.12);color:#c4885a;border:1px solid rgba(180,120,60,.2)}
+.tg-lux{background:rgba(180,160,120,.1);color:#b4a078;border:1px solid rgba(180,160,120,.2)}
+.tg-tec{background:rgba(37,99,170,.1);color:#6090cc;border:1px solid rgba(37,99,170,.2)}
+.tg-fri{background:rgba(249,115,22,.1);color:#f97316;border:1px solid rgba(249,115,22,.2)}
+.tg-ed{background:rgba(200,170,100,.1);color:#c4a050;border:1px solid rgba(200,170,100,.2)}
+
+/* ======================================================
+   PREVIEW 1 — ELECTRICIAN
+   Layout: SPLIT PANEL — cert stack left / headline right
+   Dark navy left strip, white right, hard vertical divide
+   ====================================================== */
+.p-elec{height:100%;display:flex;font-family:'DM Sans',sans-serif;background:#f5f7fa}
+.p-elec .left{width:38%;background:#0d2244;display:flex;flex-direction:column;justify-content:space-between;padding:10px 8px;border-right:2px solid #f5a623}
+.p-elec .left .brand{font-size:6.5px;font-weight:700;color:#f5a623;letter-spacing:.14em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);margin:0 auto}
+.p-elec .left .certs{display:flex;flex-direction:column;gap:4px}
+.p-elec .left .cert{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);padding:3px 5px;font-size:5px;color:#f5a623;text-align:center;border-radius:2px;letter-spacing:.06em;font-weight:700}
+.p-elec .right{flex:1;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
+.p-elec .right .rtop .tag{font-size:5px;color:#4a6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.p-elec .right .rtop h2{font-size:11.5px;font-weight:600;color:#0d2244;line-height:1.25;margin-bottom:5px}
+.p-elec .right .rtop p{font-size:6px;color:#6a8aaa;line-height:1.4}
+.p-elec .right .rbot{display:flex;justify-content:space-between;align-items:flex-end}
+.p-elec .right .rbot .num{font-size:9px;font-weight:700;color:#0d2244}
+.p-elec .right .rbot .btn{background:#0d2244;color:#fff;font-size:5.5px;padding:3px 8px;border-radius:2px;font-weight:600}
+
+/* ======================================================
+   PREVIEW 2 — PLUMBER
+   Layout: GIANT PHONE NUMBER as the hero element
+   Emergency red band at top, number takes 40% of space
+   ====================================================== */
+.p-plumb{height:100%;background:#fff;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+.p-plumb .emerg{background:#dc2626;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.p-plumb .emerg span{font-size:6px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.1em}
+.p-plumb .emerg .dot{width:5px;height:5px;background:#fff;border-radius:50%;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.p-plumb .body{flex:1;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between}
+.p-plumb .body .bname{font-size:7px;font-weight:700;color:#1a3a5c;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.p-plumb .body .bsub{font-size:5.5px;color:#7a9ab0;margin-bottom:5px}
+.p-plumb .body .bignum{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#1a3a5c;line-height:1;letter-spacing:.04em}
+.p-plumb .body .bignum span{color:#dc2626}
+.p-plumb .body .bfoot{display:flex;gap:8px;align-items:center}
+.p-plumb .body .bfoot .gs{background:#1a3a5c;color:#fff;font-size:5px;padding:2px 6px;border-radius:2px;font-weight:700}
+.p-plumb .body .bfoot .gstxt{font-size:5.5px;color:#7a9ab0}
+.p-plumb .amber-bar{background:#f5a623;padding:4px 10px;display:flex;gap:10px;flex-shrink:0}
+.p-plumb .amber-bar span{font-size:5.5px;font-weight:700;color:#1a3a5c}
+
+/* ======================================================
+   PREVIEW 3 — PAINTER & DECORATOR  
+   Layout: DIAGONAL SLASH — warm terracotta cuts space at 45°
+   Colour swatches strip along the diagonal edge
+   ====================================================== */
+.p-paint{height:100%;background:#fdf8f3;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+.p-paint .slash{position:absolute;top:-20px;right:-30px;width:160px;height:250px;background:linear-gradient(135deg,#c4622d 0%,#e07840 100%);transform:rotate(-12deg);transform-origin:top right;opacity:.92}
+.p-paint .swatches{position:absolute;top:0;right:0;height:100%;width:34px;display:flex;flex-direction:column}
+.p-paint .sw{flex:1}
+.p-paint .content{position:relative;z-index:2;padding:11px 12px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.p-paint .pname{font-size:7.5px;font-weight:700;color:#3a2010;letter-spacing:.06em;text-transform:uppercase}
+.p-paint .pmid h2{font-size:13px;color:#3a2010;line-height:1.25;max-width:58%;font-weight:400;font-family:'Crimson Pro',serif}
+.p-paint .pmid h2 em{font-style:italic;color:#c4622d}
+.p-paint .pbot .stars{color:#c4622d;font-size:8px;letter-spacing:1px}
+.p-paint .pbot .rev{font-size:5.5px;color:#7a5040;margin-top:1px}
+
+/* ======================================================
+   PREVIEW 4 — LANDSCAPER
+   Layout: FULL-BLEED IMAGE SIMULATION — gradient landscape
+   Text floats at bottom-left with leaf motifs, no white
+   ====================================================== */
+.p-land{height:100%;background:linear-gradient(165deg,#2a4a1e 0%,#4a7c3a 35%,#6b9e55 65%,#8aba6a 100%);font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+.p-land .sky{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,#87ceeb 0%,#b0ddf0 100%);opacity:.35}
+.p-land .sun{position:absolute;top:8px;right:14px;width:22px;height:22px;background:radial-gradient(circle,rgba(255,220,100,.8),transparent 70%);border-radius:50%}
+.p-land .trees{position:absolute;top:20%;left:0;right:0;display:flex;gap:0;opacity:.4}
+.p-land .tree{width:20%;text-align:center;font-size:28px;line-height:1}
+.p-land .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,25,10,.88) 0%,rgba(10,25,10,.2) 55%,transparent 100%)}
+.p-land .content{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;z-index:2}
+.p-land .lbrand{font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;color:#a8d890;margin-bottom:4px}
+.p-land h2{font-family:'Cormorant+Garamond',Georgia,serif;font-size:14px;font-weight:400;font-style:italic;color:#fff;line-height:1.2;margin-bottom:5px}
+.p-land .lfoot{display:flex;justify-content:space-between;align-items:center}
+.p-land .lfoot .area{font-size:5.5px;color:rgba(168,216,144,.8)}
+.p-land .lfoot .btn{background:#4a7c3a;border:1px solid #8aba6a;padding:3px 8px;font-size:5.5px;color:#fff;border-radius:2px}
+
+/* ======================================================
+   PREVIEW 5 — ROOFER
+   Layout: BRUTALIST — massive tilted watermark text ROOFING
+   sits behind content, industrial texture overlay
+   ====================================================== */
+.p-roof{height:100%;background:#111;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+.p-roof .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);font-family:'Bebas Neue',sans-serif;font-size:72px;color:rgba(229,62,26,.07);white-space:nowrap;letter-spacing:.08em;pointer-events:none;user-select:none}
+.p-roof .stripe{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(to right,#e53e1a,#ff7040)}
+.p-roof .content{position:relative;z-index:2;padding:12px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.p-roof .rtop{display:flex;justify-content:space-between;align-items:flex-start}
+.p-roof .rname{font-size:7px;font-weight:700;color:#fff;letter-spacing:.2em;text-transform:uppercase}
+.p-roof .r247{font-size:6px;color:#e53e1a;font-weight:700;border:1px solid #e53e1a;padding:1px 5px;border-radius:2px}
+.p-roof h2{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;line-height:.95;letter-spacing:.04em}
+.p-roof h2 span{color:#e53e1a}
+.p-roof .rbot{display:flex;gap:10px;border-top:1px solid rgba(229,62,26,.2);padding-top:6px}
+.p-roof .stat strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#e53e1a;line-height:1}
+.p-roof .stat small{font-size:5px;color:#555;text-transform:uppercase;letter-spacing:.1em}
+
+/* ======================================================
+   PREVIEW 6 — CARPENTER / JOINER
+   Layout: CENTRED STAMP / CREST — radial composition
+   Everything centred, decorative rule-and-border frame
+   ====================================================== */
+.p-carp{height:100%;background:#f5e8cc;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background-image:repeating-linear-gradient(0deg,transparent,transparent 12px,rgba(139,94,60,.05) 12px,rgba(139,94,60,.05) 13px),repeating-linear-gradient(90deg,transparent,transparent 12px,rgba(139,94,60,.03) 12px,rgba(139,94,60,.03) 13px)}
+.p-carp .stamp{text-align:center;border:2px solid #8b5e3c;padding:12px 16px;position:relative}
+.p-carp .stamp::before{content:'';position:absolute;inset:3px;border:1px solid rgba(139,94,60,.4)}
+.p-carp .stamp .icon{font-size:18px;margin-bottom:4px;display:block}
+.p-carp .stamp .sname{font-size:9.5px;font-weight:700;color:#3d200a;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.p-carp .stamp .sdiv{height:1px;background:linear-gradient(to right,transparent,#8b5e3c,transparent);margin:4px 0}
+.p-carp .stamp .strade{font-size:6.5px;font-style:italic;color:#8b5e3c;letter-spacing:.06em;margin-bottom:4px}
+.p-carp .stamp .sest{font-size:5.5px;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.14em;color:#c4956a;background:rgba(139,94,60,.08);padding:2px 8px}
+.p-carp .corner{position:absolute;width:10px;height:10px;border-color:#8b5e3c;border-style:solid}
+.p-carp .tl{top:6px;left:6px;border-width:1.5px 0 0 1.5px}
+.p-carp .tr{top:6px;right:6px;border-width:1.5px 1.5px 0 0}
+.p-carp .bl{bottom:6px;left:6px;border-width:0 0 1.5px 1.5px}
+.p-carp .br{bottom:6px;right:6px;border-width:0 1.5px 1.5px 0}
+
+/* ======================================================
+   PREVIEW 7 — BATHROOM FITTER
+   Layout: HOTEL ROOM CARD — perfect symmetry, centred mono-
+   gram on dark field, ruled lines, gold everything
+   ====================================================== */
+.p-bath{height:100%;background:#0a0a0c;font-family:Georgia,serif;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
+.p-bath .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.6) 100%);pointer-events:none}
+.p-bath .rule-top{width:80px;height:1px;background:linear-gradient(to right,transparent,#b4a078,transparent);margin-bottom:8px}
+.p-bath .mono{width:40px;height:40px;border:1px solid #b4a078;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;background:rgba(180,160,120,.06)}
+.p-bath .mono span{font-size:16px;font-weight:400;color:#b4a078;font-style:italic}
+.p-bath .bname{font-size:7px;letter-spacing:.28em;text-transform:uppercase;color:#b4a078;margin-bottom:5px}
+.p-bath .rule-mid{width:50px;height:1px;background:linear-gradient(to right,transparent,rgba(180,160,120,.5),transparent);margin:0 auto 8px}
+.p-bath h2{font-family:Georgia,serif;font-size:11.5px;font-style:italic;color:#ede0d0;line-height:1.3;font-weight:400;max-width:130px;margin:0 auto 8px}
+.p-bath .rule-bot{width:80px;height:1px;background:linear-gradient(to right,transparent,#b4a078,transparent);margin:0 auto 8px}
+.p-bath .baward{font-size:5.5px;color:#b4a078;letter-spacing:.1em;text-transform:uppercase}
+
+/* ======================================================
+   PREVIEW 8 — HEATING ENGINEER
+   Layout: DASHBOARD GRID — data cells like an instrument panel
+   Cert number top-right, stat boxes dominate lower half
+   ====================================================== */
+.p-heat{height:100%;background:#0d1e35;font-family:'Space Mono',monospace;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.p-heat::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,170,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,170,.04) 1px,transparent 1px);background-size:12px 12px}
+.p-heat .htop{padding:8px 10px;border-bottom:1px solid rgba(37,99,170,.25);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:relative;z-index:2}
+.p-heat .htop .hbrand{font-size:7.5px;font-weight:700;color:#e2f0ff;letter-spacing:.04em}
+.p-heat .htop .hgs{font-size:5px;color:#f5a623;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);padding:2px 5px;letter-spacing:.06em}
+.p-heat .hmid{padding:8px 10px 6px;flex-shrink:0;position:relative;z-index:2}
+.p-heat .hmid .certs{display:flex;gap:3px;margin-bottom:6px}
+.p-heat .hmid .cert{background:rgba(37,99,170,.2);border:1px solid rgba(37,99,170,.4);padding:2px 5px;font-size:4.5px;color:#7ab0e0;letter-spacing:.04em}
+.p-heat .hmid h2{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:#e2f0ff;line-height:1.3}
+.p-heat .hgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(37,99,170,.15);margin:auto 0 0;flex-shrink:0;position:relative;z-index:2}
+.p-heat .hcell{background:#0d1e35;padding:7px 6px;text-align:center}
+.p-heat .hcell strong{display:block;font-size:14px;color:#2563eb;letter-spacing:.02em;line-height:1}
+.p-heat .hcell span{font-size:5px;color:#4a6a8a;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;display:block}
+.p-heat .hcell.hi strong{color:#f5a623}
+
+/* CTA */
+.cta-wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px 80px}
+.cta-block{background:linear-gradient(135deg,var(--navy3) 0%,rgba(20,40,75,.9) 100%);border:1px solid var(--bd);border-radius:10px;padding:52px 36px;text-align:center;overflow:hidden;position:relative}
+.cta-block::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,166,35,.07) 0%,transparent 70%);pointer-events:none}
+.cta-block h2{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,36px);font-weight:400;line-height:1.15;margin-bottom:12px}
+.cta-block h2 em{font-style:italic;color:var(--amber)}
+.cta-block p{font-size:15px;font-weight:300;color:var(--mu);line-height:1.7;margin-bottom:28px;max-width:460px;margin-left:auto;margin-right:auto}
+.btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.btn-p{display:inline-block;padding:14px 30px;background:var(--amber);color:#fff;font-size:14px;font-weight:600;letter-spacing:.03em;border-radius:4px;text-decoration:none;transition:all .2s}
+.btn-p:hover{background:var(--amber2);box-shadow:0 4px 20px rgba(245,166,35,.3)}
+.btn-s{display:inline-block;padding:13px 28px;background:transparent;color:var(--mu);font-size:14px;border:1px solid var(--bd);border-radius:4px;text-decoration:none;transition:all .2s}
+.btn-s:hover{border-color:rgba(245,166,35,.4);color:var(--tx)}
+
+/* FOOTER (match About) */
+footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24px;position:relative;z-index:1}
+.footer-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-copy{font-size:12px;font-weight:300;color:var(--muted);margin-top:2px}
+.footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.footer-links a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--amber)}
+.footer-sep{width:1px;height:16px;background:var(--bd)}
+
+/* INTRO STRIP */
+.intro{background:var(--navy3);border:1px solid var(--bd);border-radius:8px;padding:20px 26px;margin-bottom:38px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.intro p{font-size:13.5px;color:var(--mu);line-height:1.65;max-width:530px}
+.intro p strong{color:var(--tx)}
+.intro a{font-size:13px;font-weight:600;color:var(--amber);text-decoration:none;white-space:nowrap;padding:10px 22px;border:1px solid var(--ab);border-radius:4px;transition:all .2s;flex-shrink:0}
+.intro a:hover{background:var(--ap)}
+
+/* REVEAL */
+.html-rv .rv{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+.html-rv .rv.in{opacity:1;transform:none}
+
+.nav-logo-img, .footer-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+.nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+.nav-wordmark span, .logo-wordmark span { color: var(--amber); }
+
+  /* ── ACCREDITATION BADGE COMPONENTS ── */
+  .nb-badge {
+    display: flex;
+    align-items: stretch;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 52px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nb-badge .nb-mark {
+    width: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nb-badge .nb-mark svg { display: block; }
+  .nb-badge .nb-text {
+    background: #fff;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nb-badge .nb-top {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1;
+  }
+  .nb-badge .nb-bot {
+    font-size: 7.5px;
+    color: #555;
+    letter-spacing: .03em;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
+  .nb-gassafe .nb-mark { background: #1a6db5; }
+  .nb-gassafe .nb-top { color: #1a6db5; }
+  .nb-gassafe.dk .nb-text { background: #1a2f55; }
+  .nb-gassafe.dk .nb-top { color: #60aaef; }
+  .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+  .nb-niceic { border: 1.5px solid #d32f2f; min-width: 130px; }
+  .nb-niceic .nb-mark { background: #d32f2f; }
+  .nb-niceic .nb-top { font-size: 13px; color: #d32f2f; }
+  .nb-niceic.dk .nb-text { background: #1a2f55; }
+  .nb-niceic.dk .nb-top { color: #ef9595; }
+  .nb-niceic.dk .nb-bot { color: #a0b4cc; }
+  .nb-partp { border: 1.5px solid #2e7d32; min-width: 115px; }
+  .nb-partp .nb-mark { background: #2e7d32; }
+  .nb-partp .nb-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; }
+  .nb-partp .nb-circle span { font-size: 9px; font-weight: 800; color: #fff; }
+  .nb-partp .nb-top { font-size: 11px; color: #2e7d32; }
+  .nb-partp.dk .nb-text { background: #1a2f55; }
+  .nb-partp.dk .nb-top { color: #97c459; }
+  .nb-partp.dk .nb-bot { color: #a0b4cc; }
+  .nb-insured { display: inline-flex; align-items: center; gap: 8px; border-radius: 6px; border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff; font-family: 'DM Sans', sans-serif; min-width: 180px; }
+  .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+  .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+  .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+  .nb-insured.dk .nb-top { color: #e0eaf5; }
+  .nb-insured.dk .nb-bot { color: #a0b4cc; }
+  .nb-insured.dk svg path { stroke: #a0b4cc; }
+
+</style>
+<link rel="stylesheet" href="/nav-mobile.css" />
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-logo">
+  <img src="logo.png" alt="NeoBookworm.uk logo" class="nav-logo-img">
+  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+</a>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <ul id="primary-nav" class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="examples.html" class="active">Examples</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero rv">
+  <div class="eyebrow">Examples</div>
+  <h1>Every site tells a<br><em>different story.</em></h1>
+  <p>Eight completely different approaches — different layouts, different structures, different personalities. These show the range of what's possible. Your site would be built around you, not around a template.</p>
+  <div class="hero-note">Fictional businesses, <strong>real craft</strong> — built the same way yours would be.</div>
+</div>
+
+<div class="wrap">
+
+  <div class="intro rv">
+    <p>Notice how these feel <strong>structurally different</strong> — not just recoloured versions of the same thing. Each one is a real design approach that could work for any trade. I'll suggest what might suit you best — but the choice is always yours.</p>
+    <a href="intake-form.html">Get your free demo &rarr;</a>
+  </div>
+
+  <!-- ═══ CLEAN & CLEAR ═══ -->
+  <div class="group-label rv">Clean <em>&amp; Clear</em></div>
+  <p class="group-sub rv">Structured and trustworthy — works well when your qualifications and accreditations are a big part of why customers choose you.</p>
+  <div class="grid">
+
+    <!-- ELECTRICIAN — Swift Electricals (live demo) -->
+    <a class="card rv" id="example-swift-electricals" href="https://swift-electrical-njb-demo.netlify.app/" target="_blank" rel="noopener noreferrer">
+      <div class="preview preview--browser">
+        <div class="browser-chrome" aria-hidden="true">
+          <span class="browser-dots"><span></span><span></span><span></span></span>
+          <span class="browser-url">swift-electrical-njb-demo.netlify.app</span>
+        </div>
+        <div class="browser-viewport">
+          <img src="/Images/demo-swift-electricals.png" width="1024" height="654" alt="Swift Electricals — live demo site in a browser window">
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Electrician</div>
+        <div class="biz">Swift Electricals</div>
+        <div class="desc">A split-panel hero keeps accreditations and badges in their own column beside your headline — so customers see you're approved before they read the detail. A strong fit if people choose you because of what you're registered for; the same idea works for any trade where qualifications and trust marks need to lead the page.</div>
+        <div class="tags"><span class="tag tg-min">Split panel</span><span class="tag tg-tec">Cert-led</span></div>
+        <div class="arrow">View demo &#8594;</div>
+      </div>
+    </a>
+
+    <!-- PLUMBER — Hartley Plumbing (live demo) -->
+    <a class="card rv" id="example-hartley-plumbing" href="https://hartley-plumbing-njb-demo.netlify.app/" target="_blank" rel="noopener noreferrer">
+      <div class="preview preview--browser">
+        <div class="browser-chrome" aria-hidden="true">
+          <span class="browser-dots"><span></span><span></span><span></span></span>
+          <span class="browser-url">hartley-plumbing-njb-demo.netlify.app</span>
+        </div>
+        <div class="browser-viewport browser-viewport--photo">
+          <img src="/Images/demo-hartley-plumbing.jpg" width="1024" height="654" alt="Hartley Plumbing — live demo site in a browser window">
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Plumber</div>
+        <div class="biz">Hartley Plumbing</div>
+        <div class="desc">The phone number is the hero — impossible to miss, impossible to forget — with a clear emergency strip and trust badges below. A strong fit if your customers are often in a hurry or dealing with a crisis; the same idea works for any trade that lives on inbound calls.</div>
+        <div class="tags"><span class="tag tg-bold">Phone-first</span><span class="tag tg-bold">Emergency</span></div>
+        <div class="arrow">View demo &#8594;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ WARM & APPROACHABLE ═══ -->
+  <div class="group-label rv">Warm <em>&amp; Approachable</em></div>
+  <p class="group-sub rv">Personality-forward — a good fit if you want customers to feel they already know and like you before they pick up the phone.</p>
+  <div class="grid">
+
+    <!-- PAINTER — Diagonal slash -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-paint">
+          <div class="slash"></div>
+          <div class="swatches">
+            <div class="sw" style="background:#c4622d"></div>
+            <div class="sw" style="background:#e07840"></div>
+            <div class="sw" style="background:#4a6fa5"></div>
+            <div class="sw" style="background:#6b9e6b"></div>
+            <div class="sw" style="background:#e8d5a3"></div>
+            <div class="sw" style="background:#2e2e2e"></div>
+          </div>
+          <div class="content">
+            <div class="pname">Sarah Brooks Decorating</div>
+            <div class="pmid">
+              <h2>Colour advice &amp; a finish you'll <em>love</em></h2>
+            </div>
+            <div class="pbot">
+              <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <div class="rev">214 reviews · Swindon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Painter &amp; Decorator</div>
+        <div class="biz">Sarah Brooks Decorating</div>
+        <div class="desc">A diagonal colour slash cuts across the layout, with a swatch strip down the right edge. This approach works brilliantly for anyone whose work is inherently visual — it shows taste and creativity before a word is read.</div>
+        <div class="tags"><span class="tag tg-fri">Diagonal layout</span><span class="tag tg-ed">Colour-led</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+    <!-- LANDSCAPER — Full bleed landscape -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-land">
+          <div class="sky"></div>
+          <div class="sun"></div>
+          <div class="trees">
+            <div class="tree">🌳</div>
+            <div class="tree">🌲</div>
+            <div class="tree">🌳</div>
+            <div class="tree">🌿</div>
+            <div class="tree">🌲</div>
+          </div>
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="lbrand">Green Acre Landscapes</div>
+            <h2>Gardens designed to breathe</h2>
+            <div class="lfoot">
+              <div class="area">Swindon &amp; Wiltshire</div>
+              <div class="btn">View my work</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Landscaper / Gardener</div>
+        <div class="biz">Green Acre Landscapes</div>
+        <div class="desc">Full-bleed and immersive — no white background, no boxes, text floating over a scene like a photograph caption. Suits anyone whose work is best understood by seeing it. Kitchen fitters, bathroom fitters, flooring specialists — all good candidates.</div>
+        <div class="tags"><span class="tag tg-org">Full-bleed</span><span class="tag tg-org">Immersive</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ BOLD & DISTINCTIVE ═══ -->
+  <div class="group-label rv">Bold <em>&amp; Distinctive</em></div>
+  <p class="group-sub rv">High-impact and confident — ideal if you want your site to make a strong first impression and not be forgettable.</p>
+  <div class="grid">
+
+    <!-- ROOFER — Brutalist watermark -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-roof">
+          <div class="wm">ROOFING</div>
+          <div class="stripe"></div>
+          <div class="content">
+            <div class="rtop">
+              <div class="rname">Apex Roofing</div>
+              <div class="r247">24/7</div>
+            </div>
+            <h2>WE <span>FIX</span><br>ROOFS.</h2>
+            <div class="rbot">
+              <div class="stat"><strong>500+</strong><small>Jobs done</small></div>
+              <div class="stat"><strong>18yr</strong><small>Experience</small></div>
+              <div class="stat"><strong>24/7</strong><small>Callouts</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Roofer</div>
+        <div class="biz">Apex Roofing</div>
+        <div class="desc">Brutalist — oversized type as background texture, bold stats, red accent strip. A deliberate choice for anyone who wants their site to feel decisive and confident rather than polished and safe. Works for any trade with a strong track record to shout about.</div>
+        <div class="tags"><span class="tag tg-bold">Brutalist</span><span class="tag tg-bold">High-impact</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+    <!-- CARPENTER — Centred crest/stamp -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-carp">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="stamp">
+            <span class="icon">🪵</span>
+            <div class="sname">Hartwood Joinery</div>
+            <div class="sdiv"></div>
+            <div class="strade">Bespoke Timber Craftsmanship</div>
+            <div class="sest">Est. Swindon 1987</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Carpenter / Joiner</div>
+        <div class="biz">Hartwood Joinery</div>
+        <div class="desc">Centred crest layout — everything radiating from a bordered stamp, like a hallmark or maker's mark. A strong option for anyone who wants their site to say "established, skilled, and proud of it." Particularly effective for sole traders with a long history.</div>
+        <div class="tags"><span class="tag tg-ret">Centred crest</span><span class="tag tg-ret">Heritage</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ PREMIUM & SPECIALIST ═══ -->
+  <div class="group-label rv">Premium <em>&amp; Specialist</em></div>
+  <p class="group-sub rv">Refined and aspirational — a strong choice if you do high-value work and want the site to reflect that before a price is mentioned.</p>
+  <div class="grid">
+
+    <!-- BATHROOM FITTER — Hotel card -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-bath">
+          <div class="vignette"></div>
+          <div class="rule-top"></div>
+          <div class="mono"><span>A</span></div>
+          <div class="bname">Atelier Bathrooms</div>
+          <div class="rule-mid"></div>
+          <h2>Where every detail is considered</h2>
+          <div class="rule-bot"></div>
+          <div class="baward">Checkatrade · Top Rated 2024</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Bathroom Fitter</div>
+        <div class="biz">Atelier Bathrooms</div>
+        <div class="desc">Perfect symmetry on a dark background — monogram, ruled lines, everything centred like a hotel key card. This approach signals premium positioning immediately, and works for any trade doing high-value, considered work where the customer is investing seriously.</div>
+        <div class="tags"><span class="tag tg-lux">Hotel symmetry</span><span class="tag tg-lux">Centred</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+    <!-- HEATING ENGINEER — Dashboard grid -->
+    <a class="card rv" href="#" onclick="return false">
+      <div class="preview">
+        <div class="p-heat">
+          <div class="htop">
+            <div class="hbrand">Meridian Heating</div>
+            <div class="hgs">GAS SAFE · 004412</div>
+          </div>
+          <div class="hmid">
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+              <div class="nb-badge nb-gassafe dk" style="height:28px;min-width:unset;">
+                <div class="nb-mark" style="width:22px;background:#1a6db5;">
+                  <svg width="10" height="12" viewBox="0 0 24 30" fill="none">
+                    <path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/>
+                    <path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/>
+                  </svg>
+                </div>
+                <div class="nb-text" style="padding:0 5px;">
+                  <div class="nb-top" style="font-size:7px;color:#60aaef;">GAS SAFE</div>
+                </div>
+              </div>
+              <div class="nb-insured dk" style="height:28px;min-width:unset;padding:0 6px;gap:4px;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:10px;height:10px;">
+                  <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#a0b4cc" stroke-width="1.5" fill="none"/>
+                  <path d="M9 12L11 14L15 10" stroke="#a0b4cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div>
+                  <div class="nb-top" style="font-size:7px;color:#e0eaf5;">Insured</div>
+                </div>
+              </div>
+            </div>
+            <h2>Boiler installs, servicing &amp; heating systems</h2>
+          </div>
+          <div class="hgrid">
+            <div class="hcell"><strong>10yr</strong><span>Guarantee</span></div>
+            <div class="hcell hi"><strong>24hr</strong><span>Response</span></div>
+            <div class="hcell"><strong>A+</strong><span>Boilers only</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="trade">Heating Engineer / Gas Safe</div>
+        <div class="biz">Meridian Heating</div>
+        <div class="desc">Dashboard layout — a data grid at the bottom instead of a big sales block, monospace numbers, registration in the header. A great fit for anyone whose customers want to see facts and figures up front: years trading, response time, guarantee length.</div>
+        <div class="tags"><span class="tag tg-tec">Dashboard grid</span><span class="tag tg-tec">Data-first</span></div>
+        <div class="arrow">View demo site &#8594;</div>
+      </div>
+    </a>
+
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta-block rv">
+    <h2>Want to see one built<br><em>for your business?</em></h2>
+    <p>I'll put together a free demo using your actual business name and trade — so you can see exactly what you'd get before spending anything.</p>
+    <div class="btns">
+      <a href="intake-form.html" class="btn-p">Get my free demo &rarr;</a>
+      <a href="pricing.html" class="btn-s">See pricing first</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="terms.html">Terms of service</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('html-rv');
+  var obs = new IntersectionObserver(function(e){
+    e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target);}});
+  },{threshold:0.01, rootMargin:'0px 0px 150px 0px'});
+  document.querySelectorAll('.rv').forEach(function(el,i){
+    el.style.transitionDelay = (i % 3) * 0.07 + 's';
+    obs.observe(el);
+  });
+})();
+</script>
+<script src="/nav-mobile.js" defer></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
