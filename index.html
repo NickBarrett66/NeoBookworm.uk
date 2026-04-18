@@ -19,7 +19,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -899,17 +899,6 @@
     .p-plumb .amber-bar span{font-size:5.5px;font-weight:700;color:#1a3a5c}
 
     /* Painter — diagonal slash */
-    .p-paint{height:100%;background:#fdf8f3;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
-    .p-paint .slash{position:absolute;top:-20px;right:-30px;width:160px;height:250px;background:linear-gradient(135deg,#c4622d 0%,#e07840 100%);transform:rotate(-12deg);transform-origin:top right;opacity:.92}
-    .p-paint .swatches{position:absolute;top:0;right:0;height:100%;width:34px;display:flex;flex-direction:column}
-    .p-paint .sw{flex:1}
-    .p-paint .content{position:relative;z-index:2;padding:11px 12px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
-    .p-paint .pname{font-size:7.5px;font-weight:700;color:#3a2010;letter-spacing:.06em;text-transform:uppercase}
-    .p-paint .pmid h2{font-size:13px;color:#3a2010;line-height:1.25;max-width:58%;font-weight:400;font-family:'Crimson Pro',serif}
-    .p-paint .pmid h2 em{font-style:italic;color:#c4622d}
-    .p-paint .pbot .stars{color:#c4622d;font-size:8px;letter-spacing:1px}
-    .p-paint .pbot .rev{font-size:5.5px;color:#7a5040;margin-top:1px}
-
     /* Roofer — brutalist */
     .p-roof{height:100%;background:#111;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
     .p-roof .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);font-family:'Bebas Neue',sans-serif;font-size:72px;color:rgba(229,62,26,.07);white-space:nowrap;letter-spacing:.08em;pointer-events:none}
@@ -1715,34 +1704,20 @@
           <div class="example-tag">Phone-first layout →</div>
         </div>
       </a>
-      <a href="examples.html" class="example-card reveal">
-        <div class="example-thumb">
-          <div class="p-paint">
-            <div class="slash"></div>
-            <div class="swatches">
-              <div class="sw" style="background:#c4622d"></div>
-              <div class="sw" style="background:#e07840"></div>
-              <div class="sw" style="background:#4a6fa5"></div>
-              <div class="sw" style="background:#6b9e6b"></div>
-              <div class="sw" style="background:#e8d5a3"></div>
-              <div class="sw" style="background:#2e2e2e"></div>
-            </div>
-            <div class="content">
-              <div class="pname">Sarah Brooks Decorating</div>
-              <div class="pmid">
-                <h2>Colour advice &amp; a finish you'll <em>love</em></h2>
-              </div>
-              <div class="pbot">
-                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="rev">214 reviews · Swindon</div>
-              </div>
-            </div>
+      <a href="examples.html#example-ridgecoat-decorators" class="example-card reveal">
+        <div class="example-thumb example-thumb--browser">
+          <div class="browser-chrome" aria-hidden="true">
+            <span class="browser-dots"><span></span><span></span><span></span></span>
+            <span class="browser-url">ridgecoat-decorators-njb-demo.netlify.app</span>
+          </div>
+          <div class="browser-viewport">
+            <img src="Images/demo-ridgecoat-decorators.png" width="1024" height="654" alt="Ridgecoat Decorators — live demo site in a browser window">
           </div>
         </div>
         <div class="example-info">
           <div class="example-trade">Painter &amp; Decorator</div>
-          <div class="example-name">Sarah Brooks Decorating</div>
-          <div class="example-tag">Diagonal colour layout →</div>
+          <div class="example-name">Ridgecoat Decorators</div>
+          <div class="example-tag">Local hero &amp; process flow →</div>
         </div>
       </a>
       <a href="examples.html" class="example-card reveal">
