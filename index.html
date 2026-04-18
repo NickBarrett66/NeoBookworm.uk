@@ -951,9 +951,12 @@
 
     .pricing-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 1fr;
+      gap: 2rem;
       align-items: start;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .pricing-main {
@@ -1098,14 +1101,6 @@
       border-radius: 100px;
     }
 
-    .aftercare-footnote {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,0.35);
-      line-height: 1.6;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 0.85rem;
-    }
-
     .tax-note-subtle {
       margin-top: 1.1rem;
       font-size: 0.875rem;
@@ -1129,70 +1124,6 @@
 
     @media (max-width: 480px) {
       .aftercare-split { grid-template-columns: 1fr; }
-    }
-
-    /* Addons */
-    .addons-header {
-      margin-bottom: 1.25rem;
-    }
-
-    .addons-header h3 {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.3rem;
-    }
-
-    .addons-header p {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.45);
-    }
-
-    .addon-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .addon-item {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 0.95rem 1rem;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px;
-      gap: 1rem;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .addon-item:hover {
-      border-color: rgba(245,166,35,0.2);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .addon-name {
-      font-size: 0.875rem;
-      color: rgba(255,255,255,0.75);
-      font-weight: 500;
-      margin-bottom: 0.2rem;
-    }
-
-    .addon-desc {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,0.38);
-      line-height: 1.5;
-      max-width: 340px;
-    }
-
-    .addon-price {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--amber);
-      white-space: nowrap;
-      align-self: flex-start;
-      padding-top: 0.1rem;
     }
 
     /* ══════════════════════════════════════
@@ -1679,7 +1610,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <h3>Grows with you</h3>
-        <p>Start with a clean 5-page site. When you're ready, add online booking so customers can pick a date themselves, show your Google reviews on the site, or appear higher in Google search lists. Each one is a simple add-on — no rebuilds, no new quotes.</p>
+        <p>Start with a clean 5-page site that works on phones, makes it easy to contact you, and is written so you appear in Google search lists. If you need bigger changes later — new pages, new sections, or fresh ideas — drop me a line and I&rsquo;ll quote before I start.</p>
       </div>
     </div>
   </div>
@@ -1888,69 +1819,11 @@
             <p class="aftercare-opt-desc">I hand it over completely. Keeping the site live is free on a basic Netlify plan; you pay your web address renewal once a year (usually £10-15) — I'll show you how.</p>
           </div>
         </div>
-        <p class="aftercare-footnote">The optional extras are one-off additions — separate from the monthly choice above.</p>
         <p class="tax-note-subtle">
           By the way — if you're self-employed or running a limited company,
           your website is likely a tax-deductible business expense.
           <a href="pricing.html#tax-relief">Find out what that means in practice →</a>
         </p>
-      </div>
-      <div>
-        <div class="addons-header reveal">
-          <h3>Optional extras</h3>
-          <p>Pick what makes sense for your business. Add more later — no need to decide now.</p>
-        </div>
-        <div class="addon-list">
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Get your business on Google Maps</div>
-              <div class="addon-desc">I'll set up your free listing so you show up when someone searches "plumber near me" or your trade in Swindon</div>
-            </div>
-            <span class="addon-price">£74.99</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Text alert when someone enquires</div>
-              <div class="addon-desc">The moment a customer fills in your contact form, you get a text on your phone — so you can call them back before they call someone else</div>
-            </div>
-            <span class="addon-price">£49.99</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Show your Google reviews on your site</div>
-              <div class="addon-desc">Your real Google reviews appear live on your website automatically — great for building trust with new customers</div>
-            </div>
-            <span class="addon-price">£74.99</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Let customers book you online</div>
-              <div class="addon-desc">Customers can pick a date and book a call or visit directly from your site — it links straight to your calendar</div>
-            </div>
-            <span class="addon-price">£74.99</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Appear higher in Google search lists</div>
-              <div class="addon-desc">A full review of how you appear in Google search, plus changes to help more local customers find you instead of a competitor</div>
-            </div>
-            <span class="addon-price">£199.99</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Monthly Google report</div>
-              <div class="addon-desc">A simple monthly summary showing how many people found your site on Google, what they searched for, and how you're improving</div>
-            </div>
-            <span class="addon-price">£49.99/mo</span>
-          </div>
-          <div class="addon-item reveal">
-            <div>
-              <div class="addon-name">Extra pages</div>
-              <div class="addon-desc">Need a separate page for each service, or targeting a specific town nearby? Each additional page is a one-off charge</div>
-            </div>
-            <span class="addon-price">£49.99/page</span>
-          </div>
-        </div>
       </div>
     </div>
   </div>

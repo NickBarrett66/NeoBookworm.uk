@@ -7,11 +7,11 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How It Works — NeoBookworm.uk</title>
-  <meta name="description" content="Start with a simple website. Add extras as your business grows. No tech knowledge needed — I handle everything." />
+  <meta name="description" content="A fixed 5-page website for £299 — you don't pay until you're happy. Then choose monthly care or run it yourself. Plain English, no tech knowledge needed." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://neobookworm.uk/how-it-works.html" />
   <meta property="og:title" content="How It Works — NeoBookworm.uk" />
-  <meta property="og:description" content="Start with a simple website. Add extras as your business grows. No tech knowledge needed — I handle everything." />
+  <meta property="og:description" content="A fixed 5-page website for £299 — you don't pay until you're happy. Then choose monthly care or run it yourself. Plain English, no tech knowledge needed." />
   <meta property="og:image" content="https://neobookworm.uk/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -233,13 +233,6 @@
       box-shadow: 0 0 0 6px rgba(245,166,35,0.15);
     }
 
-    /* Stages 2–8 — extras */
-    .stage-extra .node-circle {
-      background: var(--navy-mid);
-      border: 2px solid rgba(245,166,35,0.35);
-      color: var(--amber);
-    }
-
     .stage:hover .node-circle { transform: scale(1.08); }
 
     /* Card */
@@ -291,15 +284,6 @@
       line-height: 1.65;
     }
 
-    .stage-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 0.85rem;
-      flex-wrap: wrap;
-    }
-
     .stage-title {
       font-family: var(--serif);
       font-size: 1.35rem; font-weight: 700;
@@ -321,12 +305,6 @@
       background: rgba(245,166,35,0.2);
       border: 1px solid rgba(245,166,35,0.4);
       color: var(--amber);
-    }
-
-    .pill-extra {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.5);
     }
 
     .stage-desc {
@@ -356,34 +334,6 @@
       stroke: var(--amber); flex-shrink: 0;
       margin-top: 2px;
     }
-
-    /* Price tag on extras */
-    .stage-price {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.45);
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .stage-price strong {
-      color: var(--amber);
-      font-size: 0.92rem; font-weight: 600;
-    }
-
-    /* "When might I need this?" callout */
-    .stage-when {
-      background: rgba(255,255,255,0.03);
-      border-left: 2px solid rgba(245,166,35,0.3);
-      border-radius: 0 8px 8px 0;
-      padding: 0.7rem 1rem;
-      margin-top: 0.85rem;
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.6;
-    }
-
-    .stage-when em { color: rgba(255,255,255,0.65); font-style: normal; }
 
     /* £299 build — scoped block inside stage 1 (not aftercare) */
     .stage-499-scope {
@@ -538,6 +488,17 @@
       line-height: 1.65;
       border-top: 1px solid rgba(255,255,255,0.07);
       padding-top: 1rem;
+    }
+
+    .aftercare-footer a {
+      color: var(--amber);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245,166,35,0.35);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .aftercare-footer a:hover {
+      border-bottom-color: var(--amber);
     }
 
     @media (max-width: 640px) {
@@ -703,8 +664,8 @@
 <div class="page-hero">
   <div class="page-hero-inner">
     <span class="page-label">How it works</span>
-    <h1 class="page-title">Start simple.<br><em>Grow when you're ready.</em></h1>
-    <p class="page-intro">Every client starts with the same thing — a 5-page website that works on phones, looks great, and helps you appear in Google search lists. You don&rsquo;t pay until you&rsquo;re happy. After that, you choose what to add, if and when it makes sense for your business.</p>
+    <h1 class="page-title">One clear build.<br><em>Your choice after that.</em></h1>
+    <p class="page-intro">Every client gets the same thing — a 5-page website that works on phones, looks great, and helps you appear in Google search lists. You don&rsquo;t pay until you&rsquo;re happy. After that, you either have me keep it running for £19.99 a month, or you take it over yourself. If you need bigger changes later, email me and I&rsquo;ll quote before I start.</p>
   </div>
 </div>
 
@@ -714,7 +675,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     </svg>
-    <p><strong>No pressure, no upselling.</strong> Stage 1 is all most tradespeople ever need. The extras are genuinely useful things you might want one day — I&rsquo;ve listed them so you can see what&rsquo;s possible, not so I can talk you into buying them.</p>
+    <p><strong>No pressure, no upselling.</strong> The £299 build is deliberately complete — most tradespeople never need anything more to win work online. If your business changes down the line, I&rsquo;m still here for ad-hoc help or bigger projects, always with a clear price first.</p>
   </div>
 </div>
 
@@ -778,192 +739,8 @@
         </div>
       </div>
       <div class="aftercare-footer">
-        The optional extras — text alerts, Google Maps, online booking and so on — are available whichever option you choose. They're one-off additions, not part of the monthly fee.
+        Need new pages or a bigger change later? Message me — I charge £25 an hour for work outside the monthly plan, and I&rsquo;ll always agree a price with you before I start. See <a href="pricing.html">pricing</a> for the full picture.
       </div>
-    </div>
-  </div>
-
-  <!-- STAGE 2 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">2</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Update your own site — without calling me</h2>
-        <span class="stage-pill pill-extra">Optional · £49.99 one-off</span>
-      </div>
-      <p class="stage-desc">Want to change your prices, add a new service, or update your phone number yourself? I add a simple login to your website — think of it like editing a Word document, but for your site. No tech knowledge needed.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Log in from any phone or computer</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Change prices, services, photos or wording yourself</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>No coding, no tech knowledge required</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> When you find yourself regularly asking me to make small changes, or you want to update things immediately rather than waiting for me.
-      </div>
-      <div class="stage-price"><strong>£49.99</strong> one-off — included in monthly retainer if you prefer me to do it for you</div>
-    </div>
-  </div>
-
-  <!-- STAGE 3 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">3</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Get a text the moment someone enquires</h2>
-        <span class="stage-pill pill-extra">Optional · £49.99 one-off</span>
-      </div>
-      <p class="stage-desc">When someone fills in the contact form on your website, you get a text message on your phone straight away — with their name, number and what they need. You can call them back before they've even tried your competitor.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Instant text to your phone with customer details</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Customer gets an automatic reply so they know you'll be in touch</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Every enquiry is logged so nothing slips through the cracks</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> If you're on the tools all day and can't check emails — this means you'll never miss a lead while you're working.
-      </div>
-      <div class="stage-price"><strong>£49.99</strong> one-off setup · included free in the monthly retainer</div>
-    </div>
-  </div>
-
-  <!-- STAGE 4 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">4</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Show your Google reviews on your website</h2>
-        <span class="stage-pill pill-extra">Optional · £74.99 one-off</span>
-      </div>
-      <p class="stage-desc">Your genuine Google reviews appear live on your website — automatically updated whenever you get a new one. Customers who land on your site can see what other local people say about you without having to go searching.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Real, verified Google reviews shown live on your site</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Updates automatically — new reviews appear on their own</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Also get your business set up on Google Maps (see Stage 4a below)</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> If you've built up good reviews on Google and want people to see them the moment they land on your site — before they go looking elsewhere.
-      </div>
-      <div class="stage-price"><strong>£74.99</strong> one-off</div>
-    </div>
-  </div>
-
-  <!-- STAGE 4a — Google Maps -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle" style="font-size:0.72rem;">4a</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Get your business on Google Maps</h2>
-        <span class="stage-pill pill-extra">Optional · £74.99 one-off</span>
-      </div>
-      <p class="stage-desc">When someone types "plumber near me" or "roofer in Swindon" into Google, a map comes up with local businesses listed on it. I'll set up your free listing on that map — including your phone number, opening hours, website link and photos.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your business appears on Google Maps and in local search results</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Phone number, hours, photos and reviews all in one place</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>The listing is free — I just set it up and make it look clear and tidy</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> Almost always worth doing early — it's free to have and gets your business in front of local people searching on their phones right now.
-      </div>
-      <div class="stage-price"><strong>£74.99</strong> one-off setup</div>
-    </div>
-  </div>
-
-  <!-- STAGE 5 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">5</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Let customers book you directly online</h2>
-        <span class="stage-pill pill-extra">Optional · £74.99 one-off</span>
-      </div>
-      <p class="stage-desc">Instead of customers calling to check your availability, they can go straight to your website, pick a date and time that works for them, and book a call or site visit — all automatically. It syncs straight to your phone's calendar.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Customers pick a date and book themselves — no phone tag</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>You get an instant notification and a calendar entry</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Works with Google Calendar and Apple Calendar</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> If you do initial consultations or site visits before quoting — this takes the admin out of arranging them.
-      </div>
-      <div class="stage-price"><strong>£74.99</strong> one-off setup</div>
-    </div>
-  </div>
-
-  <!-- STAGE 6 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">6</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Appear higher in Google search lists</h2>
-        <span class="stage-pill pill-extra">Optional · £199.99 + £49.99/mo</span>
-      </div>
-      <p class="stage-desc">When someone in Swindon Googles "emergency plumber" or "painter and decorator near me", they see a list of results. The higher up your website appears on that list, the more enquiries you get. I'll go through your site and make changes to help push you up that list.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>A full review of how Google currently sees your site — and what to fix</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Changes made to help you appear when local customers search for your trade</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Optional monthly report showing how many people found you and where from</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> When you want to grow beyond word-of-mouth and start getting enquiries from people who don't know you yet — found you purely because you came up on Google.
-      </div>
-      <div class="stage-price"><strong>£199.99</strong> one-off audit &amp; setup · <strong>£49.99/month</strong> for the monthly report (optional)</div>
-    </div>
-  </div>
-
-  <!-- STAGE 7 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">7</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">A gallery that updates itself</h2>
-        <span class="stage-pill pill-extra">Optional · £99.99 one-off</span>
-      </div>
-      <p class="stage-desc">Got a lot of project photos? I can set up a simple system where you add new jobs — photos, a title, a short description — and they appear on your website automatically. No need to contact me every time you finish a job you're proud of.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Add new case studies or project photos from your phone</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>They appear on your website gallery automatically</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Great for tradespeople who do varied, visually impressive work</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> If you do kitchens, extensions, decorating, landscaping — anything where showing your work is the best way to win new customers.
-      </div>
-      <div class="stage-price"><strong>£99.99</strong> one-off setup</div>
-    </div>
-  </div>
-
-  <!-- STAGE 8 -->
-  <div class="stage stage-extra reveal">
-    <div class="stage-node">
-      <div class="node-circle">8</div>
-    </div>
-    <div class="stage-card">
-      <div class="stage-header">
-        <h2 class="stage-title">Target specific towns nearby</h2>
-        <span class="stage-pill pill-extra">Optional · £49.99/page</span>
-      </div>
-      <p class="stage-desc">If you work across a wider area — say, Swindon, Marlborough, Chippenham and Cirencester — I can add a separate page for each town you cover. This helps people in those areas find you when they search on Google, rather than only finding tradespeople closer to them.</p>
-      <ul class="stage-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>A dedicated page for each town or area you cover</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Helps Google match you to searches from those areas</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Good for growing tradespeople who want to expand their patch</li>
-      </ul>
-      <div class="stage-when">
-        <em>When might I want this?</em> Once you've got the basics working well and you're ready to grow into new areas — or if you already cover a wide patch and want to make sure people in each area can find you.
-      </div>
-      <div class="stage-price"><strong>£49.99</strong> per town page</div>
     </div>
   </div>
 
@@ -971,10 +748,10 @@
 
 <!-- BOTTOM CTA -->
 <div class="bottom-cta">
-  <h2>Not sure which extras you need?</h2>
-  <p>Drop me a message and I'll tell you honestly which ones would make a difference for your type of work — and which ones you probably don't need yet.</p>
+  <h2>Ready to talk it through?</h2>
+  <p>Drop me a message — no obligation. I&rsquo;ll explain the £299 build, how the monthly option compares to running it yourself, and answer anything you&rsquo;re unsure about.</p>
   <a href="contact.html" class="btn-primary">
-    Ask me a question
+    Get in touch
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
 </div>

@@ -163,16 +163,6 @@
     .aftercare-badge { display: inline-block; background: var(--amber); color: var(--navy); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 100px; }
     .aftercare-note { font-size: 0.78rem; color: rgba(255,255,255,0.35); font-style: italic; }
 
-    .aftercare-footnote { font-size: 0.8rem; color: rgba(255,255,255,0.35); line-height: 1.6; padding-top: 0.85rem; border-top: 1px solid rgba(255,255,255,0.07); }
-
-    /* ══ EXTRAS ══ */
-    .extras-section { padding: 4rem 2rem 0; }
-
-    .extras-header { text-align: center; margin-bottom: 3rem; }
-    .extras-title { font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; color: var(--white); margin-bottom: 0.75rem; }
-    .extras-sub { font-size: 0.98rem; color: rgba(255,255,255,0.55); max-width: 520px; margin: 0 auto; line-height: 1.7; }
-
-    .extras-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
     /* ══ TAX RELIEF NOTE ══ */
     .tax-relief-section {
@@ -234,34 +224,6 @@
     }
 
     .tax-caveat strong { color: rgba(15,31,61,0.92); }
-
-    .extra-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px; padding: 1.5rem;
-      display: flex; flex-direction: column; gap: 0;
-      transition: border-color 0.25s, background 0.25s, transform 0.2s;
-      position: relative; overflow: hidden;
-    }
-    .extra-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--amber), transparent);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .extra-card:hover { border-color: rgba(245,166,35,0.28); background: rgba(255,255,255,0.05); transform: translateY(-3px); }
-    .extra-card:hover::before { opacity: 1; }
-
-    .extra-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.6rem; }
-    .extra-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--white); line-height: 1.3; }
-    .extra-price { font-size: 0.85rem; font-weight: 600; color: var(--amber); white-space: nowrap; flex-shrink: 0; padding-top: 2px; }
-    .extra-desc { font-size: 0.85rem; color: rgba(255,255,255,0.52); line-height: 1.65; margin-bottom: 1rem; flex: 1; }
-
-    .extra-when {
-      font-size: 0.78rem; color: rgba(255,255,255,0.35);
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 0.75rem; line-height: 1.55;
-    }
-    .extra-when em { color: rgba(255,255,255,0.5); font-style: normal; }
 
     /* ══ REASSURANCE ══ */
     .reassurance-section { padding: 4rem 2rem 0; }
@@ -395,7 +357,6 @@
     @media (max-width: 640px) {
       nav { padding: 1rem 1.25rem; }
       .aftercare-grid { grid-template-columns: 1fr; }
-      .extras-grid { grid-template-columns: 1fr; }
     }
   
 .nav-logo-img, .footer-logo-img {
@@ -555,7 +516,6 @@
             </div>
 
           </div>
-          <p class="aftercare-footnote">The optional extras are available whichever option you choose — they're one-off additions, completely separate from the build and monthly options on this page.</p>
         </div>
 
       </div>
@@ -606,92 +566,6 @@
   </div>
 </section>
 
-<!-- OPTIONAL EXTRAS -->
-<div class="extras-section">
-  <div class="section-inner">
-    <div class="extras-header reveal">
-      <span class="page-label">Optional extras</span>
-      <h2 class="extras-title">Add what makes sense for your business</h2>
-      <p class="extras-sub">None of these are necessary to get started. They're genuinely useful additions you can pick up now or add later — no pressure either way.</p>
-    </div>
-    <div class="extras-grid">
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Get your business on Google Maps</h3>
-          <span class="extra-price">£74.99 one-off</span>
-        </div>
-        <p class="extra-desc">I'll set up your free listing so you appear when someone searches "plumber near me" or your trade in Swindon. Includes your phone number, opening hours, photos and a link to your site.</p>
-        <div class="extra-when"><em>Worth doing early</em> — it's free to have and gets you in front of local people searching on their phones right now.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Get a text the moment someone enquires</h3>
-          <span class="extra-price">£49.99 one-off</span>
-        </div>
-        <p class="extra-desc">When a customer fills in your contact form, you get a text on your phone straight away with their name, number and what they need. Call them back before they try anyone else.</p>
-        <div class="extra-when"><em>Ideal if you're on the tools all day</em> and can't check emails — you'll never miss a lead while you're working.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Show your Google reviews on your site</h3>
-          <span class="extra-price">£74.99 one-off</span>
-        </div>
-        <p class="extra-desc">Your real Google reviews appear live on your website and update automatically whenever you get a new one. New visitors see what other local customers say about you straight away.</p>
-        <div class="extra-when"><em>Good if you've built up reviews</em> and want people to see them the moment they land on your site.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Let customers book you directly online</h3>
-          <span class="extra-price">£74.99 one-off</span>
-        </div>
-        <p class="extra-desc">Customers pick a date and time and book a call or site visit straight from your website. No phone tag. It syncs automatically to your Google or Apple calendar.</p>
-        <div class="extra-when"><em>Useful if you do consultations or site visits</em> before quoting — this takes the admin out of arranging them.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Update your own site without calling me</h3>
-          <span class="extra-price">£49.99 one-off</span>
-        </div>
-        <p class="extra-desc">I add a simple login to your website so you can change prices, update services or swap photos yourself — from any phone or computer. Think of it like editing a Word document, but for your site.</p>
-        <div class="extra-when"><em>Worth adding</em> if you regularly need small changes and want to make them immediately rather than waiting for me.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Appear higher in Google search lists</h3>
-          <span class="extra-price">£199.99 one-off<br><span style="font-size:0.78rem; color: rgba(255,255,255,0.35);">+ optional £49.99/mo report</span></span>
-        </div>
-        <p class="extra-desc">A full review of how Google currently sees your site, plus changes to help you appear higher when local customers search for your trade. Optional monthly report shows how you're improving.</p>
-        <div class="extra-when"><em>When you're ready to grow</em> beyond word-of-mouth and start getting enquiries from people who found you purely on Google.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">A gallery that updates itself</h3>
-          <span class="extra-price">£99.99 one-off</span>
-        </div>
-        <p class="extra-desc">Add new project photos and job descriptions from your phone, and they appear on your website gallery automatically. No need to contact me every time you finish a job you're proud of.</p>
-        <div class="extra-when"><em>Great for tradespeople</em> who do kitchens, extensions, decorating or landscaping — anything where showing your work wins new customers.</div>
-      </div>
-
-      <div class="extra-card reveal">
-        <div class="extra-header">
-          <h3 class="extra-name">Target specific towns nearby</h3>
-          <span class="extra-price">£49.99 per town</span>
-        </div>
-        <p class="extra-desc">A dedicated page for each town or area you cover — Marlborough, Chippenham, Cirencester and so on. Helps people in those areas find you when they search on Google.</p>
-        <div class="extra-when"><em>Good once you're established</em> and ready to grow your patch, or if you already cover a wide area and want each town to find you.</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <!-- REASSURANCE -->
 <div class="reassurance-section">
   <div class="section-inner">
@@ -718,7 +592,7 @@
           <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
         </svg>
         <h3>Not sure what you need?</h3>
-        <p>Drop me a message and I'll be straight with you about which extras would make a real difference — and which ones you don't need yet.</p>
+        <p>Drop me a message and I'll be straight with you about what the £299 build covers — and whether the monthly option or running it yourself suits you better.</p>
       </div>
 
     </div>
@@ -750,7 +624,7 @@
       What exactly is included in the £19.99 a month?
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
-    <div class="faq-answer">Four things: keeping your site live on the internet (the equivalent of rent for the server it lives on), making sure the security is up to date so it can't be hacked, making one content change a month if you need it — a new price, an updated service, a different photo — and your annual web address renewal so it stays registered in your name (typically £8–15 a year to the registrar; that's covered while you're on the monthly plan). Just send me a message for changes. The optional extras (Google Maps, text alerts, booking system etc.) are separate one-off costs — they're not included in the £19.99.</div>
+    <div class="faq-answer">Four things: keeping your site live on the internet (the equivalent of rent for the server it lives on), making sure the security is up to date so it can't be hacked, making one content change a month if you need it — a new price, an updated service, a different photo — and your annual web address renewal so it stays registered in your name (typically £8–15 a year to the registrar; that's covered while you're on the monthly plan). Just send me a message for changes. Bigger jobs — new pages, new sections, or anything that needs a proper build-out — are quoted separately at £25 an hour, with a clear price before I start.</div>
   </div>
 
   <div class="faq-item reveal">
@@ -766,15 +640,15 @@
       If I run the site myself, can you still make changes for me sometimes?
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
-    <div class="faq-answer">Yes — email me with what you need. I charge £25 per hour (minimum half an hour). Most small tweaks take 15–30 minutes. If you don't have the optional "update it yourself" login and want it added later, that's £49.99 one-off — same as on the optional extras list.</div>
+    <div class="faq-answer">Yes — email me with what you need. I charge £25 per hour (minimum half an hour). Most small tweaks take 15–30 minutes. Anything larger, I'll give you a quote before I start.</div>
   </div>
 
   <div class="faq-item reveal">
     <button class="faq-question">
-      Can I add extras later, or do I have to decide now?
+      Can I change or grow the site later, or do I have to decide everything now?
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
-    <div class="faq-answer">You can add any of the extras at any point — now, in six months, or whenever it makes sense. Nothing needs to be decided upfront. Each extra is a one-off job that I add onto your existing site, so there's no disruption and no need to rebuild anything.</div>
+    <div class="faq-answer">You don't need to plan everything upfront. If you're on the monthly plan, you already have one content change a month included. For anything bigger — new pages, new features, a rethink of a section — email me and I'll quote it at £25 an hour before I start. If you run the site yourself, the same applies whenever you want a hand.</div>
   </div>
 
   <div class="faq-item reveal">
