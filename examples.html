@@ -252,7 +252,7 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 
 /* INTRO STRIP */
 .intro{background:var(--navy3);border:1px solid var(--bd);border-radius:8px;padding:20px 26px;margin-bottom:38px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
-.intro p{font-size:13.5px;color:var(--mu);line-height:1.65;max-width:530px}
+.intro p{font-size:13.5px;color:var(--mu);line-height:1.65;flex:1 1 280px;min-width:0;max-width:min(46rem,100%);text-wrap:pretty}
 .intro p strong{color:var(--tx)}
 .intro a{font-size:13px;font-weight:600;color:var(--amber);text-decoration:none;white-space:nowrap;padding:10px 22px;border:1px solid var(--ab);border-radius:4px;transition:all .2s;flex-shrink:0}
 .intro a:hover{background:var(--ap)}
@@ -365,20 +365,20 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 <div class="hero rv">
   <div class="eyebrow">Examples</div>
   <h1>Every site tells a<br><em>different story.</em></h1>
-  <p>Eight completely different approaches — different layouts, different structures, different personalities. These show the range of what's possible. Your site would be built around you, not around a template.</p>
+  <p>Eight different approaches — different layouts, different shapes, different personalities. They show what&rsquo;s possible. Yours would be built around you, not dropped into a generic layout.</p>
   <div class="hero-note">Fictional businesses, <strong>real craft</strong> — built the same way yours would be.</div>
 </div>
 
 <div class="wrap">
 
   <div class="intro rv">
-    <p>Notice how these feel <strong>structurally different</strong> — not just recoloured versions of the same thing. Each one is a real design approach that could work for any trade. I'll suggest what might suit you best — but the choice is always yours.</p>
+    <p>Notice how these don&rsquo;t all feel like the <strong>same page with different colours</strong>. Each one is a genuine way a site could be put together. I&rsquo;ll say what might suit you &mdash; <strong>but you&nbsp;choose.</strong></p>
     <a href="intake-form.html">Get your free demo &rarr;</a>
   </div>
 
   <!-- ═══ CLEAN & CLEAR ═══ -->
   <div class="group-label rv">Clean <em>&amp; Clear</em></div>
-  <p class="group-sub rv">Structured and trustworthy — works well when your qualifications and accreditations are a big part of why customers choose you.</p>
+  <p class="group-sub rv">Clear and orderly &mdash; works well when <strong>qualifications and badges</strong> matter as much as what you say in your own words.</p>
   <div class="grid">
 
     <!-- ELECTRICIAN — Swift Electricals (live demo) -->
@@ -395,8 +395,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Electrician</div>
         <div class="biz">Swift Electricals</div>
-        <div class="desc">A split-panel hero keeps accreditations and badges in their own column beside your headline — so customers see you're approved before they read the detail. A strong fit if people choose you because of what you're registered for; the same idea works for any trade where qualifications and trust marks need to lead the page.</div>
-        <div class="tags"><span class="tag tg-min">Split panel</span><span class="tag tg-tec">Cert-led</span></div>
+        <div class="desc">The first screen is split: your badges and certificates sit in one column, your main message in the other &mdash; so people see you&rsquo;re registered and approved before they read the detail. Suits you if customers pick you because of what you&rsquo;re qualified to do; the same idea works for any trade where proof needs to come first.</div>
+        <div class="tags"><span class="tag tg-min">Split top</span><span class="tag tg-tec">Certificates first</span></div>
         <div class="arrow">View demo &#8594;</div>
       </div>
     </a>
@@ -415,8 +415,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Plumber</div>
         <div class="biz">Hartley Plumbing</div>
-        <div class="desc">The phone number is the hero — impossible to miss, impossible to forget — with a clear emergency strip and trust badges below. A strong fit if your customers are often in a hurry or dealing with a crisis; the same idea works for any trade that lives on inbound calls.</div>
-        <div class="tags"><span class="tag tg-bold">Phone-first</span><span class="tag tg-bold">Emergency</span></div>
+        <div class="desc">Your phone number is the biggest thing on the page &mdash; hard to miss &mdash; with a clear urgent bar at the top and proof underneath (badges, trust marks). Suits you if people are stressed or in a hurry; same idea for any trade that runs on the phone ringing.</div>
+        <div class="tags"><span class="tag tg-bold">Number-first</span><span class="tag tg-bold">Emergencies</span></div>
         <div class="arrow">View demo &#8594;</div>
       </div>
     </a>
@@ -427,7 +427,7 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 
   <!-- ═══ WARM & APPROACHABLE ═══ -->
   <div class="group-label rv">Warm <em>&amp; Approachable</em></div>
-  <p class="group-sub rv">Personality-forward — a good fit if you want customers to feel they already know and like you before they pick up the phone.</p>
+  <p class="group-sub rv">Friendly and personal &mdash; good if you want people to feel they know you a bit before they call.</p>
   <div class="grid">
 
     <!-- PAINTER — Ridgecoat Decorators (live demo) -->
@@ -444,8 +444,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Painter &amp; Decorator</div>
         <div class="biz">Ridgecoat Decorators</div>
-        <div class="desc">A strong local headline and hero image set the tone straight away, with a simple &ldquo;how it works&rdquo; flow and a trust strip (experience, insurance, accreditations) so homeowners feel reassured before they scroll. A strong fit for domestic trades where calm confidence matters; the same idea works whenever you want process and credibility up front, not a hard sell.</div>
-        <div class="tags"><span class="tag tg-ed">Local hero</span><span class="tag tg-org">Process-led</span></div>
+        <div class="desc">A strong local opening line and a big photo at the top set the tone, then a simple &ldquo;how it works&rdquo; in steps, and a short row of proof underneath &mdash; years, insurance, accreditations &mdash; so people feel reassured before they scroll. Suits domestic trades where calm and trust matter; same idea whenever you want process and credibility up front, not a hard sell.</div>
+        <div class="tags"><span class="tag tg-ed">Local up front</span><span class="tag tg-org">Step-by-step</span></div>
         <div class="arrow">View demo &#8594;</div>
       </div>
     </a>
@@ -477,8 +477,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Landscaper / Gardener</div>
         <div class="biz">Green Acre Landscapes</div>
-        <div class="desc">Full-bleed and immersive — no white background, no boxes, text floating over a scene like a photograph caption. Suits anyone whose work is best understood by seeing it. Kitchen fitters, bathroom fitters, flooring specialists — all good candidates.</div>
-        <div class="tags"><span class="tag tg-org">Full-bleed</span><span class="tag tg-org">Immersive</span></div>
+        <div class="desc">The photo goes edge to edge &mdash; it feels like you&rsquo;re looking at a real job, not a blank page with boxes. Text sits over the picture like a caption. Suits anyone whose work has to be seen; kitchen fitters, bathrooms, flooring &mdash; same kind of thing.</div>
+        <div class="tags"><span class="tag tg-org">Full-width photo</span><span class="tag tg-org">Picture-led</span></div>
         <div class="arrow">View demo site &#8594;</div>
       </div>
     </a>
@@ -489,7 +489,7 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 
   <!-- ═══ BOLD & DISTINCTIVE ═══ -->
   <div class="group-label rv">Bold <em>&amp; Distinctive</em></div>
-  <p class="group-sub rv">High-impact and confident — ideal if you want your site to make a strong first impression and not be forgettable.</p>
+  <p class="group-sub rv">Strong and memorable &mdash; when you want a site that sticks in the mind, not one that looks like everyone else&rsquo;s.</p>
   <div class="grid">
 
     <!-- ROOFER — Brutalist watermark -->
@@ -515,8 +515,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Roofer</div>
         <div class="biz">Apex Roofing</div>
-        <div class="desc">Brutalist — oversized type as background texture, bold stats, red accent strip. A deliberate choice for anyone who wants their site to feel decisive and confident rather than polished and safe. Works for any trade with a strong track record to shout about.</div>
-        <div class="tags"><span class="tag tg-bold">Brutalist</span><span class="tag tg-bold">High-impact</span></div>
+        <div class="desc">Big bold type and huge faded wording in the background, bold numbers (jobs, years, callouts), and a strong coloured bar across the top. For anyone who wants the site to feel direct and confident, not soft and safe. Works when you&rsquo;ve got a track record worth shouting about.</div>
+        <div class="tags"><span class="tag tg-bold">Bold type</span><span class="tag tg-bold">Strong numbers</span></div>
         <div class="arrow">View demo site &#8594;</div>
       </div>
     </a>
@@ -541,8 +541,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Carpenter / Joiner</div>
         <div class="biz">Hartwood Joinery</div>
-        <div class="desc">Centred crest layout — everything radiating from a bordered stamp, like a hallmark or maker's mark. A strong option for anyone who wants their site to say "established, skilled, and proud of it." Particularly effective for sole traders with a long history.</div>
-        <div class="tags"><span class="tag tg-ret">Centred crest</span><span class="tag tg-ret">Heritage</span></div>
+        <div class="desc">Everything centres on a badge or seal &mdash; like a maker&rsquo;s mark &mdash; with a clear border. Good when you want to look established and proud of the craft. Especially strong for sole traders with a long story.</div>
+        <div class="tags"><span class="tag tg-ret">Centre badge</span><span class="tag tg-ret">Heritage feel</span></div>
         <div class="arrow">View demo site &#8594;</div>
       </div>
     </a>
@@ -553,7 +553,7 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 
   <!-- ═══ PREMIUM & SPECIALIST ═══ -->
   <div class="group-label rv">Premium <em>&amp; Specialist</em></div>
-  <p class="group-sub rv">Refined and aspirational — a strong choice if you do high-value work and want the site to reflect that before a price is mentioned.</p>
+  <p class="group-sub rv">Refined &mdash; when you do high-value work and the site should feel the part before anyone asks the price.</p>
   <div class="grid">
 
     <!-- BATHROOM FITTER — Hotel card -->
@@ -573,8 +573,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Bathroom Fitter</div>
         <div class="biz">Atelier Bathrooms</div>
-        <div class="desc">Perfect symmetry on a dark background — monogram, ruled lines, everything centred like a hotel key card. This approach signals premium positioning immediately, and works for any trade doing high-value, considered work where the customer is investing seriously.</div>
-        <div class="tags"><span class="tag tg-lux">Hotel symmetry</span><span class="tag tg-lux">Centred</span></div>
+        <div class="desc">Balanced layout on a dark background &mdash; initials in a circle, neat lines, everything centred &mdash; a bit like a hotel key card. Feels upmarket straight away. Suits trades where the customer is spending serious money and wants reassurance, not a bargain pitch.</div>
+        <div class="tags"><span class="tag tg-lux">Symmetrical</span><span class="tag tg-lux">Upmarket feel</span></div>
         <div class="arrow">View demo site &#8594;</div>
       </div>
     </a>
@@ -622,8 +622,8 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
       <div class="meta">
         <div class="trade">Heating Engineer / Gas Safe</div>
         <div class="biz">Meridian Heating</div>
-        <div class="desc">Dashboard layout — a data grid at the bottom instead of a big sales block, monospace numbers, registration in the header. A great fit for anyone whose customers want to see facts and figures up front: years trading, response time, guarantee length.</div>
-        <div class="tags"><span class="tag tg-tec">Dashboard grid</span><span class="tag tg-tec">Data-first</span></div>
+        <div class="desc">Key facts in boxes along the bottom &mdash; guarantee, response time, the kind of work you take on &mdash; with your registration and badges in the top bar. Suits customers who want numbers and facts before a long read: years trading, how fast you answer, what you guarantee.</div>
+        <div class="tags"><span class="tag tg-tec">Facts in boxes</span><span class="tag tg-tec">Numbers up front</span></div>
         <div class="arrow">View demo site &#8594;</div>
       </div>
     </a>
@@ -636,7 +636,7 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 <div class="cta-wrap">
   <div class="cta-block rv">
     <h2>Want to see one built<br><em>for your business?</em></h2>
-    <p>I'll put together a free demo using your actual business name and trade — so you can see exactly what you'd get before spending anything.</p>
+    <p>I&rsquo;ll put together a <strong>free demo</strong> with your <strong>real business name and trade</strong> &mdash; so you can see <strong>what you&rsquo;d get</strong> before you spend anything.</p>
     <div class="btns">
       <a href="intake-form.html" class="btn-p">Get my free demo &rarr;</a>
       <a href="pricing.html" class="btn-s">See pricing first</a>
