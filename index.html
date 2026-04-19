@@ -549,7 +549,8 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: top center;
+      /* Same nudge as .browser-viewport--photo for demo-hartley-plumbing.jpg — keeps left edge visible in narrow frames (e.g. iPad Chrome) */
+      object-position: 22% top;
       display: block;
     }
 
@@ -1372,7 +1373,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: top left;
+        object-position: 22% top;
       }
       .pricing-layout { grid-template-columns: 1fr; }
       .examples-grid  { grid-template-columns: repeat(2, 1fr); }
