@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme: only dark; background:#0f1f3d;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Guides for Tradespeople | NeoBookworm</title>
+  <meta name="description" content="Plain-English guides for tradespeople thinking about getting a website — or who already have one. No jargon, no sales pitch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:        #0f1f3d;
+      --navy-card:   #162b4a;
+      --navy-card2:  #1a3050;
+      --navy-hover:  #1e3558;
+      --amber:       #f5a623;
+      --amber-dark:  #d4891a;
+      --amber-faint: rgba(245,166,35,0.08);
+      --amber-mid:   rgba(245,166,35,0.18);
+      --text:        #dde5f0;
+      --text-muted:  #7d98b8;
+      --text-dim:    #3d5a7a;
+      --border:      rgba(255,255,255,0.09);
+      --border-gold: rgba(245,166,35,0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      color-scheme: only dark;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,27,53,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+    }
+    .nav-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 62px; gap: 2rem;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.55rem;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo-icon {
+      width: 32px; height: 32px; border-radius: 6px;
+      background: var(--amber);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 900;
+      color: var(--navy); line-height: 1;
+    }
+    .nav-logo-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.975rem; font-weight: 600;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .nav-logo-text span { color: var(--amber); }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s; white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--amber); }
+    .nav-cta {
+      background: var(--amber); color: var(--navy);
+      padding: 0.45rem 1.1rem; border-radius: 5px;
+      font-size: 0.875rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .nav-cta:hover { background: var(--amber-dark); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 5rem 5% 4rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .hero-inner { max-width: 1080px; margin: 0 auto; }
+
+    .hero-kicker {
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.1rem, 5vw, 3.4rem);
+      font-weight: 900; font-style: italic;
+      line-height: 1.1; color: var(--amber);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-sub {
+      font-size: 1rem; color: var(--text-muted);
+      max-width: 520px; margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .wrap {
+      max-width: 1080px; margin: 0 auto;
+      padding: 0 5% 5rem;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-head {
+      padding: 3.5rem 0 1.75rem;
+    }
+    .section-tag {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.45rem;
+    }
+    .section-tag.amber { color: var(--amber); }
+    .section-tag.blue  { color: #7fb3cc; }
+    .section-tag .pip {
+      width: 5px; height: 5px; border-radius: 50%;
+      display: inline-block; flex-shrink: 0;
+    }
+    .section-tag.amber .pip { background: var(--amber); }
+    .section-tag.blue  .pip { background: #7fb3cc; }
+
+    .section-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.3rem, 2.5vw, 1.65rem);
+      font-weight: 700; color: #fff;
+      margin-bottom: 0.4rem; line-height: 1.2;
+    }
+    .section-head p {
+      font-size: 0.9rem; color: var(--text-muted);
+      max-width: 480px; line-height: 1.65;
+    }
+
+    /* ── GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      display: flex; flex-direction: column;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem 1.5rem 1.3rem;
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      transition: background 0.2s, border-color 0.2s, transform 0.18s;
+    }
+    .card:hover {
+      background: var(--navy-hover);
+      border-color: var(--border-gold);
+      transform: translateY(-2px);
+    }
+    .card::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--amber);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.22s ease;
+    }
+    .card:hover::after { transform: scaleX(1); }
+
+    .card-icon { font-size: 1.6rem; margin-bottom: 0.9rem; line-height: 1; }
+
+    .card-meta {
+      display: flex; align-items: center;
+      gap: 0.45rem; margin-bottom: 0.55rem;
+    }
+    .card-badge {
+      font-size: 0.63rem; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 3px;
+    }
+    .card-badge.amber {
+      background: var(--amber-mid); color: var(--amber);
+    }
+    .card-badge.blue {
+      background: rgba(127,179,204,0.12); color: #7fb3cc;
+    }
+    .card-time {
+      font-size: 0.7rem; color: var(--text-dim); font-weight: 500;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      color: #fff; line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .card-tagline {
+      font-size: 0.85rem; color: var(--text-muted);
+      line-height: 1.55; flex: 1; margin-bottom: 1rem;
+    }
+    .card-cta {
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--amber);
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      transition: gap 0.18s;
+    }
+    .card:hover .card-cta { gap: 0.5rem; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center;
+      gap: 1rem; margin: 0.5rem 0 0;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .divider-gem {
+      width: 7px; height: 7px;
+      background: var(--amber); opacity: 0.35;
+      transform: rotate(45deg);
+    }
+
+    /* ── NOTICE BOX (matches site's existing callout style) ── */
+    .notice {
+      display: flex; gap: 0.9rem; align-items: flex-start;
+      background: var(--navy-card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 3rem;
+    }
+    .notice-icon {
+      flex-shrink: 0; margin-top: 1px;
+      color: var(--amber); font-size: 1rem;
+    }
+    .notice p {
+      font-size: 0.9rem; color: var(--text-muted); line-height: 1.65;
+    }
+    .notice strong { color: var(--text); font-weight: 600; }
+    .notice a { color: var(--amber); text-decoration: none; }
+    .notice a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.25rem 5%;
+    }
+    .footer-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .footer-logo-icon {
+      width: 26px; height: 26px; border-radius: 4px;
+      background: var(--amber);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem; font-weight: 900; color: var(--navy);
+    }
+    .footer-logo-text {
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--text-muted);
+    }
+    .footer-logo-text span { color: var(--amber); }
+    .footer-links {
+      display: flex; gap: 1.4rem; list-style: none; flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.8rem; color: var(--text-dim);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-copy { font-size: 0.75rem; color: var(--text-dim); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .card-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">N</div>
+      <span class="nav-logo-text">Neo<span>Bookworm.uk</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="examples.html">Examples</a></li>
+      <li><a href="guides.html" class="active">Guides</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Free resource library</div>
+    <h1>Straight answers.<br>No sales pitch.</h1>
+    <p class="hero-sub">Plain-English guides for tradespeople — whether you're thinking about getting a website or you've already got one.</p>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="wrap">
+
+  <!-- SECTION 1 -->
+  <div class="section-head">
+    <div class="section-tag amber"><span class="pip"></span>Thinking about getting a website?</div>
+    <h2>Before you decide</h2>
+    <p>Five guides covering cost, content, Google, and whether you need one at all.</p>
+  </div>
+
+  <div class="card-grid">
+
+    <a href="guides/do-i-need-a-website.html" class="card">
+      <span class="card-icon">🤔</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Getting started</span>
+        <span class="card-time">5 min read</span>
+      </div>
+      <div class="card-title">Do I Actually Need a Website, or Is Facebook Enough?</div>
+      <div class="card-tagline">A fair look at both — so you can decide for yourself, without a sales pitch either way.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/website-running-costs.html" class="card">
+      <span class="card-icon">💷</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Cost & value</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">What Does a Website Actually Cost to Keep Running?</div>
+      <div class="card-tagline">Domain, hosting, security, and updates — the honest numbers, including what the care plan covers.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/what-goes-on-a-trades-website.html" class="card">
+      <span class="card-icon">🏗️</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Content</span>
+        <span class="card-time">5 min read</span>
+      </div>
+      <div class="card-title">What Actually Goes on a Trades Website That Gets You Jobs?</div>
+      <div class="card-tagline">Five things customers look for — and exactly what to give them.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/local-search-guide.html" class="card">
+      <span class="card-icon">🔍</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Google & search</span>
+        <span class="card-time">5 min read</span>
+      </div>
+      <div class="card-title">How to Appear When Someone in Your Town Searches for Your Trade</div>
+      <div class="card-tagline">Google Business, reviews, and local search — explained without jargon.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/work-photos-guide.html" class="card">
+      <span class="card-icon">📸</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Photography</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">How to Take Decent Work Photos on Your Phone</div>
+      <div class="card-tagline">Better photos mean more enquiries. Here's all it takes with a modern smartphone.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- DIVIDER -->
+  <div class="divider"><div class="divider-gem"></div></div>
+
+  <!-- SECTION 2 -->
+  <div class="section-head">
+    <div class="section-tag blue"><span class="pip"></span>Already a NeoBookworm client?</div>
+    <h2>After you launch</h2>
+    <p>Five guides for clients who've gone live — what to do next, how to manage your site, and how to make the most of it.</p>
+  </div>
+
+  <div class="card-grid">
+
+    <a href="guides/site-is-live.html" class="card">
+      <span class="card-icon">✅</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Post-launch</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">Your Site Is Live — What to Do Next</div>
+      <div class="card-tagline">A simple checklist for the first week — sharing the link, Google Business, and getting your first reviews.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/website-handover.html" class="card">
+      <span class="card-icon">📋</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Self-manage</span>
+        <span class="card-time">6 min read</span>
+      </div>
+      <div class="card-title">Taking Over Your Website — Customer Handover Guide</div>
+      <div class="card-tagline">Step-by-step instructions if you want to manage your own hosting after the build.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/requesting-changes.html" class="card">
+      <span class="card-icon">✏️</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Making changes</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">Requesting Changes After Handover</div>
+      <div class="card-tagline">How to ask for an update, what it costs, and how the process works.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/seo-guide.html" class="card">
+      <span class="card-icon">📈</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Google & search</span>
+        <span class="card-time">6 min read</span>
+      </div>
+      <div class="card-title">Getting Found on Google — What NeoBookworm Does for Your SEO</div>
+      <div class="card-tagline">What's built into every site at launch — and the optional extras worth considering.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/cold-calls.html" class="card">
+      <span class="card-icon">📵</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Protection</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">Protecting You From Cold Calls — What NeoBookworm Does at Launch</div>
+      <div class="card-tagline">Why cold calls happen after a new site goes live — and what we do to prevent them.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- NOTICE BOX -->
+  <div class="notice">
+    <div class="notice-icon">◎</div>
+    <p><strong>Not sure which guide you need?</strong> Drop me an email and I'll point you in the right direction — no obligation. <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-logo">
+      <div class="footer-logo-icon">N</div>
+      <span class="footer-logo-text">Neo<span>Bookworm.uk</span></span>
+    </a>
+    <ul class="footer-links">
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="examples.html">Examples</a></li>
+      <li><a href="guides.html">Guides</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <span class="footer-copy">© 2025 NeoBookworm. Based in Swindon.</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme:only dark;background:#0f1f3d;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Protecting You From Cold Calls — What NeoBookworm Does at Launch | NeoBookworm</title>
+  <meta name="description" content="Why cold calls happen after a new site goes live — and what NeoBookworm does to prevent them.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>/* ── SHARED STYLES — NeoBookworm Guide Pages ── */
+:root {
+  --navy:        #0f1f3d;
+  --navy-card:   #162b4a;
+  --navy-card2:  #1a3050;
+  --navy-hover:  #1e3558;
+  --amber:       #f5a623;
+  --amber-dark:  #d4891a;
+  --amber-faint: rgba(245,166,35,0.08);
+  --amber-mid:   rgba(245,166,35,0.18);
+  --text:        #dde5f0;
+  --text-muted:  #7d98b8;
+  --text-dim:    #3d5a7a;
+  --border:      rgba(255,255,255,0.09);
+  --border-gold: rgba(245,166,35,0.25);
+  --blue-tag:    #7fb3cc;
+  --blue-faint:  rgba(127,179,204,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; color-scheme: only dark; background: #0f1f3d; }
+
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: only dark;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,27,53,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 5%;
+}
+.nav-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 62px; gap: 2rem;
+}
+.nav-logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; flex-shrink: 0; }
+.nav-logo-icon {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 900; color: var(--navy); line-height: 1;
+}
+.nav-logo-text { font-family: 'DM Sans', sans-serif; font-size: 0.975rem; font-weight: 600; color: var(--text); }
+.nav-logo-text span { color: var(--amber); }
+.nav-links { display: flex; gap: 1.6rem; list-style: none; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; white-space: nowrap; }
+.nav-links a:hover { color: var(--text); }
+.nav-links a.active { color: var(--amber); }
+.nav-cta { background: var(--amber); color: var(--navy); padding: 0.45rem 1.1rem; border-radius: 5px; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
+.nav-cta:hover { background: var(--amber-dark); }
+
+/* BREADCRUMB */
+.breadcrumb { padding: 1.25rem 5%; border-bottom: 1px solid var(--border); }
+.breadcrumb-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 0.4rem; font-size: 0.775rem; color: var(--text-dim); }
+.breadcrumb a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--text-muted); }
+.breadcrumb-sep { color: var(--text-dim); opacity: 0.5; }
+.breadcrumb-current { color: var(--text-muted); }
+
+/* GUIDE HEADER */
+.guide-header { padding: 3rem 5% 2.5rem; border-bottom: 1px solid var(--border); }
+.guide-header-inner { max-width: 720px; margin: 0 auto; }
+.guide-section-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.guide-section-tag .pip { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+.guide-section-tag.amber { color: var(--amber); }
+.guide-section-tag.amber .pip { background: var(--amber); }
+.guide-section-tag.blue { color: var(--blue-tag); }
+.guide-section-tag.blue .pip { background: var(--blue-tag); }
+.guide-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 0.75rem; }
+.guide-meta { display: flex; align-items: center; gap: 0.75rem; }
+.guide-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; }
+.guide-badge.amber { background: var(--amber-mid); color: var(--amber); }
+.guide-badge.blue { background: var(--blue-faint); color: var(--blue-tag); }
+.guide-read-time { font-size: 0.75rem; color: var(--text-dim); font-weight: 500; }
+
+/* CONTENT BODY */
+.guide-body { padding: 3rem 5% 4rem; }
+.guide-body-inner { max-width: 720px; margin: 0 auto; }
+
+.guide-body h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; font-weight: 700; color: #fff;
+  margin: 2.5rem 0 0.75rem;
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--amber);
+  line-height: 1.3;
+}
+.guide-body h2:first-child { margin-top: 0; }
+
+.guide-body p { font-size: 0.975rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1rem; }
+.guide-body p:last-child { margin-bottom: 0; }
+
+.guide-body ul, .guide-body ol { margin: 0.75rem 0 1rem 1.25rem; }
+.guide-body li { font-size: 0.975rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.3rem; }
+
+.guide-body strong { color: var(--text); font-weight: 600; }
+.guide-body em { color: var(--text); font-style: italic; }
+.guide-body a { color: var(--amber); text-decoration: none; }
+.guide-body a:hover { text-decoration: underline; }
+
+/* CALLOUT BOX */
+.callout {
+  background: var(--navy-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem; margin: 1.25rem 0;
+}
+.callout p { margin-bottom: 0; }
+
+/* TABLE */
+.guide-body table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; }
+.guide-body th { text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
+.guide-body td { padding: 0.6rem 0.75rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+.guide-body tr:last-child td { border-bottom: none; }
+.guide-body td:first-child { color: var(--text); font-weight: 500; }
+
+/* CTA BLOCK */
+.guide-cta {
+  background: var(--amber-faint); border: 1px solid var(--border-gold);
+  border-radius: 10px; padding: 1.75rem 2rem;
+  margin-top: 3rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+}
+.guide-cta-text p { font-size: 0.825rem; color: var(--text-muted); margin-top: 0.25rem; }
+.guide-cta-text strong { font-size: 1rem; color: #fff; font-family: 'Playfair Display', serif; font-weight: 700; }
+.guide-cta-btn { background: var(--amber); color: var(--navy); padding: 0.6rem 1.3rem; border-radius: 5px; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
+.guide-cta-btn:hover { background: var(--amber-dark); }
+
+/* MORE GUIDES */
+.more-guides { padding: 3rem 5% 4rem; border-top: 1px solid var(--border); }
+.more-guides-inner { max-width: 1080px; margin: 0 auto; }
+.more-guides-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1.25rem; }
+.more-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+
+.mini-card {
+  display: flex; flex-direction: column;
+  background: var(--navy-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.25rem 1.3rem; text-decoration: none; color: inherit;
+  transition: background 0.2s, border-color 0.2s, transform 0.18s;
+  position: relative; overflow: hidden;
+}
+.mini-card:hover { background: var(--navy-hover); border-color: var(--border-gold); transform: translateY(-2px); }
+.mini-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform 0.22s; }
+.mini-card:hover::after { transform: scaleX(1); }
+.mini-icon { font-size: 1.3rem; margin-bottom: 0.6rem; }
+.mini-badge { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-bottom: 0.5rem; display: inline-block; }
+.mini-badge.amber { background: var(--amber-mid); color: var(--amber); }
+.mini-badge.blue { background: var(--blue-faint); color: var(--blue-tag); }
+.mini-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 0.5rem; flex: 1; }
+.mini-cta { font-size: 0.75rem; font-weight: 600; color: var(--amber); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 2.25rem 5%; }
+.footer-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+.footer-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+.footer-logo-icon { width: 26px; height: 26px; border-radius: 4px; background: var(--amber); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 0.8rem; font-weight: 900; color: var(--navy); }
+.footer-logo-text { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+.footer-logo-text span { color: var(--amber); }
+.footer-links { display: flex; gap: 1.4rem; list-style: none; flex-wrap: wrap; }
+.footer-links a { font-size: 0.8rem; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text-muted); }
+.footer-copy { font-size: 0.75rem; color: var(--text-dim); }
+
+@media (max-width: 700px) {
+  .nav-links { display: none; }
+  .guide-cta { flex-direction: column; align-items: flex-start; }
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/index.html" class="nav-logo">
+      <div class="nav-logo-icon">N</div>
+      <span class="nav-logo-text">Neo<span>Bookworm.uk</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="/how-it-works.html">How It Works</a></li>
+      <li><a href="/pricing.html">Pricing</a></li>
+      <li><a href="/examples.html">Examples</a></li>
+      <li><a href="/guides.html" class="active">Guides</a></li>
+      <li><a href="/about.html">About</a></li>
+    </ul>
+    <a href="/contact.html" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/index.html">Home</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/guides.html">Guides</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">Cold Calls Guide</span>
+  </div>
+</div>
+
+<header class="guide-header">
+  <div class="guide-header-inner">
+    <div class="guide-section-tag blue"><span class="pip"></span>Already a NeoBookworm client?</div>
+    <h1>Protecting You From Cold Calls — What NeoBookworm Does at Launch</h1>
+    <div class="guide-meta">
+      <span class="guide-badge blue">Protection</span>
+      <span class="guide-read-time">4 min read</span>
+    </div>
+  </div>
+</header>
+
+<article class="guide-body">
+  <div class="guide-body-inner">
+    <p>One of the most common complaints from tradespeople who&#8217;ve had a website before is this: within days of going live, the phone started ringing with people trying to sell them SEO services and Google advertising packages. It&#8217;s a real problem, and it puts a lot of people off getting a website in the first place. Here&#8217;s why it happens and what we do to prevent it.</p>
+
+    <h2>Why does it happen?</h2>
+    <p>When a website goes live, several things happen at once. The biggest trigger is domain name registration &mdash; when a domain is registered, the registrar stores the owner&#8217;s contact details. Sales companies run automated bots that scan this database constantly, looking for newly registered domains, and add the contact details to their call lists. A second trigger is the website going live on Google &mdash; some marketing companies scrape newly indexed sites and harvest any visible contact details. None of this is your fault, and none of it is unavoidable. It just needs to be handled properly.</p>
+
+    <h2>What we do as standard &mdash; included in every build</h2>
+    <p><strong>Domain privacy protection.</strong> All domains for NeoBookworm clients are registered through Krystal, a UK-based hosting company. Krystal automatically hides the owner&#8217;s personal contact details from the public WHOIS database on every domain they register, at no extra cost. Your name, address and phone number are replaced with Krystal&#8217;s details instead. This is the single most effective thing you can do &mdash; it cuts off the main pipeline that feeds cold call lists before your site even launches.</p>
+    <p><strong>TPS registration.</strong> The TPS is the UK&#8217;s official Do Not Call register. If a phone number is registered on the TPS, it is illegal under UK law for marketing companies to call it without prior consent. As part of your handover, we register your mobile number with the TPS on your behalf. The registration becomes fully effective within 28 days and stays on the list permanently.</p>
+    <p><strong>No visible email address on the site.</strong> Your NeoBookworm website uses a contact form rather than displaying your email address as a clickable link. This prevents automated bots from harvesting your email from the page.</p>
+
+    <h2>What to do if you do get called</h2>
+    <p><strong>If someone calls claiming to be from Google:</strong> It isn&#8217;t. Google does not cold call businesses. You can tell them you&#8217;re not interested and hang up.</p>
+    <p><strong>If someone calls offering SEO or website services:</strong> You can simply say &#8220;I&#8217;m happy with what I have, thank you&#8221; and end the call.</p>
+    <p><strong>If calls persist:</strong> Report the number to the ICO at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>. Calling a TPS-registered number is a legal violation and carries significant fines. The free app <strong>Truecaller</strong> is also worth installing &mdash; it identifies known spam numbers before you answer.</p>
+
+    <h2>The honest summary</h2>
+    <p>We can&#8217;t guarantee zero cold calls after your site launches. The measures above significantly reduce them &mdash; particularly in the first few weeks, which is when most of the scraping activity happens. Most clients find that any increase in sales calls is short-lived and well worth it for the benefits of having a professional website. What we can tell you is that we&#8217;ve thought about this problem and taken every practical step to prevent it as part of our standard process &mdash; you won&#8217;t need to ask for it or pay extra.</p>
+    <div class="guide-cta">
+      <div class="guide-cta-text">
+        <strong>Any questions about launch?</strong>
+        <p>Get in touch and I&#8217;ll talk you through what to expect.</p>
+      </div>
+      <a href="/contact.html" class="guide-cta-btn">Get in touch &rarr;</a>
+    </div>
+  </div>
+</article>
+
+<section class="more-guides">
+  <div class="more-guides-inner">
+    <div class="more-guides-label">More guides</div>
+    <div class="more-grid">
+      <a href="/guides/website-handover.html" class="mini-card">
+        <div class="mini-icon">📋</div>
+        <span class="mini-badge blue">Self-manage</span>
+        <div class="mini-title">Taking Over Your Website &mdash; Customer Handover Guide</div>
+        <div class="mini-cta">Read guide &rarr;</div>
+      </a>
+      <a href="/guides/requesting-changes.html" class="mini-card">
+        <div class="mini-icon">✏️</div>
+        <span class="mini-badge blue">Making changes</span>
+        <div class="mini-title">Requesting Changes After Handover</div>
+        <div class="mini-cta">Read guide &rarr;</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/index.html" class="footer-logo">
+      <div class="footer-logo-icon">N</div>
+      <span class="footer-logo-text">Neo<span>Bookworm.uk</span></span>
+    </a>
+    <ul class="footer-links">
+      <li><a href="/how-it-works.html">How It Works</a></li>
+      <li><a href="/pricing.html">Pricing</a></li>
+      <li><a href="/examples.html">Examples</a></li>
+      <li><a href="/guides.html">Guides</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/privacy.html">Privacy</a></li>
+      <li><a href="/terms.html">Terms</a></li>
+    </ul>
+    <span class="footer-copy">&copy; 2025 NeoBookworm. Based in Swindon.</span>
+  </div>
+</footer>
+
+</body>
+</html>
