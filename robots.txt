@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /intake-form
+Disallow: /docs/
+
+Sitemap: https://neobookworm.uk/sitemap.xml
