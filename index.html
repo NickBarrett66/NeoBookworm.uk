@@ -1902,40 +1902,45 @@
   // Scroll Reveal — progressive enhancement (content visible without JS)
   document.documentElement.classList.add('js-reveal');
 
-  const reveals = document.querySelectorAll('.reveal');
+  const reveals = Array.from(document.querySelectorAll('.reveal'));
 
   if ('IntersectionObserver' in window) {
+
+    // Pre-compute sibling index for each reveal element once,
+    // so the observer callback never needs to query the DOM.
+    const siblingIndex = new Map();
+    reveals.forEach((el) => {
+      const parent = el.parentElement;
+      if (!parent) { siblingIndex.set(el, 0); return; }
+      const sibs = Array.from(parent.querySelectorAll('.reveal'));
+      siblingIndex.set(el, sibs.indexOf(el));
+    });
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-
-        // Stagger siblings in same parent
-        const parent = entry.target.parentElement;
-        const siblings = parent
-          ? [...parent.querySelectorAll('.reveal:not(.visible)')]
-          : [entry.target];
-        const idx = siblings.indexOf(entry.target);
-        const delay = Math.max(0, idx) * 80;
-
+        const delay = Math.max(0, siblingIndex.get(entry.target) || 0) * 80;
         setTimeout(() => {
           entry.target.classList.add('visible');
         }, delay);
-
         observer.unobserve(entry.target);
       });
     }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
 
     reveals.forEach(el => observer.observe(el));
 
-    // Immediately reveal anything already in the viewport (e.g. direct #pricing loads)
+    // Batch-read all bounding rects before looping to avoid layout thrash.
+    // A single requestAnimationFrame ensures styles have settled first.
     requestAnimationFrame(() => {
-      reveals.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight) el.classList.add('visible');
+      const rects = reveals.map(el => el.getBoundingClientRect());
+      const vh = window.innerHeight;
+      reveals.forEach((el, i) => {
+        if (rects[i].top < vh) el.classList.add('visible');
       });
     });
+
   } else {
-    // No IntersectionObserver support — just show everything
+    // No IntersectionObserver support — show everything immediately
     reveals.forEach(el => el.classList.add('visible'));
   }
 </script>

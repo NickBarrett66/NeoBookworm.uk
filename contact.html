@@ -777,7 +777,7 @@
     // Opt in to scroll reveal animation only when JS is running
     document.documentElement.classList.add('js-reveal');
 
-    var reveals = document.querySelectorAll('.reveal');
+    var reveals = Array.from(document.querySelectorAll('.reveal'));
 
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries) {
@@ -793,9 +793,10 @@
 
       // Immediately reveal anything already in the viewport
       requestAnimationFrame(function () {
-        reveals.forEach(function(el) {
-          var r = el.getBoundingClientRect();
-          if (r.top < window.innerHeight) { el.classList.add('visible'); }
+        var rects = reveals.map(function (el) { return el.getBoundingClientRect(); });
+        var vh = window.innerHeight;
+        reveals.forEach(function (el, i) {
+          if (rects[i].top < vh) { el.classList.add('visible'); }
         });
       });
     } else {

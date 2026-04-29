@@ -738,7 +738,7 @@
   // Scroll Reveal — progressive enhancement (content visible without JS)
   document.documentElement.classList.add('js-reveal');
 
-  const reveals = document.querySelectorAll('.reveal');
+  const reveals = Array.from(document.querySelectorAll('.reveal'));
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
@@ -753,9 +753,10 @@
 
     // Immediately reveal anything already in the viewport
     requestAnimationFrame(() => {
-      reveals.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight) el.classList.add('visible');
+      const rects = reveals.map(el => el.getBoundingClientRect());
+      const vh = window.innerHeight;
+      reveals.forEach((el, i) => {
+        if (rects[i].top < vh) el.classList.add('visible');
       });
     });
   } else {

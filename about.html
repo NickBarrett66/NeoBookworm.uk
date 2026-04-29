@@ -713,32 +713,47 @@
   </footer>
 
   <script>
-    // Mark <html> so CSS animation opt-in is safe
+    // Scroll Reveal — progressive enhancement (content visible without JS)
     document.documentElement.classList.add('js-reveal');
 
-    var reveals = document.querySelectorAll('.reveal');
+    var reveals = Array.from(document.querySelectorAll('.reveal'));
 
     if ('IntersectionObserver' in window) {
+
+      // Pre-compute sibling index for each reveal element once,
+      // so the observer callback never needs to query the DOM.
+      var siblingIndex = new Map();
+      reveals.forEach(function (el) {
+        var parent = el.parentElement;
+        if (!parent) { siblingIndex.set(el, 0); return; }
+        var sibs = Array.from(parent.querySelectorAll('.reveal'));
+        siblingIndex.set(el, sibs.indexOf(el));
+      });
+
       var io = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
-          if (e.isIntersecting) {
+          if (!e.isIntersecting) return;
+          var delay = Math.max(0, siblingIndex.get(e.target) || 0) * 80;
+          setTimeout(function () {
             e.target.classList.add('visible');
-            io.unobserve(e.target);
-          }
+          }, delay);
+          io.unobserve(e.target);
         });
       }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
 
       reveals.forEach(function(el) { io.observe(el); });
 
-      // Immediately reveal anything already in view
+      // Batch-read all bounding rects before looping to avoid layout thrash.
+      // A single requestAnimationFrame ensures styles have settled first.
       requestAnimationFrame(function () {
-        reveals.forEach(function(el) {
-          var r = el.getBoundingClientRect();
-          if (r.top < window.innerHeight) { el.classList.add('visible'); }
+        var rects = reveals.map(function (el) { return el.getBoundingClientRect(); });
+        var vh = window.innerHeight;
+        reveals.forEach(function (el, i) {
+          if (rects[i].top < vh) { el.classList.add('visible'); }
         });
       });
     } else {
-      // No IntersectionObserver support — just show everything
+      // No IntersectionObserver support — show everything immediately
       reveals.forEach(function(el) { el.classList.add('visible'); });
     }
   </script>
