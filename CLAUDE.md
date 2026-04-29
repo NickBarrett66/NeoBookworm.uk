@@ -213,6 +213,24 @@ standards from the first build. Do not wait for a PageSpeed audit to apply them.
   to avoid forced reflow.
 - Scroll reveal and animation JS must use `IntersectionObserver` with a
   fallback — never `setInterval` or synchronous scroll listeners.
+- **Never call `getBoundingClientRect()` inside a loop.** Batch-read all
+  rects into an array first, then loop over the stored values:
+  ```js
+  const rects = reveals.map(el => el.getBoundingClientRect());
+  reveals.forEach((el, i) => { if (rects[i].top < vh) ... });
+  ```
+- **Never call `querySelectorAll` inside an `IntersectionObserver` callback.**
+  Pre-build any index or sibling maps once at setup time using a `Map`,
+  then look up pre-computed values inside the callback.
+- The standard scroll reveal pattern for all NeoBookworm pages is:
+  1. `document.documentElement.classList.add('js-reveal')` to opt in
+  2. Pre-build a `siblingIndex` Map keyed by element before observing
+  3. `IntersectionObserver` with `threshold: 0.01, rootMargin: '0px 0px 150px 0px'`
+  4. Stagger delay of `siblingIndex * 80ms` via `setTimeout`
+  5. On first `requestAnimationFrame`, batch-read rects and immediately
+     reveal anything already in viewport
+  6. Fallback: add `visible` to all elements if `IntersectionObserver`
+     is not supported
 
 ### DOM
 
