@@ -17,24 +17,23 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://vitals.vercel-insights.com" />
 <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0f1f3d;--navy2:#162840;--navy3:#1e3352;
-  --amber:#f5a623;--amber2:#e8951a;
-  --ap:rgba(245,166,35,.10);--ab:rgba(245,166,35,.22);
-  --tx:#f0e8da;--mu:#8fa3c0;--mu2:#5a7496;--bd:rgba(245,166,35,.18);
-  --muted:rgba(255,255,255,.58);
+--navy:#0f1f3d;--navy2:#162840;--navy3:#1e3352;
+--amber:#f5a623;--amber2:#e8951a;
+--ap:rgba(245,166,35,.10);--ab:rgba(245,166,35,.22);
+--tx:#f0e8da;--mu:#8fa3c0;--mu2:#5a7496;--bd:rgba(245,166,35,.18);
+--muted:rgba(255,255,255,.58);
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--tx);overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
 
-/* NAV — match Home / How it works / Pricing */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;background:rgba(15,31,61,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);transition:padding .3s}
 .nav-logo{display:flex;align-items:center;gap:.7rem;text-decoration:none}
 .logo-wordmark{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-weight:700;color:#fff;letter-spacing:-.01em}
@@ -47,7 +46,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .nav-cta:hover{background:#d4891a!important;transform:translateY(-1px)}
 @media (max-width:640px){nav{padding:1rem 1.25rem}}
 
-/* HERO */
 .hero{padding:9rem 32px 64px;text-align:center;position:relative;z-index:1;max-width:720px;margin:0 auto}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,54px);font-weight:600;line-height:1.1;margin-bottom:18px}
@@ -56,7 +54,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .hero-note{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--mu2);border:1px solid var(--bd);border-radius:4px;padding:8px 16px}
 .hero-note strong{color:var(--amber);font-weight:500}
 
-/* LAYOUT */
 .wrap{position:relative;z-index:1;padding:0 24px 80px;max-width:1060px;margin:0 auto}
 .group-label{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--tx);margin-bottom:5px}
 .group-label em{font-style:italic;color:var(--amber)}
@@ -64,13 +61,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .divider{height:1px;background:linear-gradient(to right,transparent,var(--bd),transparent);margin:50px 0 44px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
 
-/* CARD SHELL */
 .card{background:var(--navy2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s;cursor:pointer;text-decoration:none;display:block}
 .card:hover{transform:translateY(-4px);border-color:rgba(245,166,35,.45);box-shadow:0 10px 36px rgba(0,0,0,.4),0 0 0 1px rgba(245,166,35,.12)}
-/* 16:9 landscape frame — same idea as index example thumbs; fair crop for varied hero layouts */
+
 .preview{aspect-ratio:16/9;height:auto;min-height:0;overflow:hidden;position:relative;flex-shrink:0}
 .preview>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
-/* Full viewport + browser chrome — matches index “site in a window” cards */
+
 .preview.preview--browser{display:flex;flex-direction:column;aspect-ratio:auto;background:#1e2433}
 .preview.preview--browser .browser-chrome{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:0 10px;height:26px;min-height:26px;background:linear-gradient(180deg,#3d4450 0%,#2a3038 100%);border-bottom:1px solid rgba(0,0,0,.35)}
 .preview.preview--browser .browser-dots{display:flex;gap:5px;flex-shrink:0}
@@ -91,7 +87,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .arrow{font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.04em;display:flex;align-items:center;gap:5px;transition:gap .18s}
 .card:hover .arrow{gap:9px}
 
-/* TAG COLOURS */
 .tg-min{background:rgba(100,140,200,.1);color:#8ab0d8;border:1px solid rgba(100,140,200,.2)}
 .tg-bold{background:rgba(220,60,40,.1);color:#e05040;border:1px solid rgba(220,60,40,.2)}
 .tg-org{background:rgba(80,160,100,.1);color:#6ab880;border:1px solid rgba(80,160,100,.2)}
@@ -101,11 +96,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .tg-fri{background:rgba(249,115,22,.1);color:#f97316;border:1px solid rgba(249,115,22,.2)}
 .tg-ed{background:rgba(200,170,100,.1);color:#c4a050;border:1px solid rgba(200,170,100,.2)}
 
-/* ======================================================
-   PREVIEW 1 — ELECTRICIAN
-   Layout: SPLIT PANEL — cert stack left / headline right
-   Dark navy left strip, white right, hard vertical divide
-   ====================================================== */
 .p-elec{height:100%;display:flex;font-family:'DM Sans',sans-serif;background:#f5f7fa}
 .p-elec .left{width:38%;background:#0d2244;display:flex;flex-direction:column;justify-content:space-between;padding:10px 8px;border-right:2px solid #f5a623}
 .p-elec .left .brand{font-size:6.5px;font-weight:700;color:#f5a623;letter-spacing:.14em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);margin:0 auto}
@@ -119,11 +109,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-elec .right .rbot .num{font-size:9px;font-weight:700;color:#0d2244}
 .p-elec .right .rbot .btn{background:#0d2244;color:#fff;font-size:5.5px;padding:3px 8px;border-radius:2px;font-weight:600}
 
-/* ======================================================
-   PREVIEW 2 — PLUMBER
-   Layout: GIANT PHONE NUMBER as the hero element
-   Emergency red band at top, number takes 40% of space
-   ====================================================== */
 .p-plumb{height:100%;background:#fff;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
 .p-plumb .emerg{background:#dc2626;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .p-plumb .emerg span{font-size:6px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.1em}
@@ -140,11 +125,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-plumb .amber-bar{background:#f5a623;padding:4px 10px;display:flex;gap:10px;flex-shrink:0}
 .p-plumb .amber-bar span{font-size:5.5px;font-weight:700;color:#1a3a5c}
 
-/* ======================================================
-   PREVIEW 4 — LANDSCAPER
-   Layout: FULL-BLEED IMAGE SIMULATION — gradient landscape
-   Text floats at bottom-left with leaf motifs, no white
-   ====================================================== */
 .p-land{height:100%;background:linear-gradient(165deg,#2a4a1e 0%,#4a7c3a 35%,#6b9e55 65%,#8aba6a 100%);font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
 .p-land .sky{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,#87ceeb 0%,#b0ddf0 100%);opacity:.35}
 .p-land .sun{position:absolute;top:8px;right:14px;width:22px;height:22px;background:radial-gradient(circle,rgba(255,220,100,.8),transparent 70%);border-radius:50%}
@@ -158,11 +138,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-land .lfoot .area{font-size:5.5px;color:rgba(168,216,144,.8)}
 .p-land .lfoot .btn{background:#4a7c3a;border:1px solid #8aba6a;padding:3px 8px;font-size:5.5px;color:#fff;border-radius:2px}
 
-/* ======================================================
-   PREVIEW 5 — ROOFER
-   Layout: BRUTALIST — massive tilted watermark text ROOFING
-   sits behind content, industrial texture overlay
-   ====================================================== */
 .p-roof{height:100%;background:#111;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
 .p-roof .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);font-family:'Bebas Neue',sans-serif;font-size:72px;color:rgba(229,62,26,.07);white-space:nowrap;letter-spacing:.08em;pointer-events:none;user-select:none}
 .p-roof .stripe{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(to right,#e53e1a,#ff7040)}
@@ -176,11 +151,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-roof .stat strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#e53e1a;line-height:1}
 .p-roof .stat small{font-size:5px;color:#555;text-transform:uppercase;letter-spacing:.1em}
 
-/* ======================================================
-   PREVIEW 6 — CARPENTER / JOINER
-   Layout: CENTRED STAMP / CREST — radial composition
-   Everything centred, decorative rule-and-border frame
-   ====================================================== */
 .p-carp{height:100%;background:#f5e8cc;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background-image:repeating-linear-gradient(0deg,transparent,transparent 12px,rgba(139,94,60,.05) 12px,rgba(139,94,60,.05) 13px),repeating-linear-gradient(90deg,transparent,transparent 12px,rgba(139,94,60,.03) 12px,rgba(139,94,60,.03) 13px)}
 .p-carp .stamp{text-align:center;border:2px solid #8b5e3c;padding:12px 16px;position:relative}
 .p-carp .stamp::before{content:'';position:absolute;inset:3px;border:1px solid rgba(139,94,60,.4)}
@@ -195,11 +165,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-carp .bl{bottom:6px;left:6px;border-width:0 0 1.5px 1.5px}
 .p-carp .br{bottom:6px;right:6px;border-width:0 1.5px 1.5px 0}
 
-/* ======================================================
-   PREVIEW 7 — BATHROOM FITTER
-   Layout: HOTEL ROOM CARD — perfect symmetry, centred mono-
-   gram on dark field, ruled lines, gold everything
-   ====================================================== */
 .p-bath{height:100%;background:#0a0a0c;font-family:Georgia,serif;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
 .p-bath .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.6) 100%);pointer-events:none}
 .p-bath .rule-top{width:80px;height:1px;background:linear-gradient(to right,transparent,#b4a078,transparent);margin-bottom:8px}
@@ -211,11 +176,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-bath .rule-bot{width:80px;height:1px;background:linear-gradient(to right,transparent,#b4a078,transparent);margin:0 auto 8px}
 .p-bath .baward{font-size:5.5px;color:#b4a078;letter-spacing:.1em;text-transform:uppercase}
 
-/* ======================================================
-   PREVIEW 8 — HEATING ENGINEER
-   Layout: DASHBOARD GRID — data cells like an instrument panel
-   Cert number top-right, stat boxes dominate lower half
-   ====================================================== */
 .p-heat{height:100%;background:#0d1e35;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .p-heat::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,170,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,170,.04) 1px,transparent 1px);background-size:12px 12px}
 .p-heat .htop{padding:8px 10px;border-bottom:1px solid rgba(37,99,170,.25);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:relative;z-index:2}
@@ -231,7 +191,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .p-heat .hcell span{font-size:5px;color:#4a6a8a;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;display:block}
 .p-heat .hcell.hi strong{color:#f5a623}
 
-/* CTA */
 .cta-wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px 80px}
 .cta-block{background:linear-gradient(135deg,var(--navy3) 0%,rgba(20,40,75,.9) 100%);border:1px solid var(--bd);border-radius:10px;padding:52px 36px;text-align:center;overflow:hidden;position:relative}
 .cta-block::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,166,35,.07) 0%,transparent 70%);pointer-events:none}
@@ -244,7 +203,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .btn-s{display:inline-block;padding:13px 28px;background:transparent;color:var(--mu);font-size:14px;border:1px solid var(--bd);border-radius:4px;text-decoration:none;transition:all .2s}
 .btn-s:hover{border-color:rgba(245,166,35,.4);color:var(--tx)}
 
-/* FOOTER (match About) */
 footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24px;position:relative;z-index:1}
 .footer-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
 .footer-brand{display:flex;align-items:center;gap:10px}
@@ -254,94 +212,90 @@ footer{background:rgba(0,0,0,.25);border-top:1px solid var(--bd);padding:48px 24
 .footer-links a:hover{color:var(--amber)}
 .footer-sep{width:1px;height:16px;background:var(--bd)}
 
-/* INTRO STRIP */
 .intro{background:var(--navy3);border:1px solid var(--bd);border-radius:8px;padding:20px 26px;margin-bottom:38px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
 .intro p{font-size:13.5px;color:var(--mu);line-height:1.65;flex:1 1 280px;min-width:0;max-width:min(46rem,100%);text-wrap:pretty}
 .intro p strong{color:var(--tx)}
 .intro a{font-size:13px;font-weight:600;color:var(--amber);text-decoration:none;white-space:nowrap;padding:10px 22px;border:1px solid var(--ab);border-radius:4px;transition:all .2s;flex-shrink:0}
 .intro a:hover{background:var(--ap)}
 
-/* REVEAL */
 .html-rv .rv{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
 .html-rv .rv.in{opacity:1;transform:none}
 
 .nav-logo-img, .footer-logo-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  display: inline-block;
-  margin-right: 0.6rem;
-  vertical-align: middle;
+width: 40px;
+height: 40px;
+object-fit: contain;
+display: inline-block;
+margin-right: 0.6rem;
+vertical-align: middle;
 }
 .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
 .nav-wordmark span, .logo-wordmark span { color: var(--amber); }
 
-  /* ── ACCREDITATION BADGE COMPONENTS ── */
-  .nb-badge {
-    display: flex;
-    align-items: stretch;
-    border-radius: 6px;
-    overflow: hidden;
-    height: 52px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .nb-badge .nb-mark {
-    width: 38px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .nb-badge .nb-mark svg { display: block; }
-  .nb-badge .nb-text {
-    background: #fff;
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .nb-badge .nb-top {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .06em;
-    line-height: 1;
-  }
-  .nb-badge .nb-bot {
-    font-size: 7.5px;
-    color: #555;
-    letter-spacing: .03em;
-    line-height: 1.4;
-    margin-top: 2px;
-  }
-  .nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
-  .nb-gassafe .nb-mark { background: #1a6db5; }
-  .nb-gassafe .nb-top { color: #1a6db5; }
-  .nb-gassafe.dk .nb-text { background: #1a2f55; }
-  .nb-gassafe.dk .nb-top { color: #60aaef; }
-  .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
-  .nb-niceic { border: 1.5px solid #d32f2f; min-width: 130px; }
-  .nb-niceic .nb-mark { background: #d32f2f; }
-  .nb-niceic .nb-top { font-size: 13px; color: #d32f2f; }
-  .nb-niceic.dk .nb-text { background: #1a2f55; }
-  .nb-niceic.dk .nb-top { color: #ef9595; }
-  .nb-niceic.dk .nb-bot { color: #a0b4cc; }
-  .nb-partp { border: 1.5px solid #2e7d32; min-width: 115px; }
-  .nb-partp .nb-mark { background: #2e7d32; }
-  .nb-partp .nb-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; }
-  .nb-partp .nb-circle span { font-size: 9px; font-weight: 800; color: #fff; }
-  .nb-partp .nb-top { font-size: 11px; color: #2e7d32; }
-  .nb-partp.dk .nb-text { background: #1a2f55; }
-  .nb-partp.dk .nb-top { color: #97c459; }
-  .nb-partp.dk .nb-bot { color: #a0b4cc; }
-  .nb-insured { display: inline-flex; align-items: center; gap: 8px; border-radius: 6px; border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff; font-family: 'DM Sans', sans-serif; min-width: 180px; }
-  .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
-  .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
-  .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
-  .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
-  .nb-insured.dk .nb-top { color: #e0eaf5; }
-  .nb-insured.dk .nb-bot { color: #a0b4cc; }
-  .nb-insured.dk svg path { stroke: #a0b4cc; }
-
+.nb-badge {
+display: flex;
+align-items: stretch;
+border-radius: 6px;
+overflow: hidden;
+height: 52px;
+font-family: 'DM Sans', sans-serif;
+}
+.nb-badge .nb-mark {
+width: 38px;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.nb-badge .nb-mark svg { display: block; }
+.nb-badge .nb-text {
+background: #fff;
+padding: 0 10px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+.nb-badge .nb-top {
+font-size: 11px;
+font-weight: 800;
+letter-spacing: .06em;
+line-height: 1;
+}
+.nb-badge .nb-bot {
+font-size: 7.5px;
+color: #555;
+letter-spacing: .03em;
+line-height: 1.4;
+margin-top: 2px;
+}
+.nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
+.nb-gassafe .nb-mark { background: #1a6db5; }
+.nb-gassafe .nb-top { color: #1a6db5; }
+.nb-gassafe.dk .nb-text { background: #1a2f55; }
+.nb-gassafe.dk .nb-top { color: #60aaef; }
+.nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+.nb-niceic { border: 1.5px solid #d32f2f; min-width: 130px; }
+.nb-niceic .nb-mark { background: #d32f2f; }
+.nb-niceic .nb-top { font-size: 13px; color: #d32f2f; }
+.nb-niceic.dk .nb-text { background: #1a2f55; }
+.nb-niceic.dk .nb-top { color: #ef9595; }
+.nb-niceic.dk .nb-bot { color: #a0b4cc; }
+.nb-partp { border: 1.5px solid #2e7d32; min-width: 115px; }
+.nb-partp .nb-mark { background: #2e7d32; }
+.nb-partp .nb-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; }
+.nb-partp .nb-circle span { font-size: 9px; font-weight: 800; color: #fff; }
+.nb-partp .nb-top { font-size: 11px; color: #2e7d32; }
+.nb-partp.dk .nb-text { background: #1a2f55; }
+.nb-partp.dk .nb-top { color: #97c459; }
+.nb-partp.dk .nb-bot { color: #a0b4cc; }
+.nb-insured { display: inline-flex; align-items: center; gap: 8px; border-radius: 6px; border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff; font-family: 'DM Sans', sans-serif; min-width: 180px; }
+.nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+.nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+.nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+.nb-insured.dk .nb-top { color: #e0eaf5; }
+.nb-insured.dk .nb-bot { color: #a0b4cc; }
+.nb-insured.dk svg path { stroke: #a0b4cc; }
 </style>
 <link rel="stylesheet" href="/nav-mobile.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/nav-mobile.css" /></noscript>

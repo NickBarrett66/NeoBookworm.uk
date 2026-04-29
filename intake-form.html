@@ -17,14 +17,14 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://vitals.vercel-insights.com" />
 <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/fonts-cormorant.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/fonts-cormorant.css"></noscript>
 <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
-<style>
-:root{--bg:#0f1f3d;--bg2:#162848;--bg3:#1a3260;--gold:#f5a623;--gm:#d4891a;--gp:rgba(245,166,35,.12);--bd:rgba(245,166,35,.22);--tx:#ffffff;--mu:rgba(255,255,255,0.5);--er:#e07060}
+<style>:root{--bg:#0f1f3d;--bg2:#162848;--bg3:#1a3260;--gold:#f5a623;--gm:#d4891a;--gp:rgba(245,166,35,.12);--bd:rgba(245,166,35,.22);--tx:#ffffff;--mu:rgba(255,255,255,0.5);--er:#e07060}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 70% 0%,rgba(245,166,35,.06) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(245,166,35,.04) 0%,transparent 50%);color:var(--tx);min-height:100vh;overflow-x:hidden}
@@ -75,7 +75,6 @@ select option{background:#fff;color:#1a1a1a}
 .scat{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--mu);margin:18px 0 10px}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-/* === STYLE CARD SHELL === */
 .scard{border:1px solid var(--bd);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:transform .18s,border-color .18s,box-shadow .18s;background:var(--bg2)}
 .scard:hover{border-color:var(--gm);transform:translateY(-2px)}
 .scard.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gp),0 4px 14px rgba(154,104,32,.12)}
@@ -85,11 +84,6 @@ select option{background:#fff;color:#1a1a1a}
 .slbl{padding:8px 10px;font-size:11px;font-weight:500;color:var(--tx);background:var(--bg2);border-top:1px solid var(--bd);line-height:1.3}
 .slbl span{display:block;font-size:10px;color:var(--mu);font-weight:300;margin-top:1px}
 
-/* =============================================
-   STYLE PREVIEW PANELS — each is a different trade
-   ============================================= */
-
-/* 1. MINIMAL / CORPORATE → Electrician (clean, NICEIC, trustworthy) */
 .prev-electric{background:#f8f9fb;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
 .prev-electric .nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #e4e8ef}
 .prev-electric .nav .brand{font-size:8px;font-weight:700;color:#0d2244;letter-spacing:.06em}
@@ -102,7 +96,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-electric .badges{display:flex;gap:4px;margin-top:4px}
 .prev-electric .badge{background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);padding:2px 5px;font-size:5px;color:#f5a623;border-radius:2px}
 
-/* 2. EDITORIAL → Kitchen Fitter (magazine-style, aspirational) */
 .prev-kitchen{background:#faf7f2;padding:0;height:100%;overflow:hidden;font-family:Georgia,serif}
 .prev-kitchen .khead{padding:6px 8px;border-bottom:2px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center}
 .prev-kitchen .khead .brand{font-size:9px;font-weight:700;color:#1a1a1a;letter-spacing:.1em;text-transform:uppercase}
@@ -117,7 +110,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-kitchen .kside .ks2{font-size:9px;color:#1a1a1a;line-height:1.3;margin-bottom:4px}
 .prev-kitchen .kside .ks3{font-size:6px;color:#666;line-height:1.4;font-family:'DM Sans',sans-serif}
 
-/* 3. FRIENDLY / ROUNDED → Handyman (warm, local, approachable) */
 .prev-handy{background:#fffbf5;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
 .prev-handy .hbar{display:flex;align-items:center;gap:5px;margin-bottom:7px}
 .prev-handy .hico{width:20px;height:20px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
@@ -130,7 +122,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-handy .hpill{padding:2px 6px;background:#fff0e6;border:1px solid #fcd9be;border-radius:20px;font-size:5.5px;color:#c2440f}
 .prev-handy .hstar{color:#f59e0b;font-size:7px;margin-top:5px}
 
-/* 4. ORGANIC / NATURAL → Landscaper (earthy, green, outdoors) */
 .prev-land{background:#f2ede7;padding:10px;height:100%;position:relative;overflow:hidden;font-family:Georgia,serif}
 .prev-land .lbg{position:absolute;top:-8px;right:-12px;width:60px;height:60px;background:#6b9e6b;border-radius:50%;opacity:.2}
 .prev-land .lbg2{position:absolute;bottom:-10px;left:-6px;width:40px;height:40px;background:#4a7c59;border-radius:50%;opacity:.15}
@@ -141,7 +132,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-land .lbtn{display:inline-block;background:#4a7c59;padding:3px 8px;border-radius:2px;font-size:6px;color:#fff;font-family:'DM Sans',sans-serif;letter-spacing:.06em}
 .prev-land .ltag{position:absolute;bottom:9px;right:9px;font-size:5.5px;color:#a8c097;font-style:italic}
 
-/* 5. BOLD / STRIKING → Roofer (strong, no-nonsense, impact) */
 .prev-roof{background:#111;padding:10px;height:100%;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
 .prev-roof .rline{height:3px;background:linear-gradient(to right,#e53e1a,#ff6b3d);margin-bottom:7px}
 .prev-roof .rname{font-size:7px;font-weight:700;color:#fff;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
@@ -153,7 +143,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-roof .rstat span{font-size:5.5px;color:#666;text-transform:uppercase;letter-spacing:.06em}
 .prev-roof .rshape{position:absolute;top:-5px;right:-5px;width:35px;height:35px;background:#e53e1a;opacity:.12;transform:rotate(15deg)}
 
-/* 6. RETRO / VINTAGE → Carpenter / Joiner (craft, heritage) */
 .prev-carp{background:#f5e6c8;padding:10px;height:100%;overflow:hidden;background-image:repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(139,94,60,.06) 10px,rgba(139,94,60,.06) 11px)}
 .prev-carp .cbar{height:3px;background:#8b5e3c;margin-bottom:6px}
 .prev-carp .cbar2{height:1px;background:#c4956a;margin-bottom:5px}
@@ -163,7 +152,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-carp .cp{font-size:6.5px;color:#6b4c30;line-height:1.4}
 .prev-carp .ctree{position:absolute;bottom:28px;right:9px;font-size:16px;opacity:.15}
 
-/* 7. LUXURY / REFINED → Bathroom Fitter (spa, premium) */
 .prev-bath{background:#0c0c0e;padding:10px;height:100%;font-family:Georgia,serif;position:relative}
 .prev-bath .bglow{position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle,rgba(180,160,120,.15) 0%,transparent 70%)}
 .prev-bath .bname{font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:#b4a078;margin-bottom:4px}
@@ -175,7 +163,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-bath .baward{position:absolute;bottom:8px;right:9px;text-align:right}
 .prev-bath .baward span{display:block;font-size:5px;color:#b4a078;letter-spacing:.1em}
 
-/* 8. TECHNICAL / PRECISE → Heating Engineer / Gas Safe */
 .prev-heat{background:#f0f4f8;padding:10px;height:100%;font-family:'DM Sans',sans-serif}
 .prev-heat .htop{display:flex;justify-content:space-between;border-bottom:1px solid #d0dce8;padding-bottom:4px;margin-bottom:5px}
 .prev-heat .htop .hbrand{font-size:8px;font-weight:600;color:#0f2d54;letter-spacing:.04em}
@@ -187,9 +174,6 @@ select option{background:#fff;color:#1a1a1a}
 .prev-heat .hst strong{display:block;font-size:11px;color:#2563aa;font-family:'Courier New',monospace;line-height:1}
 .prev-heat .hst span{font-size:5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}
 
-/* =============================================
-   NAV / BUTTONS
-   ============================================= */
 .nav{position:fixed;bottom:0;left:0;right:0;padding:14px 24px;background:linear-gradient(to top,rgba(24,17,10,.98) 65%,transparent);display:flex;gap:12px;justify-content:flex-end;z-index:50;max-width:640px;margin-left:auto;margin-right:auto}
 .bbk{padding:12px 22px;background:transparent;border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .18s}
 .bbk:hover{border-color:var(--gold);color:var(--tx)}
