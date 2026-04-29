@@ -195,6 +195,16 @@ standards from the first build. Do not wait for a PageSpeed audit to apply them.
   shift) by letting the browser reserve space before the file loads.
   CSS controls display size — HTML attributes tell the browser the aspect ratio.
   Example: `<img src="hero.webp" alt="..." width="1200" height="673">`
+- **Use `srcset` and `sizes` for any image displayed significantly smaller than
+  its natural dimensions.** Generate resized variants using sharp at build time.
+  Rule of thumb: if the displayed width is less than 70% of the source width,
+  a smaller variant is needed. Key patterns:
+  - Logo (40px display, 1024px source): serve 80w and 160w variants
+    `srcset="logo-80.webp 80w, logo-160.webp 160w" sizes="80px"`
+  - Hero (full-width): serve a 640w variant for mobile, full size for desktop
+    `srcset="hero-640.webp 640w, hero-1200.webp 1200w" sizes="(max-width:900px) 100vw, 820px"`
+  - Demo screenshots in a 4-col grid: serve a 680w variant
+    `srcset="demo-680.webp 680w, demo-1024.webp 1024w" sizes="(max-width:640px) 100vw, (max-width:900px) 50vw, 258px"`
 - Use **WebP format** for all images. Only use JPG/PNG if WebP is not available
   for a specific source image.
 - Add `loading="lazy"` to every image that is not in the initial viewport
