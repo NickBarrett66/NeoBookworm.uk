@@ -16,6 +16,7 @@ NeoBookworm.uk/
 ├── examples.html           # Demo site showcase
 ├── about.html              # About page
 ├── contact.html            # Contact page
+├── guides.html             # Guides index page
 ├── privacy.html            # Privacy policy
 ├── terms.html              # Terms of service
 ├── WEBSITE-REFERENCE.md    # Implementation & troubleshooting reference
@@ -24,6 +25,18 @@ NeoBookworm.uk/
 ├── nav-mobile.js           # Moves #primary-nav under <body> on mobile (WebKit fixed-position quirk)
 ├── header.html             # Shared header partial
 ├── include-header.js       # JS to inject shared header
+├── guides/                 # Individual guide articles (see Guides section below)
+│   ├── cold-calls.html
+│   ├── do-i-need-a-website.html
+│   ├── how-fast-is-my-website.html
+│   ├── local-search-guide.html
+│   ├── requesting-changes.html
+│   ├── seo-guide.html
+│   ├── site-is-live.html
+│   ├── website-handover.html
+│   ├── website-running-costs.html
+│   ├── what-goes-on-a-trades-website.html
+│   └── work-photos-guide.html
 ├── accreditations/
 │   └── accreditation-badges.html   # Badge snippet library (see below)
 ├── Images/                 # Site images
@@ -49,7 +62,7 @@ NeoBookworm.uk/
 **Fonts**
 - Headings: Playfair Display (serif)
 - Body / UI: DM Sans (sans-serif)
-- Both loaded via Google Fonts on every page
+- Both loaded via Google Fonts on every page (non-blocking `rel="preload"` pattern used site-wide)
 
 **Tone**
 - Plain English throughout — no jargon
@@ -169,6 +182,18 @@ so keeping it current is essential. Do not wait to be asked.
 | contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
 | privacy.html | Complete | Footer highlights Privacy on this page. Nav matches main site; policy `ul`/`li` rules scoped to `.content` so `#primary-nav` is not given dash bullets. |
 | terms.html | Complete | Same header/footer as rest of site (nav + mobile menu); footer highlights Terms on this page. |
+| guides.html | Complete | Guides index page. Nav includes Guides link. Self-contained CSS (no nav-mobile.css dependency). |
+| guides/cold-calls.html | Complete | Client-facing guide: cold call protection at launch. Blue tag. |
+| guides/do-i-need-a-website.html | Complete | Prospect-facing guide: Facebook vs website comparison. Amber tag. |
+| guides/how-fast-is-my-website.html | Complete | PageSpeed + Mobile-Friendly test walkthrough. Score panel present but commented out pending real scores. |
+| guides/local-search-guide.html | Complete | Google Business profile + local search explained. Amber tag. |
+| guides/requesting-changes.html | Complete | Client-facing: how to request ad-hoc changes, access via Netlify collaborator invite, pricing table. |
+| guides/seo-guide.html | Complete | What NeoBookworm builds in for search visibility. Blue tag. |
+| guides/site-is-live.html | Complete | Post-launch checklist for clients. |
+| guides/website-handover.html | Complete | Self-manage handover guide for clients taking over Netlify hosting. |
+| guides/website-running-costs.html | Complete | Honest cost breakdown: domain, hosting, care plan. |
+| guides/what-goes-on-a-trades-website.html | Complete | Content guide: what pages and copy a trades site needs. |
+| guides/work-photos-guide.html | Complete | How to take and send good work photos. |
 | intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
 
 ### Demo sites
