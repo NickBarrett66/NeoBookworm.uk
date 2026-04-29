@@ -162,6 +162,7 @@ background-size: 60px 60px;
 position: relative;
 max-width: 1160px;
 margin: 0 auto;
+text-align: center;
 }
 .eyebrow {
 display: inline-flex;
@@ -180,14 +181,24 @@ display: block;
 width: 24px; height: 2px;
 background: var(--amber);
 }
+
+/* Contact hero: remove the decorative dash/line */
+.hero .eyebrow::before { display: none; }
 .hero h1 {
 font-family: 'Playfair Display', serif;
 font-weight: 900;
-font-size: clamp(40px, 6vw, 72px);
-line-height: 1.1;
-letter-spacing: -0.02em;
+font-size: clamp(2.4rem, 6vw, 4rem);
+line-height: 1.08;
+letter-spacing: -0.025em;
 max-width: 600px;
+margin-left: auto;
+margin-right: auto;
 margin-bottom: 20px;
+}
+.hero h1 em {
+font-style: italic;
+color: var(--amber);
+font-weight: 400;
 }
 .hero-sub {
 font-size: 18px;
@@ -195,6 +206,8 @@ font-weight: 300;
 color: var(--muted);
 max-width: 460px;
 line-height: 1.6;
+margin-left: auto;
+margin-right: auto;
 margin-bottom: 40px;
 }
 
@@ -600,8 +613,8 @@ color: #fca5a5;
     </div>
     <div class="hero-inner">
       <div class="eyebrow reveal">Contact</div>
-      <h1 class="reveal reveal-delay-1">Get in touch</h1>
-      <p class="hero-sub reveal reveal-delay-2">No obligation, no pressure. Fill in the short form below and I&rsquo;ll come back to you by email.</p>
+      <h1 class="reveal reveal-delay-1">Get in touch<br><em>No obligation, no pressure.</em></h1>
+      <p class="hero-sub reveal reveal-delay-2">Fill in the short form below and I&rsquo;ll come back to you by email.</p>
       <div class="hero-meta reveal reveal-delay-2">
         <div class="contact-meta-item">
           <div class="detail-icon">&#128205;</div>
