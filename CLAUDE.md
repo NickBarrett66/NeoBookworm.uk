@@ -173,18 +173,29 @@ standards from the first build. Do not wait for a PageSpeed audit to apply them.
 - **Never load fonts from Google Fonts CDN.** Always self-host using woff2 files
   in `/fonts/` and a shared `fonts.css` with `@font-face` rules.
 - Use `font-display: swap` on every `@font-face` rule.
-- Add `<link rel="preload">` tags for the 1–2 most-used weights (typically the
-  heading weight and the body weight) before the fonts.css link. Format:
-  ```html
-  <link rel="preload" href="/fonts/filename.woff2" as="font" type="font/woff2" crossorigin>
-  ```
-- Load `fonts.css` itself **non-blocking** using the `media="print"` pattern —
-  it only contains `@font-face` declarations and must never block rendering:
+- **fonts.css should only contain fonts used on every page** (Playfair Display
+  and DM Sans). Fonts used on specific pages only must live in separate files
+  and be loaded only on those pages:
+  - `fonts-bebas.css` — Bebas Neue, loaded only on `index.html`
+  - `fonts-cormorant.css` — Cormorant Garamond, loaded only on `intake-form.html`
+  - Follow this pattern for any future page-specific font.
+- Load `fonts.css` and all font CSS files **non-blocking** using the
+  `media="print"` pattern — they only contain `@font-face` declarations and
+  must never block rendering:
   ```html
   <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
   ```
-- The correct order is: woff2 preload tags first, then the deferred fonts.css link.
+- Add `<link rel="preload">` tags for the most-used weights. Preload the
+  upright heading weight and body weight on every page. Additionally preload
+  any italic weight used **above the fold** on that specific page:
+  ```html
+  <link rel="preload" href="/fonts/[upright-heading].woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/[body].woff2" as="font" type="font/woff2" crossorigin>
+  <!-- index.html only — italic Playfair used in h1 <em>: -->
+  <link rel="preload" href="/fonts/[italic-heading].woff2" as="font" type="font/woff2" crossorigin>
+  ```
+- The correct order is: woff2 preload tags first, then the deferred font CSS links.
 - Add `<link rel="preconnect">` tags only if a third-party font CDN is
   unavoidably used (it should not be).
 
