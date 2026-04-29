@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Getting Found on Google — What NeoBookworm Does for Your SEO | NeoBookworm</title>
-  <meta name="description" content="What's built into every NeoBookworm site at launch, and the optional extras worth considering.">
-  <link rel="canonical" href="https://neobookworm.uk/guides/seo-guide">
+  <title>How Fast Is My Website? Two Free Google Tests Every Tradesperson Should Run | NeoBookworm</title>
+  <meta name="description" content="Google's free speed and mobile tests tell you whether your website is working properly. Here's how to run them and what the results mean.">
+  <link rel="canonical" href="https://neobookworm.uk/guides/how-fast-is-my-website">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>/* ── SHARED STYLES — NeoBookworm Guide Pages ── */
 :root {
@@ -131,6 +131,29 @@ nav {
 }
 .callout p { margin-bottom: 0; }
 
+/* SCORE PANEL */
+.score-panel {
+  background: var(--navy-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  margin: 1.5rem 0;
+}
+.score-panel-title {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 1rem;
+}
+.score-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.9rem;
+}
+.score-row:last-child { border-bottom: none; padding-bottom: 0; }
+.score-label { color: var(--text-muted); }
+.score-value { font-weight: 600; }
+.score-value.green { color: #4ade80; }
+.score-value.placeholder { color: var(--text-dim); font-style: italic; font-weight: 400; }
+
 /* TABLE */
 .guide-body table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; }
 .guide-body th { text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
@@ -189,6 +212,7 @@ footer { border-top: 1px solid var(--border); padding: 2.25rem 5%; }
   .nav-links { display: none; }
   .guide-cta { flex-direction: column; align-items: flex-start; }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .score-row { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
 }
 </style>
 </head>
@@ -218,47 +242,83 @@ footer { border-top: 1px solid var(--border); padding: 2.25rem 5%; }
     <span class="breadcrumb-sep">/</span>
     <a href="/guides.html">Guides</a>
     <span class="breadcrumb-sep">/</span>
-    <span class="breadcrumb-current">SEO Guide</span>
+    <span class="breadcrumb-current">How Fast Is My Website?</span>
   </div>
 </div>
 
 <header class="guide-header">
   <div class="guide-header-inner">
-    <div class="guide-section-tag blue"><span class="pip"></span>Already a NeoBookworm client?</div>
-    <h1>Getting Found on Google — What NeoBookworm Does for Your SEO</h1>
+    <div class="guide-section-tag blue"><span class="pip"></span>Your website&rsquo;s performance</div>
+    <h1>How Fast Is My Website? Two Free Google Tests Worth Running</h1>
     <div class="guide-meta">
-      <span class="guide-badge blue">Google &amp; search</span>
-      <span class="guide-read-time">6 min read</span>
+      <span class="guide-badge blue">Speed &amp; mobile</span>
+      <span class="guide-read-time">4 min read</span>
     </div>
   </div>
 </header>
 
 <article class="guide-body">
   <div class="guide-body-inner">
-    <p>When someone searches Google for a plumber, electrician, kitchen fitter &mdash; or any trade &mdash; the businesses near the top of that list get the calls. The ones buried on page two rarely get found at all. Here&#8217;s what NeoBookworm builds into every site from day one, and what optional extras are worth considering.</p>
 
-    <h2>What&#8217;s included in every NeoBookworm site &mdash; at no extra charge</h2>
-    <p><strong>Your trade and location in the right places.</strong> Every page is written with your trade and your location woven naturally into the headings and descriptions. The main heading on your homepage won&#8217;t just say &#8220;Welcome&#8221; &mdash; it&#8217;ll say something like <em>&#8220;Plumber in Swindon and Wiltshire&#8221;</em>. That one change makes a significant difference to how Google understands your site.</p>
-    <p><strong>Consistent name, area, and phone number on every page.</strong> Google uses consistency as a trust signal. All NeoBookworm sites include this information in the footer of every page, formatted consistently.</p>
-    <p><strong>Hand-crafted meta descriptions.</strong> The short description that appears in Google search results under your link is written for every page &mdash; mentioning your trade, your area, and giving a clear reason to click.</p>
-    <p><strong>Schema markup.</strong> Hidden in the code of every NeoBookworm site is structured data that tells Google precisely: this is a local business, this is what they do, this is where they operate. It removes any ambiguity and can help your business appear in richer search results, including star ratings shown directly on the Google results page.</p>
-    <p><strong>Fast loading on mobile.</strong> Google ranks websites partly based on how quickly they load on a mobile phone. NeoBookworm sites are built to load fast by design: clean, lightweight code with no unnecessary extras.</p>
+    <p>Google uses your website&rsquo;s speed and how well it works on mobile as ranking signals &mdash; meaning a slow or mobile-unfriendly site can quietly cost you search positions. The good news is that Google provides two free tools to check both, and you don&rsquo;t need any technical knowledge to use them.</p>
 
-    <h2>Optional extras &mdash; at additional cost</h2>
-    <p><strong>Google Business Profile setup &mdash; &pound;75.</strong> Getting into the map pack &mdash; the three businesses shown at the top of local search results with a map &mdash; is often more valuable than ranking highly in regular results. We handle the full setup: verification, category selection, description, photos, and matching your site details exactly.</p>
-    <p><strong>Directory listing submissions &mdash; &pound;49.</strong> We submit your details to six key UK directories (Yell, Bing Places, Apple Maps, and others), all formatted consistently to match your website. A one-off task with a lasting positive effect.</p>
-    <p><strong>Additional service pages &mdash; &pound;49 per page.</strong> If you want a dedicated page for each individual service, each can be added. Dedicated service pages help Google match your site to more specific searches and tend to generate more targeted enquiries.</p>
+    <h2>Test 1 &mdash; Google PageSpeed Insights</h2>
+    <p>PageSpeed Insights checks how quickly your website loads and how responsive it feels when someone uses it. It gives you a score out of 100 for both mobile and desktop, and flags the specific things slowing it down.</p>
+    <p><strong>To run the test:</strong> go to <a href="https://pagespeed.web.dev" target="_blank" rel="noopener">pagespeed.web.dev</a>, type in your website address, and click Analyse. The results appear within about 30 seconds.</p>
 
-    <h2>What good results realistically look like over time</h2>
-    <p>A new website doesn&#8217;t appear at the top of Google overnight. Search engines typically take two to four months to fully index a new site and start ranking it. Over time, especially if you collect Google reviews regularly, your visibility will grow. Most tradespeople find that within three to six months, they start appearing in local searches for their trade.</p>
-    <div class="callout"><p>We don&#8217;t guarantee specific rankings &mdash; nobody can honestly do that. What we can guarantee is that your site is built to best-practice standards and gives you the best possible starting point.</p></div>
+    <div class="callout">
+      <p>Google scores pages as <strong>Good (90&ndash;100)</strong>, <strong>Needs improvement (50&ndash;89)</strong>, or <strong>Poor (below 50)</strong>. Most well-built websites score 90+ on desktop and 70+ on mobile. Mobile scores are nearly always lower than desktop &mdash; that&rsquo;s normal.</p>
+    </div>
+
+    <p>The test shows two separate scores: one for desktop (someone on a computer) and one for mobile (someone on a phone). Because Google now looks at the mobile version of your site first when deciding where to rank you, the mobile score is the more important of the two.</p>
+    <p>If your site scores below 50 on mobile, it&rsquo;s likely slow enough that visitors are leaving before it finishes loading &mdash; and Google is probably ranking you lower as a result.</p>
+
+    <h2>Test 2 &mdash; Google Mobile-Friendly Test</h2>
+    <p>This test checks whether your website is easy to use on a phone &mdash; things like whether the text is large enough to read without zooming in, whether buttons are big enough to tap, and whether the layout adjusts properly to a smaller screen.</p>
+    <p><strong>To run the test:</strong> go to <a href="https://search.google.com/test/mobile-friendly" target="_blank" rel="noopener">search.google.com/test/mobile-friendly</a>, enter your website address, and click Test URL. You&rsquo;ll get a clear pass or fail, plus a screenshot of how Google sees your page on a phone.</p>
+
+    <div class="callout">
+      <p>A fail here is a serious issue. Google will rank a mobile-unfriendly site significantly lower in search results, especially for searches done on phones &mdash; which is where most local trade searches happen.</p>
+    </div>
+
+    <h2>What to do with the results</h2>
+    <p>If your existing site fails either test, that&rsquo;s useful information &mdash; it explains why you might not be appearing as prominently in Google search results as you&rsquo;d expect. A new site built to modern standards should pass both comfortably.</p>
+    <p>If you already have a site built by NeoBookworm, you&rsquo;re welcome to run both tests and check your scores. All NeoBookworm sites are built to perform well on mobile and load quickly &mdash; if something doesn&rsquo;t look right, just get in touch.</p>
+
+    <h2>Why these two tests specifically?</h2>
+    <p>There are dozens of tools that claim to audit your website, and many of them are designed to alarm you with a long list of problems so you&rsquo;ll buy something. PageSpeed Insights and the Mobile-Friendly Test are made by Google itself &mdash; they test the exact things Google cares about when it decides where to rank your site. If you pass both, you&rsquo;re in good shape on the factors that matter most.</p>
+
+    <!-- SCORE PANEL — populate with real results before publishing -->
+    <!-- TO NICK: run both tests on neobookworm.uk and fill in the scores below,
+         then remove this comment and the placeholder text -->
+    <!--
+    <h2>How NeoBookworm.uk scores</h2>
+    <p>For what it&rsquo;s worth, here&rsquo;s how this site performs on both tests:</p>
+    <div class="score-panel">
+      <div class="score-panel-title">NeoBookworm.uk &mdash; Google test results</div>
+      <div class="score-row">
+        <span class="score-label">PageSpeed &mdash; Desktop</span>
+        <span class="score-value green">XX / 100</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">PageSpeed &mdash; Mobile</span>
+        <span class="score-value green">XX / 100</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Mobile-Friendly Test</span>
+        <span class="score-value green">Pass</span>
+      </div>
+    </div>
+    -->
+
     <div class="guide-cta">
       <div class="guide-cta-text">
-        <strong>Want to add Google Business profile setup?</strong>
-        <p>It&#8217;s &pound;75 as a one-off and genuinely makes a difference.</p>
+        <strong>Thinking about a new site?</strong>
+        <p>Every NeoBookworm site is built to pass both Google tests from day one &mdash; for a fixed £299.</p>
       </div>
       <a href="/contact.html" class="guide-cta-btn">Get in touch &rarr;</a>
     </div>
+
   </div>
 </article>
 
@@ -267,15 +327,21 @@ footer { border-top: 1px solid var(--border); padding: 2.25rem 5%; }
     <div class="more-guides-label">More guides</div>
     <div class="more-grid">
       <a href="/guides/local-search-guide.html" class="mini-card">
-        <div class="mini-icon">🔍</div>
-        <span class="mini-badge amber">Google & search</span>
+        <div class="mini-icon">📍</div>
+        <span class="mini-badge amber">Google &amp; search</span>
         <div class="mini-title">How to Appear When Someone in Your Town Searches for Your Trade</div>
         <div class="mini-cta">Read guide &rarr;</div>
       </a>
-      <a href="/guides/site-is-live.html" class="mini-card">
-        <div class="mini-icon">✅</div>
-        <span class="mini-badge blue">Post-launch</span>
-        <div class="mini-title">Your Site Is Live &mdash; What to Do Next</div>
+      <a href="/guides/seo-guide.html" class="mini-card">
+        <div class="mini-icon">📈</div>
+        <span class="mini-badge blue">Google &amp; search</span>
+        <div class="mini-title">Getting Found on Google &mdash; What NeoBookworm Does for Your SEO</div>
+        <div class="mini-cta">Read guide &rarr;</div>
+      </a>
+      <a href="/guides/do-i-need-a-website.html" class="mini-card">
+        <div class="mini-icon">🤔</div>
+        <span class="mini-badge amber">Thinking about it?</span>
+        <div class="mini-title">Do I Actually Need a Website?</div>
         <div class="mini-cta">Read guide &rarr;</div>
       </a>
     </div>
