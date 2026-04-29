@@ -267,6 +267,32 @@ standards from the first build. Do not wait for a PageSpeed audit to apply them.
   (Third-party scripts like Vercel Analytics may add depth beyond your control
   — that is acceptable and not flagged as an error.)
 
+### Page landmark
+
+Every page must have a `<main>` element wrapping all content between the closing
+`</nav>` tag and the opening `<footer>` tag:
+
+```html
+</nav>
+<main id="main">
+  ... all page content ...
+</main>
+<footer>
+```
+
+This is required for two reasons:
+1. **Accessibility** — screen readers and keyboard users rely on landmark regions
+   to navigate. Missing `<main>` costs points on PageSpeed Insights accessibility.
+2. **PageSpeed accessibility score** — the `<main>` landmark is one of the checks
+   that prevents a perfect 100 score. With it present, 100 is achievable on every page.
+
+Every page must also have a skip link as the **first child of `<body>`**:
+```html
+<a class="skip-link" href="#main">Skip to content</a>
+```
+
+The `id="main"` on the `<main>` element is the skip link target — always include it.
+
 ### Head tag checklist
 
 Every page must include, in this order:
@@ -275,7 +301,7 @@ Every page must include, in this order:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Page Title | NeoBookworm (or Client Name)</title>
-<meta name="description" content="...">
+<meta name="description" content="...">  <!-- 140–155 characters; end with a CTA -->
 <link rel="canonical" href="https://...">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -296,6 +322,10 @@ Every page must include, in this order:
 <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
 ```
 
+**Meta description rule:** always 140–155 characters. Over 155 characters gets
+truncated by Google. Under 140 characters leaves ranking signals on the table.
+Every meta description must end with a clear call to action.
+
 ### Structured data (JSON-LD)
 
 - NeoBookworm.uk pages include `WebDesigner` schema in a `<script type="application/ld+json">` block.
@@ -311,12 +341,19 @@ Every page must include, in this order:
 
 ### PageSpeed targets
 
-All pages should achieve, when tested on PageSpeed Insights:
+All pages should achieve, when tested on PageSpeed Insights (pagespeed.web.dev):
 - **Performance (mobile):** 80+
 - **Performance (desktop):** 95+
-- **Accessibility:** 95+
+- **Accessibility:** 100 — achievable on every page with correct landmarks, alt text, contrast, and labels
 - **Best Practices:** 95+
 - **SEO:** 100
+
+Also run **Chrome Lighthouse** on every page before considering it complete, with
+device set to **Mobile**. To run it: open the page in Chrome → right-click →
+Inspect → Lighthouse tab → select Mobile → Analyse page load. The mobile Lighthouse
+run checks responsive layout, tap target sizes, and font legibility — all factors
+Google uses in mobile ranking. Note: Google's standalone Mobile-Friendly Test tool
+was retired in December 2023; Lighthouse is Google's recommended replacement.
 
 The SEO score of 100 is achievable on every page with correct meta tags,
 canonical URLs, image alt text, and structured data — always target it.
@@ -345,7 +382,7 @@ so keeping it current is essential. Do not wait to be asked.
 | guides.html | Complete | Guides index page. Nav includes Guides link. Self-contained CSS (no nav-mobile.css dependency). |
 | guides/cold-calls.html | Complete | Client-facing guide: cold call protection at launch. Blue tag. |
 | guides/do-i-need-a-website.html | Complete | Prospect-facing guide: Facebook vs website comparison. Amber tag. |
-| guides/how-fast-is-my-website.html | Complete | PageSpeed + Mobile-Friendly test walkthrough. Score panel present but commented out pending real scores. |
+| guides/how-fast-is-my-website.html | Complete | PageSpeed + Lighthouse mobile test walkthrough. Score panel present but commented out pending real scores. |
 | guides/local-search-guide.html | Complete | Google Business profile + local search explained. Amber tag. |
 | guides/requesting-changes.html | Complete | Client-facing: how to request ad-hoc changes, access via Netlify collaborator invite, pricing table. |
 | guides/seo-guide.html | Complete | What NeoBookworm builds in for search visibility. Blue tag. |
