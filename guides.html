@@ -123,9 +123,15 @@
     .hero h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.1rem, 5vw, 3.4rem);
-      font-weight: 900; font-style: italic;
-      line-height: 1.1; color: var(--amber);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #fff;
       margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--amber);
     }
 
     .hero-sub {
@@ -368,7 +374,7 @@
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-kicker">Free resource library</div>
-    <h1>Straight answers.<br>No sales pitch.</h1>
+    <h1>Straight answers.<br><em>No sales pitch.</em></h1>
     <p class="hero-sub">Plain-English guides for tradespeople — whether you're thinking about getting a website or you've already got one.</p>
   </div>
 </section>
