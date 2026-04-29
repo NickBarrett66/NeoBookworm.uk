@@ -163,6 +163,120 @@ Client demo sites are deployed as separate Netlify sites.
 
 ---
 
+## Performance and SEO standards
+
+Every page built for NeoBookworm.uk or any client demo site must follow these
+standards from the first build. Do not wait for a PageSpeed audit to apply them.
+
+### Fonts
+
+- **Never load fonts from Google Fonts CDN.** Always self-host using woff2 files
+  in `/fonts/` and a shared `fonts.css` with `@font-face` rules.
+- Use `font-display: swap` on every `@font-face` rule.
+- Add `<link rel="preload">` tags for the 1–2 most-used weights (typically the
+  heading weight and the body weight) before the `<link rel="stylesheet">` for
+  fonts.css. Format:
+  ```html
+  <link rel="preload" href="/fonts/filename.woff2" as="font" type="font/woff2" crossorigin>
+  ```
+- Add `<link rel="preconnect">` tags only if a third-party font CDN is
+  unavoidably used (it should not be).
+
+### Images
+
+- **Every `<img>` tag must have explicit `width` and `height` attributes**
+  matching the image's natural pixel dimensions. This prevents CLS (layout
+  shift) by letting the browser reserve space before the file loads.
+  CSS controls display size — HTML attributes tell the browser the aspect ratio.
+  Example: `<img src="hero.webp" alt="..." width="1200" height="673">`
+- Use **WebP format** for all images. Only use JPG/PNG if WebP is not available
+  for a specific source image.
+- Add `loading="lazy"` to every image that is not in the initial viewport
+  (i.e. below the fold). Add `loading="eager"` to above-the-fold hero images.
+- Add `decoding="async"` to non-critical images.
+
+### CSS loading
+
+- **nav-mobile.css** (and any other non-critical CSS) must load non-blocking:
+  ```html
+  <link rel="stylesheet" href="nav-mobile.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="nav-mobile.css"></noscript>
+  ```
+- Inline critical above-the-fold CSS in a `<style>` block in `<head>` where
+  possible. Non-critical CSS loads deferred as above.
+
+### JavaScript
+
+- All `<script>` tags that are not render-critical must use `defer` or `async`.
+- Any JS that reads layout geometry (`offsetWidth`, `getBoundingClientRect`,
+  etc.) after modifying the DOM must wrap the read in `requestAnimationFrame`
+  to avoid forced reflow.
+- Scroll reveal and animation JS must use `IntersectionObserver` with a
+  fallback — never `setInterval` or synchronous scroll listeners.
+
+### DOM
+
+- Aim for a DOM depth of under 32 levels in hand-written HTML. Avoid deeply
+  nested wrapper elements.
+- Total element count should be under 500 for a typical 5-page site.
+  (Third-party scripts like Vercel Analytics may add depth beyond your control
+  — that is acceptable and not flagged as an error.)
+
+### Head tag checklist
+
+Every page must include, in this order:
+
+```html
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Title | NeoBookworm (or Client Name)</title>
+<meta name="description" content="...">
+<link rel="canonical" href="https://...">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://...">
+<meta property="og:title" content="...">
+<meta property="og:description" content="...">
+<meta property="og:image" content="https://...">  <!-- 1200×630 -->
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<!-- Self-hosted fonts (preload critical weights first) -->
+<link rel="preload" href="/fonts/[heading-weight].woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/[body-weight].woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css">
+```
+
+### Structured data (JSON-LD)
+
+- NeoBookworm.uk pages include `WebDesigner` schema in a `<script type="application/ld+json">` block.
+- Client demo/live sites should include `LocalBusiness` schema with the
+  client's trade type, name, address (Wiltshire), and URL.
+- Do not use `telephone` in schema on NeoBookworm.uk pages (email-only policy).
+
+### Robots and sitemap
+
+- Every deployed site must have a `robots.txt` allowing all crawlers.
+- Every deployed site must have a `sitemap.xml` listing all public pages with
+  their canonical URLs. Update `sitemap.xml` whenever a new page is added.
+
+### PageSpeed targets
+
+All pages should achieve, when tested on PageSpeed Insights:
+- **Performance (mobile):** 80+
+- **Performance (desktop):** 95+
+- **Accessibility:** 95+
+- **Best Practices:** 95+
+- **SEO:** 100
+
+The SEO score of 100 is achievable on every page with correct meta tags,
+canonical URLs, image alt text, and structured data — always target it.
+
+---
+
 ## Build status
 
 **Important:** After completing any meaningful work in a session — building a demo site,
@@ -220,3 +334,4 @@ so keeping it current is essential. Do not wait to be asked.
 | Examples page image integration | Medium | Swap CSS previews for real images once generated |
 | End-to-end pipeline test | Medium | Stripe Customer Portal, Netlify deploy, handover docs |
 | Intake → R2 uploads (Vercel) | High | `neo-bookworm-uk`: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL + R2_ENDPOINT **or** R2_ACCOUNT_ID; EU buckets need `R2_JURISDICTION=eu` or `.eu.r2.cloudflarestorage.com`; `@aws-sdk/client-s3` ≥3.729 needs checksum options (implemented in getS3) |
+| CSS minification build pipeline | Low | PageSpeed flags ~3 KiB savings from unminified inline CSS. Vercel gzip/brotli compresses delivery but does NOT minify inline `<style>` blocks at source. Fix requires a proper build step (e.g. PostCSS + cssnano, or Vite). Not worth introducing a build pipeline for 3 KiB alone — revisit when demo site pipeline is being designed, as a build step will be natural at that point. Do not hand-minify CSS manually. |
