@@ -18,17 +18,19 @@
     var menu = getMenu();
     if (!nav || !menu) return;
 
-    if (mq.matches) {
-      if (menu.parentNode !== document.body) {
-        document.body.appendChild(menu);
-        menu.setAttribute('data-nav-mobile-body', '');
+    requestAnimationFrame(function () {
+      if (mq.matches) {
+        if (menu.parentNode !== document.body) {
+          document.body.appendChild(menu);
+          menu.setAttribute('data-nav-mobile-body', '');
+        }
+      } else {
+        if (menu.hasAttribute('data-nav-mobile-body')) {
+          nav.appendChild(menu);
+          menu.removeAttribute('data-nav-mobile-body');
+        }
       }
-    } else {
-      if (menu.hasAttribute('data-nav-mobile-body')) {
-        nav.appendChild(menu);
-        menu.removeAttribute('data-nav-mobile-body');
-      }
-    }
+    });
   }
 
   var resizeTimer;

@@ -755,9 +755,11 @@
     reveals.forEach(el => observer.observe(el));
 
     // Immediately reveal anything already in the viewport
-    reveals.forEach((el) => {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight) el.classList.add('visible');
+    requestAnimationFrame(() => {
+      reveals.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight) el.classList.add('visible');
+      });
     });
   } else {
     // No IntersectionObserver support — just show everything

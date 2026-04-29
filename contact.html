@@ -795,9 +795,11 @@
       reveals.forEach(function(el) { io.observe(el); });
 
       // Immediately reveal anything already in the viewport
-      reveals.forEach(function(el) {
-        var r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight) { el.classList.add('visible'); }
+      requestAnimationFrame(function () {
+        reveals.forEach(function(el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight) { el.classList.add('visible'); }
+        });
       });
     } else {
       reveals.forEach(function(el) { el.classList.add('visible'); });
