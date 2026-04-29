@@ -174,11 +174,17 @@ standards from the first build. Do not wait for a PageSpeed audit to apply them.
   in `/fonts/` and a shared `fonts.css` with `@font-face` rules.
 - Use `font-display: swap` on every `@font-face` rule.
 - Add `<link rel="preload">` tags for the 1–2 most-used weights (typically the
-  heading weight and the body weight) before the `<link rel="stylesheet">` for
-  fonts.css. Format:
+  heading weight and the body weight) before the fonts.css link. Format:
   ```html
   <link rel="preload" href="/fonts/filename.woff2" as="font" type="font/woff2" crossorigin>
   ```
+- Load `fonts.css` itself **non-blocking** using the `media="print"` pattern —
+  it only contains `@font-face` declarations and must never block rendering:
+  ```html
+  <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+  ```
+- The correct order is: woff2 preload tags first, then the deferred fonts.css link.
 - Add `<link rel="preconnect">` tags only if a third-party font CDN is
   unavoidably used (it should not be).
 
@@ -262,10 +268,11 @@ Every page must include, in this order:
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<!-- Self-hosted fonts (preload critical weights first) -->
+<!-- Self-hosted fonts: preload critical woff2 files first, then load CSS non-blocking -->
 <link rel="preload" href="/fonts/[heading-weight].woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/[body-weight].woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/fonts.css"></noscript>
 ```
 
 ### Structured data (JSON-LD)
