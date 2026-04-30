@@ -377,7 +377,7 @@ so keeping it current is essential. Do not wait to be asked.
 | examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated. Footer matches About page. |
 | about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £9.99 (optional). |
 | contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
-| privacy.html | Complete | Footer highlights Privacy on this page. Nav matches main site; policy `ul`/`li` rules scoped to `.content` so `#primary-nav` is not given dash bullets. |
+| privacy.html | Complete | Footer highlights Privacy on this page. Nav matches main site; policy `ul`/`li` rules scoped to `.content` so `#primary-nav` is not given dash bullets. CookieConsent v3.1.0 self-hosted in `/vendor/cookieconsent/` with config in `cookieconsent-config.js`. GA4 `G-FM1VG68GKQ` is opt-in (analytics denied by default until visitor accepts). Privacy includes “Manage cookie preferences” link. |
 | terms.html | Complete | Same header/footer as rest of site (nav + mobile menu); footer highlights Terms on this page. |
 | guides.html | Complete | Guides index page. Nav includes Guides link. Self-contained CSS (no nav-mobile.css dependency). |
 | guides/cold-calls.html | Complete | Client-facing guide: cold call protection at launch. Blue tag. |
