@@ -115,7 +115,7 @@ Project documentation describes **separate Netlify sites** per trade demo; they 
 |----------|----------|--------|
 | `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` | For real send | If missing, handler logs body and returns `{ ok: true, note: '...' }` so the UI still “succeeds” |
 | `SMTP_PORT` | Optional | Default `587`; `465` uses implicit TLS |
-| `TO_EMAIL` | Optional | Default `nick@neobookworm.uk` |
+| `TO_EMAIL` | Optional | Default `neobookworm@icloud.com` |
 
 **Troubleshooting:**
 

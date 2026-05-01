@@ -3,7 +3,7 @@
 // Required env vars (set in Vercel dashboard):
 //   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
 // Optional:
-//   TO_EMAIL  (defaults to nick@neobookworm.uk)
+//   TO_EMAIL  (defaults to neobookworm@icloud.com)
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-  const toEmail  = process.env.TO_EMAIL || 'nick@neobookworm.uk';
+  const toEmail  = process.env.TO_EMAIL || 'neobookworm@icloud.com';
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.log('SMTP not configured. Would have sent:\n' + emailBody);

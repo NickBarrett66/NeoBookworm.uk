@@ -887,7 +887,7 @@ color: #fca5a5;
           try {
             json = await res.json();
           } catch {
-            throw new Error('Something went wrong. Please try again or email nick@neobookworm.uk directly.');
+            throw new Error('Something went wrong. Please try again or email neobookworm@icloud.com directly.');
           }
 
           if (res.ok && (json.ok || json.note)) {
@@ -899,7 +899,7 @@ color: #fca5a5;
           }
         } catch (err) {
           notice.className = 'cf-notice error';
-          notice.textContent = err.message || 'Something went wrong. Please try again or email nick@neobookworm.uk directly.';
+          notice.textContent = err.message || 'Something went wrong. Please try again or email neobookworm@icloud.com directly.';
         } finally {
           btn.disabled = false;
           btn.innerHTML = 'Send message <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';

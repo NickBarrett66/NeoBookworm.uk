@@ -20,6 +20,7 @@ NeoBookworm.uk/
 ├── privacy.html            # Privacy policy
 ├── terms.html              # Terms of service
 ├── WEBSITE-REFERENCE.md    # Implementation & troubleshooting reference
+├── api/                    # Vercel serverless routes (contact email, intake, …)
 ├── intake-form.html        # Client onboarding form - replaced Tally form
 ├── nav-mobile.css          # Hamburger + full-screen menu (≤768px) for main site nav
 ├── nav-mobile.js           # Moves #primary-nav under <body> on mobile (WebKit fixed-position quirk)
@@ -40,8 +41,8 @@ NeoBookworm.uk/
 ├── accreditations/
 │   └── accreditation-badges.html   # Badge snippet library (see below)
 ├── Images/                 # Site images
-├── netlify/                # Netlify function configs
-├── netlify.toml            # Netlify build config
+├── netlify/                # Netlify configs (client demos; optional / legacy here)
+├── netlify.toml            # Netlify build config (demos; main marketing site is Vercel)
 └── .claude/
     └── settings.local.json # Claude Code permissions
 ```
@@ -143,13 +144,12 @@ Each demo site should:
 
 ## Deployment
 
-Sites are deployed via the Netlify CLI. The permitted deploy command is:
+**NeoBookworm.uk (main marketing site)** is deployed to **Vercel** (production: neobookworm.uk). Backend behaviour lives under `api/` as Vercel serverless routes (for example `api/contact.js` for the quick enquiry form, intake endpoints for onboarding). Set **`TO_EMAIL`**, SMTP, R2, and other secrets in the **Vercel project → Settings → Environment Variables**.
+
+**Client demo sites** are separate static sites, deployed as individual Netlify projects. The permitted deploy command for those demos is:
 ```
 netlify deploy
 ```
-
-NeoBookworm.uk itself is deployed to Vercel (production site: neobookworm.uk).
-Client demo sites are deployed as separate Netlify sites.
 
 ---
 
@@ -376,7 +376,7 @@ so keeping it current is essential. Do not wait to be asked.
 | pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £9.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
 | examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated. Footer matches About page. |
 | about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £9.99 (optional). |
-| contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form added; Netlify function created; SMTP env vars needed in Netlify dashboard |
+| contact.html | Complete | Header/nav aligned with Home / How it works / Pricing. Complete — intake form kept; simple email form POSTs to Vercel `api/contact.js`; set SMTP / `TO_EMAIL` in Vercel env vars |
 | privacy.html | Complete | Footer highlights Privacy on this page. Nav matches main site; policy `ul`/`li` rules scoped to `.content` so `#primary-nav` is not given dash bullets. CookieConsent v3.1.0 self-hosted in `/vendor/cookieconsent/` with config in `cookieconsent-config.js`. GA4 `G-FM1VG68GKQ` is opt-in (analytics denied by default until visitor accepts). Privacy includes “Manage cookie preferences” link. |
 | terms.html | Complete | Same header/footer as rest of site (nav + mobile menu); footer highlights Terms on this page. |
 | guides.html | Complete | Guides index page. Nav includes Guides link. Self-contained CSS (no nav-mobile.css dependency). |
@@ -411,10 +411,10 @@ so keeping it current is essential. Do not wait to be asked.
 | Item | Priority | Notes |
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
-| SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in Netlify dashboard to activate email sending (Brevo recommended) |
+| SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in **Vercel** project env vars to activate email sending (Brevo recommended) |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |
 | Examples page image integration | Medium | Swap CSS previews for real images once generated |
-| End-to-end pipeline test | Medium | Stripe Customer Portal, Netlify deploy, handover docs |
+| End-to-end pipeline test | Medium | Stripe Customer Portal, Vercel production checks, Netlify demo deploys, handover docs |
 | Intake → R2 uploads (Vercel) | High | `neo-bookworm-uk`: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL + R2_ENDPOINT **or** R2_ACCOUNT_ID; EU buckets need `R2_JURISDICTION=eu` or `.eu.r2.cloudflarestorage.com`; `@aws-sdk/client-s3` ≥3.729 needs checksum options (implemented in getS3) |
 | CSS minification build pipeline | Low | PageSpeed flags ~3 KiB savings from unminified inline CSS. Vercel gzip/brotli compresses delivery but does NOT minify inline `<style>` blocks at source. Fix requires a proper build step (e.g. PostCSS + cssnano, or Vite). Not worth introducing a build pipeline for 3 KiB alone — revisit when demo site pipeline is being designed, as a build step will be natural at that point. Do not hand-minify CSS manually. |
