@@ -127,7 +127,9 @@ transform: translateY(-1px);
 nav { padding: 1rem 1.25rem; }
 }
 
-#brief {
+#brief,
+#option-full,
+#option-call {
 scroll-margin-top: 5.5rem;
 }
 
@@ -263,6 +265,136 @@ font-size: 15px;
 font-weight: 300;
 color: var(--muted);
 margin-bottom: 28px;
+max-width: 640px;
+margin-left: auto;
+margin-right: auto;
+line-height: 1.65;
+}
+.form-intro strong {
+color: rgba(255,255,255,0.78);
+font-weight: 600;
+}
+
+.contact-option-jump {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: center;
+gap: 10px 14px;
+margin-bottom: 40px;
+font-size: 14px;
+font-weight: 500;
+}
+.contact-option-jump a {
+color: var(--amber);
+text-decoration: none;
+border-bottom: 1px solid rgba(245,166,35,0.35);
+transition: color 0.2s, border-color 0.2s;
+}
+.contact-option-jump a:hover {
+color: var(--amber-dark);
+border-bottom-color: rgba(212,137,26,0.6);
+}
+.contact-option-jump-sep {
+color: rgba(255,255,255,0.22);
+user-select: none;
+}
+
+.contact-option {
+background: var(--amber-pale);
+border: 1px solid rgba(245,166,35,0.28);
+border-radius: 14px;
+padding: 28px 32px;
+max-width: 860px;
+margin: 0 auto 28px;
+}
+.contact-option:last-of-type {
+margin-bottom: 0;
+}
+.contact-option--wide {
+max-width: 100%;
+}
+
+.contact-option-row {
+display: flex;
+align-items: flex-start;
+gap: 18px;
+flex-wrap: wrap;
+}
+.contact-option-num {
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background: var(--amber-pale);
+border: 1px solid rgba(245,166,35,0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: 'Playfair Display', serif;
+font-weight: 900;
+font-size: 18px;
+color: var(--amber);
+flex-shrink: 0;
+}
+.contact-option-main {
+flex: 1;
+min-width: 200px;
+}
+.contact-option-kicker {
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.38);
+margin-bottom: 6px;
+}
+.contact-option-title {
+font-family: 'Playfair Display', serif;
+font-weight: 700;
+font-size: 20px;
+line-height: 1.25;
+margin-bottom: 8px;
+color: var(--white);
+}
+.contact-option-desc {
+font-size: 15px;
+font-weight: 300;
+color: rgba(255,255,255,0.78);
+line-height: 1.6;
+margin: 0;
+}
+
+.contact-option-embed {
+margin-top: 22px;
+}
+
+.contact-option-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: var(--amber);
+color: var(--navy);
+font-family: 'DM Sans', sans-serif;
+font-size: 15px;
+font-weight: 600;
+padding: 13px 24px;
+border-radius: 8px;
+text-decoration: none;
+flex-shrink: 0;
+transition: background 0.2s, transform 0.15s;
+align-self: center;
+}
+.contact-option-btn:hover {
+background: var(--amber-dark);
+transform: translateY(-1px);
+}
+.contact-option-row .contact-option-btn {
+margin-left: auto;
+}
+
+.contact-option-form-wrap {
+margin-top: 22px;
+width: 100%;
 }
 
 .contact-meta {
@@ -427,43 +559,9 @@ vertical-align: middle;
 .nav-logo .nav-wordmark, .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
 .nav-wordmark span, .logo-wordmark span { color: var(--amber); }
 
-.or-divider {
-display: flex;
-align-items: center;
-gap: 16px;
-margin: 56px 0 48px;
-}
-.or-divider::before,
-.or-divider::after {
-content: '';
-flex: 1;
-height: 1px;
-background: rgba(245,166,35,0.18);
-}
-.or-divider span {
-font-size: 12px;
-font-weight: 600;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-color: rgba(255,255,255,0.3);
-white-space: nowrap;
-}
-
 .email-form-block {
-max-width: 640px;
-}
-.email-form-block h2 {
-font-family: 'Playfair Display', serif;
-font-weight: 700;
-font-size: 24px;
-margin-bottom: 8px;
-}
-.email-form-block p {
-font-size: 15px;
-font-weight: 300;
-color: var(--muted);
-margin-bottom: 28px;
-line-height: 1.6;
+max-width: none;
+width: 100%;
 }
 
 .cf-row {
@@ -554,70 +652,15 @@ color: #fca5a5;
 
 @media (max-width: 560px) {
 .cf-row { grid-template-columns: 1fr; }
+.contact-option {
+padding: 24px 20px;
 }
-
-.koalendar-card {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: var(--amber-pale);
-  border: 1px solid rgba(245,166,35,0.28);
-  border-radius: 14px;
-  padding: 28px 32px;
-  max-width: 720px;
-  flex-wrap: wrap;
+.contact-option-row .contact-option-btn {
+width: 100%;
+justify-content: center;
+margin-top: 4px;
+margin-left: 0;
 }
-.koalendar-icon {
-  font-size: 28px;
-  flex-shrink: 0;
-}
-.koalendar-text {
-  flex: 1;
-  min-width: 200px;
-}
-.koalendar-text strong {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--amber);
-  display: block;
-  margin-bottom: 4px;
-}
-.koalendar-text p {
-  font-size: 15px;
-  font-weight: 300;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.6;
-  margin: 0;
-}
-.koalendar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--amber);
-  color: var(--navy);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 13px 24px;
-  border-radius: 8px;
-  text-decoration: none;
-  flex-shrink: 0;
-  transition: background 0.2s, transform 0.15s;
-}
-.koalendar-btn:hover {
-  background: var(--amber-dark);
-  transform: translateY(-1px);
-}
-@media (max-width: 560px) {
-  .koalendar-card {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px 20px;
-  }
-  .koalendar-btn {
-    width: 100%;
-    justify-content: center;
-  }
 }
 </style>
 
@@ -724,7 +767,7 @@ color: #fca5a5;
     <div class="hero-inner">
       <div class="eyebrow reveal">Contact</div>
       <h1 class="reveal reveal-delay-1">Get in touch<br><em>No obligation, no pressure.</em></h1>
-      <p class="hero-sub reveal reveal-delay-2">Fill in the short form below and I&rsquo;ll come back to you by email.</p>
+      <p class="hero-sub reveal reveal-delay-2">Three ways to get in touch on this page &mdash; pick whichever suits you. No jargon, no hard sell.</p>
       <div class="hero-meta reveal reveal-delay-2">
         <div class="contact-meta-item">
           <div class="detail-icon">&#128205;</div>
@@ -751,50 +794,63 @@ color: #fca5a5;
     </div>
   </header>
 
-  <!-- FORM -->
+  <!-- CONTACT OPTIONS -->
   <section>
     <div class="inner">
 
       <div class="form-block">
-        <h2 class="reveal">Tell me about your business</h2>
-        <p class="form-intro reveal reveal-delay-1">Fill in the short form below and I&rsquo;ll come back to you by email &mdash; no jargon, no hard sell.</p>
+        <h2 class="reveal">Choose how you&rsquo;d like to reach me</h2>
+        <p class="form-intro reveal reveal-delay-1"><strong>Full enquiry</strong> &mdash; best when you&rsquo;re ready to tell me about your trade and what you need (takes a few minutes). <strong>Free 30-minute call</strong> &mdash; if you&rsquo;d rather talk it through first. <strong>Quick message</strong> &mdash; a short note if you&rsquo;re not ready for the full form. I&rsquo;ll reply by email for enquiries and messages; book a call for a time that suits you.</p>
 
-        <div class="tally-embed-wrapper reveal reveal-delay-2">
+        <nav class="contact-option-jump reveal reveal-delay-2" aria-label="Jump to contact options">
+          <a href="#option-full">Full enquiry</a>
+          <span class="contact-option-jump-sep" aria-hidden="true">&middot;</span>
+          <a href="#option-call">Book a call</a>
+          <span class="contact-option-jump-sep" aria-hidden="true">&middot;</span>
+          <a href="#brief">Quick message</a>
+        </nav>
+      </div>
+
+      <article id="option-full" class="contact-option contact-option--wide reveal reveal-delay-2">
+        <div class="contact-option-row">
+          <div class="contact-option-num" aria-hidden="true">1</div>
+          <div class="contact-option-main">
+            <p class="contact-option-kicker">Full enquiry</p>
+            <h3 class="contact-option-title">Tell me about your business</h3>
+            <p class="contact-option-desc">The questions below help me understand what you need so I can reply with something useful &mdash; not a generic brochure.</p>
+          </div>
+        </div>
+        <div class="contact-option-embed tally-embed-wrapper">
           <iframe src="intake-form.html" title="New website enquiry form"></iframe>
         </div>
-      </div>
-    </div>
-  </section>
+      </article>
 
-  <!-- ── SIMPLE EMAIL OPTION ── -->
-  <section id="brief">
-    <div class="inner">
-
-      <div class="or-divider reveal">
-        <span>Or book a call</span>
-      </div>
-
-      <div class="koalendar-card reveal">
-        <div class="koalendar-icon">📅</div>
-        <div class="koalendar-text">
-          <strong>Prefer to talk it through?</strong>
-          <p>Book a free 15-minute call and I'll answer any questions you have — no pressure, no sales pitch.</p>
+      <article id="option-call" class="contact-option reveal reveal-delay-3">
+        <div class="contact-option-row">
+          <div class="contact-option-num" aria-hidden="true">2</div>
+          <div class="contact-option-main">
+            <p class="contact-option-kicker">Free call</p>
+            <h3 class="contact-option-title">Prefer to talk it through?</h3>
+            <p class="contact-option-desc">Book a free 30-minute call and I&rsquo;ll answer any questions you have &mdash; no pressure, no sales pitch.</p>
+          </div>
+          <a href="https://koalendar.com/u/nickbarrett" target="_blank" rel="noopener noreferrer" class="contact-option-btn">
+            Book a call
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div>
-        <a href="https://koalendar.com/u/nickbarrett" target="_blank" rel="noopener noreferrer" class="koalendar-btn">
-          Book a call
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+      </article>
 
-      <div class="or-divider reveal">
-        <span>Or send a quick message</span>
-      </div>
-
-      <div class="email-form-block reveal">
-        <h2>Prefer to keep it brief?</h2>
-        <p>Not ready to fill in the full form? Just drop me a quick message below — name, what you're after, and the best way to reach you. I'll come back to you within 24 hours.</p>
-
-        <form id="contact-form" novalidate>
+      <article id="brief" class="contact-option reveal reveal-delay-3">
+        <div class="contact-option-row">
+          <div class="contact-option-num" aria-hidden="true">3</div>
+          <div class="contact-option-main">
+            <p class="contact-option-kicker">Quick message</p>
+            <h3 class="contact-option-title">Prefer to keep it brief?</h3>
+            <p class="contact-option-desc">Not ready for the full form? Drop me a quick note below &mdash; name, what you&rsquo;re after, and the best way to reach you. I&rsquo;ll come back within 24 hours.</p>
+          </div>
+        </div>
+        <div class="email-form-block contact-option-form-wrap">
+          <form id="contact-form" novalidate>
           <div class="cf-row">
             <div class="cf-field">
               <label for="cf-name">Your name</label>
@@ -826,8 +882,9 @@ color: #fca5a5;
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
           <div class="cf-notice" id="cf-notice"></div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </article>
 
     </div>
   </section>
