@@ -52,6 +52,28 @@ line-height: 1.7;
 overflow-x: hidden;
 }
 
+.skip-link {
+position: absolute;
+left: -9999px;
+top: 0;
+z-index: 400;
+padding: 0.85rem 1.25rem;
+background: var(--amber);
+color: var(--navy);
+font-family: var(--sans);
+font-size: 14px;
+font-weight: 600;
+text-decoration: none;
+border-radius: 6px;
+transition: transform 0.15s;
+}
+.skip-link:focus {
+left: 1rem;
+top: 1rem;
+outline: 2px solid var(--white);
+outline-offset: 2px;
+}
+
 html.js-reveal .reveal {
 opacity: 0;
 transform: translateY(28px);
@@ -65,7 +87,7 @@ transform: translateY(0);
 .reveal-delay-2 { transition-delay: 0.20s; }
 .reveal-delay-3 { transition-delay: 0.30s; }
 
-nav {
+nav.site-nav {
 position: fixed;
 top: 0; left: 0; right: 0;
 z-index: 200;
@@ -117,19 +139,23 @@ color: var(--navy) !important;
 padding: 0.5rem 1.2rem;
 border-radius: 6px;
 font-weight: 600 !important;
-transition: background 0.2s !important, transform 0.15s !important;
+transition: background 0.2s, transform 0.15s !important;
 }
 .nav-cta:hover {
 background: var(--amber-dark) !important;
 transform: translateY(-1px);
 }
 @media (max-width: 640px) {
-nav { padding: 1rem 1.25rem; }
+nav.site-nav { padding: 1rem 1.25rem; }
 }
 
+#main,
 #brief,
 #option-full,
-#option-call {
+#option-call,
+#panel-full,
+#panel-call,
+#panel-brief {
 scroll-margin-top: 5.5rem;
 }
 
@@ -218,6 +244,9 @@ display: flex;
 flex-wrap: wrap;
 gap: 12px;
 max-width: 860px;
+margin-left: auto;
+margin-right: auto;
+justify-content: center;
 }
 .hero-meta .contact-meta-item {
 background: rgba(255,255,255,0.06);
@@ -295,12 +324,47 @@ transition: color 0.2s, border-color 0.2s;
 color: var(--amber-dark);
 border-bottom-color: rgba(212,137,26,0.6);
 }
+.contact-option-jump a.contact-option-jump-active {
+color: var(--white);
+border-bottom-color: rgba(245,166,35,0.55);
+}
 .contact-option-jump-sep {
 color: rgba(255,255,255,0.22);
 user-select: none;
 }
 
+html.js-contact-accordion .contact-option.is-open .contact-option-footer .contact-option-expand {
+display: none;
+}
+
+.contact-option-embed-note,
+.contact-option-embed-fallback {
+font-size: 14px;
+font-weight: 300;
+color: var(--muted);
+line-height: 1.55;
+margin-bottom: 14px;
+}
+.contact-option-embed-fallback {
+margin-bottom: 0;
+margin-top: 14px;
+}
+.contact-option-embed-fallback a {
+color: var(--amber);
+text-decoration: none;
+border-bottom: 1px solid rgba(245,166,35,0.35);
+}
+.contact-option-embed-fallback a:hover {
+color: var(--amber-dark);
+}
+
 .contact-option {
+display: grid;
+grid-template-columns: auto 1fr auto;
+grid-template-rows: auto auto;
+align-items: start;
+column-gap: 18px;
+row-gap: 22px;
 background: var(--amber-pale);
 border: 1px solid rgba(245,166,35,0.28);
 border-radius: 14px;
@@ -311,17 +375,10 @@ margin: 0 auto 28px;
 .contact-option:last-of-type {
 margin-bottom: 0;
 }
-.contact-option--wide {
-max-width: 100%;
-}
 
-.contact-option-row {
-display: flex;
-align-items: flex-start;
-gap: 18px;
-flex-wrap: wrap;
-}
 .contact-option-num {
+grid-column: 1;
+grid-row: 1;
 width: 44px;
 height: 44px;
 border-radius: 50%;
@@ -335,10 +392,24 @@ font-weight: 900;
 font-size: 18px;
 color: var(--amber);
 flex-shrink: 0;
+align-self: start;
 }
 .contact-option-main {
-flex: 1;
-min-width: 200px;
+grid-column: 2;
+grid-row: 1;
+min-width: 0;
+}
+.contact-option-footer {
+grid-column: 3;
+grid-row: 1;
+justify-self: end;
+align-self: center;
+}
+.contact-option-panel {
+grid-column: 1 / -1;
+grid-row: 2;
+width: 100%;
+min-width: 0;
 }
 .contact-option-kicker {
 font-size: 11px;
@@ -365,7 +436,7 @@ margin: 0;
 }
 
 .contact-option-embed {
-margin-top: 22px;
+margin-top: 0;
 }
 
 .contact-option-btn {
@@ -382,19 +453,28 @@ border-radius: 8px;
 text-decoration: none;
 flex-shrink: 0;
 transition: background 0.2s, transform 0.15s;
-align-self: center;
+white-space: nowrap;
 }
 .contact-option-btn:hover {
 background: var(--amber-dark);
 transform: translateY(-1px);
 }
-.contact-option-row .contact-option-btn {
-margin-left: auto;
+
+.contact-option-panel .cf-submit {
+margin-top: 12px;
+padding: 13px 24px;
 }
 
 .contact-option-form-wrap {
-margin-top: 22px;
+margin-top: 0;
 width: 100%;
+}
+
+.koalendar-embed-wrapper iframe {
+display: block;
+width: 100%;
+height: 720px;
+border: none;
 }
 
 .contact-meta {
@@ -654,12 +734,36 @@ color: #fca5a5;
 .cf-row { grid-template-columns: 1fr; }
 .contact-option {
 padding: 24px 20px;
+grid-template-columns: auto 1fr;
+grid-template-rows: auto auto auto;
 }
-.contact-option-row .contact-option-btn {
+.contact-option-num {
+grid-column: 1;
+grid-row: 1;
+}
+.contact-option-main {
+grid-column: 2;
+grid-row: 1;
+}
+.contact-option-footer {
+grid-column: 1 / -1;
+grid-row: 2;
+justify-self: stretch;
+align-self: stretch;
+}
+.contact-option-footer .contact-option-btn {
 width: 100%;
 justify-content: center;
-margin-top: 4px;
-margin-left: 0;
+white-space: normal;
+text-align: center;
+}
+.contact-option-panel {
+grid-column: 1 / -1;
+grid-row: 3;
+}
+.contact-option-panel .cf-submit {
+width: 100%;
+justify-content: center;
 }
 }
 </style>
@@ -736,11 +840,20 @@ margin-left: 0;
 </script>
 </head>
 <body>
+<script>document.documentElement.classList.add('js-contact-accordion');</script>
+<noscript><style>.contact-option-expand{display:none!important}</style></noscript>
+
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- NAV -->
   <nav class="site-nav">
     <a href="index.html" class="nav-logo">
-  <img src="logo.webp" alt="NeoBookworm.uk logo" class="nav-logo-img">
+  <img src="logo-160.webp"
+       srcset="logo-80.webp 80w, logo-160.webp 160w"
+       sizes="80px"
+       alt="NeoBookworm.uk logo"
+       class="nav-logo-img"
+       width="1024" height="1024">
   <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
 </a>
     <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
@@ -754,11 +867,11 @@ margin-left: 0;
       <li><a href="examples.html">Examples</a></li>
       <li><a href="guides.html">Guides</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="contact.html" class="nav-cta" aria-current="page">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta active" aria-current="page">Contact</a></li>
     </ul>
   </nav>
 
-  <main>
+  <main id="main">
   <!-- HERO -->
   <header class="hero">
     <div class="hero-bg">
@@ -795,7 +908,7 @@ margin-left: 0;
   </header>
 
   <!-- CONTACT OPTIONS -->
-  <section>
+  <section id="contact-options">
     <div class="inner">
 
       <div class="form-block">
@@ -803,85 +916,102 @@ margin-left: 0;
         <p class="form-intro reveal reveal-delay-1"><strong>Full enquiry</strong> &mdash; best when you&rsquo;re ready to tell me about your trade and what you need (takes a few minutes). <strong>Free 30-minute call</strong> &mdash; if you&rsquo;d rather talk it through first. <strong>Quick message</strong> &mdash; a short note if you&rsquo;re not ready for the full form. I&rsquo;ll reply by email for enquiries and messages; book a call for a time that suits you.</p>
 
         <nav class="contact-option-jump reveal reveal-delay-2" aria-label="Jump to contact options">
-          <a href="#option-full">Full enquiry</a>
+          <a href="#option-full" data-contact-hash="option-full">Full enquiry</a>
           <span class="contact-option-jump-sep" aria-hidden="true">&middot;</span>
-          <a href="#option-call">Book a call</a>
+          <a href="#option-call" data-contact-hash="option-call">Book a call</a>
           <span class="contact-option-jump-sep" aria-hidden="true">&middot;</span>
-          <a href="#brief">Quick message</a>
+          <a href="#brief" data-contact-hash="brief">Quick message</a>
         </nav>
       </div>
 
-      <article id="option-full" class="contact-option contact-option--wide reveal reveal-delay-2">
-        <div class="contact-option-row">
-          <div class="contact-option-num" aria-hidden="true">1</div>
-          <div class="contact-option-main">
-            <p class="contact-option-kicker">Full enquiry</p>
-            <h3 class="contact-option-title">Tell me about your business</h3>
-            <p class="contact-option-desc">The questions below help me understand what you need so I can reply with something useful &mdash; not a generic brochure.</p>
-          </div>
+      <article id="option-full" class="contact-option reveal reveal-delay-2" aria-expanded="false">
+        <div class="contact-option-num" aria-hidden="true">1</div>
+        <div class="contact-option-main">
+          <p class="contact-option-kicker">Full enquiry</p>
+          <h3 class="contact-option-title" id="option-full-heading">Tell me about your business</h3>
+          <p class="contact-option-desc">The questions below help me understand what you need so I can reply with something useful &mdash; not a generic brochure.</p>
         </div>
-        <div class="contact-option-embed tally-embed-wrapper">
-          <iframe src="intake-form.html" title="New website enquiry form"></iframe>
+        <div class="contact-option-footer">
+          <button type="button" class="contact-option-btn contact-option-expand" data-contact-expand="option-full" aria-expanded="false" aria-controls="panel-full">
+            Start the form
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div id="panel-full" class="contact-option-panel contact-option-embed" role="region" aria-labelledby="option-full-heading">
+          <div id="intake-embed-anchor" class="tally-embed-wrapper">
+            <iframe class="contact-lazy-if" title="New website enquiry form" data-src="intake-form.html"></iframe>
+          </div>
         </div>
       </article>
 
-      <article id="option-call" class="contact-option reveal reveal-delay-3">
-        <div class="contact-option-row">
-          <div class="contact-option-num" aria-hidden="true">2</div>
-          <div class="contact-option-main">
-            <p class="contact-option-kicker">Free call</p>
-            <h3 class="contact-option-title">Prefer to talk it through?</h3>
-            <p class="contact-option-desc">Book a free 30-minute call and I&rsquo;ll answer any questions you have &mdash; no pressure, no sales pitch.</p>
-          </div>
-          <a href="https://koalendar.com/u/nickbarrett" target="_blank" rel="noopener noreferrer" class="contact-option-btn">
+      <article id="option-call" class="contact-option reveal reveal-delay-3" aria-expanded="false">
+        <div class="contact-option-num" aria-hidden="true">2</div>
+        <div class="contact-option-main">
+          <p class="contact-option-kicker">Free call</p>
+          <h3 class="contact-option-title" id="option-call-heading">Prefer to talk it through?</h3>
+          <p class="contact-option-desc">Book a free 30-minute call and I&rsquo;ll answer any questions you have &mdash; no pressure, no sales pitch.</p>
+        </div>
+        <div class="contact-option-footer">
+          <button type="button" class="contact-option-btn contact-option-expand" data-contact-expand="option-call" aria-expanded="false" aria-controls="panel-call">
             Book a call
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          </button>
+        </div>
+        <div id="panel-call" class="contact-option-panel contact-option-embed" role="region" aria-labelledby="option-call-heading">
+          <p class="contact-option-embed-note">Calendar loads below &mdash; colours may look slightly different from the rest of this site.</p>
+          <div class="tally-embed-wrapper koalendar-embed-wrapper">
+            <iframe class="contact-lazy-if" title="Book a 30-minute call with Nick" data-src="https://koalendar.com/u/nickbarrett?embed=true"></iframe>
+          </div>
+          <p class="contact-option-embed-fallback"><a href="https://koalendar.com/u/nickbarrett" target="_blank" rel="noopener noreferrer">Open booking page in a new tab</a> if the calendar doesn&rsquo;t appear.</p>
         </div>
       </article>
 
-      <article id="brief" class="contact-option reveal reveal-delay-3">
-        <div class="contact-option-row">
-          <div class="contact-option-num" aria-hidden="true">3</div>
-          <div class="contact-option-main">
-            <p class="contact-option-kicker">Quick message</p>
-            <h3 class="contact-option-title">Prefer to keep it brief?</h3>
-            <p class="contact-option-desc">Not ready for the full form? Drop me a quick note below &mdash; name, what you&rsquo;re after, and the best way to reach you. I&rsquo;ll come back within 24 hours.</p>
-          </div>
+      <article id="brief" class="contact-option reveal reveal-delay-3" aria-expanded="false">
+        <div class="contact-option-num" aria-hidden="true">3</div>
+        <div class="contact-option-main">
+          <p class="contact-option-kicker">Quick message</p>
+          <h3 class="contact-option-title" id="option-brief-heading">Prefer to keep it brief?</h3>
+          <p class="contact-option-desc">Not ready for the full form? Drop me a quick note &mdash; name, what you&rsquo;re after, and the best way to reach you. I&rsquo;ll come back within 24 hours.</p>
         </div>
-        <div class="email-form-block contact-option-form-wrap">
-          <form id="contact-form" novalidate>
-          <div class="cf-row">
-            <div class="cf-field">
-              <label for="cf-name">Your name</label>
-              <input type="text" id="cf-name" name="name" placeholder="e.g. Dave Smith" required>
-            </div>
-            <div class="cf-field">
-              <label for="cf-trade">Your trade</label>
-              <input type="text" id="cf-trade" name="trade" placeholder="e.g. Plumber, Electrician">
-            </div>
-          </div>
-          <div class="cf-row">
-            <div class="cf-field">
-              <label for="cf-email">Your email</label>
-              <input type="email" id="cf-email" name="email" placeholder="your@email.com" required>
-            </div>
-            <div class="cf-field">
-              <label for="cf-phone">Your phone (optional)</label>
-              <input type="tel" id="cf-phone" name="phone" placeholder="07700 000 000">
-            </div>
-          </div>
-          <div class="cf-row">
-            <div class="cf-field full">
-              <label for="cf-message">What would you like to know?</label>
-              <textarea id="cf-message" name="message" placeholder="Tell me a bit about what you're looking for — no need to write an essay." required></textarea>
-            </div>
-          </div>
-          <button type="submit" class="cf-submit" id="cf-btn">
-            Send message
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <div class="contact-option-footer">
+          <button type="button" class="contact-option-btn contact-option-expand" data-contact-expand="brief" aria-expanded="false" aria-controls="panel-brief">
+            Write a message
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
-          <div class="cf-notice" id="cf-notice"></div>
+        </div>
+        <div id="panel-brief" class="contact-option-panel email-form-block contact-option-form-wrap" role="region" aria-labelledby="option-brief-heading">
+          <form id="contact-form" novalidate>
+            <div class="cf-row">
+              <div class="cf-field">
+                <label for="cf-name">Your name</label>
+                <input type="text" id="cf-name" name="name" placeholder="e.g. Dave Smith" required>
+              </div>
+              <div class="cf-field">
+                <label for="cf-trade">Your trade</label>
+                <input type="text" id="cf-trade" name="trade" placeholder="e.g. Plumber, Electrician">
+              </div>
+            </div>
+            <div class="cf-row">
+              <div class="cf-field">
+                <label for="cf-email">Your email</label>
+                <input type="email" id="cf-email" name="email" placeholder="your@email.com" required>
+              </div>
+              <div class="cf-field">
+                <label for="cf-phone">Your phone (optional)</label>
+                <input type="tel" id="cf-phone" name="phone" placeholder="07700 000 000">
+              </div>
+            </div>
+            <div class="cf-row">
+              <div class="cf-field full">
+                <label for="cf-message">What would you like to know?</label>
+                <textarea id="cf-message" name="message" placeholder="Tell me a bit about what you're looking for — no need to write an essay." required></textarea>
+              </div>
+            </div>
+            <button type="submit" class="contact-option-btn cf-submit" id="cf-btn">
+              Send message
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <div class="cf-notice" id="cf-notice"></div>
           </form>
         </div>
       </article>
@@ -1039,11 +1169,166 @@ margin-left: 0;
           notice.textContent = err.message || 'Something went wrong. Please try again or email neobookworm@icloud.com directly.';
         } finally {
           btn.disabled = false;
-          btn.innerHTML = 'Send message <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+          btn.innerHTML = 'Send message <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+          btn.className = 'contact-option-btn cf-submit';
         }
       });
     })();
   </script>
+
+  <script>
+    (function () {
+      if (!document.documentElement.classList.contains('js-contact-accordion')) return;
+
+      var IDS = ['option-full', 'option-call', 'brief'];
+
+      function hydrateLazyIframes(container) {
+        if (!container) return;
+        container.querySelectorAll('iframe.contact-lazy-if[data-src]').forEach(function (ifr) {
+          if (ifr.dataset.loaded) return;
+          var src = ifr.getAttribute('data-src');
+          if (!src) return;
+          ifr.src = src;
+          ifr.dataset.loaded = '1';
+        });
+      }
+
+      function setJumpActive(id) {
+        document.querySelectorAll('.contact-option-jump a[data-contact-hash]').forEach(function (a) {
+          a.classList.toggle('contact-option-jump-active', !!id && a.getAttribute('data-contact-hash') === id);
+        });
+      }
+
+      function openContactOption(id, opts) {
+        opts = opts || {};
+        if (IDS.indexOf(id) === -1) return;
+
+        if (history.replaceState && opts.replaceHash !== false) {
+          history.replaceState(null, '', '#' + id);
+        }
+
+        IDS.forEach(function (sid) {
+          var art = document.getElementById(sid);
+          if (!art) return;
+          var open = sid === id;
+          art.classList.toggle('is-open', open);
+          art.setAttribute('aria-expanded', open ? 'true' : 'false');
+          var panel = art.querySelector('.contact-option-panel');
+          if (panel) panel.hidden = !open;
+          var btn = art.querySelector('.contact-option-expand');
+          if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+
+        setJumpActive(id);
+
+        var article = document.getElementById(id);
+        if (article) hydrateLazyIframes(article);
+
+        if (opts.scroll !== false) {
+          var panel = article && article.querySelector('.contact-option-panel');
+          if (panel && !panel.hidden) {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            });
+          }
+        }
+
+        if (id === 'brief') {
+          requestAnimationFrame(function () {
+            var p = document.getElementById('panel-brief');
+            var el = document.getElementById('cf-name');
+            if (el && p && !p.hidden) el.focus();
+          });
+        }
+      }
+
+      function collapseAllInitial() {
+        IDS.forEach(function (sid) {
+          var art = document.getElementById(sid);
+          if (!art) return;
+          art.classList.remove('is-open');
+          art.setAttribute('aria-expanded', 'false');
+          var panel = art.querySelector('.contact-option-panel');
+          if (panel) panel.hidden = true;
+          var btn = art.querySelector('.contact-option-expand');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      function bind() {
+        var inner = document.querySelector('#contact-options .inner');
+        if (inner) {
+          inner.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-contact-expand]');
+            if (!btn) return;
+            openContactOption(btn.getAttribute('data-contact-expand'));
+          });
+        }
+
+        var navContact = document.querySelector('nav .nav-cta.active[aria-current="page"]');
+        if (navContact) {
+          navContact.addEventListener('click', function (e) {
+            if (!window.location.hash) return;
+            e.preventDefault();
+            collapseAllInitial();
+            setJumpActive(null);
+            if (history.replaceState) {
+              var bare = window.location.pathname + window.location.search;
+              history.replaceState(null, '', bare);
+            }
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+          });
+        }
+
+        document.querySelectorAll('.contact-option-jump a[data-contact-hash]').forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            openContactOption(a.getAttribute('data-contact-hash'));
+          });
+        });
+
+        window.addEventListener('hashchange', function () {
+          var raw = window.location.hash.replace(/^#/, '');
+          if (IDS.indexOf(raw) !== -1) {
+            openContactOption(raw, { replaceHash: false });
+          } else {
+            collapseAllInitial();
+            setJumpActive(null);
+          }
+        });
+
+        document.addEventListener('click', function (e) {
+          var region = document.getElementById('contact-options');
+          if (!region || region.contains(e.target)) return;
+          if (!document.querySelector('#contact-options .contact-option.is-open')) return;
+          collapseAllInitial();
+          setJumpActive(null);
+          if (history.replaceState && window.location.hash) {
+            var bare = window.location.pathname + window.location.search;
+            history.replaceState(null, '', bare);
+          }
+        }, true);
+      }
+
+      function boot() {
+        bind();
+        collapseAllInitial();
+        var raw = window.location.hash.replace(/^#/, '');
+        if (IDS.indexOf(raw) !== -1) {
+          openContactOption(raw);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
+    })();
+  </script>
+
   <script src="/nav-mobile.js" defer></script>
 
   <script defer src="/_vercel/insights/script.js"></script>
