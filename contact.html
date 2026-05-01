@@ -555,6 +555,70 @@ color: #fca5a5;
 @media (max-width: 560px) {
 .cf-row { grid-template-columns: 1fr; }
 }
+
+.koalendar-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--amber-pale);
+  border: 1px solid rgba(245,166,35,0.28);
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 720px;
+  flex-wrap: wrap;
+}
+.koalendar-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.koalendar-text {
+  flex: 1;
+  min-width: 200px;
+}
+.koalendar-text strong {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--amber);
+  display: block;
+  margin-bottom: 4px;
+}
+.koalendar-text p {
+  font-size: 15px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+.koalendar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--amber);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+}
+.koalendar-btn:hover {
+  background: var(--amber-dark);
+  transform: translateY(-1px);
+}
+@media (max-width: 560px) {
+  .koalendar-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+  }
+  .koalendar-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>
 
 <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
@@ -705,6 +769,22 @@ color: #fca5a5;
   <!-- ── SIMPLE EMAIL OPTION ── -->
   <section id="brief">
     <div class="inner">
+
+      <div class="or-divider reveal">
+        <span>Or book a call</span>
+      </div>
+
+      <div class="koalendar-card reveal">
+        <div class="koalendar-icon">📅</div>
+        <div class="koalendar-text">
+          <strong>Prefer to talk it through?</strong>
+          <p>Book a free 15-minute call and I'll answer any questions you have — no pressure, no sales pitch.</p>
+        </div>
+        <a href="https://koalendar.com/u/nickbarrett" target="_blank" rel="noopener noreferrer" class="koalendar-btn">
+          Book a call
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
 
       <div class="or-divider reveal">
         <span>Or send a quick message</span>
