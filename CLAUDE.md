@@ -392,6 +392,7 @@ so keeping it current is essential. Do not wait to be asked.
 | guides/what-goes-on-a-trades-website.html | Complete | Content guide: what pages and copy a trades site needs. |
 | guides/work-photos-guide.html | Complete | How to take and send good work photos. |
 | intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
+| plumbers.html | Complete | Cold-email landing page targeting UK plumber Ltds (`/plumbers`). Hero + 3 numbered steps + prose "Why" + single pricing card (£299 build, £19.99/mo aftercare) + 3-field form (name / business / email) → `fetch()` POST to **Formspree** (`https://formspree.io/f/NICK_TO_REPLACE` — replace before launch). Hero uses a CSS browser-frame mock pointing at placeholder image **`img/plumber-demo-preview.jpg`** (drop in real screenshot). Same nav / footer / fonts / GA consent / CookieConsent as rest of site. Voice follows `docs/neobookworms-voice` (no "we", no jargon). |
 
 ### Demo sites
 
