@@ -1,9 +1,30 @@
 # Dependencies
 node_modules/
 
-# Environment variables — never commit these
+# Environment / secrets
 .env
-.env.*
-.Claude/settings.local.json
-.vercel
-.env*.local
+.env.local
+.env.*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / local tooling
+.vscode/
+.claude/
+.cursor/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Build output
+dist/
+.next/
+.vercel/
+
+# Binary / temp files
+*.mdb
+*.tmp
+*.log
