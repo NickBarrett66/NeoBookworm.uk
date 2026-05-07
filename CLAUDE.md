@@ -392,7 +392,8 @@ so keeping it current is essential. Do not wait to be asked.
 | guides/what-goes-on-a-trades-website.html | Complete | Content guide: what pages and copy a trades site needs. |
 | guides/work-photos-guide.html | Complete | How to take and send good work photos. |
 | intake-form.html | Complete | Submit path: `POST /api/intake-upload-session` (JSON) → browser **PUT** to R2 (presigned) → `POST /api/intake-finalize` — avoids Vercel 4.5 MB limit. Set **INTAKE_UPLOAD_SECRET** in Vercel; configure **R2 bucket CORS** (PUT/HEAD, `Content-Type`, site origin). Legacy `POST /api/submit-intake` (multipart) still available for small uploads. Same Notion/R2 pipeline as before. |
-| plumbers.html | Complete | Cold-email landing page targeting UK plumber Ltds (`/plumbers`). Hero + 3 numbered steps + prose "Why" + single pricing card (£299 build, £9.99/mo aftercare — matches rest of site) + 3-field form (name / business / email) → `fetch()` POST to **Formspree** (`https://formspree.io/f/NICK_TO_REPLACE` — replace before launch). Hero browser-frame mock is a clickable link to the live **Hartley Plumbing** demo (`https://hartley-plumbing-njb-demo.netlify.app/`) using the existing `Images/demo-hartley-plumbing.jpg` screenshot, styled the same way as the example cards on the homepage. Same nav / footer / fonts / GA consent / CookieConsent as rest of site. Voice follows `docs/neobookworms-voice`. |
+| plumbers.html | Complete | v3 overhaul. Campaign landing page for UK plumber cold-email outreach. Minimal header (logo only → neobookworm.uk — no site nav). Minimal footer (copyright + Privacy / Terms / Contact only). Sections: Hero → How It Works → Why It Matters (plumber-specific prose) → What Your Site Includes (6-card grid) → Social Proof (placeholder testimonial) → Pricing → Unified form. Form: name / business name / email + 3 radio option cards (leave_it_with_me pre-selected, tell_more reveals conditional textarea, intake_form redirects to `/intake-form.html?name=…&biz=…&email=…&ref=plumbers`). Options 1 & 2 POST to `/api/landing-enquiry` → show thank-you in-place. All HTML comments mark TRADE-SPECIFIC sections for future trade-page search-and-replace. |
+| intake-form.html | Complete | URL parameter pre-filling added (`?name=`, `?biz=`, `?email=`) — used when plumbers landing page option 3 redirects here. |
 
 ### Demo sites
 
@@ -412,6 +413,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Item | Priority | Notes |
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
+| landing-enquiry Notion DB | High | `/api/landing-enquiry` writes to Prospects DB `7787183058744a398644b2e6d511b8d6`. Properties `Name` (title), `Business Name` (text), `Email` (email), `Start Option` (select), `Notes` (text), `Source` (select) must exist in that Notion database before going live. Add via Notion UI or script. |
 | SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in **Vercel** project env vars to activate email sending (Brevo recommended) |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |

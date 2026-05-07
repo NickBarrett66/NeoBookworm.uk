@@ -560,6 +560,23 @@ select option{background:#fff;color:#1a1a1a}
 </div>
 </main>
 <script data-cfasync="false">
+// Pre-fill from URL parameters (used by trade landing pages)
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.has('name')) {
+    var el = document.getElementById('f_name');
+    if (el) el.value = params.get('name');
+  }
+  if (params.has('biz')) {
+    var el = document.getElementById('f_biz');
+    if (el) el.value = params.get('biz');
+  }
+  if (params.has('email')) {
+    var el = document.getElementById('f_email');
+    if (el) el.value = params.get('email');
+  }
+})();
+
 var curStep=0,togVals={},styleVal='',teamVal='',domainVal='';
 
 (function(){

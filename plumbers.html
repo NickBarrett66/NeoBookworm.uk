@@ -6,8 +6,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- TRADE-SPECIFIC: Meta title/description/OG -->
   <title>Websites for UK Plumbers — £299 Fixed Price | NeoBookworm</title>
-  <meta name="description" content="I build £299 websites for UK plumbers. See your free preview before paying — if it's not right, walk away owing nothing. Start yours today.">
+  <meta name="description" content="I build £299 websites for UK plumbers. You see your site before paying — walk away owing nothing if it's not right. See what I'd build for you today.">
   <link rel="canonical" href="https://neobookworm.uk/plumbers">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://neobookworm.uk/plumbers">
@@ -18,12 +20,16 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
   <meta name="twitter:card" content="summary_large_image">
+
   <link rel="preconnect" href="https://vitals.vercel-insights.com">
+
+  <!-- Font preloads: heading upright, body, heading italic (used in h1 em, above fold) -->
   <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -59,6 +65,7 @@
       min-height: 100vh;
     }
 
+    /* ─── Skip link ─── */
     .skip-link {
       position: absolute;
       left: -9999px;
@@ -71,22 +78,33 @@
     }
     .skip-link:focus { left: 1rem; top: 1rem; }
 
-    /* ───── NAV (matches index.html) ───── */
-    nav {
+    /* ─── Minimal landing header — logo only, no nav links ─── */
+    .lp-header {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 200;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 1.2rem 2.5rem;
       background: rgba(15,31,61,0.9);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: padding 0.3s;
     }
-    .nav-logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
-    .nav-logo:hover .logo-mark { transform: rotate(-4deg) scale(1.05); }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      text-decoration: none;
+    }
+    .nav-logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      display: inline-block;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .nav-logo:hover .nav-logo-img { transform: rotate(-4deg) scale(1.05); }
     .logo-wordmark {
       font-family: var(--serif);
       font-size: 1.05rem;
@@ -95,37 +113,8 @@
       letter-spacing: -0.01em;
     }
     .logo-wordmark span { color: var(--amber); }
-    .nav-logo-img {
-      width: 40px; height: 40px;
-      object-fit: contain;
-      display: inline-block;
-    }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      list-style: none;
-      margin: 0; padding: 0;
-    }
-    .nav-links a {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--white); }
-    .nav-cta {
-      background: var(--amber) !important;
-      color: var(--navy) !important;
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      font-weight: 600 !important;
-      transition: background 0.2s !important; transform 0.15s !important;
-    }
-    .nav-cta:hover { background: var(--amber-dark) !important; transform: translateY(-1px); }
 
-    /* ───── SECTIONS ───── */
+    /* ─── Shared section helpers ─── */
     section { padding: 4.5rem 2rem; position: relative; }
     .section-inner { max-width: 1100px; margin: 0 auto; }
 
@@ -138,7 +127,6 @@
       color: var(--amber);
       margin-bottom: 1rem;
     }
-
     .section-title {
       font-family: var(--serif);
       font-size: clamp(2rem, 4.5vw, 3rem);
@@ -157,13 +145,7 @@
       margin: 14px 0 22px;
     }
 
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-      margin: 26px 0;
-    }
-
-    /* ───── HERO ───── */
+    /* ─── Hero ─── */
     .hero {
       padding: 7rem 2rem 4.5rem;
       overflow: hidden;
@@ -221,31 +203,6 @@
       margin-top: 1.75rem;
       flex-wrap: wrap;
     }
-
-    .scroll-hint {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.45rem;
-      margin: 3rem auto 0;
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.34);
-      pointer-events: none;
-    }
-    .scroll-bar {
-      width: 1px;
-      height: 30px;
-      background: linear-gradient(to bottom, var(--amber), transparent);
-      animation: scrollPulse 2.2s 1s ease-in-out infinite;
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.35; transform: scaleY(1); }
-      50%      { opacity: 1;    transform: scaleY(1.25); }
-    }
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -288,10 +245,7 @@
       border-color: rgba(245,166,35,0.4);
       box-shadow: 0 28px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.18);
     }
-    .hero-mock:focus-visible {
-      outline: 2px solid var(--amber);
-      outline-offset: 3px;
-    }
+    .hero-mock:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
     .hero-mock-chrome {
       display: flex;
       align-items: center;
@@ -302,11 +256,7 @@
       border-bottom: 1px solid rgba(0,0,0,0.35);
     }
     .hero-mock-dots { display: flex; gap: 6px; flex-shrink: 0; }
-    .hero-mock-dots span {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      display: block;
-    }
+    .hero-mock-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
     .hero-mock-dots span:nth-child(1) { background: #ff5f57; }
     .hero-mock-dots span:nth-child(2) { background: #febc2e; }
     .hero-mock-dots span:nth-child(3) { background: #28c840; }
@@ -349,25 +299,36 @@
       background: rgba(245,166,35,0.06);
       border-top: 1px solid var(--border);
     }
-    .hero-mock-cap-text {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--muted);
+    .hero-mock-cap-text { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
+    .hero-mock-cap-text strong { color: var(--off-white); font-weight: 600; }
+    .hero-mock-cap-arrow { font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.04em; white-space: nowrap; }
+
+    .scroll-hint {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 3rem auto 0;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.34);
+      pointer-events: none;
     }
-    .hero-mock-cap-text strong {
-      color: var(--off-white);
-      font-weight: 600;
+    .scroll-bar {
+      width: 1px;
+      height: 30px;
+      background: linear-gradient(to bottom, var(--amber), transparent);
+      animation: scrollPulse 2.2s 1s ease-in-out infinite;
     }
-    .hero-mock-cap-arrow {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--amber);
-      letter-spacing: 0.04em;
-      white-space: nowrap;
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.35; transform: scaleY(1); }
+      50%       { opacity: 1;    transform: scaleY(1.25); }
     }
 
-    /* ───── HOW IT WORKS (numbered) ───── */
+    /* ─── How It Works ─── */
     .steps {
       background: rgba(255,255,255,0.02);
       border-top: 1px solid rgba(255,255,255,0.06);
@@ -379,9 +340,7 @@
       gap: 2rem;
       margin-top: 2rem;
     }
-    .step {
-      padding: 0 0.5rem;
-    }
+    .step { padding: 0 0.5rem; }
     .step-num {
       font-family: var(--serif);
       font-size: 4rem;
@@ -407,7 +366,7 @@
       font-weight: 300;
     }
 
-    /* ───── WHY IT WORKS (prose) ───── */
+    /* ─── Why It Matters ─── */
     .why-content {
       max-width: 720px;
       margin-top: 1.75rem;
@@ -421,7 +380,84 @@
     }
     .why-content p:last-child { margin-bottom: 0; }
 
-    /* ───── PRICING ───── */
+    /* ─── Feature cards (6-grid) ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    .feat-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 18px;
+    }
+    .feat-card h3 {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .feat-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.65;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    /* ─── Social proof ─── */
+    .proof-wrap {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .proof-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      max-width: 680px;
+      width: 100%;
+    }
+    .proof-quote {
+      font-size: 4rem;
+      line-height: 0.8;
+      color: var(--amber);
+      font-family: var(--serif);
+      font-weight: 900;
+      margin-bottom: 1rem;
+      display: block;
+      opacity: 0.65;
+    }
+    .proof-text {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.75;
+      font-style: italic;
+      margin-bottom: 1.25rem;
+    }
+    .proof-attr {
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .proof-note {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 1rem;
+      text-align: center;
+      max-width: 680px;
+    }
+
+    /* ─── Pricing ─── */
     .pricing-card {
       background: var(--navy-mid);
       border: 1px solid var(--border);
@@ -483,7 +519,7 @@
       max-width: 560px;
     }
 
-    /* ───── FORM ───── */
+    /* ─── Form section ─── */
     .form-section {
       background: rgba(255,255,255,0.02);
       border-top: 1px solid rgba(255,255,255,0.06);
@@ -498,6 +534,8 @@
       padding-bottom: 26px;
       border-bottom: 1px solid var(--border);
     }
+
+    /* Input fields */
     .field { margin-bottom: 18px; }
     .field label {
       display: block;
@@ -508,7 +546,16 @@
       color: var(--amber);
       margin-bottom: 7px;
     }
-    .field input {
+    .field label .opt {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-left: 4px;
+    }
+    .field input,
+    .field textarea {
       width: 100%;
       background: var(--navy-mid);
       border: 1px solid var(--border);
@@ -522,8 +569,15 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
-    .field input::placeholder { color: var(--muted); }
-    .field input:focus {
+    .field textarea {
+      resize: vertical;
+      min-height: 108px;
+      line-height: 1.6;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--muted); }
+    .field input:focus,
+    .field textarea:focus {
       border-color: var(--amber);
       box-shadow: 0 0 0 3px var(--amber-pale);
     }
@@ -534,7 +588,100 @@
       display: none;
     }
     .ferr.show { display: block; }
-    .form-submit {
+
+    /* Radio option cards */
+    .radio-group-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .radio-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .radio-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      user-select: none;
+      position: relative;
+    }
+    .radio-card:hover { border-color: rgba(245,166,35,0.4); }
+    .radio-card.selected {
+      border-color: var(--amber);
+      background: rgba(245,166,35,0.06);
+    }
+    .radio-card input[type="radio"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+    .radio-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: border-color 0.18s, background 0.18s;
+      position: relative;
+    }
+    .radio-card.selected .radio-circle {
+      border-color: var(--amber);
+      background: var(--amber);
+    }
+    .radio-card.selected .radio-circle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+    }
+    .radio-card-text { flex: 1; min-width: 0; }
+    .radio-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .radio-card-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Conditional textarea slide-down */
+    .details-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease;
+    }
+    .details-reveal.open { max-height: 280px; }
+    .details-reveal-inner { padding-top: 2px; }
+
+    /* Submit button */
+    .bstart {
       display: inline-flex;
       align-items: center;
       gap: 10px;
@@ -549,15 +696,14 @@
       letter-spacing: 0.03em;
       cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-      align-self: flex-start;
       margin-top: 8px;
     }
-    .form-submit:hover {
+    .bstart:hover {
       background: var(--amber-dark);
       box-shadow: 0 4px 18px rgba(154,104,32,0.28);
       transform: translateY(-1px);
     }
-    .form-submit[disabled] { opacity: 0.6; cursor: progress; transform: none; }
+    .bstart[disabled] { opacity: 0.6; cursor: progress; transform: none !important; box-shadow: none !important; }
     .form-privacy {
       font-size: 12px;
       font-style: italic;
@@ -573,12 +719,12 @@
       color: var(--amber-dark);
     }
 
-    /* Thank-you state */
+    /* ─── Thank-you state ─── */
     .ty-wrap {
       display: none;
       flex-direction: column;
       max-width: 560px;
-      animation: fu 0.4s ease both;
+      animation: tyFade 0.4s ease both;
     }
     .ty-wrap.show { display: flex; }
     .ty-icon {
@@ -617,17 +763,16 @@
       line-height: 1.6;
     }
     .ty-foot a { color: var(--amber); text-decoration: none; }
-
-    @keyframes fu {
+    @keyframes tyFade {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ───── FOOTER (matches index.html) ───── */
+    /* ─── Footer (minimal: copyright + 3 links) ─── */
     footer {
       background: rgba(0,0,0,0.25);
       border-top: 1px solid var(--border);
-      padding: 48px 24px;
+      padding: 32px 24px;
     }
     .footer-inner {
       max-width: 1160px;
@@ -635,61 +780,46 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 32px;
+      gap: 24px;
       flex-wrap: wrap;
     }
-    .footer-brand { display: flex; align-items: center; gap: 10px; }
     .footer-copy {
       font-size: 12px;
       font-weight: 300;
       color: var(--muted);
-      margin-top: 2px;
     }
     .footer-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
       flex-wrap: wrap;
       list-style: none;
     }
     .footer-links a {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
       text-decoration: none;
       transition: color 0.2s;
     }
     .footer-links a:hover { color: var(--amber); }
-    .footer-sep { width: 1px; height: 16px; background: var(--border); }
+    .footer-sep { width: 1px; height: 14px; background: var(--border); }
 
-    /* ───── RESPONSIVE ───── */
+    /* ─── Responsive ─── */
     @media (max-width: 960px) {
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
       .hero-mock { max-width: 560px; margin: 0 auto; }
       .steps-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
       .scroll-hint { margin-top: 2.25rem; }
     }
     @media (max-width: 640px) {
-      nav {
-        padding: 1rem 1.25rem;
-        gap: 0.75rem;
-        flex-wrap: nowrap;
-        align-items: center;
-      }
-      .nav-logo { min-width: 0; flex: 1 1 auto; gap: 0.45rem; }
-      .nav-logo .nav-logo-img { flex-shrink: 0; width: 36px; height: 36px; }
-      .nav-logo .logo-wordmark {
-        font-size: clamp(0.76rem, 3.4vw, 0.88rem);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        white-space: nowrap;
-      }
+      .lp-header { padding: 1rem 1.25rem; }
       section { padding: 3rem 1.25rem; }
       .hero { padding: 6rem 1.25rem 2.75rem; }
-      .form-submit { width: 100%; justify-content: center; }
-    }
-
-    @media (min-width: 641px) {
-      .nav-logo .logo-wordmark { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .bstart { display: flex; width: 100%; justify-content: center; }
+      .proof-card { padding: 1.5rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
     }
   </style>
 
@@ -739,9 +869,7 @@
     gtag('config', 'G-FM1VG68GKQ');
   </script>
 
-  <link rel="stylesheet" href="/nav-mobile.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/nav-mobile.css"></noscript>
-
+  <!-- TRADE-SPECIFIC: Structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -768,40 +896,29 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<!-- ══ NAV ══ -->
-<nav class="site-nav">
-  <a href="index.html" class="nav-logo">
+<!-- Minimal landing header — logo only, no site navigation links -->
+<header class="lp-header">
+  <a href="https://www.neobookworm.uk/" class="nav-logo" aria-label="NeoBookworm.uk — go to main site">
     <img src="logo-160.webp"
          srcset="logo-80.webp 80w, logo-160.webp 160w"
          sizes="80px"
          alt="NeoBookworm.uk logo"
          class="nav-logo-img"
-         width="1024" height="1024">
-    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+         width="1024" height="1024"
+         loading="eager">
+    <span class="logo-wordmark">Neo<span>Bookworm.uk</span></span>
   </a>
-  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
-    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
-  </button>
-  <ul id="primary-nav" class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="examples.html">Examples</a></li>
-    <li><a href="guides.html">Guides</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contact.html" class="nav-cta">Contact</a></li>
-  </ul>
-</nav>
+</header>
 
 <main id="main">
 
   <!-- ══ HERO ══ -->
   <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-dots"></div>
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-dots" aria-hidden="true"></div>
     <div class="hero-grid">
       <div>
+        <!-- TRADE-SPECIFIC: Hero eyebrow -->
         <span class="eyebrow">Built for plumbers</span>
         <h1>A website that gets you chosen — not just <em>found.</em></h1>
         <div class="gold-line"></div>
@@ -810,6 +927,8 @@
           <a href="#start" class="btn-primary">See what I&rsquo;d build for you &rarr;</a>
         </div>
       </div>
+
+      <!-- TRADE-SPECIFIC: Demo site image and link -->
       <a class="hero-mock"
          href="https://hartley-plumbing-njb-demo.netlify.app/"
          target="_blank"
@@ -842,6 +961,7 @@
   </section>
 
   <!-- ══ HOW IT WORKS ══ -->
+  <!-- Sections identical across all trades (trade name swapped in step 2) -->
   <section class="steps">
     <div class="section-inner">
       <span class="eyebrow">How it works</span>
@@ -851,10 +971,11 @@
         <div class="step">
           <span class="step-num">1</span>
           <h3>Tell me about your business</h3>
-          <p>Fill in the short form below — your name, business name, and email. That&rsquo;s all I need to get started.</p>
+          <p>Fill in the form below — a few details about you and how you&rsquo;d like to get started.</p>
         </div>
         <div class="step">
           <span class="step-num">2</span>
+          <!-- TRADE-SPECIFIC in step 2 description: "plumbing business" -->
           <h3>I build your preview site</h3>
           <p>Within 5 working days, I&rsquo;ll build a website specifically for your plumbing business. You&rsquo;ll get a link to view it live.</p>
         </div>
@@ -867,21 +988,78 @@
     </div>
   </section>
 
-  <!-- ══ WHY IT WORKS ══ -->
+  <!-- ══ WHY IT MATTERS ══ -->
+  <!-- TRADE-SPECIFIC: Why It Matters — entirely rewritten per trade -->
   <section class="why">
     <div class="section-inner">
       <span class="eyebrow">Why it matters</span>
-      <h2 class="section-title">Checkatrade gets you <em>found.</em> A website gets you chosen.</h2>
+      <!-- TRADE-SPECIFIC: heading -->
+      <h2 class="section-title">When a pipe bursts at 10pm, your customer decides <em>in minutes</em> — not days.</h2>
       <div class="gold-line"></div>
       <div class="why-content">
-        <p>When someone finds you on Checkatrade or MyBuilder, a lot of them Google your business name before they call. What they find — or don&rsquo;t find — decides whether they ring you or move on.</p>
-        <p>A website tells people you&rsquo;re established, that your work has standards, and that you&rsquo;re easy to get hold of. It&rsquo;s where they make up their mind.</p>
-        <p>I build sites specifically for plumbers — not templates that could belong to anyone, but pages built around your work, your area, and the jobs you want more of. I handle everything: the design, the writing, the technical side. You just tell me about your business.</p>
+        <p>Most plumbing calls start with a search. A boiler that&rsquo;s stopped working, a radiator that won&rsquo;t heat up, a leak that&rsquo;s getting worse. The person searching is usually stressed, sometimes standing in a puddle, and they&rsquo;re not going to spend half an hour comparing options. They&rsquo;ll look at two or three plumbers and call the one that looks right.</p>
+        <p>That&rsquo;s the moment a website earns its keep. Not because it&rsquo;s flashy — because it loads fast on a phone, it shows your Gas Safe number, it says clearly where you work and what you do, and it has a number they can tap to call you straight away. That&rsquo;s all it takes to be the one they ring instead of the next result down.</p>
+        <p>It works for bigger jobs too. Someone looking at a bathroom refit or a full heating system will spend more time choosing — and that&rsquo;s where photos of previous work, a clear list of services, and a few genuine reviews tip the balance. A website gives you somewhere to put all of that in one place, instead of hoping they find your Facebook page and scroll far enough.</p>
+        <p>And unlike Checkatrade or Bark, a website brings you direct enquiries. No commission, no competing quotes, no racing to reply first. Someone visits your site, decides they want you, and gets in touch. That&rsquo;s a better kind of job to win.</p>
       </div>
     </div>
   </section>
 
+  <!-- ══ WHAT YOUR SITE WILL INCLUDE ══ -->
+  <!-- TRADE-SPECIFIC: What Your Site Includes — cards rewritten per trade (Gas Safe → NICEIC for electricians, etc.) -->
+  <section class="includes">
+    <div class="section-inner">
+      <span class="eyebrow">What you get</span>
+      <h2 class="section-title">Built around your trade — not <em>around a template.</em></h2>
+      <div class="gold-line"></div>
+      <div class="cards-grid">
+        <div class="feat-card">
+          <!-- TRADE-SPECIFIC: card 1 accreditation -->
+          <h3>Gas Safe front and centre</h3>
+          <p>If you&rsquo;re Gas Safe registered, your licence number goes on every page — linked to the register so customers can verify it in one click.</p>
+        </div>
+        <div class="feat-card">
+          <h3>Your area, spelled out</h3>
+          <p>I write your site around the towns and postcodes you actually cover, so people searching locally find you — not a plumber three counties away.</p>
+        </div>
+        <div class="feat-card">
+          <!-- TRADE-SPECIFIC: services list -->
+          <h3>Services in plain English</h3>
+          <p>Boiler installs, bathroom plumbing, leaks, unblocking, heating systems — whatever you do, listed clearly so customers know you handle their job before they call.</p>
+        </div>
+        <div class="feat-card">
+          <h3>Photos of real work</h3>
+          <p>A gallery of your actual jobs — before and afters, finished bathrooms, boiler installs. Real photos build more trust than any amount of words.</p>
+        </div>
+        <div class="feat-card">
+          <!-- TRADE-SPECIFIC: phone number context -->
+          <h3>Tap to call, tap to message</h3>
+          <p>A phone number and contact form that work properly on a phone. Most people searching for a plumber are on their mobile — your site needs to work where they are.</p>
+        </div>
+        <div class="feat-card">
+          <h3>Looks right on any screen</h3>
+          <p>Your site will look clean and load fast on phones, tablets, and desktops. No tiny text, no sideways scrolling, no waiting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ LIMITED AVAILABILITY ══ -->
+  <section class="avail">
+    <div class="section-inner">
+      <span class="eyebrow">Limited availability</span>
+      <h2 class="section-title">Build your site for <em>&pound;199</em> &mdash; while I have <em>capacity.</em></h2>
+      <div class="gold-line"></div>
+      <div class="why-content">
+        <p>I build one site at a time, so I can give each one proper attention. Right now I have availability for the next few plumbers &mdash; after that, there&rsquo;s a waiting list.</p>
+        <p>If you want to lock in the &pound;199 build price (normally &pound;299), the next step is simple: fill in the form below and let me know you&rsquo;re interested. Once you&rsquo;re in, the price is locked in for your project, regardless of when we start.</p>
+      </div>
+      <p style="font-size:13px; font-style:italic; color:var(--muted); margin-top:14px;">Standard price returns to &pound;299 once availability is full. Current status: <strong>3 slots remaining.</strong></p>
+    </div>
+  </section>
+
   <!-- ══ PRICING ══ -->
+  <!-- Identical across all trades -->
   <section class="pricing">
     <div class="section-inner">
       <span class="eyebrow">What it costs</span>
@@ -906,80 +1084,131 @@
   </section>
 
   <!-- ══ FORM ══ -->
+  <!-- Identical across all trades (source field value and textarea placeholder change per trade) -->
   <section class="form-section" id="start">
     <div class="section-inner">
-      <span class="eyebrow">Get started</span>
-      <h2 class="section-title">See what I&rsquo;d build for <em>your</em> business.</h2>
-      <div class="gold-line"></div>
-      <div class="form-wrap">
-        <p class="form-sub">Fill in your details below and I&rsquo;ll get started. You&rsquo;ll hear from me within one working day.</p>
 
-        <form id="lead-form" novalidate
-              action="https://formspree.io/f/NICK_TO_REPLACE"
-              method="POST">
-          <div class="field">
-            <label for="f_name">Your name</label>
-            <input type="text" id="f_name" name="name" placeholder="e.g. James Hart" autocomplete="name" required>
-            <div class="ferr" id="e_name">Please enter your name</div>
-          </div>
-          <div class="field">
-            <label for="f_business">Your business name</label>
-            <input type="text" id="f_business" name="businessName" placeholder="e.g. Hart Plumbing Ltd" autocomplete="organization" required>
-            <div class="ferr" id="e_business">Please enter your business name</div>
-          </div>
-          <div class="field">
-            <label for="f_email">Your email address</label>
-            <input type="email" id="f_email" name="email" placeholder="e.g. james@hartplumbing.co.uk" autocomplete="email" required>
-            <div class="ferr" id="e_email">Please enter a valid email address</div>
-          </div>
+      <!-- This block is hidden after successful API submission -->
+      <div id="form-header-and-content">
+        <span class="eyebrow">Get started</span>
+        <h2 class="section-title">Tell me about your business — and how you&rsquo;d like <em>to get started.</em></h2>
+        <div class="gold-line"></div>
+        <div class="form-wrap">
+          <p class="form-sub">Fill in your details, choose how you&rsquo;d like to work together, and hit the button. That&rsquo;s it.</p>
 
-          <input type="hidden" name="source" value="plumbers-landing">
+          <form id="lead-form" novalidate>
 
-          <button type="submit" class="form-submit" id="submit-btn">Build my free preview &rarr;</button>
-          <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
-          <p class="form-privacy">I&rsquo;ll only use your details to build and send you your preview site. No marketing emails, no passing your details on.</p>
-        </form>
+            <!-- PART 1 — Contact details -->
+            <div class="field">
+              <label for="f_name">Your name</label>
+              <input type="text" id="f_name" name="name"
+                     placeholder="e.g. James Hart"
+                     autocomplete="name" required>
+              <div class="ferr" id="e_name">Please enter your name</div>
+            </div>
 
-        <div class="ty-wrap" id="ty-wrap" aria-live="polite">
-          <div class="ty-icon">&#10022;</div>
-          <h2 class="ty-title">You&rsquo;re all <em>done.</em></h2>
-          <p class="ty-body">That&rsquo;s everything I need. I&rsquo;ll be in touch within one working day to let you know I&rsquo;ve received this and to talk through next steps.</p>
-          <div class="gold-line"></div>
-          <p class="ty-foot">Questions? Reach me at <span id="ctaEmail"></span></p>
+            <div class="field">
+              <label for="f_biz">Your business name</label>
+              <input type="text" id="f_biz" name="bizName"
+                     placeholder="e.g. Hart Plumbing Ltd"
+                     autocomplete="organization" required>
+              <div class="ferr" id="e_biz">Please enter your business name</div>
+            </div>
+
+            <div class="field">
+              <label for="f_email">Your email address</label>
+              <input type="email" id="f_email" name="email"
+                     placeholder="e.g. james@hartplumbing.co.uk"
+                     autocomplete="email" required>
+              <div class="ferr" id="e_email">Please enter a valid email address</div>
+            </div>
+
+            <!-- PART 2 — How to get started (radio option cards) -->
+            <fieldset style="border:none;padding:0;margin:0 0 6px">
+              <legend class="radio-group-label">How would you like to get started?</legend>
+              <div class="radio-cards">
+
+                <label class="radio-card selected" data-value="leave_it_with_me">
+                  <input type="radio" name="start_option" value="leave_it_with_me" checked>
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">Leave it with me</div>
+                    <div class="radio-card-desc">I&rsquo;ll research your business and build a first version — you tell me what to change.</div>
+                  </div>
+                </label>
+
+                <label class="radio-card" data-value="tell_more">
+                  <input type="radio" name="start_option" value="tell_more">
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">I&rsquo;d like to tell you a bit more</div>
+                    <div class="radio-card-desc">There&rsquo;s a box below for anything you&rsquo;d like me to know — your area, your services, whatever helps.</div>
+                  </div>
+                </label>
+
+                <label class="radio-card" data-value="intake_form">
+                  <input type="radio" name="start_option" value="intake_form">
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">I&rsquo;d like to fill in the full intake form</div>
+                    <div class="radio-card-desc">More detail up front means I can get closer first time. Takes about five minutes.</div>
+                  </div>
+                </label>
+
+              </div>
+            </fieldset>
+
+            <!-- Conditional textarea — revealed when 'tell_more' is selected -->
+            <div class="details-reveal" id="details-reveal" aria-live="polite">
+              <div class="details-reveal-inner">
+                <div class="field">
+                  <label for="f_details">Tell me about your business <span class="opt">optional — whatever comes to mind</span></label>
+                  <!-- TRADE-SPECIFIC: Textarea placeholder -->
+                  <textarea id="f_details" name="details" rows="5"
+                            placeholder="e.g. I'm a Gas Safe plumber based in Bristol, mostly do boiler installs and bathroom work. Trying to get more work in the BS postcode areas."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="bstart" id="submit-btn">Build my free preview &rarr;</button>
+            <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
+            <p class="form-privacy">I&rsquo;ll only use your details to build and send you your preview site. No marketing emails, no passing your details on.</p>
+
+          </form>
         </div>
       </div>
+
+      <!-- Thank-you state — shown after successful Option 1 or 2 submission -->
+      <!-- Identical across all trades -->
+      <div class="ty-wrap" id="ty-wrap" aria-live="polite">
+        <div class="ty-icon" aria-hidden="true">&#10022;</div>
+        <h2 class="ty-title">You&rsquo;re all <em>done.</em></h2>
+        <p class="ty-body">That&rsquo;s everything I need. I&rsquo;ll research your business, start putting your site together, and be in touch within one working day.</p>
+        <div class="gold-line"></div>
+        <p class="ty-foot">Questions in the meantime? Reach me at <span id="ctaEmail"></span></p>
+      </div>
+
     </div>
   </section>
 
 </main>
 
-<!-- ══ FOOTER ══ -->
+<!-- ══ FOOTER (minimal: copyright + Privacy, Terms, Contact) ══ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
-    </div>
+    <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
     <ul class="footer-links">
-      <li><a href="how-it-works.html">How It Works</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="pricing.html">Pricing</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="examples.html">Examples</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="guides.html">Guides</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="about.html">About</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="privacy.html">Privacy Policy</a></li>
-      <li class="footer-sep"></li>
-      <li><a href="terms.html">Terms of service</a></li>
+      <li><a href="/privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep" aria-hidden="true"></li>
+      <li><a href="/terms.html">Terms of Service</a></li>
+      <li class="footer-sep" aria-hidden="true"></li>
+      <li><a href="/contact.html">Contact</a></li>
     </ul>
   </div>
 </footer>
 
 <script data-cfasync="false">
+  /* ── Email obfuscation: nick@neobookworm.uk ── */
   (function(){
     var p=[110,105,99,107,64,110,101,111,98,111,111,107,119,111,114,109,46,117,107];
     var addr=p.map(function(c){return String.fromCharCode(c);}).join('');
@@ -988,45 +1217,77 @@
       var a=document.createElement('a');
       a.href='mail'+'to:'+addr;
       a.textContent=addr;
+      a.style.color='var(--amber)';
       el.appendChild(a);
     }
   })();
 
   function isValidEmail(s){
     var parts=s.split(String.fromCharCode(64));
-    return parts.length===2 && parts[0].length>0 && parts[1].indexOf('.')>0;
+    return parts.length===2&&parts[0].length>0&&parts[1].indexOf('.')>0;
   }
 
+  /* ── Radio card interaction ── */
+  (function(){
+    var cards=document.querySelectorAll('.radio-card');
+    var detailsReveal=document.getElementById('details-reveal');
+
+    function selectCard(card){
+      cards.forEach(function(c){ c.classList.remove('selected'); });
+      card.classList.add('selected');
+      var inp=card.querySelector('input[type="radio"]');
+      if(inp) inp.checked=true;
+      var val=card.getAttribute('data-value');
+      if(detailsReveal){
+        if(val==='tell_more'){
+          detailsReveal.classList.add('open');
+        } else {
+          detailsReveal.classList.remove('open');
+        }
+      }
+    }
+
+    cards.forEach(function(card){
+      card.addEventListener('click',function(){ selectCard(card); });
+      card.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          selectCard(card);
+        }
+      });
+    });
+  })();
+
+  /* ── Form validation and submission ── */
   (function(){
     var form=document.getElementById('lead-form');
     var btn=document.getElementById('submit-btn');
+    var formHeaderAndContent=document.getElementById('form-header-and-content');
     var tyWrap=document.getElementById('ty-wrap');
     var errBox=document.getElementById('submit-error');
 
-    var fields=[
-      {input:'f_name',     err:'e_name'},
-      {input:'f_business', err:'e_business'},
-      {input:'f_email',    err:'e_email'}
+    var textFields=[
+      {input:'f_name', err:'e_name'},
+      {input:'f_biz',  err:'e_biz'},
+      {input:'f_email',err:'e_email'}
     ];
 
-    fields.forEach(function(f){
+    textFields.forEach(function(f){
       var i=document.getElementById(f.input);
       var e=document.getElementById(f.err);
-      if(i&&e){
-        i.addEventListener('input',function(){ e.classList.remove('show'); });
-      }
+      if(i&&e) i.addEventListener('input',function(){ e.classList.remove('show'); });
     });
 
     function validate(){
-      var ok=true, firstBad=null;
-      fields.forEach(function(f){
+      var ok=true,firstBad=null;
+      textFields.forEach(function(f){
         var i=document.getElementById(f.input);
         var e=document.getElementById(f.err);
         if(!i||!e) return;
         var v=(i.value||'').trim();
         var bad=false;
         if(!v) bad=true;
-        if(f.input==='f_email' && v && !isValidEmail(v)){
+        if(f.input==='f_email'&&v&&!isValidEmail(v)){
           bad=true;
           e.textContent='Please enter a valid email address';
         }
@@ -1042,48 +1303,76 @@
       return ok;
     }
 
+    function getSelectedOption(){
+      var checked=document.querySelector('input[name="start_option"]:checked');
+      return checked?checked.value:'leave_it_with_me';
+    }
+
     form.addEventListener('submit',function(ev){
       ev.preventDefault();
       errBox.style.display='none';
       if(!validate()) return;
 
+      var selectedOption=getSelectedOption();
+
+      /* Option 3: redirect to intake form with pre-filled fields */
+      if(selectedOption==='intake_form'){
+        var nameVal=document.getElementById('f_name').value.trim();
+        var bizVal=document.getElementById('f_biz').value.trim();
+        var emailVal=document.getElementById('f_email').value.trim();
+        window.location.href='/intake-form.html'
+          +'?name='+encodeURIComponent(nameVal)
+          +'&biz='+encodeURIComponent(bizVal)
+          +'&email='+encodeURIComponent(emailVal)
+          +'&ref=plumbers';
+        return;
+      }
+
+      /* Options 1 & 2: POST to API, show thank-you */
       btn.disabled=true;
       btn.textContent='Sending\u2026';
 
+      var detailsEl=document.getElementById('f_details');
       var payload={
-        name:     document.getElementById('f_name').value.trim(),
-        businessName: document.getElementById('f_business').value.trim(),
-        email:    document.getElementById('f_email').value.trim(),
-        source:   'plumbers-landing'
+        fullName:    document.getElementById('f_name').value.trim(),
+        bizName:     document.getElementById('f_biz').value.trim(),
+        email:       document.getElementById('f_email').value.trim(),
+        startOption: selectedOption,
+        details:     (selectedOption==='tell_more'&&detailsEl)?detailsEl.value.trim():'',
+        /* TRADE-SPECIFIC: source field value */
+        source:      'plumbers-landing'
       };
 
-      fetch(form.action,{
+      fetch('/api/landing-enquiry',{
         method:'POST',
         headers:{'Content-Type':'application/json','Accept':'application/json'},
         body:JSON.stringify(payload)
       })
       .then(function(res){
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        return res.json().catch(function(){ return {}; });
+        return res.json().then(function(j){
+          if(!res.ok) throw new Error(j.error||('HTTP '+res.status));
+          return j;
+        });
       })
       .then(function(){
-        form.style.display='none';
+        formHeaderAndContent.style.display='none';
         tyWrap.classList.add('show');
-        window.scrollTo({top: tyWrap.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'});
+        window.scrollTo({
+          top: tyWrap.getBoundingClientRect().top+window.scrollY-80,
+          behavior:'smooth'
+        });
       })
       .catch(function(err){
         btn.disabled=false;
         btn.textContent='Build my free preview \u2192';
         errBox.style.display='block';
-        if(window.console && console.warn) console.warn(err);
+        if(window.console&&console.warn) console.warn(err);
       });
     });
   })();
 </script>
 
-<script src="/nav-mobile.js" defer></script>
 <script defer src="/_vercel/insights/script.js"></script>
-
 <!-- CookieConsent v3 (self-hosted UMD) -->
 <script type="module" src="/cookieconsent-config.js"></script>
 
