@@ -239,6 +239,8 @@
     .hero-mock {
       position: relative;
       display: block;
+      width: 100%;
+      max-width: 100%;
       border: 1px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
@@ -962,6 +964,7 @@
       }
       .avail-grid { grid-template-columns: 1fr; }
       .avail-aside { order: 2; }
+      .avail-aside { overflow-x: clip; }
     }
     @media (max-width: 960px) {
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
