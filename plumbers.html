@@ -179,6 +179,13 @@
       max-width: 1180px;
       margin: 0 auto;
     }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+    }
     .hero h1 {
       font-family: var(--serif);
       font-size: clamp(2.4rem, 5.5vw, 4rem);
@@ -340,33 +347,81 @@
       gap: 2rem;
       margin-top: 2rem;
     }
-    .step { padding: 0 0.5rem; }
+    .step {
+      padding: 20px 18px;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .step-header {
+      position: relative;
+      height: 52px;
+      margin-bottom: 1rem;
+    }
+    .step-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--amber-pale);
+      border: 1px solid rgba(245,166,35,0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-icon img {
+      width: 26px;
+      height: 26px;
+      display: block;
+    }
     .step-num {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
       font-family: var(--serif);
-      font-size: 4rem;
+      font-size: 3.5rem;
       font-weight: 900;
       line-height: 1;
       color: var(--amber);
       letter-spacing: -0.04em;
-      margin-bottom: 1rem;
-      display: block;
+      text-align: center;
+      margin-bottom: 0;
     }
     .step h3 {
       font-family: var(--serif);
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--off-white);
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.6rem;
       letter-spacing: -0.01em;
+      line-height: 1.25;
     }
     .step p {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: rgba(255,255,255,0.62);
       line-height: 1.65;
       font-weight: 300;
+      margin: 0;
     }
 
     /* ─── Why It Matters ─── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .why-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+    }
     .why-content {
       max-width: 720px;
       margin-top: 1.75rem;
@@ -517,6 +572,19 @@
       color: var(--muted);
       margin-top: 1rem;
       max-width: 560px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .pricing-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
 
     /* ─── Form section ─── */
@@ -805,6 +873,25 @@
     .footer-sep { width: 1px; height: 14px; background: var(--border); }
 
     /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hero-image {
+        order: 2;
+        max-height: 280px;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-image {
+        order: 2; /* image appears below text on mobile */
+        max-height: 260px;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-image {
+        order: 2; /* image below pricing on mobile — price first */
+      }
+    }
     @media (max-width: 960px) {
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
       .hero-mock { max-width: 560px; margin: 0 auto; }
@@ -917,7 +1004,7 @@
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-dots" aria-hidden="true"></div>
     <div class="hero-grid">
-      <div>
+      <div class="hero-copy">
         <!-- TRADE-SPECIFIC: Hero eyebrow -->
         <span class="eyebrow">Built for plumbers</span>
         <h1>A website that gets you chosen — not just <em>found.</em></h1>
@@ -926,33 +1013,43 @@
         <div class="hero-cta-row">
           <a href="#start" class="btn-primary">See what I&rsquo;d build for you &rarr;</a>
         </div>
+
+        <!-- TRADE-SPECIFIC: Demo site image and link -->
+        <a class="hero-mock"
+           href="https://hartley-plumbing-njb-demo.netlify.app/"
+           target="_blank"
+           rel="noopener"
+           aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
+          <div class="hero-mock-chrome">
+            <div class="hero-mock-dots"><span></span><span></span><span></span></div>
+            <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
+          </div>
+          <div class="hero-mock-viewport">
+            <img src="Images/demo-hartley-plumbing.jpg"
+                 srcset="Images/demo-hartley-plumbing-680.webp 680w,
+                         Images/demo-hartley-plumbing.jpg 800w"
+                 sizes="(max-width: 960px) 92vw, 540px"
+                 width="1024" height="654"
+                 alt="Hartley Plumbing — example plumber website built by NeoBookworm"
+                 loading="eager"
+                 decoding="async">
+          </div>
+          <div class="hero-mock-cap">
+            <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
+            <span class="hero-mock-cap-arrow">View live &rarr;</span>
+          </div>
+        </a>
       </div>
 
-      <!-- TRADE-SPECIFIC: Demo site image and link -->
-      <a class="hero-mock"
-         href="https://hartley-plumbing-njb-demo.netlify.app/"
-         target="_blank"
-         rel="noopener"
-         aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
-        <div class="hero-mock-chrome">
-          <div class="hero-mock-dots"><span></span><span></span><span></span></div>
-          <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
-        </div>
-        <div class="hero-mock-viewport">
-          <img src="Images/demo-hartley-plumbing.jpg"
-               srcset="Images/demo-hartley-plumbing-680.webp 680w,
-                       Images/demo-hartley-plumbing.jpg 800w"
-               sizes="(max-width: 960px) 92vw, 540px"
-               width="1024" height="654"
-               alt="Hartley Plumbing — example plumber website built by NeoBookworm"
-               loading="eager"
-               decoding="async">
-        </div>
-        <div class="hero-mock-cap">
-          <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
-          <span class="hero-mock-cap-arrow">View live &rarr;</span>
-        </div>
-      </a>
+      <div class="hero-image">
+        <img
+          src="/images/hero-plumber.webp"
+          alt="Professional plumber working in a UK kitchen"
+          width="700"
+          height="500"
+          loading="eager"
+        >
+      </div>
     </div>
     <div class="scroll-hint" aria-hidden="true">
       <span>How it works</span>
@@ -969,18 +1066,33 @@
       <div class="gold-line"></div>
       <div class="steps-grid">
         <div class="step">
-          <span class="step-num">1</span>
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-1.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">1</span>
+          </div>
           <h3>Tell me about your business</h3>
           <p>Fill in the form below — a few details about you and how you&rsquo;d like to get started.</p>
         </div>
         <div class="step">
-          <span class="step-num">2</span>
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-2.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">2</span>
+          </div>
           <!-- TRADE-SPECIFIC in step 2 description: "plumbing business" -->
           <h3>I build your preview site</h3>
           <p>Within 5 working days, I&rsquo;ll build a website specifically for your plumbing business. You&rsquo;ll get a link to view it live.</p>
         </div>
         <div class="step">
-          <span class="step-num">3</span>
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-3.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">3</span>
+          </div>
           <h3>You decide</h3>
           <p>If you like it, it&rsquo;s £299 to keep — plus £9.99 a month for me to keep it live and looked after. If it&rsquo;s not right, just say so. No invoice, no awkward conversation.</p>
         </div>
@@ -993,14 +1105,27 @@
   <section class="why">
     <div class="section-inner">
       <span class="eyebrow">Why it matters</span>
-      <!-- TRADE-SPECIFIC: heading -->
-      <h2 class="section-title">When a pipe bursts at 10pm, your customer decides <em>in minutes</em> — not days.</h2>
-      <div class="gold-line"></div>
-      <div class="why-content">
-        <p>Most plumbing calls start with a search. A boiler that&rsquo;s stopped working, a radiator that won&rsquo;t heat up, a leak that&rsquo;s getting worse. The person searching is usually stressed, sometimes standing in a puddle, and they&rsquo;re not going to spend half an hour comparing options. They&rsquo;ll look at two or three plumbers and call the one that looks right.</p>
-        <p>That&rsquo;s the moment a website earns its keep. Not because it&rsquo;s flashy — because it loads fast on a phone, it shows your Gas Safe number, it says clearly where you work and what you do, and it has a number they can tap to call you straight away. That&rsquo;s all it takes to be the one they ring instead of the next result down.</p>
-        <p>It works for bigger jobs too. Someone looking at a bathroom refit or a full heating system will spend more time choosing — and that&rsquo;s where photos of previous work, a clear list of services, and a few genuine reviews tip the balance. A website gives you somewhere to put all of that in one place, instead of hoping they find your Facebook page and scroll far enough.</p>
-        <p>And unlike Checkatrade or Bark, a website brings you direct enquiries. No commission, no competing quotes, no racing to reply first. Someone visits your site, decides they want you, and gets in touch. That&rsquo;s a better kind of job to win.</p>
+      <div class="why-grid">
+        <div class="why-image">
+          <img
+            src="/images/customer-deciding.webp"
+            alt="Person researching a tradesman on their smartphone"
+            width="500"
+            height="400"
+            loading="lazy"
+          >
+        </div>
+        <div class="why-copy">
+          <!-- TRADE-SPECIFIC: heading -->
+          <h2 class="section-title">When a pipe bursts at 10pm, your customer decides <em>in minutes</em> — not days.</h2>
+          <div class="gold-line"></div>
+          <div class="why-content">
+            <p>Most plumbing calls start with a search. A boiler that&rsquo;s stopped working, a radiator that won&rsquo;t heat up, a leak that&rsquo;s getting worse. The person searching is usually stressed, sometimes standing in a puddle, and they&rsquo;re not going to spend half an hour comparing options. They&rsquo;ll look at two or three plumbers and call the one that looks right.</p>
+            <p>That&rsquo;s the moment a website earns its keep. Not because it&rsquo;s flashy — because it loads fast on a phone, it shows your Gas Safe number, it says clearly where you work and what you do, and it has a number they can tap to call you straight away. That&rsquo;s all it takes to be the one they ring instead of the next result down.</p>
+            <p>It works for bigger jobs too. Someone looking at a bathroom refit or a full heating system will spend more time choosing — and that&rsquo;s where photos of previous work, a clear list of services, and a few genuine reviews tip the balance. A website gives you somewhere to put all of that in one place, instead of hoping they find your Facebook page and scroll far enough.</p>
+            <p>And unlike Checkatrade or Bark, a website brings you direct enquiries. No commission, no competing quotes, no racing to reply first. Someone visits your site, decides they want you, and gets in touch. That&rsquo;s a better kind of job to win.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1062,24 +1187,37 @@
   <!-- Identical across all trades -->
   <section class="pricing">
     <div class="section-inner">
-      <span class="eyebrow">What it costs</span>
-      <h2 class="section-title"><em>Straightforward</em> pricing. No surprises.</h2>
-      <div class="gold-line"></div>
-      <div class="pricing-card">
-        <div class="pricing-row">
-          <div class="pricing-label">One-off build</div>
-          <div class="pricing-amount">£299</div>
+      <div class="pricing-grid">
+        <div class="pricing-image">
+          <img
+            src="/images/laptop-mockup.webp"
+            alt="A plumber business website displayed on a laptop"
+            width="600"
+            height="400"
+            loading="lazy"
+          >
         </div>
-        <div class="pricing-row">
-          <div class="pricing-label">
-            Keep it live and looked after
-            <small>Covers everything. No annual contracts. Cancel anytime.</small>
+        <div class="pricing-content">
+          <span class="eyebrow">What it costs</span>
+          <h2 class="section-title"><em>Straightforward</em> pricing. No surprises.</h2>
+          <div class="gold-line"></div>
+          <div class="pricing-card">
+            <div class="pricing-row">
+              <div class="pricing-label">One-off build</div>
+              <div class="pricing-amount">£299</div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-label">
+                Keep it live and looked after
+                <small>Covers everything. No annual contracts. Cancel anytime.</small>
+              </div>
+              <div class="pricing-amount">£9.99<small>/mo</small></div>
+            </div>
+            <div class="pricing-aside">If you&rsquo;d rather run it yourself, I&rsquo;ll hand the files over and you&rsquo;re on your way.</div>
           </div>
-          <div class="pricing-amount">£9.99<small>/mo</small></div>
+          <p class="pricing-reassure">You don&rsquo;t pay anything until you&rsquo;ve seen the site and decided you want it.</p>
         </div>
-        <div class="pricing-aside">If you&rsquo;d rather run it yourself, I&rsquo;ll hand the files over and you&rsquo;re on your way.</div>
       </div>
-      <p class="pricing-reassure">You don&rsquo;t pay anything until you&rsquo;ve seen the site and decided you want it.</p>
     </div>
   </section>
 
