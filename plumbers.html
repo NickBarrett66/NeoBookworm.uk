@@ -600,6 +600,31 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
 
+    /* ─── Limited availability (2-col like other sections) ─── */
+    .avail-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .avail-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .avail-aside .btn-primary {
+      justify-content: center;
+      width: 100%;
+    }
+    .avail-aside-note {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 2px;
+    }
+
     /* ─── Form section ─── */
     .form-section {
       background: rgba(255,255,255,0.02);
@@ -917,6 +942,8 @@
         width: 100%;
         max-height: 300px;
       }
+      .avail-grid { grid-template-columns: 1fr; }
+      .avail-aside { order: 2; }
     }
     @media (max-width: 960px) {
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
@@ -1036,35 +1063,6 @@
         <h1>A website that gets you chosen — not just <em>found.</em></h1>
         <div class="gold-line"></div>
         <p class="hero-sub">I build websites for plumbers across the UK. You see the finished site before you commit to anything. If it&rsquo;s not right for you, you walk away and owe me nothing.</p>
-        <div class="hero-cta-row">
-          <a href="#start" class="btn-primary">See what I&rsquo;d build for you &rarr;</a>
-        </div>
-
-        <!-- TRADE-SPECIFIC: Demo site image and link -->
-        <a class="hero-mock"
-           href="https://hartley-plumbing-njb-demo.netlify.app/"
-           target="_blank"
-           rel="noopener"
-           aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
-          <div class="hero-mock-chrome">
-            <div class="hero-mock-dots"><span></span><span></span><span></span></div>
-            <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
-          </div>
-          <div class="hero-mock-viewport">
-            <img src="Images/demo-hartley-plumbing.jpg"
-                 srcset="Images/demo-hartley-plumbing-680.webp 680w,
-                         Images/demo-hartley-plumbing.jpg 800w"
-                 sizes="(max-width: 960px) 92vw, 540px"
-                 width="1024" height="654"
-                 alt="Hartley Plumbing — example plumber website built by NeoBookworm"
-                 loading="eager"
-                 decoding="async">
-          </div>
-          <div class="hero-mock-cap">
-            <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
-            <span class="hero-mock-cap-arrow">View live &rarr;</span>
-          </div>
-        </a>
       </div>
 
       <div class="hero-image">
@@ -1196,16 +1194,52 @@
   </section>
 
   <!-- ══ LIMITED AVAILABILITY ══ -->
-  <section class="avail">
+  <section class="avail" id="availability">
     <div class="section-inner">
-      <span class="eyebrow">Limited availability</span>
-      <h2 class="section-title">Build your site for <em>&pound;199</em> &mdash; while I have <em>capacity.</em></h2>
-      <div class="gold-line"></div>
-      <div class="why-content">
-        <p>I build one site at a time, so I can give each one proper attention. Right now I have availability for the next few plumbers &mdash; after that, there&rsquo;s a waiting list.</p>
-        <p>If you want to lock in the &pound;199 build price (normally &pound;299), the next step is simple: fill in the form below and let me know you&rsquo;re interested. Once you&rsquo;re in, the price is locked in for your project, regardless of when we start.</p>
+      <div class="avail-grid">
+        <div class="avail-copy">
+          <span class="eyebrow">Limited availability</span>
+          <h2 class="section-title">Build your site for <em>&pound;199</em> &mdash; while I have <em>capacity.</em></h2>
+          <div class="gold-line"></div>
+          <div class="why-content">
+            <p>I build one site at a time, so I can give each one proper attention. Right now I have availability for the next few plumbers &mdash; after that, there&rsquo;s a waiting list.</p>
+            <p>If you want to lock in the &pound;199 build price (normally &pound;299), the next step is simple: fill in the form below and let me know you&rsquo;re interested. Once you&rsquo;re in, the price is locked in for your project, regardless of when we start.</p>
+          </div>
+          <p style="font-size:13px; font-style:italic; color:var(--muted); margin-top:14px;">Standard price returns to &pound;299 once availability is full. Current status: <strong>3 slots remaining.</strong></p>
+        </div>
+
+        <aside class="avail-aside" aria-label="Example site preview">
+          <div class="avail-aside-note">This is just an example demo. Yours would be written and designed around your business, your area, and the work you want more of.</div>
+
+          <!-- TRADE-SPECIFIC: Demo site image and link -->
+          <a class="hero-mock"
+             href="https://hartley-plumbing-njb-demo.netlify.app/"
+             target="_blank"
+             rel="noopener"
+             aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
+            <div class="hero-mock-chrome">
+              <div class="hero-mock-dots"><span></span><span></span><span></span></div>
+              <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
+            </div>
+            <div class="hero-mock-viewport">
+              <img src="Images/demo-hartley-plumbing.jpg"
+                   srcset="Images/demo-hartley-plumbing-680.webp 680w,
+                           Images/demo-hartley-plumbing.jpg 800w"
+                   sizes="(max-width: 960px) 92vw, 540px"
+                   width="1024" height="654"
+                   alt="Hartley Plumbing — example plumber website built by NeoBookworm"
+                   loading="lazy"
+                   decoding="async">
+            </div>
+            <div class="hero-mock-cap">
+              <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
+              <span class="hero-mock-cap-arrow">View live &rarr;</span>
+            </div>
+          </a>
+
+          <a href="#start" class="btn-primary">See what I&rsquo;d build for you &rarr;</a>
+        </aside>
       </div>
-      <p style="font-size:13px; font-style:italic; color:var(--muted); margin-top:14px;">Standard price returns to &pound;299 once availability is full. Current status: <strong>3 slots remaining.</strong></p>
     </div>
   </section>
 
