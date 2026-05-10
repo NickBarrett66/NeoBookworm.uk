@@ -638,6 +638,58 @@
       margin-top: 0;
     }
 
+    /* ─── FAQ Accordion ─── */
+    .faq-list {
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-btn {
+      width: 100%;
+      background: var(--navy-mid);
+      border: none;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--sans);
+      font-size: 0.975rem;
+      font-weight: 600;
+      color: var(--off-white);
+      line-height: 1.4;
+      transition: background 0.2s;
+    }
+    .faq-btn:hover { background: var(--navy-light); }
+    .faq-btn[aria-expanded="true"] { background: rgba(245,166,35,0.06); color: var(--amber); }
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      color: var(--amber);
+      transition: transform 0.25s;
+    }
+    .faq-btn[aria-expanded="true"] .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(245,166,35,0.03);
+    }
+    .faq-answer-inner { padding: 0 20px 18px; }
+    .faq-answer-inner p {
+      font-size: 0.93rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.75;
+      font-weight: 300;
+      margin: 0;
+    }
+
     /* ─── About Nick ─── */
     .about-nick-grid {
       display: grid;
@@ -1350,6 +1402,78 @@
     </div>
   </section>
 
+  <!-- ══ FAQ ══ -->
+  <section class="faq">
+    <div class="section-inner">
+      <span class="eyebrow">Common questions</span>
+      <h2 class="section-title">Things plumbers usually <em>ask me.</em></h2>
+      <div class="gold-line"></div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-1">
+            I get enough work from word of mouth &mdash; do I really need a website?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-1" role="region">
+            <div class="faq-answer-inner">
+              <p>Word of mouth is a great start &mdash; but it only reaches people who already know someone who knows you. A website means you&rsquo;re there for everyone else: the homeowner who just moved in, the landlord who&rsquo;s never used you before, the emergency caller who needs someone right now. And when referrals slow down (they always do eventually), you&rsquo;ve got something working in the background.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-2">
+            I&rsquo;m not good with computers &mdash; will I have to manage anything?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-2" role="region">
+            <div class="faq-answer-inner">
+              <p>Nothing. I handle the build, the hosting, updates, and security. You don&rsquo;t need to log in to anything or touch any code. If you want something changed on the site, you email me and I do it &mdash; usually within a day. That&rsquo;s it.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
+            What if I want to change something on the site later?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-3" role="region">
+            <div class="faq-answer-inner">
+              <p>Changes are included in the monthly plan &mdash; just email me and I&rsquo;ll get it done. If you ever want to take the site over yourself, I can hand you the files and point you in the right direction. Either way works.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-4">
+            I already have a Google Business listing &mdash; isn&rsquo;t that enough?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-4" role="region">
+            <div class="faq-answer-inner">
+              <p>A Google Business listing is a good start, but a website backs it up with credibility &mdash; your services in full, your work photos, your Gas Safe number, and somewhere for customers to land before they decide to ring. Listings with a linked website also tend to rank better in local search. If you don&rsquo;t have a listing yet, I can walk you through setting one up once the site is live.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-5">
+            What if I don&rsquo;t like it?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-5" role="region">
+            <div class="faq-answer-inner">
+              <p>You walk away owing nothing. I build the site, send you a link to view it live, and you decide from there. No invoice until you&rsquo;re happy with what you see. No awkward conversation if it&rsquo;s not right &mdash; just let me know and that&rsquo;s the end of it.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ══ ABOUT NICK ══ -->
   <section class="about-nick">
     <div class="section-inner">
@@ -1498,6 +1622,26 @@
 </footer>
 
 <script data-cfasync="false">
+  /* ── FAQ accordion ── */
+  (function(){
+    var btns = document.querySelectorAll('.faq-btn');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        var answer = document.getElementById(btn.getAttribute('aria-controls'));
+        btns.forEach(function(b) {
+          b.setAttribute('aria-expanded', 'false');
+          var a = document.getElementById(b.getAttribute('aria-controls'));
+          if (a) a.style.maxHeight = null;
+        });
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          if (answer) answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
   /* ── Email obfuscation: nick@neobookworm.uk ── */
   (function(){
     var p=[110,105,99,107,64,110,101,111,98,111,111,107,119,111,114,109,46,117,107];
