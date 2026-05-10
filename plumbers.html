@@ -642,6 +642,33 @@
       margin-top: 2px;
     }
 
+    /* ─── About Nick ─── */
+    .about-nick-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .about-nick-photo img {
+      width: 100%;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      display: block;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .about-nick-copy p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+    .about-nick-copy p:last-child { margin-bottom: 0; }
+    @media (max-width: 640px) {
+      .about-nick-grid { grid-template-columns: 1fr; }
+      .about-nick-photo { max-width: 140px; }
+    }
+
     /* ─── Form section ─── */
     .form-section {
       background: rgba(255,255,255,0.02);
@@ -1301,6 +1328,27 @@
             <div class="pricing-aside">If you&rsquo;d rather run it yourself, I&rsquo;ll hand the files over and you&rsquo;re on your way.</div>
           </div>
           <p class="pricing-reassure">You don&rsquo;t pay anything until you&rsquo;ve seen the site and decided you want it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ABOUT NICK ══ -->
+  <section class="about-nick">
+    <div class="section-inner">
+      <div class="about-nick-grid">
+        <div class="about-nick-photo">
+          <picture>
+            <source srcset="/nick.webp" type="image/webp">
+            <img src="/nick.jpg" alt="Nick Barrett — NeoBookworm.uk" width="300" height="375" loading="lazy">
+          </picture>
+        </div>
+        <div class="about-nick-copy">
+          <span class="eyebrow">Who you&rsquo;re dealing with</span>
+          <h2 class="section-title">One person. <em>Direct.</em></h2>
+          <div class="gold-line"></div>
+          <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before getting fed up watching brilliant local tradespeople lose work to competitors with better-looking websites.</p>
+          <p>I&rsquo;m not an agency. When you email me, I reply. When your site needs changing, I do it &mdash; not a helpdesk in another time zone.</p>
         </div>
       </div>
     </div>
