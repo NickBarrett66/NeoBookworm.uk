@@ -645,12 +645,28 @@
     /* ─── About Nick ─── */
     .about-nick-grid {
       display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 2.5rem;
-      align-items: center;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      column-gap: 2.5rem;
+      row-gap: 0;
+      align-items: start;
     }
+    .about-nick-eyebrow {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+    /* Photo row sits flush under this line; space before headline lives on h2 */
+    .about-nick-eyebrow .eyebrow { margin-bottom: 0; }
+    .about-nick-copy .section-title { margin-top: 1rem; }
     .about-nick-photo {
+      grid-column: 1;
+      grid-row: 2;
       align-self: start;
+    }
+    .about-nick-copy {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
     }
     .about-nick-photo img {
       width: 100%;
@@ -669,8 +685,25 @@
     }
     .about-nick-copy p:last-child { margin-bottom: 0; }
     @media (max-width: 640px) {
-      .about-nick-grid { grid-template-columns: 1fr; }
-      .about-nick-photo { max-width: 140px; }
+      .about-nick-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+      }
+      .about-nick-eyebrow .eyebrow { margin-bottom: 1rem; }
+      .about-nick-eyebrow {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .about-nick-photo {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: center;
+        max-width: 280px;
+      }
+      .about-nick-copy {
+        grid-column: 1;
+        grid-row: 3;
+      }
     }
 
     /* ─── Form section ─── */
@@ -1341,6 +1374,9 @@
   <section class="about-nick">
     <div class="section-inner">
       <div class="about-nick-grid">
+        <div class="about-nick-eyebrow">
+          <span class="eyebrow">Who you&rsquo;re dealing with</span>
+        </div>
         <div class="about-nick-photo">
           <picture>
             <source srcset="/nick.webp" type="image/webp">
@@ -1348,7 +1384,6 @@
           </picture>
         </div>
         <div class="about-nick-copy">
-          <span class="eyebrow">Who you&rsquo;re dealing with</span>
           <h2 class="section-title">One person. <em>Direct.</em></h2>
           <div class="gold-line"></div>
           <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before getting fed up watching brilliant local tradespeople lose work to competitors with better-looking websites.</p>
