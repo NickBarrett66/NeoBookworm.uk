@@ -179,13 +179,21 @@
       max-width: 1180px;
       margin: 0 auto;
     }
-    .hero-image img {
+    /* Eyebrow line box height — demo note top aligns with bottom of eyebrow text */
+    .hero .eyebrow {
+      line-height: 1.45;
+    }
+    .hero-demo-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+      min-width: 0;
+      margin-top: calc(0.625rem * 1.45);
+    }
+    .hero-demo-aside .btn-primary {
+      justify-content: center;
       width: 100%;
-      height: auto;
-      max-height: 600px;
-      object-fit: cover;
-      border-radius: 12px;
-      display: block;
     }
     .hero h1 {
       font-family: var(--serif);
@@ -203,13 +211,6 @@
       color: rgba(255,255,255,0.72);
       line-height: 1.7;
       max-width: 520px;
-    }
-    .hero-cta-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-top: 1.75rem;
-      flex-wrap: wrap;
     }
     .btn-primary {
       display: inline-flex;
@@ -618,21 +619,13 @@
     /* ─── Limited availability (2-col like other sections) ─── */
     .avail-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      grid-template-columns: 1fr;
       gap: 3rem;
       align-items: start;
     }
-    .avail-copy,
-    .avail-aside { min-width: 0; }
-    .avail-aside {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-items: stretch;
-    }
-    .avail-aside .btn-primary {
-      justify-content: center;
-      width: 100%;
+    .avail-copy {
+      min-width: 0;
+      max-width: 640px;
     }
     .avail-aside-note {
       font-size: 13px;
@@ -640,6 +633,9 @@
       color: var(--muted);
       line-height: 1.55;
       margin-top: 2px;
+    }
+    .hero-demo-aside .avail-aside-note {
+      margin-top: 0;
     }
 
     /* ─── About Nick ─── */
@@ -997,15 +993,9 @@
 
     /* ─── Responsive ─── */
     @media (max-width: 768px) {
-      .hero-image {
+      .hero-demo-aside {
         order: 2;
-        max-height: 280px;
-        overflow: hidden;
-        border-radius: 12px;
-      }
-      .hero-image img {
-        width: 100%;
-        max-height: 300px;
+        overflow-x: clip;
       }
       .why-grid { grid-template-columns: 1fr; }
       .why-image {
@@ -1027,10 +1017,9 @@
         max-height: 300px;
       }
       .avail-grid { grid-template-columns: 1fr; }
-      .avail-aside { order: 2; }
-      .avail-aside { overflow-x: clip; }
     }
     @media (max-width: 960px) {
+      .hero-demo-aside { margin-top: 0; }
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
       .hero-mock { max-width: 560px; margin: 0 auto; }
       .steps-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -1144,20 +1133,43 @@
     <div class="hero-grid">
       <div class="hero-copy">
         <!-- TRADE-SPECIFIC: Hero eyebrow -->
-        <span class="eyebrow">Built for plumbers</span>
-        <h1>A website that gets you chosen — not just <em>found.</em></h1>
+        <span class="eyebrow">For plumbers without a website</span>
+        <h1>Word of mouth built your business.<br><em>A website means you&rsquo;re not invisible to everyone else.</em></h1>
         <div class="gold-line"></div>
-        <p class="hero-sub">I build websites for plumbers across the UK. You see the finished site before you commit to anything. If it&rsquo;s not right for you, you walk away and owe me nothing.</p>
+        <p class="hero-sub">Most plumbers get their work through referrals &mdash; and that&rsquo;s a great start. But referrals only reach the people who already know someone who knows you. Everyone else searching for a plumber right now doesn&rsquo;t know you exist.</p>
+        <p class="hero-sub" style="margin-top: 0.85rem;">I build websites specifically for plumbing businesses. You see the finished site before you pay anything &mdash; if it&rsquo;s not right, walk away and owe me nothing.</p>
       </div>
 
-      <div class="hero-image">
-        <img
-          src="/Images/hero-plumber.webp"
-          alt="Professional plumber working in a UK kitchen"
-          width="700"
-          height="500"
-          loading="eager"
-        >
+      <div class="hero-demo-aside">
+        <div class="avail-aside-note">This is just an example demo. Yours would be written and designed around your business, your area, and the work you want more of.</div>
+
+        <!-- TRADE-SPECIFIC: Demo site image and link -->
+        <a class="hero-mock"
+           href="https://hartley-plumbing-njb-demo.netlify.app/"
+           target="_blank"
+           rel="noopener"
+           aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
+          <div class="hero-mock-chrome">
+            <div class="hero-mock-dots"><span></span><span></span><span></span></div>
+            <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
+          </div>
+          <div class="hero-mock-viewport">
+            <img src="Images/demo-hartley-plumbing.jpg"
+                 srcset="Images/demo-hartley-plumbing-680.webp 680w,
+                         Images/demo-hartley-plumbing.jpg 800w"
+                 sizes="(max-width: 960px) 92vw, 540px"
+                 width="1024" height="654"
+                 alt="Hartley Plumbing — example plumber website built by NeoBookworm"
+                 loading="eager"
+                 decoding="async">
+          </div>
+          <div class="hero-mock-cap">
+            <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
+            <span class="hero-mock-cap-arrow">View live &rarr;</span>
+          </div>
+        </a>
+
+        <a href="#start" class="btn-primary">Give me some information and see what I can build you &rarr;</a>
       </div>
     </div>
     <div class="scroll-hint" aria-hidden="true">
@@ -1296,38 +1308,6 @@
           </div>
           <p style="font-size:13px; font-style:italic; color:var(--muted); margin-top:14px;">Standard price returns to &pound;299 once availability is full. Current status: <strong>3 slots remaining.</strong></p>
         </div>
-
-        <aside class="avail-aside" aria-label="Example site preview">
-          <div class="avail-aside-note">This is just an example demo. Yours would be written and designed around your business, your area, and the work you want more of.</div>
-
-          <!-- TRADE-SPECIFIC: Demo site image and link -->
-          <a class="hero-mock"
-             href="https://hartley-plumbing-njb-demo.netlify.app/"
-             target="_blank"
-             rel="noopener"
-             aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
-            <div class="hero-mock-chrome">
-              <div class="hero-mock-dots"><span></span><span></span><span></span></div>
-              <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
-            </div>
-            <div class="hero-mock-viewport">
-              <img src="Images/demo-hartley-plumbing.jpg"
-                   srcset="Images/demo-hartley-plumbing-680.webp 680w,
-                           Images/demo-hartley-plumbing.jpg 800w"
-                   sizes="(max-width: 960px) 92vw, 540px"
-                   width="1024" height="654"
-                   alt="Hartley Plumbing — example plumber website built by NeoBookworm"
-                   loading="lazy"
-                   decoding="async">
-            </div>
-            <div class="hero-mock-cap">
-              <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
-              <span class="hero-mock-cap-arrow">View live &rarr;</span>
-            </div>
-          </a>
-
-          <a href="#start" class="btn-primary">See what I&rsquo;d build for you &rarr;</a>
-        </aside>
       </div>
     </div>
   </section>
