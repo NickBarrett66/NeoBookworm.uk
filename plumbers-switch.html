@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- TRADE-SPECIFIC: Meta title/description/OG -->
+  <title>Already Have a Website? Here's Why Plumbers Switch | NeoBookworm</title>
+  <meta name="description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+  <link rel="canonical" href="https://neobookworm.uk/plumbers-switch">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://neobookworm.uk/plumbers-switch">
+  <meta property="og:title" content="Already Have a Website? Here's Why Plumbers Switch | NeoBookworm">
+  <meta property="og:description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+  <meta property="og:image" content="https://neobookworm.uk/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Already Have a Website? Here's Why Plumbers Switch | NeoBookworm">
+  <meta name="twitter:description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+
+  <link rel="preconnect" href="https://vitals.vercel-insights.com">
+
+  <!-- Font preloads: heading upright, body, heading italic (used in h1 em, above fold) -->
+  <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0f1f3d;
+      --navy-mid:   #1a3260;
+      --navy-light: #243d72;
+      --amber:      #f5a623;
+      --amber-dark: #d4891a;
+      --amber-pale: rgba(245,166,35,0.12);
+      --amber-glow: rgba(245,166,35,0.25);
+      --white:      #ffffff;
+      --off-white:  #f9f7f2;
+      --muted:      rgba(255,255,255,0.58);
+      --border:     rgba(245,166,35,0.18);
+      --error:      #e07060;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--navy);
+      background-image:
+        radial-gradient(ellipse 90% 70% at 50% -5%, rgba(26,50,96,0.55) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 85% 90%, rgba(245,166,35,0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 5% 70%, rgba(245,166,35,0.04) 0%, transparent 60%);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── Skip link ─── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--amber);
+      color: var(--navy);
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      z-index: 999;
+    }
+    .skip-link:focus { left: 1rem; top: 1rem; }
+
+    /* ─── Minimal landing header — logo only, no nav links ─── */
+    .lp-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: rgba(15,31,61,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      text-decoration: none;
+    }
+    .nav-logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      display: inline-block;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .nav-logo:hover .nav-logo-img { transform: rotate(-4deg) scale(1.05); }
+    .logo-wordmark {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+    .logo-wordmark span { color: var(--amber); }
+
+    /* ─── Shared section helpers ─── */
+    section { padding: 4.5rem 2rem; position: relative; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--off-white);
+      margin-bottom: 1.25rem;
+    }
+    .section-title em { font-style: italic; color: var(--amber); }
+
+    .gold-line {
+      height: 1px;
+      width: 56px;
+      background: linear-gradient(to right, var(--amber), transparent);
+      margin: 14px 0 22px;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      padding: 7rem 2rem 4.5rem;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% -5%, rgba(26,50,96,0.95) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 85% 90%, rgba(245,166,35,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 5% 70%, rgba(245,166,35,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-dots {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 0%, transparent 100%);
+      z-index: 0;
+    }
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    /* Eyebrow line box height — demo note top aligns with bottom of eyebrow text */
+    .hero .eyebrow {
+      line-height: 1.45;
+    }
+    .hero-demo-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+      min-width: 0;
+      margin-top: calc(0.625rem * 1.45);
+    }
+    .hero-demo-aside .btn-primary {
+      justify-content: center;
+      width: 100%;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--off-white);
+      margin-bottom: 0;
+    }
+    .hero h1 em { font-style: italic; color: var(--amber); }
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--amber);
+      color: var(--navy);
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 0.85rem 1.6rem;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(154,104,32,0.18);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--amber-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(154,104,32,0.32);
+    }
+
+    /* Browser-frame mockup — clickable, links to the live demo */
+    .hero-mock {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1e2433;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .hero-mock:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245,166,35,0.4);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.18);
+    }
+    .hero-mock:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+    .hero-mock-chrome {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      height: 30px;
+      background: linear-gradient(180deg, #3d4450 0%, #2a3038 100%);
+      border-bottom: 1px solid rgba(0,0,0,0.35);
+    }
+    .hero-mock-dots { display: flex; gap: 6px; flex-shrink: 0; }
+    .hero-mock-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+    .hero-mock-dots span:nth-child(1) { background: #ff5f57; }
+    .hero-mock-dots span:nth-child(2) { background: #febc2e; }
+    .hero-mock-dots span:nth-child(3) { background: #28c840; }
+    .hero-mock-url {
+      flex: 1;
+      min-width: 0;
+      font-family: ui-monospace, 'Segoe UI Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.22);
+      border-radius: 4px;
+      padding: 4px 10px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hero-mock-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1024 / 654;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .hero-mock-viewport img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 22% top;
+      display: block;
+    }
+    .hero-mock-cap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(245,166,35,0.06);
+      border-top: 1px solid var(--border);
+    }
+    .hero-mock-cap-text { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
+    .hero-mock-cap-text strong { color: var(--off-white); font-weight: 600; }
+    .hero-mock-cap-arrow { font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.04em; white-space: nowrap; }
+
+    .scroll-hint {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 3rem auto 0;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.34);
+      pointer-events: none;
+    }
+    .scroll-bar {
+      width: 1px;
+      height: 30px;
+      background: linear-gradient(to bottom, var(--amber), transparent);
+      animation: scrollPulse 2.2s 1s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.35; transform: scaleY(1); }
+      50%       { opacity: 1;    transform: scaleY(1.25); }
+    }
+
+    /* ─── How It Works — striped band (also cost comparison on plumbers-switch) ─── */
+    .steps,
+    .cost-compare {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .step {
+      padding: 20px 18px;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .step-header {
+      position: relative;
+      height: 52px;
+      margin-bottom: 1rem;
+    }
+    .step-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--amber-pale);
+      border: 1px solid rgba(245,166,35,0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-icon img {
+      width: 26px;
+      height: 26px;
+      display: block;
+    }
+    .step-num {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--amber);
+      letter-spacing: -0.04em;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    .step h3 {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .step p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.65;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    /* ─── Why It Matters ─── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .why-image {
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .why-image img {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 12px;
+      display: block;
+    }
+    .why-content {
+      max-width: 720px;
+      margin-top: 1.75rem;
+    }
+    .why-content p {
+      font-size: 1.02rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.85;
+      font-weight: 300;
+      margin-bottom: 1.4rem;
+    }
+    .why-content p:last-child { margin-bottom: 0; }
+    .why-list {
+      list-style: disc;
+      padding-left: 1.15rem;
+      margin: 0 0 1.4rem;
+    }
+    .why-list li {
+      font-size: 1.02rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.75;
+      font-weight: 300;
+      margin: 0.55rem 0;
+    }
+    .why-list strong { color: var(--off-white); font-weight: 700; }
+
+    /* ─── Feature cards (6-grid) ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    .feat-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 18px;
+    }
+    .feat-card h3 {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .feat-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.65;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    /* ─── Social proof ─── */
+    .proof-wrap {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .proof-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      max-width: 680px;
+      width: 100%;
+    }
+    .proof-quote {
+      font-size: 4rem;
+      line-height: 0.8;
+      color: var(--amber);
+      font-family: var(--serif);
+      font-weight: 900;
+      margin-bottom: 1rem;
+      display: block;
+      opacity: 0.65;
+    }
+    .proof-text {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.75;
+      font-style: italic;
+      margin-bottom: 1.25rem;
+    }
+    .proof-attr {
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .proof-note {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 1rem;
+      text-align: center;
+      max-width: 680px;
+    }
+
+    /* ─── Pricing ─── */
+    .pricing-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      max-width: 560px;
+      margin-top: 1.5rem;
+    }
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .pricing-row:last-of-type { border-bottom: none; }
+    .pricing-label {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.78);
+    }
+    .pricing-label small {
+      display: block;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.45);
+      font-weight: 300;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .pricing-amount {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--amber);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .pricing-amount small {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0;
+    }
+    .pricing-aside {
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.6;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .pricing-reassure {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 1rem;
+      max-width: 560px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: stretch;
+    }
+    .pricing-image {
+      display: flex;
+      align-items: center;
+    }
+    .pricing-image img {
+      width: 100%;
+      height: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    /* ─── Limited availability (2-col like other sections) ─── */
+    .avail-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .avail-copy {
+      min-width: 0;
+      max-width: 640px;
+    }
+    .avail-aside-note {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 2px;
+    }
+    .hero-demo-aside .avail-aside-note {
+      margin-top: 0;
+    }
+
+    /* ─── FAQ Accordion ─── */
+    .faq-list {
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-btn {
+      width: 100%;
+      background: var(--navy-mid);
+      border: none;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--sans);
+      font-size: 0.975rem;
+      font-weight: 600;
+      color: var(--off-white);
+      line-height: 1.4;
+      transition: background 0.2s;
+    }
+    .faq-btn:hover { background: var(--navy-light); }
+    .faq-btn[aria-expanded="true"] { background: rgba(245,166,35,0.06); color: var(--amber); }
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      color: var(--amber);
+      transition: transform 0.25s;
+    }
+    .faq-btn[aria-expanded="true"] .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(245,166,35,0.03);
+    }
+    .faq-answer-inner { padding: 0 20px 18px; }
+    .faq-answer-inner p {
+      font-size: 0.93rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.75;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    /* ─── About Nick ─── */
+    .about-nick-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      column-gap: 2.5rem;
+      row-gap: 0;
+      align-items: start;
+    }
+    .about-nick-eyebrow {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+    /* Photo row sits flush under this line; space before headline lives on h2 */
+    .about-nick-eyebrow .eyebrow { margin-bottom: 0; }
+    .about-nick-copy .section-title { margin-top: 1rem; }
+    .about-nick-photo {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+    }
+    .about-nick-copy {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+    }
+    .about-nick-photo img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      display: block;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .about-nick-copy p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+    .about-nick-copy p:last-child { margin-bottom: 0; }
+    @media (max-width: 640px) {
+      .about-nick-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+      }
+      .about-nick-eyebrow .eyebrow { margin-bottom: 1rem; }
+      .about-nick-eyebrow {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .about-nick-photo {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: center;
+        max-width: 280px;
+      }
+      .about-nick-copy {
+        grid-column: 1;
+        grid-row: 3;
+      }
+    }
+
+    /* ─── Form section ─── */
+    .form-section {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .form-wrap { max-width: 560px; margin-top: 1rem; }
+    .form-sub {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 28px;
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Input fields */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 7px;
+    }
+    .field label .opt {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-left: 4px;
+    }
+    .field input,
+    .field textarea {
+      width: 100%;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 15px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 108px;
+      line-height: 1.6;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--muted); }
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px var(--amber-pale);
+    }
+    .ferr {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+      display: none;
+    }
+    .ferr.show { display: block; }
+
+    /* Radio option cards */
+    .radio-group-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .radio-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .radio-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      user-select: none;
+      position: relative;
+    }
+    .radio-card:hover { border-color: rgba(245,166,35,0.4); }
+    .radio-card.selected {
+      border-color: var(--amber);
+      background: rgba(245,166,35,0.06);
+    }
+    .radio-card input[type="radio"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+    .radio-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: border-color 0.18s, background 0.18s;
+      position: relative;
+    }
+    .radio-card.selected .radio-circle {
+      border-color: var(--amber);
+      background: var(--amber);
+    }
+    .radio-card.selected .radio-circle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+    }
+    .radio-card-text { flex: 1; min-width: 0; }
+    .radio-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .radio-card-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Conditional textarea slide-down */
+    .details-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease;
+      margin-top: -4px;
+      margin-bottom: 4px;
+      padding-left: 32px; /* align with radio card text (circle + gap) */
+    }
+    .details-reveal.open { max-height: 280px; }
+    .details-reveal-inner { padding-top: 2px; }
+
+    /* Submit button */
+    .bstart {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 26px;
+      background: var(--amber);
+      border: none;
+      border-radius: 6px;
+      color: var(--navy);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      margin-top: 8px;
+    }
+    .bstart:hover {
+      background: var(--amber-dark);
+      box-shadow: 0 4px 18px rgba(154,104,32,0.28);
+      transform: translateY(-1px);
+    }
+    .bstart[disabled] { opacity: 0.6; cursor: progress; transform: none !important; box-shadow: none !important; }
+    .form-privacy {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 16px;
+      max-width: 480px;
+    }
+    #submit-error {
+      display: none;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--amber-dark);
+    }
+
+    /* ─── Thank-you state ─── */
+    .ty-wrap {
+      display: none;
+      flex-direction: column;
+      max-width: 560px;
+      animation: tyFade 0.4s ease both;
+    }
+    .ty-wrap.show { display: flex; }
+    .ty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--amber-pale);
+      border: 1px solid var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--amber);
+      margin-bottom: 26px;
+    }
+    .ty-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.12;
+      color: var(--off-white);
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+    .ty-title em { font-style: italic; color: var(--amber); }
+    .ty-body {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .ty-foot {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .ty-foot a { color: var(--amber); text-decoration: none; }
+    @keyframes tyFade {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── plumbers-switch: hero CTA row + hero image ─── */
+    .hero-cta-row {
+      margin-top: 1.35rem;
+    }
+    .hero-plumber-photo {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    /* ─── Self-check list ─── */
+    .check-list {
+      list-style: none;
+      padding: 0;
+      margin: 2rem 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.975rem;
+      color: rgba(255,255,255,0.78);
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    .check-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--amber-pale);
+      border: 1px solid rgba(245,166,35,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    /* ─── Speed score comparison ─── */
+    .speed-compare {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .speed-box {
+      text-align: center;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 36px;
+      min-width: 160px;
+    }
+    .speed-score {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    .speed-bad .speed-score { color: #e07060; }
+    .speed-good .speed-score { color: #5cb85c; }
+    .speed-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .speed-arrow {
+      font-size: 2rem;
+      color: var(--amber);
+      opacity: 0.6;
+    }
+    .speed-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 1rem;
+    }
+
+    /* ─── Cost comparison table ─── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+    .compare-table th,
+    .compare-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      line-height: 1.5;
+    }
+    .compare-table thead th {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--navy-mid);
+    }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr:nth-child(odd) td { background: rgba(255,255,255,0.02); }
+    .compare-table td:first-child { color: rgba(255,255,255,0.55); font-weight: 400; }
+    .compare-table td:nth-child(2) { color: rgba(255,255,255,0.55); }
+    .compare-table td:nth-child(3) { color: var(--off-white); font-weight: 500; }
+    @media (max-width: 640px) {
+      .compare-table thead { display: none; }
+      .compare-table tr { display: block; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+      .compare-table td { display: block; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .compare-table td:first-child { background: var(--navy-mid); color: var(--amber); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    }
+
+    /* ─── Footer (minimal: copyright + 3 links) ─── */
+    footer {
+      background: rgba(0,0,0,0.25);
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+    }
+    .footer-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--amber); }
+    .footer-sep { width: 1px; height: 14px; background: var(--border); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hero-demo-aside {
+        order: 2;
+        overflow-x: clip;
+      }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-image {
+        order: 2; /* image appears below text on mobile */
+        max-height: 260px;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+      .why-image img {
+        width: 100%;
+        max-height: 300px;
+      }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-image {
+        order: 2; /* image below pricing on mobile — price first */
+      }
+      .pricing-image img {
+        width: 100%;
+        max-height: 300px;
+      }
+      .avail-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 960px) {
+      .hero-demo-aside { margin-top: 0; }
+      .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
+      .hero-mock { max-width: 560px; margin: 0 auto; }
+      .hero-plumber-photo { max-width: 560px; margin: 0 auto; }
+      .steps-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .scroll-hint { margin-top: 2.25rem; }
+    }
+    @media (max-width: 640px) {
+      .lp-header { padding: 1rem 1.25rem; }
+      section { padding: 3rem 1.25rem; }
+      .hero { padding: 6rem 1.25rem 2.75rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .bstart { display: flex; width: 100%; justify-content: center; }
+      .proof-card { padding: 1.5rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+  </style>
+
+  <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
+  <link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css"
+        media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css"></noscript>
+
+  <!-- CookieConsent colour overrides -->
+  <style>
+    #cc-main {
+      --cc-bg: #0f1f3d;
+      --cc-primary-color: #f5a623;
+      --cc-secondary-color: #ffffff;
+      --cc-text-color: #ffffff;
+      --cc-text-color-headline: #ffffff;
+      --cc-separator-border-color: rgba(245, 166, 35, 0.2);
+      --cc-btn-primary-bg: #f5a623;
+      --cc-btn-primary-color: #0f1f3d;
+      --cc-btn-primary-hover-bg: #d4891a;
+      --cc-btn-primary-hover-color: #0f1f3d;
+      --cc-btn-secondary-bg: transparent;
+      --cc-btn-secondary-color: #ffffff;
+      --cc-btn-secondary-border-color: rgba(255,255,255,0.3);
+      --cc-btn-secondary-hover-bg: rgba(255,255,255,0.08);
+      --cc-btn-secondary-hover-color: #ffffff;
+      --cc-toggle-on-bg: #f5a623;
+      --cc-toggle-off-bg: rgba(255,255,255,0.2);
+      --cc-toggle-enabled-icon-color: #0f1f3d;
+      --cc-toggle-readonly-bg: rgba(245, 166, 35, 0.35);
+      --cc-cookie-category-block-bg: rgba(255,255,255,0.05);
+      --cc-cookie-category-block-border: rgba(245,166,35,0.15);
+      --cc-overlay-bg: rgba(0,0,0,0.5);
+      --cc-modal-border-radius: 4px;
+      --cc-btn-border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+    }
+  </style>
+
+  <!-- Google Analytics — consent denied by default until visitor accepts -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FM1VG68GKQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent', 'default', { analytics_storage: 'denied' });
+    gtag('config', 'G-FM1VG68GKQ');
+  </script>
+
+  <!-- TRADE-SPECIFIC: Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": "https://neobookworm.uk/plumbers-switch#service",
+    "identifier": "plumbers-switch-landing",
+    "url": "https://neobookworm.uk/plumbers-switch",
+    "serviceType": "Website redesign and migration for plumbers with an existing site",
+    "provider": {
+      "@type": "WebDesigner",
+      "name": "NeoBookworm",
+      "url": "https://neobookworm.uk",
+      "areaServed": { "@type": "Country", "name": "United Kingdom" }
+    },
+    "areaServed": { "@type": "Country", "name": "United Kingdom" },
+    "audience": { "@type": "BusinessAudience", "audienceType": "Plumbers" },
+    "offers": {
+      "@type": "Offer",
+      "price": "199",
+      "priceCurrency": "GBP",
+      "description": "Website rebuild with preview-before-pay model for UK plumbing businesses switching provider"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- Minimal landing header — logo only, no site navigation links -->
+<header class="lp-header">
+  <a href="https://www.neobookworm.uk/" class="nav-logo" aria-label="NeoBookworm.uk — go to main site">
+    <img src="logo-160.webp"
+         srcset="logo-80.webp 80w, logo-160.webp 160w"
+         sizes="80px"
+         alt="NeoBookworm.uk logo"
+         class="nav-logo-img"
+         width="1024" height="1024"
+         loading="eager">
+    <span class="logo-wordmark">Neo<span>Bookworm.uk</span></span>
+  </a>
+</header>
+
+<main id="main">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-dots" aria-hidden="true"></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">For plumbers who already have a website</span>
+        <h1>Your website might be the reason customers aren&rsquo;t <em>calling.</em></h1>
+        <div class="gold-line"></div>
+        <p class="hero-sub">Most plumber websites were built once and never properly looked after. They load slowly on mobile, they&rsquo;re difficult to update, and they cost more per month than they should &mdash; without bringing in the work to justify it.</p>
+        <p class="hero-sub" style="margin-top:0.85rem;">I&rsquo;ll review your current site for free and tell you honestly what I&rsquo;d change. If you want me to build something better, you see it before you pay anything.</p>
+        <div class="hero-cta-row">
+          <a href="#start" class="btn-primary">Get a free site review &rarr;</a>
+        </div>
+      </div>
+
+      <div class="hero-demo-aside">
+        <img class="hero-plumber-photo"
+             src="/Images/hero-plumber.webp"
+             alt="Plumber working on pipework — illustrative photo"
+             width="770"
+             height="814"
+             loading="eager"
+             decoding="async">
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Five quick questions</span>
+      <div class="scroll-bar"></div>
+    </div>
+  </section>
+
+  <!-- ══ SELF-CHECK ══ -->
+  <section class="self-check">
+    <div class="section-inner">
+      <span class="eyebrow">Is your current site letting you down?</span>
+      <h2 class="section-title">Five questions worth <em>asking yourself.</em></h2>
+      <div class="gold-line"></div>
+      <ul class="check-list">
+        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Is your site more than three years old?</span></li>
+        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Does it load slowly when you open it on your phone?</span></li>
+        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Are you paying more than &pound;15 a month to keep it live?</span></li>
+        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Do you have to wait days (or longer) to get changes made?</span></li>
+        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Can you remember the last time it actually brought in a job?</span></li>
+      </ul>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.62); margin-top:1.5rem;">If you answered yes to two or more of those, it&rsquo;s worth at least having a look at what else is out there.</p>
+    </div>
+  </section>
+
+  <!-- ══ WHAT'S DIFFERENT ══ -->
+  <section class="includes">
+    <div class="section-inner">
+      <span class="eyebrow">What makes the difference</span>
+      <h2 class="section-title">Speed. Simplicity. Someone who <em>actually responds.</em></h2>
+      <div class="gold-line"></div>
+      <div class="cards-grid">
+        <div class="feat-card">
+          <h3>Built for mobile first</h3>
+          <p>Most plumber sites were designed on a desktop and squeezed onto a phone as an afterthought. Every site I build is tested on mobile from the first line of code &mdash; because that&rsquo;s where your customers are when they need someone urgently.</p>
+        </div>
+        <div class="feat-card">
+          <h3>Fast by design</h3>
+          <p>Page builder tools like Wix and Squarespace load a lot of code your site doesn&rsquo;t need. Sites I build are hand-coded and lightweight &mdash; they score 90+ on Google&rsquo;s mobile speed test, compared to 20&ndash;40 for a typical trades site built on a page builder.</p>
+        </div>
+        <div class="feat-card">
+          <h3>Changes done by me, directly</h3>
+          <p>No tickets, no account managers, no waiting a week. If you want something changed on your site, you email me and I do it &mdash; usually within a day. You deal with one person throughout.</p>
+        </div>
+      </div>
+      <div class="speed-compare">
+        <div class="speed-box speed-bad">
+          <div class="speed-score">24</div>
+          <div class="speed-label">Typical Wix / page-builder<br>plumber site (mobile)</div>
+        </div>
+        <div class="speed-arrow">&#8594;</div>
+        <div class="speed-box speed-good">
+          <div class="speed-score">96</div>
+          <div class="speed-label">NeoBookworm build<br>(mobile)</div>
+        </div>
+      </div>
+      <p class="speed-note">Scores from Google PageSpeed Insights &mdash; the tool Google uses to assess how fast your site loads on a phone.</p>
+    </div>
+  </section>
+
+  <!-- ══ COST COMPARISON ══ -->
+  <section class="cost-compare">
+    <div class="section-inner">
+      <span class="eyebrow">What you&rsquo;re actually paying</span>
+      <h2 class="section-title">Most plumbers pay more than they realise &mdash; for <em>less than they think.</em></h2>
+      <div class="gold-line"></div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Typical setup</th>
+            <th scope="col">NeoBookworm</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Build cost</td>
+            <td>Already paid (but locked to that provider)</td>
+            <td>&pound;299 &mdash; or &pound;199 while availability lasts</td>
+          </tr>
+          <tr>
+            <td>Monthly cost</td>
+            <td>&pound;15&ndash;20 (Wix/Squarespace) or &pound;40&ndash;100+ (agency retainer)</td>
+            <td>&pound;9.99 &mdash; cancel any month</td>
+          </tr>
+          <tr>
+            <td>Getting changes made</td>
+            <td>Extra charge, or slow turnaround</td>
+            <td>Included &mdash; email Nick, done within a day</td>
+          </tr>
+          <tr>
+            <td>Contract</td>
+            <td>Often annual, auto-renews</td>
+            <td>No contract &mdash; month to month</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.875rem; font-style:italic; color:var(--muted); margin-top:1.25rem;">A Wix Premium plan at &pound;17/month is &pound;204/year. NeoBookworm is &pound;119.88/year &mdash; and the site will load significantly faster.</p>
+    </div>
+  </section>
+
+  <!-- ══ HOW SWITCHING WORKS ══ -->
+  <section class="steps">
+    <div class="section-inner">
+      <span class="eyebrow">How it works</span>
+      <h2 class="section-title">Three steps. <em>No disruption.</em></h2>
+      <div class="gold-line"></div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-1.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">1</span>
+          </div>
+          <h3>Send me your URL</h3>
+          <p>Fill in the form below with your website address. I&rsquo;ll take a proper look at it and come back to you with an honest assessment of what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d do differently.</p>
+        </div>
+        <div class="step">
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-2.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">2</span>
+          </div>
+          <h3>I build your new site</h3>
+          <p>If you want to go ahead, I build a new version of your plumbing site using your existing content, photos, and services. You get a link to view the finished site before anything goes live or changes hands.</p>
+        </div>
+        <div class="step">
+          <div class="step-header">
+            <div class="step-icon" aria-hidden="true">
+              <img src="Images/icon-step-3.webp" alt="" width="40" height="40" loading="lazy">
+            </div>
+            <span class="step-num">3</span>
+          </div>
+          <h3>We switch it over</h3>
+          <p>Once you&rsquo;re happy, I point your existing domain at the new site. Done correctly, there&rsquo;s no disruption to your Google presence. You don&rsquo;t pay until you&rsquo;re satisfied with what you see.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ABOUT NICK ══ -->
+  <section class="about-nick">
+    <div class="section-inner">
+      <div class="about-nick-grid">
+        <div class="about-nick-eyebrow">
+          <span class="eyebrow">Who you&rsquo;re dealing with</span>
+        </div>
+        <div class="about-nick-photo">
+          <picture>
+            <source srcset="/nick.webp" type="image/webp">
+            <img src="/nick.jpg" alt="Nick Barrett — NeoBookworm.uk" width="300" height="375" loading="lazy">
+          </picture>
+        </div>
+        <div class="about-nick-copy">
+          <h2 class="section-title">One person. <em>Direct.</em></h2>
+          <div class="gold-line"></div>
+          <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before getting fed up watching brilliant local tradespeople lose work to competitors with better-looking websites.</p>
+          <p>I&rsquo;m not an agency. When you email me, I reply. When your site needs changing, I do it &mdash; not a helpdesk in another time zone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FAQ ══ -->
+  <section class="faq">
+    <div class="section-inner">
+      <span class="eyebrow">Common questions</span>
+      <h2 class="section-title">Questions about <em>switching.</em></h2>
+      <div class="gold-line"></div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-1">
+            Will I lose my Google ranking when I switch?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-1" role="region">
+            <div class="faq-answer-inner">
+              <p>No &mdash; as long as the domain stays the same (which it will) and the switch is done properly. I set up redirects so Google knows every old page maps to the right new page. In practice, rankings stay stable and often improve because the new site loads faster and is better structured.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-2">
+            What happens to my domain name?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-2" role="region">
+            <div class="faq-answer-inner">
+              <p>Your domain stays yours &mdash; it&rsquo;s registered in your name and that doesn&rsquo;t change. Once the new site is ready, I&rsquo;ll walk you through pointing it at the new site, or do it with you if you prefer. The whole process takes a few minutes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
+            Can you use my existing photos and content?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-3" role="region">
+            <div class="faq-answer-inner">
+              <p>Yes &mdash; that&rsquo;s the starting point. Send me anything you have: photos of your work, your services list, your Gas Safe number, any reviews you want included. If there are gaps, I&rsquo;ll work around them and flag what would be worth adding later.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-4">
+            I&rsquo;m still in a contract with my current provider &mdash; can I still get started?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-4" role="region">
+            <div class="faq-answer-inner">
+              <p>Yes. I&rsquo;ll build your new site now so it&rsquo;s ready to go the moment you&rsquo;re out of your contract. You don&rsquo;t pay anything until you&rsquo;ve seen it and decided you want it. Some people use the preview period to decide whether it&rsquo;s worth switching at all.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-5">
+            How do I know the new site will actually be better?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-5" role="region">
+            <div class="faq-answer-inner">
+              <p>I&rsquo;ll show you the PageSpeed score on the finished site before you commit to anything. I&rsquo;ll also send you the score for your current site so you can compare directly. If the numbers don&rsquo;t back up the claim, you walk away owing nothing.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FORM ══ -->
+  <!-- Identical across all trades (source field value and textarea placeholder change per trade) -->
+  <section class="form-section" id="start">
+    <div class="section-inner">
+
+      <!-- This block is hidden after successful API submission -->
+      <div id="form-header-and-content">
+        <span class="eyebrow">Get started</span>
+        <h2 class="section-title">Tell me about your business — and how you&rsquo;d like <em>to move forward.</em></h2>
+        <div class="gold-line"></div>
+        <div class="form-wrap">
+          <p class="form-sub">Add your website link if you know it &mdash; I&rsquo;ll take a look before we speak. Then choose how you&rsquo;d like to proceed and hit the button.</p>
+
+          <form id="lead-form" novalidate>
+
+            <!-- PART 1 — Contact details -->
+            <div class="field">
+              <label for="f_name">Your name</label>
+              <input type="text" id="f_name" name="name"
+                     placeholder="e.g. James Hart"
+                     autocomplete="name" required>
+              <div class="ferr" id="e_name">Please enter your name</div>
+            </div>
+
+            <div class="field">
+              <label for="f_biz">Your business name</label>
+              <input type="text" id="f_biz" name="bizName"
+                     placeholder="e.g. Hart Plumbing Ltd"
+                     autocomplete="organization" required>
+              <div class="ferr" id="e_biz">Please enter your business name</div>
+            </div>
+
+            <div class="field">
+              <label for="f_url">Your current website address <span class="opt">so I can review it</span></label>
+              <input type="url" id="f_url" name="currentUrl"
+                     placeholder="e.g. https://www.hartplumbing.co.uk"
+                     autocomplete="url">
+              <div class="ferr" id="e_url">Please enter a valid web address</div>
+            </div>
+
+            <div class="field">
+              <label for="f_email">Your email address</label>
+              <input type="email" id="f_email" name="email"
+                     placeholder="e.g. james@hartplumbing.co.uk"
+                     autocomplete="email" required>
+              <div class="ferr" id="e_email">Please enter a valid email address</div>
+            </div>
+
+            <!-- PART 2 — How to get started (radio option cards) -->
+            <fieldset style="border:none;padding:0;margin:0 0 6px">
+              <legend class="radio-group-label">How would you like to get started?</legend>
+              <div class="radio-cards">
+
+                <label class="radio-card selected" data-value="review_site_first">
+                  <input type="radio" name="start_option" value="review_site_first" checked>
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">Review my current site first</div>
+                    <div class="radio-card-desc">I&rsquo;ll take a look at what you have and come back with honest feedback. No commitment.</div>
+                  </div>
+                </label>
+
+                <label class="radio-card" data-value="ready_to_switch">
+                  <input type="radio" name="start_option" value="ready_to_switch">
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">I already know I want to switch</div>
+                    <div class="radio-card-desc">Build me a new site using my existing content. I&rsquo;ll tell you more below.</div>
+                  </div>
+                </label>
+
+                <!-- Conditional textarea — revealed when 'ready_to_switch' is selected -->
+                <div class="details-reveal" id="details-reveal" aria-live="polite">
+                  <div class="details-reveal-inner">
+                    <div class="field">
+                      <label for="f_details">Anything else I should know <span class="opt">optional</span></label>
+                      <textarea id="f_details" name="details" rows="5"
+                                placeholder="e.g. Stuck on Wix, unhappy with speed, want to keep my domain at GoDaddy — whatever helps."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <label class="radio-card" data-value="intake_form">
+                  <input type="radio" name="start_option" value="intake_form">
+                  <div class="radio-circle" aria-hidden="true"></div>
+                  <div class="radio-card-text">
+                    <div class="radio-card-title">Fill in the full intake form</div>
+                    <div class="radio-card-desc">More detail up front means I can get closer first time. Takes about five minutes.</div>
+                  </div>
+                </label>
+
+              </div>
+            </fieldset>
+
+            <button type="submit" class="bstart" id="submit-btn">Send my details &rarr;</button>
+            <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
+            <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Thank-you state — shown after successful Option 1 or 2 submission -->
+      <!-- Identical across all trades -->
+      <div class="ty-wrap" id="ty-wrap" aria-live="polite">
+        <div class="ty-icon" aria-hidden="true">&#10022;</div>
+        <h2 class="ty-title">You&rsquo;re all <em>done.</em></h2>
+        <p class="ty-body">I&rsquo;ll review your site and come back to you within one working day with honest feedback on what I&rsquo;d change &mdash; and what I&rsquo;d keep.</p>
+        <div class="gold-line"></div>
+        <p class="ty-foot">Questions in the meantime? Reach me at <span id="ctaEmail"></span></p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER (minimal: copyright + Privacy, Terms, Contact) ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+    <ul class="footer-links">
+      <li><a href="/privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep" aria-hidden="true"></li>
+      <li><a href="/terms.html">Terms of Service</a></li>
+      <li class="footer-sep" aria-hidden="true"></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script data-cfasync="false">
+  /* ── FAQ accordion ── */
+  (function(){
+    var btns = document.querySelectorAll('.faq-btn');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        var answer = document.getElementById(btn.getAttribute('aria-controls'));
+        btns.forEach(function(b) {
+          b.setAttribute('aria-expanded', 'false');
+          var a = document.getElementById(b.getAttribute('aria-controls'));
+          if (a) a.style.maxHeight = null;
+        });
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          if (answer) answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
+  /* ── Email obfuscation: nick@neobookworm.uk ── */
+  (function(){
+    var p=[110,105,99,107,64,110,101,111,98,111,111,107,119,111,114,109,46,117,107];
+    var addr=p.map(function(c){return String.fromCharCode(c);}).join('');
+    var el=document.getElementById('ctaEmail');
+    if(el){
+      var a=document.createElement('a');
+      a.href='mail'+'to:'+addr;
+      a.textContent=addr;
+      a.style.color='var(--amber)';
+      el.appendChild(a);
+    }
+  })();
+
+  function isValidEmail(s){
+    var parts=s.split(String.fromCharCode(64));
+    return parts.length===2&&parts[0].length>0&&parts[1].indexOf('.')>0;
+  }
+
+  function isValidOptionalUrl(s){
+    var v=(s||'').trim();
+    if(!v) return true;
+    try{
+      var u=new URL(v.indexOf('://')===-1?'https://'+v:v);
+      return !!u.hostname;
+    }catch(e){ return false; }
+  }
+
+  /* ── Radio card interaction ── */
+  (function(){
+    var cards=document.querySelectorAll('.radio-card');
+    var detailsReveal=document.getElementById('details-reveal');
+
+    function selectCard(card){
+      cards.forEach(function(c){ c.classList.remove('selected'); });
+      card.classList.add('selected');
+      var inp=card.querySelector('input[type="radio"]');
+      if(inp) inp.checked=true;
+      var val=card.getAttribute('data-value');
+      if(detailsReveal){
+        if(val==='ready_to_switch'){
+          detailsReveal.classList.add('open');
+        } else {
+          detailsReveal.classList.remove('open');
+        }
+      }
+    }
+
+    cards.forEach(function(card){
+      card.addEventListener('click',function(){ selectCard(card); });
+      card.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          selectCard(card);
+        }
+      });
+    });
+  })();
+
+  /* ── Form validation and submission ── */
+  (function(){
+    var form=document.getElementById('lead-form');
+    var btn=document.getElementById('submit-btn');
+    var formHeaderAndContent=document.getElementById('form-header-and-content');
+    var tyWrap=document.getElementById('ty-wrap');
+    var errBox=document.getElementById('submit-error');
+
+    var textFields=[
+      {input:'f_name', err:'e_name'},
+      {input:'f_biz',  err:'e_biz'},
+      {input:'f_email',err:'e_email'}
+    ];
+
+    textFields.forEach(function(f){
+      var i=document.getElementById(f.input);
+      var e=document.getElementById(f.err);
+      if(i&&e) i.addEventListener('input',function(){ e.classList.remove('show'); });
+    });
+
+    var urlInput=document.getElementById('f_url');
+    var urlErr=document.getElementById('e_url');
+    if(urlInput&&urlErr) urlInput.addEventListener('input',function(){ urlErr.classList.remove('show'); });
+
+    function validate(){
+      var ok=true,firstBad=null;
+      textFields.forEach(function(f){
+        var i=document.getElementById(f.input);
+        var e=document.getElementById(f.err);
+        if(!i||!e) return;
+        var v=(i.value||'').trim();
+        var bad=false;
+        if(!v) bad=true;
+        if(f.input==='f_email'&&v&&!isValidEmail(v)){
+          bad=true;
+          e.textContent='Please enter a valid email address';
+        }
+        if(bad){
+          e.classList.add('show');
+          ok=false;
+          if(!firstBad) firstBad=i;
+        } else {
+          e.classList.remove('show');
+        }
+      });
+      if(urlInput&&urlErr){
+        var uv=(urlInput.value||'').trim();
+        if(uv&&!isValidOptionalUrl(uv)){
+          urlErr.classList.add('show');
+          ok=false;
+          if(!firstBad) firstBad=urlInput;
+        } else {
+          urlErr.classList.remove('show');
+        }
+      }
+      if(firstBad) firstBad.focus();
+      return ok;
+    }
+
+    function getSelectedOption(){
+      var checked=document.querySelector('input[name="start_option"]:checked');
+      return checked?checked.value:'review_site_first';
+    }
+
+    form.addEventListener('submit',function(ev){
+      ev.preventDefault();
+      errBox.style.display='none';
+      if(!validate()) return;
+
+      var selectedOption=getSelectedOption();
+
+      /* Option 3: redirect to intake form with pre-filled fields */
+      if(selectedOption==='intake_form'){
+        var nameVal=document.getElementById('f_name').value.trim();
+        var bizVal=document.getElementById('f_biz').value.trim();
+        var emailVal=document.getElementById('f_email').value.trim();
+        window.location.href='/intake-form.html'
+          +'?name='+encodeURIComponent(nameVal)
+          +'&biz='+encodeURIComponent(bizVal)
+          +'&email='+encodeURIComponent(emailVal)
+          +'&ref=plumbers-switch';
+        return;
+      }
+
+      /* Options 1 & 2: POST to API, show thank-you */
+      btn.disabled=true;
+      btn.textContent='Sending\u2026';
+
+      var detailsEl=document.getElementById('f_details');
+      var payload={
+        fullName:    document.getElementById('f_name').value.trim(),
+        bizName:     document.getElementById('f_biz').value.trim(),
+        email:       document.getElementById('f_email').value.trim(),
+        currentUrl:  document.getElementById('f_url')?document.getElementById('f_url').value.trim():'',
+        startOption: selectedOption,
+        details:     (selectedOption==='ready_to_switch'&&detailsEl)?detailsEl.value.trim():'',
+        source:      'plumbers-switch-landing'
+      };
+
+      fetch('/api/landing-enquiry',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload)
+      })
+      .then(function(res){
+        return res.json().then(function(j){
+          if(!res.ok) throw new Error(j.error||('HTTP '+res.status));
+          return j;
+        });
+      })
+      .then(function(){
+        formHeaderAndContent.style.display='none';
+        tyWrap.classList.add('show');
+        window.scrollTo({
+          top: tyWrap.getBoundingClientRect().top+window.scrollY-80,
+          behavior:'smooth'
+        });
+      })
+      .catch(function(err){
+        btn.disabled=false;
+        btn.textContent='Send my details \u2192';
+        errBox.style.display='block';
+        if(window.console&&console.warn) console.warn(err);
+      });
+    });
+  })();
+</script>
+
+<script defer src="/_vercel/insights/script.js"></script>
+<!-- CookieConsent v3 (self-hosted UMD) -->
+<script type="module" src="/cookieconsent-config.js"></script>
+
+</body>
+</html>

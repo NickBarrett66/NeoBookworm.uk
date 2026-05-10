@@ -1,4 +1,4 @@
-// POST JSON { fullName, bizName, email, startOption, details, source }
+// POST JSON { fullName, bizName, email, startOption, details, source, currentUrl? }
 //
 // Lightweight enquiry endpoint for trade landing pages (e.g. /plumbers).
 // No photo uploads or session handling — contrast with intake-finalize.js.
@@ -20,9 +20,9 @@
 //   Name (title)           — prospect's full name
 //   Business Name (text)   — trading name
 //   Email (email)          — contact email
-//   Start Option (select)  — leave_it_with_me | tell_more
-//   Notes (text)           — details / extra info from textarea
-//   Source (select)        — e.g. plumbers-landing (distinguishes from pipeline-scraped)
+//   Start Option (select)  — leave_it_with_me | tell_more | review_site_first | ready_to_switch | intake_form (etc.)
+//   Notes (text)           — details / textarea + optional "Current website:" line from currentUrl
+//   Source (select)        — e.g. plumbers-landing | plumbers-switch-landing
 //
 // If any property doesn't yet exist in the Prospects database, the Notion API
 // will return a 400 error for that property. The endpoint catches Notion errors
@@ -56,6 +56,15 @@ function richText(value) {
   return { rich_text: [{ text: { content: str } }] };
 }
 
+function combineNotes(details, currentUrl) {
+  const chunks = [];
+  const u = (currentUrl || '').toString().trim();
+  if (u) chunks.push(`Current website: ${u}`);
+  const d = (details || '').toString().trim();
+  if (d) chunks.push(d);
+  return chunks.join('\n\n');
+}
+
 async function createProspectRecord(fields) {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) {
@@ -78,7 +87,8 @@ async function createProspectRecord(fields) {
   const startOpt = (fields.startOption || '').toString().trim().slice(0, 100);
   if (startOpt) props['Start Option'] = { select: { name: startOpt } };
 
-  const notesRt = richText(fields.details);
+  const notesCombined = combineNotes(fields.details, fields.currentUrl);
+  const notesRt = richText(notesCombined);
   if (notesRt) props['Notes'] = notesRt;
 
   const src = (fields.source || '').toString().trim().slice(0, 100);
@@ -124,6 +134,7 @@ async function sendNotification(fields) {
     `Name:          ${fields.fullName || ''}`,
     `Business:      ${fields.bizName  || ''}`,
     `Email:         ${fields.email    || ''}`,
+    `Current URL:   ${fields.currentUrl || '(not provided)'}`,
     `Start option:  ${fields.startOption || '(not set)'}`,
     `Source:        ${fields.source   || '(not set)'}`,
     '',
@@ -174,7 +185,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Invalid JSON body' });
   }
 
-  const { fullName, bizName, email, startOption, details, source } = body;
+  const { fullName, bizName, email, startOption, details, source, currentUrl } = body;
 
   if (!fullName || !String(fullName).trim()) {
     return res.status(400).json({ error: 'Name is required.' });
@@ -193,6 +204,7 @@ module.exports = async (req, res) => {
     startOption: startOption ? String(startOption).trim() : '',
     details:     details     ? String(details).trim()     : '',
     source:      source      ? String(source).trim()      : 'landing',
+    currentUrl:  currentUrl  ? String(currentUrl).trim()  : '',
   };
 
   // Create Notion record (best-effort: log but don't fail the request)
