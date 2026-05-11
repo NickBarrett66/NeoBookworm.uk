@@ -608,19 +608,30 @@
         transform: scale(1);
       }
     }
+    /* Reserve square space on iOS before video metadata loads (height:auto + aspect-ratio alone can collapse). */
     .custom-modal-video {
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
+      max-width: 350px;
+      margin-inline: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(15, 31, 61, 0.06);
+      box-shadow: 0 8px 24px rgba(15, 31, 61, 0.12);
     }
     .custom-modal-video video {
       width: 100%;
-      max-width: 350px;
-      height: auto;
-      aspect-ratio: 1 / 1;
-      border-radius: 8px;
-      background: rgba(15, 31, 61, 0.06);
-      box-shadow: 0 8px 24px rgba(15, 31, 61, 0.12);
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
     .custom-modal-text h2 {
       font-family: var(--serif);
@@ -1864,8 +1875,20 @@
   <div class="custom-modal-content">
     <div class="custom-modal-inner">
       <div class="custom-modal-video">
-        <video autoplay muted loop playsinline width="350" height="350">
-          <source src="./plumber-avatar-optimized.mp4" type="video/mp4">
+        <video
+          width="350"
+          height="350"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          controlslist="nodownload"
+          disablepictureinpicture
+        >
+          <!-- Root-relative URL: ./ breaks on pretty URLs like /plumbers on iOS Safari -->
+          <source src="/plumber-avatar-optimized.mp4" type="video/mp4">
           Your browser doesn&rsquo;t support HTML5 video.
         </video>
       </div>
@@ -2100,10 +2123,34 @@
     var closeBtn = document.getElementById('closeBtn');
     if (!customCard || !modal || !closeBtn) return;
 
+    function tryPlayAvatarVideo(){
+      var vid = modal.querySelector('.custom-modal-video video');
+      if (!vid) return;
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.setAttribute('muted', '');
+      var p = vid.play();
+      if (p && typeof p.catch === 'function'){
+        p.catch(function(){ /* iOS may defer until sufficient data */ });
+      }
+    }
+
+    var avatarVid = modal.querySelector('.custom-modal-video video');
+    if (avatarVid){
+      avatarVid.addEventListener('loadedmetadata', function(){
+        if (modal.classList.contains('active')) tryPlayAvatarVideo();
+      });
+      avatarVid.addEventListener('canplay', function(){
+        if (modal.classList.contains('active')) tryPlayAvatarVideo();
+      });
+    }
+
     function openModal(){
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      /* Same user gesture as card tap — required for reliable inline autoplay on iOS */
+      tryPlayAvatarVideo();
       closeBtn.focus();
     }
 
@@ -2111,6 +2158,8 @@
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      var vid = modal.querySelector('.custom-modal-video video');
+      if (vid){ try { vid.pause(); } catch (err) {} }
       customCard.focus();
     }
 
