@@ -1875,22 +1875,16 @@
   <div class="custom-modal-content">
     <div class="custom-modal-inner">
       <div class="custom-modal-video">
+        <!-- src set in JS on first open = tied to tap gesture (iOS Safari). Preload none until then. -->
         <video
+          id="avatarIntroVideo"
           width="350"
           height="350"
-          autoplay
           muted
           loop
           playsinline
-          webkit-playsinline
-          preload="auto"
-          controlslist="nodownload"
-          disablepictureinpicture
-        >
-          <!-- Root-relative URL: ./ breaks on pretty URLs like /plumbers on iOS Safari -->
-          <source src="/plumber-avatar-optimized.mp4" type="video/mp4">
-          Your browser doesn&rsquo;t support HTML5 video.
-        </video>
+          preload="none"
+        ></video>
       </div>
 
       <div class="custom-modal-text">
@@ -2118,50 +2112,79 @@
 
   /* ── Custom-site modal (#customCard) ── */
   (function(){
+    var AVATAR_MP4 = '/plumber-avatar-optimized.mp4';
     var customCard = document.getElementById('customCard');
     var modal = document.getElementById('modal');
     var closeBtn = document.getElementById('closeBtn');
-    if (!customCard || !modal || !closeBtn) return;
+    var vid = document.getElementById('avatarIntroVideo');
+    if (!customCard || !modal || !closeBtn || !vid) return;
 
-    function tryPlayAvatarVideo(){
-      var vid = modal.querySelector('.custom-modal-video video');
-      if (!vid) return;
+    function isTouchLike(){
+      return ('ontouchstart' in window) || ((navigator.maxTouchPoints || 0) > 0);
+    }
+
+    function primeAvatarVideo(){
+      /* Bind src inside the same user gesture as opening the modal (critical for iOS). */
+      if (!vid.dataset.srcBound){
+        vid.src = AVATAR_MP4;
+        vid.dataset.srcBound = '1';
+      }
       vid.muted = true;
       vid.defaultMuted = true;
       vid.setAttribute('muted', '');
-      var p = vid.play();
-      if (p && typeof p.catch === 'function'){
-        p.catch(function(){ /* iOS may defer until sufficient data */ });
+      vid.playsInline = true;
+      vid.setAttribute('playsinline', '');
+      vid.setAttribute('webkit-playsinline', '');
+      /* Native controls on touch: autoplay often still blocks until an explicit tap. */
+      if (isTouchLike()){
+        vid.setAttribute('controls', '');
+      } else {
+        vid.removeAttribute('controls');
       }
     }
 
-    var avatarVid = modal.querySelector('.custom-modal-video video');
-    if (avatarVid){
-      avatarVid.addEventListener('loadedmetadata', function(){
-        if (modal.classList.contains('active')) tryPlayAvatarVideo();
-      });
-      avatarVid.addEventListener('canplay', function(){
-        if (modal.classList.contains('active')) tryPlayAvatarVideo();
-      });
+    function tryPlayAvatarVideo(){
+      var p = vid.play();
+      if (p && typeof p.catch === 'function'){
+        p.catch(function(){});
+      }
     }
 
+    vid.addEventListener('loadedmetadata', function(){
+      if (modal.classList.contains('active')) tryPlayAvatarVideo();
+    });
+    vid.addEventListener('canplay', function(){
+      if (modal.classList.contains('active')) tryPlayAvatarVideo();
+    });
+
     function openModal(){
+      primeAvatarVideo();
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      /* Same user gesture as card tap — required for reliable inline autoplay on iOS */
       tryPlayAvatarVideo();
-      closeBtn.focus();
+      /* After paint: second play attempt + focus (focus must not run before play in same gesture tick). */
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          tryPlayAvatarVideo();
+          closeBtn.focus();
+        });
+      });
     }
 
     function closeModal(){
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      var vid = modal.querySelector('.custom-modal-video video');
-      if (vid){ try { vid.pause(); } catch (err) {} }
+      try { vid.pause(); } catch (err) {}
       customCard.focus();
     }
+
+    /* Pointer/touch: open from touchend so play() stays in the same gesture as iOS (click can arrive too late). */
+    customCard.addEventListener('touchend', function(e){
+      openModal();
+      e.preventDefault();
+    }, { passive: false });
 
     customCard.addEventListener('click', openModal);
     customCard.addEventListener('keydown', function(e){
