@@ -2119,10 +2119,6 @@
     var vid = document.getElementById('avatarIntroVideo');
     if (!customCard || !modal || !closeBtn || !vid) return;
 
-    function isTouchLike(){
-      return ('ontouchstart' in window) || ((navigator.maxTouchPoints || 0) > 0);
-    }
-
     function primeAvatarVideo(){
       /* Bind src inside the same user gesture as opening the modal (critical for iOS). */
       if (!vid.dataset.srcBound){
@@ -2135,12 +2131,7 @@
       vid.playsInline = true;
       vid.setAttribute('playsinline', '');
       vid.setAttribute('webkit-playsinline', '');
-      /* Native controls on touch: autoplay often still blocks until an explicit tap. */
-      if (isTouchLike()){
-        vid.setAttribute('controls', '');
-      } else {
-        vid.removeAttribute('controls');
-      }
+      vid.removeAttribute('controls');
     }
 
     function tryPlayAvatarVideo(){
