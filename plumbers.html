@@ -488,6 +488,254 @@
       margin: 0;
     }
 
+    /* Featured card — template / modal CTA */
+    .feat-card.featured {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      border: 2px solid var(--amber);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.08) 0%, rgba(245, 166, 35, 0) 100%);
+      transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.28s ease;
+    }
+    .feat-card.featured::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--amber);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+      border-radius: 8px 8px 0 0;
+      pointer-events: none;
+    }
+    .feat-card.featured:hover,
+    .feat-card.featured:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+    }
+    .feat-card.featured:hover::before,
+    .feat-card.featured:focus-visible::before {
+      transform: scaleX(1);
+    }
+    .feat-card.featured:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+    .feat-card.featured::after {
+      content: 'Click to explore';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .feat-card.featured:hover::after,
+    .feat-card.featured:focus-visible::after {
+      opacity: 1;
+    }
+
+    /* ─── Custom-site modal ─── */
+    .custom-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 31, 61, 0.92);
+      z-index: 1200;
+      overflow-y: auto;
+      animation: nbModalFadeIn 0.3s ease-out;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .custom-modal.active {
+      display: flex;
+    }
+    @keyframes nbModalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .custom-modal-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      animation: nbModalSlideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes nbModalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .custom-modal-inner {
+      background: var(--white);
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      padding: 48px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      animation: nbModalScaleIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0.08s backwards;
+      color: var(--navy);
+    }
+    @keyframes nbModalScaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .custom-modal-video {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .custom-modal-video video {
+      width: 100%;
+      max-width: 350px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      background: rgba(15, 31, 61, 0.06);
+      box-shadow: 0 8px 24px rgba(15, 31, 61, 0.12);
+    }
+    .custom-modal-text h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 3.5vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--navy);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    .custom-modal-text h2 em {
+      font-style: italic;
+      color: var(--amber-dark);
+    }
+    .custom-modal-text p {
+      font-size: 1rem;
+      font-family: var(--sans);
+      color: rgba(15, 31, 61, 0.78);
+      margin-bottom: 20px;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+    .feature-list {
+      list-style: none;
+      margin: 24px 0 28px;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 12px 0 12px 28px;
+      position: relative;
+      color: rgba(15, 31, 61, 0.78);
+      font-size: 0.95rem;
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+    .feature-list li::before {
+      content: '\2713';
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .modal-cta {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(15, 31, 61, 0.12);
+    }
+    .modal-cta p {
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+    .modal-cta p:last-child { margin-bottom: 0; }
+    .custom-modal-close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: var(--white);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s ease, transform 0.25s ease;
+      z-index: 1201;
+    }
+    .custom-modal-close:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: rotate(90deg);
+    }
+    .custom-modal-close:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 768px) {
+      .custom-modal-inner {
+        grid-template-columns: 1fr;
+        padding: 32px 20px;
+        gap: 28px;
+      }
+      .custom-modal-content {
+        padding: 24px 16px 32px;
+      }
+      .custom-modal-close {
+        width: 44px;
+        height: 44px;
+        font-size: 24px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .feat-card.featured {
+        transition: none;
+      }
+      .feat-card.featured::before {
+        transition: none;
+        transform: scaleX(1);
+      }
+      .custom-modal,
+      .custom-modal-content,
+      .custom-modal-inner {
+        animation: none !important;
+      }
+      .custom-modal-close:hover {
+        transform: none;
+      }
+    }
+
     /* ─── Social proof ─── */
     .proof-wrap {
       margin-top: 2rem;
@@ -1338,9 +1586,11 @@
           <h3>Tap to call, tap to message</h3>
           <p>A phone number and contact form that work properly on a phone. Most people searching for a plumber are on their mobile — your site needs to work where they are.</p>
         </div>
-        <div class="feat-card">
-          <h3>Looks right on any screen</h3>
-          <p>Your site will look clean and load fast on phones, tablets, and desktops. No tiny text, no sideways scrolling, no waiting.</p>
+        <!-- Interactive: opens Paul avatar modal -->
+        <div class="feat-card featured" id="customCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="modal" aria-label="Open details: your business, not a template">
+          <h3>Your business, not a template</h3>
+          <p>Choose how your site looks and feels. Different colours, different layouts, different features &mdash; whatever makes your business stand out. This is your site, not ours.</p>
         </div>
       </div>
     </div>
@@ -1607,6 +1857,44 @@
 
 </main>
 
+<!-- Modal: custom site / Paul avatar (triggered by #customCard) -->
+<div class="custom-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-custom-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="closeBtn" aria-label="Close dialog">&times;</button>
+
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner">
+      <div class="custom-modal-video">
+        <video autoplay muted loop playsinline width="350" height="350">
+          <source src="./plumber-avatar-optimized.mp4" type="video/mp4">
+          Your browser doesn&rsquo;t support HTML5 video.
+        </video>
+      </div>
+
+      <div class="custom-modal-text">
+        <h2 id="modal-custom-heading">We build from scratch around <em>your</em> business.</h2>
+
+        <p>That means you pick:</p>
+
+        <ul class="feature-list">
+          <li>Whether you want an avatar like Paul here or not</li>
+          <li>Your colours and fonts</li>
+          <li>Which sections you actually need &mdash; your story, job photos, testimonials, whatever matters</li>
+          <li>How your gallery looks</li>
+          <li>Where your phone number and contact form sit on the page</li>
+          <li>What questions the contact form asks</li>
+        </ul>
+
+        <p>Every site is different because every plumber is different. No two businesses are the same &mdash; so why should their sites be?</p>
+
+        <div class="modal-cta">
+          <p><strong>Ready to see what we can build for you?</strong></p>
+          <p>Fill in the form below and we&rsquo;ll get started.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ FOOTER (minimal: copyright + Privacy, Terms, Contact) ══ -->
 <footer>
   <div class="footer-inner">
@@ -1802,6 +2090,51 @@
         errBox.style.display='block';
         if(window.console&&console.warn) console.warn(err);
       });
+    });
+  })();
+
+  /* ── Custom-site modal (#customCard) ── */
+  (function(){
+    var customCard = document.getElementById('customCard');
+    var modal = document.getElementById('modal');
+    var closeBtn = document.getElementById('closeBtn');
+    if (!customCard || !modal || !closeBtn) return;
+
+    function openModal(){
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+
+    function closeModal(){
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      customCard.focus();
+    }
+
+    customCard.addEventListener('click', openModal);
+    customCard.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openModal();
+      }
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)){
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')){
+        closeModal();
+      }
     });
   })();
 </script>
