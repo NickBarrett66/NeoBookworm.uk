@@ -2263,9 +2263,20 @@
     var AMBER_FILL = 'rgba(245,166,35,0.22)';
     var NAVY       = '#0f1f3d';
     var NAVY_FILL  = 'rgba(15,31,61,0.07)';
-    var TILE_URL   = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
-    var TILE_ATTR  = '&copy; Google Maps';
+    /* CartoDB light tiles — reliable, CORS-friendly, free for non-commercial map UI.
+       Previous choice (mt1.google.com/vt) is an undocumented Google hotlink endpoint
+       that is rate-limited / blocked in production and was returning blank tiles. */
+    var TILE_URL   = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+    var TILE_ATTR  = '&copy; OpenStreetMap &copy; CartoDB';
     var R2_BASE    = 'https://pub-21917a0ea3ab48be8f0209e81af0a6ed.r2.dev/data';
+
+    /* Leaflet measures container size at init time. The modal is display:none until
+       opened, and the inner has a 0.4s scale-in animation, so even after toggling to
+       display:flex the container reads at scale(0.96) for ~400ms. We call
+       invalidateSize() once the animation has settled so tiles render correctly. */
+    function refreshMap(map) {
+      setTimeout(function(){ map.invalidateSize(); }, 250);
+    }
 
     function initMaps() {
       if (mapsInit) return;
@@ -2273,7 +2284,8 @@
 
       /* Map 1 — Postcode districts */
       var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m1);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m1);
+      refreshMap(m1);
       fetch(R2_BASE + '/SN.geojson')
         .then(function(r){ return r.json(); })
         .then(function(data) {
@@ -2291,11 +2303,13 @@
             if (isCore) layers.push(layer);
           });
           m1.fitBounds(L.featureGroup(layers).getBounds(), { padding: [8, 8] });
-        });
+          m1.invalidateSize();
+        })
+        .catch(function(err){ console.error('SN.geojson fetch failed:', err); });
 
       /* Map 2 — Radius (10 miles from Swindon centre) */
       var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m2);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m2);
       var swindon = [51.5558, -1.7797];
       var radiusMetres = 10 * 1609.34;
       var circle = L.circle(swindon, {
@@ -2307,10 +2321,12 @@
       }).addTo(m2);
       L.circleMarker(swindon, { radius: 5, color: NAVY, fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(m2);
       m2.fitBounds(circle.getBounds(), { padding: [8, 8] });
+      refreshMap(m2);
 
       /* Map 3 — County (Wiltshire) */
       var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m3);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m3);
+      refreshMap(m3);
       fetch(R2_BASE + '/wiltshire.geojson')
         .then(function(r){ return r.json(); })
         .then(function(data) {
@@ -2321,7 +2337,9 @@
             fillOpacity: 1
           }}).addTo(m3);
           m3.fitBounds(layer.getBounds(), { padding: [8, 8] });
-        });
+          m3.invalidateSize();
+        })
+        .catch(function(err){ console.error('wiltshire.geojson fetch failed:', err); });
     }
 
     function openAreaModal() {
@@ -2329,8 +2347,10 @@
       areaModal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       areaClose.focus();
-      /* Defer map init until modal is visible so Leaflet can measure container */
-      setTimeout(initMaps, 80);
+      /* Wait until after the modal scale-in animation (0.4s + 0.08s delay) so the
+         container reports its final size to Leaflet. invalidateSize() inside
+         initMaps gives a second chance once the animation completes. */
+      setTimeout(initMaps, 300);
     }
 
     function closeAreaModal() {
