@@ -686,6 +686,12 @@
       margin-bottom: 12px;
     }
     .modal-cta p:last-child { margin-bottom: 0; }
+    /* Three-up grid for the service-area options inside #areaModal. Stacks at ≤768px. */
+    .area-options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
     .custom-modal-close {
       position: fixed;
       top: 20px;
@@ -727,6 +733,10 @@
         width: 44px;
         height: 44px;
         font-size: 24px;
+      }
+      .area-options-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
       }
     }
 
@@ -1919,12 +1929,12 @@
 <div class="custom-modal" id="areaModal" role="dialog" aria-modal="true" aria-labelledby="modal-area-heading" aria-hidden="true">
   <button type="button" class="custom-modal-close" id="areaCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
-    <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px; padding:40px 48px;">
+    <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px;">
       <div class="custom-modal-text">
         <h2 id="modal-area-heading">Your service area, shown <em>your</em> way.</h2>
         <p>When we build your site, you choose how your coverage area appears on the map. Three options &mdash; pick whichever matches how you think about your patch.</p>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+      <div class="area-options-grid">
 
         <!-- Option 1: Postcode districts -->
         <div style="display:flex; flex-direction:column; gap:12px;">
