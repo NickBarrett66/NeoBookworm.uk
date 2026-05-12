@@ -1539,6 +1539,66 @@
     @media (max-width: 500px) {
       .job-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Services modal ── */
+    /* Tab 1: All-rounder category grid */
+    .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .svc-cat {
+      background: rgba(15,31,61,0.04); border: 1px solid rgba(15,31,61,0.1);
+      border-radius: 8px; padding: 16px 18px;
+    }
+    .svc-cat-head { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .svc-cat-icon {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--amber);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .svc-cat-name { font-family: var(--serif); font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+    .svc-cat ul { list-style: none; padding: 0; margin: 0; }
+    .svc-cat ul li {
+      font-size: 0.8rem; font-family: var(--sans); color: rgba(15,31,61,0.65);
+      padding: 3px 0 3px 14px; position: relative; line-height: 1.4;
+    }
+    .svc-cat ul li::before { content: '–'; position: absolute; left: 0; color: var(--amber); font-weight: 700; }
+
+    /* Tab 2: Specialist list */
+    .svc-spec-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(15,31,61,0.1);
+    }
+    .svc-spec-header p { font-size: 0.82rem; font-family: var(--sans); color: rgba(15,31,61,0.65); margin: 0; line-height: 1.5; flex: 1; }
+    .svc-spec-item { padding: 13px 0 13px 14px; border-left: 3px solid var(--amber); border-bottom: 1px solid rgba(15,31,61,0.08); }
+    .svc-spec-item:last-child { border-bottom: none; padding-bottom: 13px; }
+    .svc-spec-item strong {
+      display: block; font-family: var(--serif); font-size: 0.95rem; font-weight: 700;
+      color: var(--navy); margin-bottom: 4px;
+    }
+    .svc-spec-item p { font-size: 0.82rem; font-family: var(--sans); color: rgba(15,31,61,0.65); line-height: 1.6; margin: 0; }
+
+    /* Tab 3: Emergency list */
+    .svc-emrg-header {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(15,31,61,0.05); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;
+    }
+    .svc-emrg-header span { font-family: var(--sans); font-size: 0.8rem; font-weight: 600; color: var(--navy); }
+    .svc-emrg-item { padding: 11px 0; border-bottom: 1px solid rgba(15,31,61,0.08); }
+    .svc-emrg-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .svc-emrg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .svc-emrg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .svc-emrg-row strong { font-family: var(--sans); font-size: 0.88rem; font-weight: 700; color: var(--navy); flex: 1; }
+    .svc-emrg-badge {
+      font-size: 0.67rem; font-weight: 700; font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .svc-emrg-badge.urgent   { background: rgba(220,38,38,0.1);   color: #b91c1c; }
+    .svc-emrg-badge.same-day { background: rgba(245,166,35,0.18); color: #96670e; }
+    .svc-emrg-badge.next-day { background: rgba(15,31,61,0.07);   color: rgba(15,31,61,0.5); }
+    .svc-emrg-note { font-size: 0.78rem; font-family: var(--sans); color: rgba(15,31,61,0.5); line-height: 1.45; padding-left: 16px; }
+
+    @media (max-width: 560px) {
+      .svc-grid { grid-template-columns: 1fr; }
+      .svc-emrg-badge { display: none; }
+    }
   </style>
 
   <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
@@ -1780,29 +1840,31 @@
           <h3>Your area, spelled out</h3>
           <p>I write your site around the towns and postcodes you actually cover, so people searching locally find you &mdash; not a plumber three counties away.</p>
         </div>
-        <div class="feat-card">
+        <!-- Interactive: opens services layout demo modal -->
+        <div class="feat-card featured" id="servicesCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="servicesModal" aria-label="Open details: services in plain English">
           <!-- TRADE-SPECIFIC: services list -->
           <h3>Services in plain English</h3>
-          <p>Boiler installs, bathroom plumbing, leaks, unblocking, heating systems — whatever you do, listed clearly so customers know you handle their job before they call.</p>
+          <p>Written around how you actually work &mdash; not a generic list copied from a template. Whether you&rsquo;re a heating specialist, an all-rounder, or something else entirely, customers know you&rsquo;re right for them before they call.</p>
         </div>
         <!-- Interactive: opens gallery layout demo modal -->
         <div class="feat-card featured" id="photosCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="photosModal" aria-label="Open details: photos of real work">
           <h3>Photos of real work</h3>
-          <p>A gallery of your actual jobs — before and afters, finished bathrooms, boiler installs. Real photos build more trust than any amount of words.</p>
+          <p>Before-and-afters or a job-by-job gallery &mdash; whichever shows your work best. Real photos do more selling than any amount of words.</p>
         </div>
         <!-- Interactive: opens mobile contact demo modal -->
         <div class="feat-card featured" id="callCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="callModal" aria-label="Open details: tap to call, tap to message">
           <!-- TRADE-SPECIFIC: phone number context -->
           <h3>Tap to call, tap to message</h3>
-          <p>A phone number and contact form that work properly on a phone. Most people searching for a plumber are on their mobile — your site needs to work where they are.</p>
+          <p>Most people searching for a plumber are on their mobile. Your number needs to be one tap &mdash; not buried in small print they have to scroll three pages to find.</p>
         </div>
         <!-- Interactive: opens Paul avatar modal -->
         <div class="feat-card featured" id="customCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="modal" aria-label="Open details: your business, not a template">
           <h3>Your business, not a template</h3>
-          <p>Choose how your site looks and feels. Different colours, different layouts, different features &mdash; whatever makes your business stand out. This is your site, not ours.</p>
+          <p>Every plumber is different, so no two sites look the same. Built from scratch around how your business works &mdash; not around a layout we already had.</p>
         </div>
       </div>
     </div>
@@ -2068,6 +2130,172 @@
   </section>
 
 </main>
+
+<!-- Modal: services layout demo (triggered by #servicesCard) -->
+<div class="custom-modal" id="servicesModal" role="dialog" aria-modal="true" aria-labelledby="modal-services-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="servicesCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+
+      <div class="custom-modal-text">
+        <h2 id="modal-services-heading">Your services, written for the way <em>you</em> work.</h2>
+        <p>A services section isn&rsquo;t just a list &mdash; it&rsquo;s the first thing a customer reads to decide if you&rsquo;re the right plumber for them. Three approaches below: pick whichever matches how you run your business.</p>
+      </div>
+
+      <div class="gallery-tabs" role="tablist" aria-label="Services layout options">
+        <button class="gallery-tab active" id="tabAllRounder" role="tab" aria-selected="true"  aria-controls="panelAllRounder">All-rounder</button>
+        <button class="gallery-tab"        id="tabSpecialist" role="tab" aria-selected="false" aria-controls="panelSpecialist">Specialist</button>
+        <button class="gallery-tab"        id="tabEmergency"  role="tab" aria-selected="false" aria-controls="panelEmergency">Emergency</button>
+      </div>
+
+      <!-- Panel 1: All-rounder -->
+      <div id="panelAllRounder" role="tabpanel" aria-labelledby="tabAllRounder">
+        <div class="svc-grid">
+
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C9 6 6 9 6 13a6 6 0 0 0 12 0c0-4-3-7-6-11z" stroke="#0f1f3d" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 17v-4" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Boilers &amp; Heating</span>
+            </div>
+            <ul>
+              <li>New boiler installation</li>
+              <li>Annual boiler servicing</li>
+              <li>Power flushing</li>
+            </ul>
+          </div>
+
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18h16M4 18v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1M4 18c0-4 2-7 8-7s8 3 8 7M8 11V7a4 4 0 0 1 8 0v4" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Bathrooms</span>
+            </div>
+            <ul>
+              <li>Full bathroom fits</li>
+              <li>Shower installation</li>
+              <li>Taps, basins &amp; toilets</li>
+            </ul>
+          </div>
+
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Plumbing &amp; Repairs</span>
+            </div>
+            <ul>
+              <li>Leaks &amp; burst pipes</li>
+              <li>Cylinder &amp; tank work</li>
+              <li>Outdoor tap installation</li>
+            </ul>
+          </div>
+
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v6M12 2l-3 3M12 2l3 3" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10h14l-1.5 9H6.5L5 10z" stroke="#0f1f3d" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Drainage</span>
+            </div>
+            <ul>
+              <li>Blocked drains &amp; toilets</li>
+              <li>Outside drain clearance</li>
+              <li>Overflow &amp; waste repairs</li>
+            </ul>
+          </div>
+
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Organised by job type so customers land straight on their problem &mdash; not a wall of text they have to read through.</p>
+      </div>
+
+      <!-- Panel 2: Specialist -->
+      <div id="panelSpecialist" role="tabpanel" aria-labelledby="tabSpecialist" hidden>
+        <div class="svc-spec-header">
+          <div class="nb-badge nb-gassafe" style="flex-shrink:0;">
+            <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+            <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER<br>Reg. No. 573421</div></div>
+          </div>
+          <p>Heating and boiler specialist covering Swindon and surrounding Wiltshire. All gas work Gas Safe registered.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>New boiler installation</strong>
+          <p>Replace your old boiler with a modern A-rated combi or system boiler. We supply and fit &mdash; Worcester Bosch, Vaillant or Ideal. Most installations completed in one day.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Boiler repair &amp; servicing</strong>
+          <p>Annual Gas Safe service to keep your boiler running safely and your manufacturer&rsquo;s warranty valid. Fast-turnaround repairs on all makes and models.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Power flushing</strong>
+          <p>Clears sludge and debris from your heating system. Reduces energy bills, extends boiler life, and fixes those cold spots on radiators that never seem to warm up.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Central heating installation</strong>
+          <p>Full system design and installation &mdash; new pipework, radiators, and thermostatic controls. Priced in writing before we start, no surprises when the job is done.</p>
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Works best if you want to be known as the go-to heating person in your area, not a generalist who also does boilers.</p>
+      </div>
+
+      <!-- Panel 3: Emergency -->
+      <div id="panelEmergency" role="tabpanel" aria-labelledby="tabEmergency" hidden>
+        <div class="svc-emrg-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#0f1f3d" stroke-width="1.5"/><path d="M12 7v5l3 3" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Available 24 hours &mdash; Paul answers the phone directly.</span>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#dc2626;"></span>
+            <strong>Burst pipe</strong>
+            <span class="svc-emrg-badge urgent">Emergency</span>
+          </div>
+          <p class="svc-emrg-note">Stop the damage before it spreads. Call now and we&rsquo;ll be with you as fast as we can get there.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#dc2626;"></span>
+            <strong>No heating or hot water</strong>
+            <span class="svc-emrg-badge urgent">Emergency</span>
+          </div>
+          <p class="svc-emrg-note">Boiler breakdown or complete loss of hot water &mdash; we prioritise these, especially in winter.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#f5a623;"></span>
+            <strong>Blocked drain or toilet</strong>
+            <span class="svc-emrg-badge same-day">Same day</span>
+          </div>
+          <p class="svc-emrg-note">Kitchen, bathroom or outside &mdash; we&rsquo;ll clear it and check what caused it.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#f5a623;"></span>
+            <strong>Leaking pipe or joint</strong>
+            <span class="svc-emrg-badge same-day">Same day</span>
+          </div>
+          <p class="svc-emrg-note">Don&rsquo;t let a small drip become a big repair bill. Turn off the water and call us.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:rgba(15,31,61,0.25);"></span>
+            <strong>Cylinder or tank replacement</strong>
+            <span class="svc-emrg-badge next-day">Next day</span>
+          </div>
+          <p class="svc-emrg-note">Hot water cylinder given up? We carry common sizes in stock to get you back up quickly.</p>
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Works best if speed and availability are your main selling point &mdash; customers in a crisis aren&rsquo;t browsing, they&rsquo;re calling the first number they trust.</p>
+      </div>
+
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me which fits you best</strong> in the form below &mdash; or describe how you work and I&rsquo;ll suggest the right approach.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Modal: gallery layout demo (triggered by #photosCard) -->
 <div class="custom-modal" id="photosModal" role="dialog" aria-modal="true" aria-labelledby="modal-photos-heading" aria-hidden="true">
@@ -2765,6 +2993,61 @@
     });
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
+    });
+  })();
+
+  /* ── Services modal (#servicesCard) — 3-way tab switcher ── */
+  (function(){
+    var card     = document.getElementById('servicesCard');
+    var modal    = document.getElementById('servicesModal');
+    var closeBtn = document.getElementById('servicesCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+
+    var tabs   = [
+      document.getElementById('tabAllRounder'),
+      document.getElementById('tabSpecialist'),
+      document.getElementById('tabEmergency')
+    ];
+    var panels = [
+      document.getElementById('panelAllRounder'),
+      document.getElementById('panelSpecialist'),
+      document.getElementById('panelEmergency')
+    ];
+
+    function switchTab(idx) {
+      tabs.forEach(function(t, i) {
+        var active = (i === idx);
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+        if (active) panels[i].removeAttribute('hidden');
+        else         panels[i].setAttribute('hidden', '');
+      });
+    }
+    tabs.forEach(function(t, i){ t.addEventListener('click', function(){ switchTab(i); }); });
+
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      switchTab(0);
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
     });
   })();
 
