@@ -2263,11 +2263,11 @@
     var AMBER_FILL = 'rgba(245,166,35,0.22)';
     var NAVY       = '#0f1f3d';
     var NAVY_FILL  = 'rgba(15,31,61,0.07)';
-    /* CartoDB light tiles — reliable, CORS-friendly, free for non-commercial map UI.
-       Previous choice (mt1.google.com/vt) is an undocumented Google hotlink endpoint
-       that is rate-limited / blocked in production and was returning blank tiles. */
-    var TILE_URL   = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-    var TILE_ATTR  = '&copy; OpenStreetMap &copy; CartoDB';
+    /* Stadia Maps OSM Bright — vibrant, CORS-safe, free for non-commercial use.
+       Replaces previous CartoDB Light (too washed out) and the undocumented
+       mt1.google.com/vt hotlink (rate-limited / unreliable in production). */
+    var TILE_URL   = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+    var TILE_ATTR  = '&copy; Stadia Maps &copy; OpenStreetMap';
     var R2_BASE    = 'https://pub-21917a0ea3ab48be8f0209e81af0a6ed.r2.dev/data';
 
     /* Leaflet measures container size at init time. The modal is display:none until
@@ -2290,7 +2290,7 @@
          before the async fetch resolves; fitBounds below refines once data arrives. */
       var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
         .setView(swindon, 10);
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m1);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m1);
       refreshMap(m1);
       fetch(R2_BASE + '/SN.geojson')
         .then(function(r){ return r.json(); })
@@ -2321,7 +2321,7 @@
       var radiusBounds = L.latLng(swindon).toBounds(radiusMetres * 2);
       var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
         .fitBounds(radiusBounds, { padding: [8, 8] });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m2);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m2);
       L.circle(swindon, {
         radius: radiusMetres,
         color: AMBER,
@@ -2336,7 +2336,7 @@
          the GeoJSON fetch is slow or fails. */
       var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
         .setView(wiltshireCentre, 9);
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m3);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m3);
       refreshMap(m3);
       fetch(R2_BASE + '/wiltshire.geojson')
         .then(function(r){ return r.json(); })
