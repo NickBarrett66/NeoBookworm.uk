@@ -1187,7 +1187,15 @@
       padding-left: 32px; /* align with radio card text (circle + gap) */
     }
     .details-reveal.open { max-height: 280px; }
+    #intake-reveal.open { max-height: 200px; }
     .details-reveal-inner { padding-top: 2px; }
+    .intake-reveal-inner {
+      padding-top: 8px;
+      padding-bottom: 4px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
 
     /* Submit button */
     .bstart {
@@ -2066,8 +2074,8 @@
               <legend class="radio-group-label">How would you like to get started?</legend>
               <div class="radio-cards">
 
-                <label class="radio-card selected" data-value="leave_it_with_me">
-                  <input type="radio" name="start_option" value="leave_it_with_me" checked>
+                <label class="radio-card" data-value="leave_it_with_me">
+                  <input type="radio" name="start_option" value="leave_it_with_me">
                   <div class="radio-circle" aria-hidden="true"></div>
                   <div class="radio-card-text">
                     <div class="radio-card-title">I&rsquo;d like you to send me an initial start point</div>
@@ -2105,12 +2113,21 @@
                   </div>
                 </label>
 
+                <!-- Conditional note — revealed when 'intake_form' is selected -->
+                <div class="details-reveal" id="intake-reveal" aria-live="polite">
+                  <div class="intake-reveal-inner">
+                    The full intake form takes about five minutes. It covers your services, your area, accreditations and any photos you&rsquo;d like to include &mdash; the more you fill in, the closer I can get on the first version.
+                  </div>
+                </div>
+
               </div>
             </fieldset>
 
-            <button type="submit" class="bstart" id="submit-btn">Build my free preview &rarr;</button>
-            <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
-            <p class="form-privacy">I&rsquo;ll only use your details to build and send you your preview site. No marketing emails, no passing your details on.</p>
+            <div id="form-submit-area" style="display:none">
+              <button type="submit" class="bstart" id="submit-btn">Build my free preview &rarr;</button>
+              <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
+              <p class="form-privacy">I&rsquo;ll only use your details to build and send you your preview site. No marketing emails, no passing your details on.</p>
+            </div>
 
           </form>
         </div>
@@ -2627,6 +2644,8 @@
   (function(){
     var cards=document.querySelectorAll('.radio-card');
     var detailsReveal=document.getElementById('details-reveal');
+    var intakeReveal=document.getElementById('intake-reveal');
+    var submitArea=document.getElementById('form-submit-area');
 
     function selectCard(card){
       cards.forEach(function(c){ c.classList.remove('selected'); });
@@ -2641,6 +2660,14 @@
           detailsReveal.classList.remove('open');
         }
       }
+      if(intakeReveal){
+        if(val==='intake_form'){
+          intakeReveal.classList.add('open');
+        } else {
+          intakeReveal.classList.remove('open');
+        }
+      }
+      if(submitArea) submitArea.style.display='block';
     }
 
     cards.forEach(function(card){

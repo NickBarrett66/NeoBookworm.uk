@@ -603,7 +603,7 @@ curStep=n;
 document.getElementById('pbar').style.width=Math.round(((n-1)/5)*100)+'%';
 document.getElementById('steplbl').textContent='Step '+n+' of 5';
 document.getElementById('bbk').style.display=n>1?'block':'none';
-document.getElementById('bnx').textContent=n===5?'Submit \u2192':'Continue \u2192';
+document.getElementById('bnx').textContent=n===5?'Build my free preview \u2192':'Continue \u2192';
 }
 
 function goNext(){if(!validate(curStep)) return;if(curStep>=5){submitForm();}else{goToStep(curStep+1);}}
