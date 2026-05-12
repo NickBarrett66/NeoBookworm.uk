@@ -2282,8 +2282,14 @@
       if (mapsInit) return;
       mapsInit = true;
 
-      /* Map 1 — Postcode districts */
-      var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      var swindon = [51.5558, -1.7797];
+      var wiltshireCentre = [51.30, -1.95];
+
+      /* Map 1 — Postcode districts.
+         setView gives the map an initial projection so the tile layer can render
+         before the async fetch resolves; fitBounds below refines once data arrives. */
+      var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .setView(swindon, 10);
       L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m1);
       refreshMap(m1);
       fetch(R2_BASE + '/SN.geojson')
@@ -2307,12 +2313,16 @@
         })
         .catch(function(err){ console.error('SN.geojson fetch failed:', err); });
 
-      /* Map 2 — Radius (10 miles from Swindon centre) */
-      var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m2);
-      var swindon = [51.5558, -1.7797];
+      /* Map 2 — Radius (10 miles from Swindon centre).
+         Compute bounds from lat/lng+radius BEFORE adding the circle, so the map has
+         a view first. Adding L.circle to a map with no view triggers a projection
+         call against an undefined _pixelOrigin and throws layerPointToLatLng. */
       var radiusMetres = 10 * 1609.34;
-      var circle = L.circle(swindon, {
+      var radiusBounds = L.latLng(swindon).toBounds(radiusMetres * 2);
+      var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .fitBounds(radiusBounds, { padding: [8, 8] });
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m2);
+      L.circle(swindon, {
         radius: radiusMetres,
         color: AMBER,
         weight: 2.5,
@@ -2320,11 +2330,12 @@
         fillOpacity: 1
       }).addTo(m2);
       L.circleMarker(swindon, { radius: 5, color: NAVY, fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(m2);
-      m2.fitBounds(circle.getBounds(), { padding: [8, 8] });
       refreshMap(m2);
 
-      /* Map 3 — County (Wiltshire) */
-      var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      /* Map 3 — County (Wiltshire). setView first so the basemap renders even if
+         the GeoJSON fetch is slow or fails. */
+      var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .setView(wiltshireCentre, 9);
       L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19, subdomains: 'abcd' }).addTo(m3);
       refreshMap(m3);
       fetch(R2_BASE + '/wiltshire.geojson')
