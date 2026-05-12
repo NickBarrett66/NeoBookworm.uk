@@ -1357,6 +1357,99 @@
       .proof-card { padding: 1.5rem; }
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
     }
+
+    /* ── Accreditation badges (Gas Safe modal) ── */
+    .nb-badge {
+      display: flex; align-items: stretch; border-radius: 6px; overflow: hidden;
+      height: 52px; font-family: var(--sans);
+    }
+    .nb-badge .nb-mark {
+      width: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .nb-badge .nb-text {
+      background: #fff; padding: 0 10px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .nb-badge .nb-top { font-size: 11px; font-weight: 800; letter-spacing: .06em; line-height: 1; }
+    .nb-badge .nb-bot { font-size: 7.5px; color: #555; letter-spacing: .03em; line-height: 1.4; margin-top: 2px; }
+    .nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
+    .nb-gassafe .nb-mark { background: #1a6db5; }
+    .nb-gassafe .nb-top { color: #1a6db5; }
+    .nb-gassafe.dk .nb-text { background: #1a2f55; }
+    .nb-gassafe.dk .nb-top { color: #60aaef; }
+    .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+    .nb-checkatrade { border: 1.5px solid #00a69c; min-width: 160px; background: #fff; }
+    .nb-checkatrade .nb-mark { background: #00a69c; height: 100%; }
+    .nb-checkatrade .nb-top { font-size: 10px; color: #00a69c; }
+    .nb-checkatrade .nb-stars { color: #f5a623; font-size: 11px; letter-spacing: 1px; margin-top: 2px; }
+    .nb-checkatrade .nb-bot { font-size: 7.5px; color: #555; margin-top: 1px; }
+    .nb-checkatrade.dk { background: #1a2f55; }
+    .nb-checkatrade.dk .nb-top { color: #00d4c8; }
+    .nb-checkatrade.dk .nb-bot { color: #a0b4cc; }
+    .nb-insured {
+      display: inline-flex; align-items: center; gap: 8px; border-radius: 6px;
+      border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff;
+      font-family: var(--sans); min-width: 160px;
+    }
+    .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+    .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+    .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+    .nb-insured.dk .nb-top { color: #e0eaf5; }
+    .nb-insured.dk .nb-bot { color: #a0b4cc; }
+    .nb-insured.dk svg path { stroke: #a0b4cc; }
+
+    /* ── Phone frame mock (Call modal) ── */
+    .phone-mock {
+      width: 220px; flex-shrink: 0;
+      background: #1c1c1e; border-radius: 36px; padding: 10px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45);
+      margin: 0 auto;
+    }
+    .phone-mock-inner { background: #fff; border-radius: 28px; overflow: hidden; }
+    .phone-mock-notch {
+      width: 66px; height: 18px; background: #1c1c1e;
+      border-radius: 0 0 12px 12px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .phone-mock-body { padding: 8px 12px 14px; }
+    .phone-biz-name {
+      font-family: var(--serif); font-size: 10px; font-weight: 700; color: var(--navy);
+      padding: 6px 0 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(15,31,61,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .phone-biz-name span { font-size: 7px; color: rgba(15,31,61,0.4); font-family: var(--sans); font-weight: 400; }
+    .phone-call-btn {
+      display: flex; align-items: center; gap: 7px; background: var(--amber);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+      cursor: default; pointer-events: none;
+    }
+    .phone-call-btn svg { flex-shrink: 0; }
+    .phone-call-label { display: flex; flex-direction: column; }
+    .phone-call-label strong { font-size: 10px; font-weight: 700; color: var(--navy); font-family: var(--sans); line-height: 1.2; }
+    .phone-call-label span { font-size: 8.5px; color: rgba(15,31,61,0.7); font-family: var(--sans); margin-top: 1px; }
+    .phone-or {
+      text-align: center; font-size: 7.5px; color: rgba(15,31,61,0.4); font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: 0.06em; margin: 6px 0; position: relative;
+    }
+    .phone-or::before, .phone-or::after {
+      content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+      width: 30%; height: 1px; background: rgba(15,31,61,0.12);
+    }
+    .phone-or::before { left: 0; }
+    .phone-or::after { right: 0; }
+    .phone-field {
+      display: block; width: 100%; background: #f5f5f3; border: 1px solid rgba(15,31,61,0.12);
+      border-radius: 5px; padding: 5px 7px; font-size: 8.5px; font-family: var(--sans);
+      color: rgba(15,31,61,0.45); margin-bottom: 5px; resize: none; line-height: 1.4;
+    }
+    .phone-send-btn {
+      display: block; width: 100%; background: var(--navy); color: #fff;
+      border-radius: 5px; padding: 7px; font-size: 8.5px; font-family: var(--sans);
+      font-weight: 700; text-align: center; letter-spacing: 0.04em;
+    }
+    .phone-mock-home {
+      width: 44px; height: 4px; background: rgba(255,255,255,0.3);
+      border-radius: 2px; margin: 8px auto 2px;
+    }
   </style>
 
   <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
@@ -1585,7 +1678,9 @@
       <h2 class="section-title">Everything customers look for — in <em>one place.</em></h2>
       <div class="gold-line"></div>
       <div class="cards-grid">
-        <div class="feat-card">
+        <!-- Interactive: opens Gas Safe badge demo modal -->
+        <div class="feat-card featured" id="gasSafeCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="gasSafeModal" aria-label="Open details: Gas Safe front and centre">
           <!-- TRADE-SPECIFIC: card 1 accreditation -->
           <h3>Gas Safe front and centre</h3>
           <p>If you&rsquo;re Gas Safe registered, your licence number goes on every page — linked to the register so customers can verify it in one click.</p>
@@ -1605,7 +1700,9 @@
           <h3>Photos of real work</h3>
           <p>A gallery of your actual jobs — before and afters, finished bathrooms, boiler installs. Real photos build more trust than any amount of words.</p>
         </div>
-        <div class="feat-card">
+        <!-- Interactive: opens mobile contact demo modal -->
+        <div class="feat-card featured" id="callCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="callModal" aria-label="Open details: tap to call, tap to message">
           <!-- TRADE-SPECIFIC: phone number context -->
           <h3>Tap to call, tap to message</h3>
           <p>A phone number and contact form that work properly on a phone. Most people searching for a plumber are on their mobile — your site needs to work where they are.</p>
@@ -1880,6 +1977,105 @@
   </section>
 
 </main>
+
+<!-- Modal: Gas Safe badge demo (triggered by #gasSafeCard) -->
+<div class="custom-modal" id="gasSafeModal" role="dialog" aria-modal="true" aria-labelledby="modal-gassafe-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="gasSafeCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:28px; padding:40px 48px;">
+      <div class="custom-modal-text">
+        <h2 id="modal-gassafe-heading">Your registration, verified in <em>one click.</em></h2>
+        <p>Your Gas Safe number goes on every page &mdash; not buried in small print, but displayed as a proper badge, linked live to the public register. A customer who wants to check you&rsquo;re legit can do it in seconds, before they even pick up the phone.</p>
+      </div>
+
+      <div>
+        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:rgba(15,31,61,0.4); margin-bottom:8px;">In your site header</div>
+        <div style="background:#fff; border:1px solid rgba(15,31,61,0.1); border-radius:8px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <span style="font-family:var(--serif); font-size:1rem; font-weight:700; color:var(--navy);">Paul&rsquo;s Plumbing</span>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div class="nb-badge nb-gassafe">
+              <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+              <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER<br>Reg. No. 573421</div></div>
+            </div>
+            <div class="nb-insured">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#5f5e5a" stroke-width="1.5" fill="none"/><path d="M9 12L11 14L15 10" stroke="#5f5e5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div><div class="nb-top">Fully Insured</div><div class="nb-bot">Public liability cover<br>up to &pound;5 million</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:rgba(15,31,61,0.4); margin-bottom:8px;">On your dark sections &amp; footer</div>
+        <div style="background:var(--navy); border-radius:8px; padding:18px 20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <div class="nb-badge nb-gassafe dk">
+            <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+            <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER &middot; Reg. No. 573421</div></div>
+          </div>
+          <div class="nb-badge nb-checkatrade dk">
+            <div class="nb-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12L10 17L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="nb-text"><div class="nb-top">CHECKATRADE</div><div class="nb-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="nb-bot">4.9 &middot; 94 reviews</div></div>
+          </div>
+          <div class="nb-insured dk">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#a0b4cc" stroke-width="1.5" fill="none"/><path d="M9 12L11 14L15 10" stroke="#a0b4cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><div class="nb-top">Fully Insured</div><div class="nb-bot">Public liability &pound;5m</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me your Gas Safe number</strong> when you fill in the form below and I&rsquo;ll link it straight to the register. If you have Checkatrade reviews too, those go on as well.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: tap to call / contact demo (triggered by #callCard) -->
+<div class="custom-modal" id="callModal" role="dialog" aria-modal="true" aria-labelledby="modal-call-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="callCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:840px; grid-template-columns:auto 1fr; gap:44px; padding:40px 48px; align-items:start;">
+
+      <div class="phone-mock" aria-hidden="true">
+        <div class="phone-mock-inner">
+          <div class="phone-mock-notch"></div>
+          <div class="phone-mock-body">
+            <div class="phone-biz-name">
+              Paul&rsquo;s Plumbing <span>Swindon &amp; surrounding areas</span>
+            </div>
+            <div class="phone-call-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14 14.6C14.2 14.4 14.6 14.3 14.9 14.5C16 14.9 17.2 15.1 18.5 15.1C19 15.1 19.4 15.5 19.4 16V18.5C19.4 19 19 19.4 18.5 19.4C9.7 19.4 2.6 12.3 2.6 3.5C2.6 3 3 2.6 3.5 2.6H6C6.5 2.6 6.9 3 6.9 3.5C6.9 4.8 7.1 6 7.5 7.1C7.6 7.4 7.5 7.8 7.3 8L5.5 9.8C5.5 10 6 10.5 6.6 10.8Z" fill="#0f1f3d"/></svg>
+              <div class="phone-call-label">
+                <strong>Call Paul</strong>
+                <span>07700 900 123</span>
+              </div>
+            </div>
+            <div class="phone-or">or send a message</div>
+            <input class="phone-field" type="text" placeholder="Your name" disabled aria-hidden="true">
+            <textarea class="phone-field" rows="3" placeholder="What do you need help with?" disabled aria-hidden="true"></textarea>
+            <div class="phone-send-btn">Send message &rarr;</div>
+          </div>
+        </div>
+        <div class="phone-mock-home"></div>
+      </div>
+
+      <div class="custom-modal-text">
+        <h2 id="modal-call-heading">One tap to call. Works on <em>every phone.</em></h2>
+        <p>Most people searching for a plumber are on their mobile &mdash; not sitting at a desk. Your number needs to work in a single tap, not be buried three scrolls deep on a contact page they have to navigate to find.</p>
+        <ul class="feature-list">
+          <li>Large tap-to-call button, styled so it&rsquo;s impossible to miss</li>
+          <li>Contact form that works on a small screen &mdash; no tiny fields or horizontal scrolling</li>
+          <li>Both options on every page, not just a dedicated contact page</li>
+          <li>Your number in a size people can actually read without zooming</li>
+        </ul>
+        <div class="modal-cta">
+          <p><strong>Call only, form only, or both</strong> &mdash; tell me how you prefer to hear from customers and I&rsquo;ll set it up that way.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Modal: custom site / Paul avatar (triggered by #customCard) -->
 <div class="custom-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-custom-heading" aria-hidden="true">
@@ -2393,6 +2589,68 @@
     });
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
+    });
+  })();
+
+  /* ── Gas Safe modal (#gasSafeCard) ── */
+  (function(){
+    var card     = document.getElementById('gasSafeCard');
+    var modal    = document.getElementById('gasSafeModal');
+    var closeBtn = document.getElementById('gasSafeCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+  })();
+
+  /* ── Call modal (#callCard) ── */
+  (function(){
+    var card     = document.getElementById('callCard');
+    var modal    = document.getElementById('callModal');
+    var closeBtn = document.getElementById('callCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
     });
   })();
 </script>
