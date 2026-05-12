@@ -22,6 +22,7 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="preconnect" href="https://vitals.vercel-insights.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <!-- Font preloads: heading upright, body, heading italic (used in h1 em, above fold) -->
   <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
@@ -1579,9 +1580,11 @@
           <h3>Gas Safe front and centre</h3>
           <p>If you&rsquo;re Gas Safe registered, your licence number goes on every page — linked to the register so customers can verify it in one click.</p>
         </div>
-        <div class="feat-card">
+        <!-- Interactive: opens service area map modal -->
+        <div class="feat-card featured" id="areaCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="areaModal" aria-label="Open details: your area, spelled out">
           <h3>Your area, spelled out</h3>
-          <p>I write your site around the towns and postcodes you actually cover, so people searching locally find you — not a plumber three counties away.</p>
+          <p>I write your site around the towns and postcodes you actually cover, so people searching locally find you &mdash; not a plumber three counties away.</p>
         </div>
         <div class="feat-card">
           <!-- TRADE-SPECIFIC: services list -->
@@ -1912,7 +1915,51 @@
   </div>
 </div>
 
-<!-- ══ FOOTER (minimal: copyright + Privacy, Terms, Contact) ══ -->
+<!-- Modal: service area map styles (triggered by #areaCard) -->
+<div class="custom-modal" id="areaModal" role="dialog" aria-modal="true" aria-labelledby="modal-area-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="areaCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px; padding:40px 48px;">
+      <div class="custom-modal-text">
+        <h2 id="modal-area-heading">Your service area, shown <em>your</em> way.</h2>
+        <p>When we build your site, you choose how your coverage area appears on the map. Three options &mdash; pick whichever matches how you think about your patch.</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+
+        <!-- Option 1: Postcode districts -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:2px solid var(--amber); height:220px;" id="areaMap1"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">Postcode districts</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">Exact postcode boundaries — SN1, SN2, SN3 and so on. Ideal if you think in postcodes and want to be precise about which areas you cover.</p>
+          </div>
+        </div>
+
+        <!-- Option 2: Radius -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:1px solid rgba(15,31,61,0.15); height:220px;" id="areaMap2"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">Radius from base</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">A circle showing how far you travel from your base. Simple, clear, and works well if you cover a consistent area in all directions.</p>
+          </div>
+        </div>
+
+        <!-- Option 3: County -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:1px solid rgba(15,31,61,0.15); height:220px;" id="areaMap3"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">County-wide</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">Your full county boundary. Best if you genuinely cover the whole area and want to keep it simple for customers to understand.</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me which style you'd like</strong> when you fill in the form below and I'll build it exactly that way.</p>
+      </div>
+    </div>
+  </div>
+</div>
 <footer>
   <div class="footer-inner">
     <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
@@ -2198,6 +2245,113 @@
       if (e.key === 'Escape' && modal.classList.contains('active')){
         closeModal();
       }
+    });
+  })();
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  /* ── Area modal (#areaCard) ── */
+  (function () {
+    var areaCard   = document.getElementById('areaCard');
+    var areaModal  = document.getElementById('areaModal');
+    var areaClose  = document.getElementById('areaCloseBtn');
+    if (!areaCard || !areaModal || !areaClose) return;
+
+    var mapsInit = false;
+    var AMBER      = '#f5a623';
+    var AMBER_FILL = 'rgba(245,166,35,0.22)';
+    var NAVY       = '#0f1f3d';
+    var NAVY_FILL  = 'rgba(15,31,61,0.07)';
+    var TILE_URL   = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+    var TILE_ATTR  = '&copy; Google Maps';
+    var R2_BASE    = 'https://pub-21917a0ea3ab48be8f0209e81af0a6ed.r2.dev/data';
+
+    function initMaps() {
+      if (mapsInit) return;
+      mapsInit = true;
+
+      /* Map 1 — Postcode districts */
+      var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m1);
+      fetch(R2_BASE + '/SN.geojson')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var CORE = ['SN1','SN2','SN3','SN4','SN5','SN25','SN26'];
+          var layers = [];
+          data.features.forEach(function(f) {
+            var isCore = CORE.indexOf(f.properties.name) !== -1;
+            var layer = L.geoJSON(f, { style: {
+              color: isCore ? AMBER : NAVY,
+              weight: isCore ? 2 : 0.8,
+              fillColor: isCore ? AMBER_FILL : NAVY_FILL,
+              fillOpacity: 1,
+              opacity: isCore ? 1 : 0.3
+            }}).addTo(m1);
+            if (isCore) layers.push(layer);
+          });
+          m1.fitBounds(L.featureGroup(layers).getBounds(), { padding: [8, 8] });
+        });
+
+      /* Map 2 — Radius (10 miles from Swindon centre) */
+      var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m2);
+      var swindon = [51.5558, -1.7797];
+      var radiusMetres = 10 * 1609.34;
+      var circle = L.circle(swindon, {
+        radius: radiusMetres,
+        color: AMBER,
+        weight: 2.5,
+        fillColor: AMBER_FILL,
+        fillOpacity: 1
+      }).addTo(m2);
+      L.circleMarker(swindon, { radius: 5, color: NAVY, fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(m2);
+      m2.fitBounds(circle.getBounds(), { padding: [8, 8] });
+
+      /* Map 3 — County (Wiltshire) */
+      var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m3);
+      fetch(R2_BASE + '/wiltshire.geojson')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var layer = L.geoJSON(data, { style: {
+            color: AMBER,
+            weight: 2.5,
+            fillColor: AMBER_FILL,
+            fillOpacity: 1
+          }}).addTo(m3);
+          m3.fitBounds(layer.getBounds(), { padding: [8, 8] });
+        });
+    }
+
+    function openAreaModal() {
+      areaModal.classList.add('active');
+      areaModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      areaClose.focus();
+      /* Defer map init until modal is visible so Leaflet can measure container */
+      setTimeout(initMaps, 80);
+    }
+
+    function closeAreaModal() {
+      areaModal.classList.remove('active');
+      areaModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      areaCard.focus();
+    }
+
+    areaCard.addEventListener('click', openAreaModal);
+    areaCard.addEventListener('touchend', function(e){ openAreaModal(); e.preventDefault(); }, { passive: false });
+    areaCard.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openAreaModal(); }
+    });
+    areaClose.addEventListener('click', closeAreaModal);
+    areaModal.addEventListener('click', function(e){
+      var inner = areaModal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) closeAreaModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
     });
   })();
 </script>
