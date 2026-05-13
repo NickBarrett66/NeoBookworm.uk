@@ -315,6 +315,33 @@
     .hero-mock-cap-text strong { color: var(--off-white); font-weight: 600; }
     .hero-mock-cap-arrow { font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.04em; white-space: nowrap; }
 
+    .hero-demo-link {
+      display: block;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.52);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .hero-demo-link:hover { color: var(--amber); }
+
+    /* ─── Scarcity badge (inside pricing section) ─── */
+    .avail-scarcity {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid rgba(245,166,35,0.35);
+      border-radius: 6px;
+      padding: 11px 16px;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      color: var(--off-white);
+      line-height: 1.5;
+    }
+    .avail-scarcity strong { color: var(--amber); font-weight: 700; }
+
     .scroll-hint {
       position: relative;
       z-index: 1;
@@ -1706,7 +1733,7 @@
       <div class="hero-copy">
         <!-- TRADE-SPECIFIC: Hero eyebrow -->
         <span class="eyebrow">For plumbers without a website</span>
-        <h1>Word of mouth built your business.<br><em>A website means you&rsquo;re not invisible to everyone else.</em></h1>
+        <h1>Word of mouth only reaches people who already know you.<br><em>A website gets you the rest.</em></h1>
         <div class="gold-line"></div>
         <p class="hero-sub">Most plumbers get their work through referrals &mdash; and that&rsquo;s a great start. But referrals only reach the people who already know someone who knows you. Everyone else searching for a plumber right now doesn&rsquo;t know you exist.</p>
         <p class="hero-sub" style="margin-top: 0.85rem;">I build websites specifically for plumbing businesses. You see the finished site before you pay anything &mdash; if it&rsquo;s not right, walk away and owe me nothing.</p>
@@ -1788,7 +1815,7 @@
             <span class="step-num">3</span>
           </div>
           <h3>You decide</h3>
-          <p>If you like it, it&rsquo;s £199 to keep (normally £299) — plus £9.99 a month for me to keep it live and looked after. If it&rsquo;s not right, just say so. No invoice, no awkward conversation.</p>
+          <p>You get a link to view the site live. Happy with it? It&rsquo;s yours for £199 (normally £299) — plus £9.99 a month for me to keep it live and looked after. Not right? Just say so — no invoice, no awkward conversation.</p>
         </div>
       </div>
     </div>
@@ -1822,6 +1849,7 @@
               <li><strong>Back it up with proof.</strong> A few job photos and reviews so they feel confident choosing you.</li>
             </ul>
             <p>That&rsquo;s how you win the urgent call-outs and the bigger jobs — without paying commission or competing in a quote race.</p>
+            <p>A plumber in your area with a website and a Google listing will typically start picking up enquiries they couldn&rsquo;t reach before: the homeowner who just moved in, the landlord without a regular plumber, the emergency caller who searches and rings the first credible result they see.</p>
           </div>
         </div>
       </div>
@@ -1879,24 +1907,6 @@
     </div>
   </section>
 
-  <!-- ══ LIMITED AVAILABILITY ══ -->
-  <section class="avail" id="availability">
-    <div class="section-inner">
-      <div class="avail-grid">
-        <div class="avail-copy">
-          <span class="eyebrow">Limited availability</span>
-          <h2 class="section-title">Build your site for <em>&pound;199</em> &mdash; while I have <em>capacity.</em></h2>
-          <div class="gold-line"></div>
-          <div class="why-content">
-            <p>I build one site at a time, so I can give each one proper attention. Right now I have availability for the next few plumbers &mdash; after that, there&rsquo;s a waiting list.</p>
-            <p>If you want to lock in the &pound;199 build price (normally &pound;299), the next step is simple: fill in the form below and let me know you&rsquo;re interested. Once you&rsquo;re in, the price is locked in for your project, regardless of when we start.</p>
-          </div>
-          <p style="font-size:13px; font-style:italic; color:var(--muted); margin-top:14px;">Standard price returns to &pound;299 once availability is full. Current status: <strong>3 slots remaining.</strong></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ══ PRICING ══ -->
   <!-- Identical across all trades -->
   <section class="pricing">
@@ -1915,6 +1925,9 @@
           <span class="eyebrow">What it costs</span>
           <h2 class="section-title"><em>Straightforward</em> pricing. No surprises.</h2>
           <div class="gold-line"></div>
+          <div class="avail-scarcity">
+            <span>&#9888;&#xFE0E;&nbsp; <strong>3 slots remaining at &pound;199.</strong> I build one site at a time &mdash; so each one gets proper attention. Once availability is full, the price returns to &pound;299. Fill in the form below to lock in &pound;199; once you&rsquo;re in, it&rsquo;s guaranteed regardless of when we start.</span>
+          </div>
           <div class="pricing-card">
             <div class="pricing-row">
               <div class="pricing-label">One-off build <small>Limited availability price (normally £299)</small></div>
@@ -2079,7 +2092,7 @@
                   <input type="radio" name="start_option" value="leave_it_with_me">
                   <div class="radio-circle" aria-hidden="true"></div>
                   <div class="radio-card-text">
-                    <div class="radio-card-title">I&rsquo;d like you to send me an initial start point</div>
+                    <div class="radio-card-title">Send me a first version based on what you can find</div>
                     <div class="radio-card-desc">I&rsquo;ll research your business and build a first version — you tell me what to change.</div>
                   </div>
                 </label>
