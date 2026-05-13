@@ -2682,6 +2682,12 @@
         }
       }
       if(submitArea) submitArea.style.display='block';
+      var btn=document.getElementById('submit-btn');
+      if(btn){
+        btn.textContent=val==='intake_form'
+          ? 'Take me to the intake form →'
+          : 'Build my free preview →';
+      }
     }
 
     cards.forEach(function(card){
