@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoBookworm — UK Market Research Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #1a2e4a;
+    --red: #c0392b;
+    --light-grey: #f2f3f5;
+    --mid-grey: #dde0e5;
+    --dark-text: #1a2031;
+    --muted: #6b7280;
+    --white: #fff;
+    --accent-gold: #d4a843;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light-grey);
+    color: var(--dark-text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  .report-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 56px 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(192,57,43,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+  }
+  .brand-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 3px;
+    font-size: 12px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+  .report-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    max-width: 700px;
+  }
+  .report-header h1 em {
+    font-style: italic;
+    color: #a8c4e0;
+  }
+  .report-meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .report-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .report-meta span::before {
+    content: '—';
+    color: var(--red);
+  }
+
+  /* MAIN LAYOUT */
+  .report-body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--white);
+    border-left: 4px solid var(--navy);
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    border-radius: 0 6px 6px 0;
+  }
+  .toc h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc-counter;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 32px;
+  }
+  @media (max-width: 560px) { .toc ol { grid-template-columns: 1fr; } }
+  .toc li {
+    counter-increment: toc-counter;
+    font-size: 13.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .toc li::before {
+    content: counter(toc-counter, decimal-leading-zero);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  /* SECTION HEADINGS */
+  .section {
+    margin-bottom: 52px;
+  }
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--mid-grey);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.25;
+  }
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--navy) 0%, transparent 100%);
+    margin-bottom: 22px;
+    opacity: 0.12;
+  }
+
+  /* PROSE */
+  .prose p {
+    margin-bottom: 14px;
+    color: #2d3748;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+
+  /* COMPETITOR TABLE */
+  .comp-table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(26,46,74,0.07);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    font-size: 13.5px;
+  }
+  thead tr {
+    background: var(--navy);
+    color: var(--white);
+  }
+  thead th {
+    padding: 13px 16px;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #eef0f4; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody td {
+    padding: 12px 16px;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-diy { background: #e8f4fd; color: #1a6fa8; }
+  .tag-dtfy { background: #e8f7ed; color: #1a7a3c; }
+  .tag-inbound { background: #fef3e2; color: #8a5500; }
+  .tag-outbound { background: #fde8ea; color: #a01c29; }
+  .tag-demo { background: #f0e8ff; color: #5c2d8e; }
+  .tag-hybrid { background: #e2f7f2; color: #0d6b56; }
+  .highlight-row td { background: #fdf3f2 !important; }
+  .highlight-row td:first-child { border-left: 3px solid var(--red); }
+
+  /* CALLOUT BOXES */
+  .callout {
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .callout-insight {
+    background: #f0f4ff;
+    border-left: 4px solid var(--navy);
+  }
+  .callout-warning {
+    background: #fdf3f2;
+    border-left: 4px solid var(--red);
+  }
+  .callout-win {
+    background: #f0fbf4;
+    border-left: 4px solid #22a64b;
+  }
+  .callout-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    font-size: 11px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .callout-insight .callout-label { color: var(--navy); }
+  .callout-warning .callout-label { color: var(--red); }
+  .callout-win .callout-label { color: #22a64b; }
+  .callout p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    color: #2d3748;
+  }
+  .callout strong { font-weight: 500; }
+
+  /* STAT CARDS */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 22px 20px;
+    box-shadow: 0 2px 8px rgba(26,46,74,0.06);
+    border-top: 3px solid var(--navy);
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-num.red { color: var(--red); }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* GAP GRID */
+  .gap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+  }
+  .gap-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 22px 22px 20px;
+    box-shadow: 0 2px 8px rgba(26,46,74,0.06);
+    border-bottom: 3px solid var(--navy);
+  }
+  .gap-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .gap-icon {
+    font-size: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .gap-card p {
+    font-size: 13.5px;
+    color: #4a5568;
+    line-height: 1.55;
+  }
+  .gap-card .neo-angle {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #e0e3ea;
+    font-size: 12.5px;
+    color: var(--red);
+    font-style: italic;
+  }
+
+  /* PRICING VISUAL */
+  .price-bar-wrap {
+    margin: 24px 0;
+  }
+  .price-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .price-bar-label {
+    font-size: 12.5px;
+    width: 170px;
+    flex-shrink: 0;
+    text-align: right;
+    color: var(--muted);
+  }
+  .price-bar-track {
+    flex: 1;
+    height: 22px;
+    background: #eef0f4;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .price-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+  }
+  .price-bar-fill span {
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .neo-bar { background: var(--red); }
+  .neo-bar span { color: white; }
+  .low-bar { background: #93c5fd; }
+  .mid-bar { background: #60a5fa; }
+  .high-bar { background: #2563eb; }
+  .premium-bar { background: var(--navy); }
+
+  /* SUMMARY */
+  .summary-box {
+    background: var(--navy);
+    color: var(--white);
+    padding: 36px 40px;
+    border-radius: 10px;
+    margin-top: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-box::before {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(192,57,43,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .summary-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--white);
+  }
+  .summary-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .summary-list li {
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.85);
+    padding-left: 22px;
+    position: relative;
+  }
+  .summary-list li::before {
+    content: '→';
+    color: var(--red);
+    position: absolute;
+    left: 0;
+  }
+
+  /* FOOTER */
+  .report-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--mid-grey);
+  }
+  .report-footer strong { color: var(--navy); }
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <div class="brand-tag">NeoBookworm · Strategic Research</div>
+  <h1>UK Market for Website Design<br>Services Targeting <em>Tradespeople</em></h1>
+  <div class="report-meta">
+    <span>April 2026</span>
+    <span>Competitive Intelligence</span>
+    <span>UK Focus</span>
+  </div>
+</header>
+
+<main class="report-body">
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li>The Market at a Glance</li>
+      <li>Key Competitors — DIY Platforms</li>
+      <li>Key Competitors — Done-for-You Services</li>
+      <li>Pricing Landscape</li>
+      <li>How Competitors Sell</li>
+      <li>Quality &amp; Customer Sentiment</li>
+      <li>Demo-First Models — How Common?</li>
+      <li>Market Gaps for NeoBookworm</li>
+    </ol>
+  </nav>
+
+  <!-- SECTION 1 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">01</span>
+      <h2>The Market at a Glance</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The UK market for website services targeting tradespeople is crowded at the low end but surprisingly thin when it comes to quality, local focus, and genuinely proactive outreach. The target audience is large: the construction and trades sector is the single biggest category of UK self-employment, with approximately 745,000 self-employed workers in construction alone (ONS, Q3 2024). Many run one-person operations with no professional web presence.</p>
+      <p>Consumer demand is acute. Online searches for local tradespeople topped 580,000 in just five months, and surveys consistently show that 78% of UK consumers search online before contacting a local business. Yet a significant portion of sole traders still rely entirely on word-of-mouth, Checkatrade, and Facebook pages — leaving a large addressable gap.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">745k</div>
+        <div class="stat-label">Self-employed in UK construction (ONS 2024)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num red">78%</div>
+        <div class="stat-label">UK consumers search online before contacting a tradesperson</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1.88m</div>
+        <div class="stat-label">Skilled tradespeople currently active in the UK</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num red">25%+</div>
+        <div class="stat-label">Plan to retire in the next five years — increasing demand pressure</div>
+      </div>
+    </div>
+    <div class="callout callout-insight">
+      <div class="callout-label">Market Context</div>
+      <p>The UK faces a looming trades skills crisis — demand for skilled tradespeople is projected to exceed supply by nearly <strong>one million workers by 2032</strong>. For the tradespeople who remain, the prize of having a standout web presence only grows larger. They don't need to be found — they need to be <em>chosen</em>.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">02</span>
+      <h2>Key Competitors — DIY Platforms</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>DIY website builders are the most heavily marketed option for tradespeople but are fundamentally unsuited to the audience. They require the tradesperson to invest significant personal time, carry ongoing subscription costs that compound over years, and typically produce generic results without specialist trade positioning.</p>
+    </div>
+    <div class="comp-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Type</th>
+            <th>UK Starting Price</th>
+            <th>Model</th>
+            <th>Key Weakness for Trades</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Wix</strong></td>
+            <td><span class="tag tag-diy">DIY</span></td>
+            <td>~£9/mo (removes branding)</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Requires self-build; generic templates; no trade expertise</td>
+          </tr>
+          <tr>
+            <td><strong>Squarespace</strong></td>
+            <td><span class="tag tag-diy">DIY</span></td>
+            <td>~£13/mo</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Designed for creatives, not trades; poor local SEO defaults</td>
+          </tr>
+          <tr>
+            <td><strong>GoDaddy</strong></td>
+            <td><span class="tag tag-diy">DIY</span></td>
+            <td>£4.99/mo yr1, rises ~60% at renewal</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Steep renewal pricing; limited design flexibility; bait-and-switch pricing</td>
+          </tr>
+          <tr>
+            <td><strong>Tradify Instant Website</strong></td>
+            <td><span class="tag tag-diy">DIY add-on</span></td>
+            <td>Add-on fee on top of Tradify subscription</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Cookie-cutter template; only available to Tradify job management subscribers</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout callout-warning">
+      <div class="callout-label">Key Finding</div>
+      <p>Independent analysis of 1,200+ UK websites found <strong>fewer than 10 Squarespace and 9 Wix sites</strong> in the top 10 results for local trade searches — a strong signal that DIY platforms perform poorly for local SEO in the trades market. Tradespeople who build their own sites on these platforms are largely invisible to search.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">03</span>
+      <h2>Key Competitors — Done-for-You Services</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The done-for-you segment is where the most direct competition for NeoBookworm sits. These range from national pay-monthly services with no upfront cost through to one-off build agencies at £1,000–£1,500. Quality and bespokeness vary enormously. Notable players are highlighted below, with the NeoBookworm entry included for direct comparison.</p>
+    </div>
+    <div class="comp-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>One-off</th>
+            <th>Monthly</th>
+            <th>How They Sell</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>TradePixels</strong><br><small>tradepixels.co.uk</small></td>
+            <td>£1,499</td>
+            <td>or £150/mo × 12</td>
+            <td><span class="tag tag-inbound">Inbound SEO</span></td>
+            <td>Specialises in trades; 15+ years experience; premium positioning; 2–4 week delivery</td>
+          </tr>
+          <tr>
+            <td><strong>Elite Web Design</strong><br><small>elitewebdesign.co.uk</small></td>
+            <td>£599</td>
+            <td>£29/mo hosting</td>
+            <td><span class="tag tag-inbound">Inbound</span> <span class="tag tag-demo">Mockup-first</span></td>
+            <td><em>Free homepage mockup before any payment.</em> Closest existing model to NeoBookworm — but reactive, not proactive</td>
+          </tr>
+          <tr>
+            <td><strong>Swift Web Design</strong><br><small>swiftwebdesign.co.uk</small></td>
+            <td>From £350</td>
+            <td>+ £112/mo (maintenance + articles)</td>
+            <td><span class="tag tag-inbound">Inbound SEO</span></td>
+            <td>Includes monthly blog content; UK-wide; heavy ongoing commitment for the client</td>
+          </tr>
+          <tr>
+            <td><strong>HungryWolf</strong><br><small>hungrywolf.co.uk</small></td>
+            <td>None</td>
+            <td>Pay monthly (price undisclosed)</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Fully managed, no upfront; trades-focused; you don't own the site if you cancel</td>
+          </tr>
+          <tr>
+            <td><strong>WeBuildStores</strong><br><small>webuildstores.co.uk</small></td>
+            <td>None</td>
+            <td>£49/mo (entry), £169/mo (growth)</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Plumbers and electricians focus; 100% money-back guarantee; no contract</td>
+          </tr>
+          <tr>
+            <td><strong>Websites 4 Trades</strong><br><small>websites-4-trades.co.uk</small></td>
+            <td>None</td>
+            <td>£30/mo all-in</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Very low price; unlimited changes included; no ownership if you cancel</td>
+          </tr>
+          <tr>
+            <td><strong>Web Design for Tradesmen</strong><br><small>webdesignfortradesmen.co.uk</small></td>
+            <td>From £200</td>
+            <td>Separate hosting</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>Full ownership claimed; budget end of market; quality unclear</td>
+          </tr>
+          <tr>
+            <td><strong>TradeExposure</strong><br><small>tradeexposure.co.uk</small></td>
+            <td>None</td>
+            <td>Pay monthly (no setup fee)</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>No contracts; 30 min updates/month included; no ownership</td>
+          </tr>
+          <tr>
+            <td><strong>Web Design &amp; SEO Co</strong><br><small>webdesignandseocompany.co.uk</small></td>
+            <td>Package pricing</td>
+            <td>Pay-monthly option</td>
+            <td><span class="tag tag-inbound">Inbound</span></td>
+            <td>9 years trades focus; "Excellent" on Trustpilot; Plymouth-based</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>NeoBookworm</strong> ★<br><small>neobookworm.uk</small></td>
+            <td>£499–£799</td>
+            <td>£20/mo hosting</td>
+            <td><span class="tag tag-outbound">Outbound demo-first</span></td>
+            <td>Prospect receives a <em>live</em> bespoke site before any contact; no payment until approval; lowest ongoing cost in market</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">04</span>
+      <h2>Pricing Landscape</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The market spans a huge range. The key tension is between ownership (one-off builds) and accessibility (pay-monthly, no upfront). Pay-monthly providers often appear cheap but lock the client in: stop paying and the site disappears. One-off builds give ownership but require an upfront commitment from a prospect who doesn't yet know or trust the provider.</p>
+      <p>NeoBookworm's pricing sits at the accessible end of one-off builds while being dramatically cheaper on ongoing costs than any pay-monthly competitor.</p>
+    </div>
+
+    <div class="price-bar-wrap">
+      <div class="price-bar-row">
+        <div class="price-bar-label">Wix / Squarespace / GoDaddy</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill low-bar" style="width:12%">
+            <span style="color:#1a3a6e">~£10–20/mo, no ownership</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label">Websites 4 Trades / TradeExposure</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill low-bar" style="width:14%">
+            <span style="color:#1a3a6e">£30–49/mo, no ownership</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label">WeBuildStores</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill low-bar" style="width:18%">
+            <span style="color:#1a3a6e">£49/mo entry, no ownership</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label" style="color:var(--red);font-weight:500">NeoBookworm ★</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill neo-bar" style="width:38%">
+            <span>£499–799 one-off + £20/mo · Full ownership</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label">Elite Web Design</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill mid-bar" style="width:44%">
+            <span style="color:white">£599 one-off + £29/mo</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label">Swift Web Design</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill mid-bar" style="width:32%">
+            <span style="color:white">From £350 + £112/mo</span>
+          </div>
+        </div>
+      </div>
+      <div class="price-bar-row">
+        <div class="price-bar-label">TradePixels</div>
+        <div class="price-bar-track">
+          <div class="price-bar-fill premium-bar" style="width:72%">
+            <span>£1,499 one-off (or £150/mo × 12)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-insight">
+      <div class="callout-label">Pricing Insight</div>
+      <p>A tradesperson who stays with a £30/mo pay-monthly service for 3 years spends <strong>£1,080</strong> and owns nothing. NeoBookworm at £499 + £20/mo for 3 years costs <strong>£1,219</strong> — broadly similar total, but the prospect <em>owns their site outright</em>. The maths is even better compared to mid-tier competitors: TradePixels at £1,499 one-off is 3× the NeoBookworm entry price for the same fundamental deliverable.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">05</span>
+      <h2>How Competitors Sell</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The overwhelming majority of providers in this market sell entirely through inbound channels — SEO, Google Ads, and word of mouth. The tradesperson must <em>come to them</em>, typically after recognising a problem, deciding to act, searching for a solution, and then evaluating providers. This is a long, multi-step journey that depends entirely on the prospect reaching that point of self-motivation.</p>
+      <p>No provider identified in this research runs systematic outbound prospecting — contacting tradespeople who don't yet know they're being targeted and presenting them with a solution before they've started looking.</p>
+    </div>
+    <div class="callout callout-win">
+      <div class="callout-label">NeoBookworm Differentiator</div>
+      <p>Every competitor waits for the tradesperson to come to them. <strong>NeoBookworm goes to the tradesperson.</strong> The entire pipeline is built around reaching people who haven't yet decided to buy, at the exact moment they're shown what they could have — removing the need for the prospect to imagine the end result. This is a fundamentally different commercial motion, not just a different marketing channel.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">06</span>
+      <h2>Quality &amp; Customer Sentiment</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>Reviews and forum discussions reveal recurring pain points across the market, providing clear signals about where customers feel underserved.</p>
+    </div>
+
+    <div class="gap-grid">
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>Pay-monthly lock-in anxiety</h3>
+        <p>A major recurring complaint: "Stop paying and the site disappears." Many tradespeople have been burned by building a presence they don't own. Ownership is an emotionally significant issue — especially for those who've invested time in getting photos, copy, and testimonials on a platform.</p>
+        <div class="neo-angle">NeoBookworm: full ownership at point of approval. No lock-in risk.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>Template genericness</h3>
+        <p>DIY platforms and cheap done-for-you services are routinely criticised for generic output. Tradespeople can spot when a site looks "off the shelf" — and so can their customers. Bespoke sites tailored to actual project photography and specific service areas are noted as genuinely differentiating.</p>
+        <div class="neo-angle">NeoBookworm: bespoke build per prospect, not a template.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>SEO promises not delivered</h3>
+        <p>Multiple providers market heavily on local SEO but reviews frequently note disappointment. Analysis shows that very few Wix or Squarespace sites appear in top-10 trade search results, suggesting platform choice alone undermines results regardless of provider claims.</p>
+        <div class="neo-angle">NeoBookworm: Netlify-hosted, custom-built — strong technical foundations from day one.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>Upfront cost inertia</h3>
+        <p>The segment of tradespeople without websites often isn't actively looking. They haven't crossed the mental threshold of "I should have one." Standard outreach (cold email, ads) doesn't work well here because there's no active demand to capture.</p>
+        <div class="neo-angle">NeoBookworm: live demo eliminates the imagination gap. Seeing is believing.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>High ongoing fees</h3>
+        <p>Providers charging £50–£150/month for managed services create growing resentment as businesses become established — the value-for-money perception shifts as the novelty wears off. Forum posts note that £3,000+ per year is "a fortune" for a small trades business.</p>
+        <div class="neo-angle">NeoBookworm: £20/mo hosting — the lowest maintenance cost in the market by a significant margin.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">⚠️</span>Trust gap for new providers</h3>
+        <p>Tradespeople are sceptical of web design cold approaches, having been burned by Checkatrade, Rated People, and similar paid-lead platforms. Forum posts are filled with stories of paying for leads that went nowhere. Any new provider faces a default assumption of "another scheme that takes my money."</p>
+        <div class="neo-angle">NeoBookworm: no payment until approval. Risk is entirely on the provider — which is the point.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">07</span>
+      <h2>Demo-First Models — How Common?</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The "show before you pay" or demo-first approach is genuinely rare in this market. Research surfaced one notable partial example:</p>
+      <p><strong>Elite Web Design (elitewebdesign.co.uk)</strong> offers to build a "free homepage mockup before you pay anything." Their proposition is: enquire, receive a mockup, pay only if you like it. This is the closest competitive parallel to NeoBookworm's model.</p>
+      <p>However, there is a critical difference: Elite Web Design's mockup is <em>reactive</em> — it follows an enquiry from a prospect who has already discovered them, made contact, and expressed interest. The demo comes after the sale cycle has begun. It removes financial risk but not the cognitive friction of seeking out and choosing a provider in the first place.</p>
+      <p>NeoBookworm's model is <em>proactive</em>: the prospect receives a live, deployed, fully functional site <em>before they've heard of NeoBookworm</em>. The decision the prospect faces isn't "should I use this company?" — it's "do I want to keep this site that already exists?" That's a fundamentally different psychological position.</p>
+    </div>
+    <div class="callout callout-insight">
+      <div class="callout-label">Assessment</div>
+      <p>Demo-first selling is genuinely unusual in this market. Truly proactive demo-first — where the demo exists before any outreach — appears to be unique. No other provider in this research segment combines outbound prospecting, a pre-built live demo, and a no-payment-until-approval model. <strong>This is not a marginal differentiation. It is a category-defining approach.</strong></p>
+    </div>
+  </section>
+
+  <!-- SECTION 8 -->
+  <section class="section">
+    <div class="section-label">
+      <span class="section-num">08</span>
+      <h2>Market Gaps for NeoBookworm</h2>
+    </div>
+    <div class="section-divider"></div>
+    <div class="prose">
+      <p>The research maps to six specific gaps that NeoBookworm is positioned to exploit in its pitch — each one grounded in a real competitor weakness or customer pain point.</p>
+    </div>
+
+    <div class="gap-grid">
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 1 — Unserved passive market</h3>
+        <p>Every competitor targets tradespeople who are already looking. No one is reaching the large (and arguably more interesting) pool who haven't yet decided to act. These are established businesses with reviews, a customer base, and real credibility — but no web presence. They're not "hard to convert"; they haven't been shown anything yet.</p>
+        <div class="neo-angle">Pitch angle: "You weren't looking for this. But it already exists."</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 2 — The imagination problem</h3>
+        <p>Asking a tradesperson to "imagine how good your website could be" is asking them to take a risk on an abstract promise. Even quality providers require the prospect to visualise something that doesn't exist yet. The demo-first model completely bypasses this by making the product tangible before any commitment.</p>
+        <div class="neo-angle">Pitch angle: "Here's what you could have. Click the link."</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 3 — Ownership at a fair price</h3>
+        <p>The market splits into "cheap but you don't own it" and "you own it but it's expensive." At £499 one-off with no lock-in, NeoBookworm occupies a position that doesn't exist today: full ownership, fair price, lowest hosting cost in market.</p>
+        <div class="neo-angle">Pitch angle: "Yours forever, for less than a weekend's wages."</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 4 — Local, bespoke, credible</h3>
+        <p>National pay-monthly services look and feel generic. Tradespeople trust local — they know local means someone who understands Swindon, not "the UK." A hyperlocal operator who has visibly done their homework on the prospect's business is orders of magnitude more credible than an ad or a generic cold email.</p>
+        <div class="neo-angle">Pitch angle: positioned as a local business partner, not a national vendor.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 5 — No-risk reversal</h3>
+        <p>Tradespeople are deeply sceptical of paid-lead platforms and web design cold approaches. They've been burned. The antidote is complete risk reversal: every other provider asks the prospect to commit before seeing a result. NeoBookworm asks them to commit only <em>after</em> seeing the result — and only if they like it.</p>
+        <div class="neo-angle">The entire NeoBookworm model is the answer to this pain point.</div>
+      </div>
+      <div class="gap-card">
+        <h3><span class="gap-icon">🎯</span>Gap 6 — Checkatrade fatigue</h3>
+        <p>Forum research reveals deep frustration with Checkatrade, Rated People, and MyBuilder among tradespeople: paying for leads that go nowhere, competing on price, feeling like a commodity. A website positions them differently — they choose who they work with, customers come to them. This is a powerful emotional hook.</p>
+        <div class="neo-angle">Core hook: "Checkatrade gets you found. A website gets you chosen."</div>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3>Summary — The NeoBookworm Competitive Position</h3>
+      <ul class="summary-list">
+        <li>The only provider using systematic outbound prospecting to reach tradespeople before they're looking</li>
+        <li>The only provider that delivers a live, deployed, bespoke demo as the opening move — not as a follow-up to an enquiry</li>
+        <li>Priced at the accessible end of owned builds (£499–799) with the lowest hosting cost in the market (£20/mo)</li>
+        <li>Complete risk reversal: no payment until approval — directly addressing the trust gap that plagues this market</li>
+        <li>Local, named, human operator: much harder to dismiss as a "scheme" than a national brand</li>
+        <li>The closest existing competitor (Elite Web Design, £599 + £29/mo) is inbound-only with a reactive mockup model — not a proactive demo-first approach</li>
+        <li>The headline pricing is competitive against all done-for-you peers on a 3-year total cost basis, while offering full ownership throughout</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="report-footer">
+    <p>Research compiled April 2026 · Prepared for <strong>NeoBookworm</strong> · neobookworm.uk<br>
+    Sources: Company websites, ONS Labour Force Survey Q3 2024, UK Business Forums, MoneySavingExpert forums, On The Tools / TradeBrain report Jan 2025, Trusted Tradesman UK Trades Crisis report Jan 2026</p>
+  </div>
+
+</main>
+</body>
+</html>
