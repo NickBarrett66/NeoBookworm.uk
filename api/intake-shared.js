@@ -744,6 +744,88 @@ async function createNotionRecord(fields, photoUrls, logoUrl) {
   return page;
 }
 
+// ─── Landing page enquiry (plumbers / plumbers-switch options 1 & 2) ─────────
+// Same Client Sites database as full intake — lightweight row with notes only.
+
+const LANDING_START_OPTION_LABELS = {
+  leave_it_with_me:  'Free preview',
+  tell_more:         'Tell me more',
+  review_site_first: 'Site review',
+  ready_to_switch:   'Ready to switch',
+};
+
+const LANDING_SOURCE_LABELS = {
+  'plumbers-landing':        'Plumbers landing',
+  'plumbers-switch-landing': 'Plumbers switch landing',
+};
+
+function landingStartOptionLabel(raw) {
+  const k = (raw || '').toString().trim();
+  return LANDING_START_OPTION_LABELS[k] || k;
+}
+
+function landingSourceLabel(raw) {
+  const k = (raw || '').toString().trim();
+  return LANDING_SOURCE_LABELS[k] || k;
+}
+
+function buildLandingEnquiryNotes(fields) {
+  const chunks = [];
+  const src = landingSourceLabel(fields.source);
+  if (src) chunks.push(`Source: ${src}`);
+  const opt = landingStartOptionLabel(fields.startOption);
+  if (opt) chunks.push(`Start option: ${opt}`);
+  const u = (fields.currentUrl || '').toString().trim();
+  if (u) chunks.push(`Current website: ${u}`);
+  const d = (fields.details || '').toString().trim();
+  if (d) chunks.push(d);
+  return chunks.join('\n\n');
+}
+
+/** Create a Client Sites row for a trade landing page enquiry (no uploads). */
+async function createLandingEnquiryRecord(fields) {
+  const apiKey = process.env.NOTION_API_KEY;
+  if (!apiKey) {
+    console.warn('[landing-enquiry] NOTION_API_KEY not set — record not saved to Notion');
+    return null;
+  }
+
+  const props = {
+    [NOTION_PROP.businessName]:  { title: [{ text: { content: (fields.bizName || 'Unknown').toString().trim().slice(0, 2000) } }] },
+    [NOTION_PROP.tradeCategory]: { select: { name: 'Plumber' } },
+    [NOTION_PROP.status]:        { select: { name: 'Pending Launch' } },
+  };
+
+  assignNotionRichText(props, NOTION_PROP.fullName, fields.fullName);
+
+  const emailTrim = (fields.email || '').trim();
+  if (emailTrim) props[NOTION_PROP.clientEmail] = { email: emailTrim };
+
+  const notes = buildLandingEnquiryNotes(fields);
+  assignNotionRichText(props, NOTION_PROP.additionalNotes, notes);
+
+  const response = await notionFetchWithRetry(
+    'https://api.notion.com/v1/pages',
+    {
+      method: 'POST',
+      headers: {
+        Authorization:    `Bearer ${apiKey}`,
+        'Content-Type':   'application/json',
+        'Notion-Version': NOTION_VERSION,
+      },
+      body: JSON.stringify({
+        parent:     { database_id: DATABASE_ID },
+        properties: props,
+      }),
+    },
+    'createLandingEnquiry',
+  );
+
+  const page = await response.json();
+  console.log('[landing-enquiry] Notion Client Sites row created (page id):', page.id);
+  return page;
+}
+
 // ─── Direct-to-R2 session (presigned PUT) ─────────────────────────────────────
 
 const MAX_PHOTOS_DIRECT     = 20;
@@ -1163,6 +1245,7 @@ module.exports = {
   uploadToR2,
   logR2UploadFailure,
   createNotionRecord,
+  createLandingEnquiryRecord,
   buildIntakeDirectUploadSession,
   finalizeIntakeDirectUpload,
   sendIntakeNotificationEmail,

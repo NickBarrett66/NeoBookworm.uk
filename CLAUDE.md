@@ -414,7 +414,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Item | Priority | Notes |
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
-| landing-enquiry Notion DB | High | `/api/landing-enquiry` writes to Prospects DB `7787183058744a398644b2e6d511b8d6`. Properties `Name` (title), `Business Name` (text), `Email` (email), `Start Option` (select), `Notes` (text), `Source` (select) must exist in that Notion database before going live. Add via Notion UI or script. |
+| landing-enquiry Notion DB | Done | `/api/landing-enquiry` (plumbers + plumbers-switch options 1 & 2) creates a row in **Client Sites** (`4b45078a341941bcb5877e52f3d27c6c`) via `intake-shared.createLandingEnquiryRecord` — same database as full intake. Notes field holds source, start option, current URL, and details. Requires `NOTION_API_KEY` on Vercel. |
 | SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in **Vercel** project env vars to activate email sending (Brevo recommended) |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |
