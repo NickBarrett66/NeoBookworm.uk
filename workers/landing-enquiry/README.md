@@ -1,10 +1,12 @@
-# landing-enquiry Worker (Phase 1)
+# landing-enquiry Worker (Phase 2)
 
 Cloudflare Worker that receives landing page enquiries from `plumbers.html` and
-`plumbers-switch.html`, validates them, and saves them to a D1 database.
+`plumbers-switch.html`, validates them, saves them to D1, and then — in the
+background — creates a Notion row and sends a notification email via Vercel.
 
-**Phase 1 scope:** save to D1 only. No Notion or email in this phase.  
-The existing Vercel `/api/landing-enquiry` is **unchanged** and still handles live traffic.
+**Phase 2 scope:** D1 insert + `ctx.waitUntil` background sync (Notion + email).  
+The existing Vercel `/api/landing-enquiry` is **unchanged** and still handles live traffic.  
+Switch-over happens in Phase 3.
 
 ---
 
@@ -189,11 +191,43 @@ npx wrangler d1 execute neobookworm-enquiries --remote \
 
 ## Environment variables / secrets
 
-Phase 1 has **no secrets**. The Worker only writes to D1; no external services are called.
+### Worker secrets (set via `wrangler secret put` from `workers/landing-enquiry/`)
 
-Phase 2 will add:
-- `NOTION_API_KEY` — for writing to the Client Sites database
-- `SMTP_*` / `TO_EMAIL` — these will stay on Vercel (TCP restriction on Workers)
+```bash
+wrangler secret put NOTION_API_KEY   # Notion internal integration secret
+wrangler secret put NOTIFY_SECRET    # shared secret — must match Vercel NOTIFY_SECRET
+```
+
+| Secret | Purpose |
+|---|---|
+| `NOTION_API_KEY` | Creates row in Client Sites Notion database. If not set, `notion_status` is set to `skipped` and a warning is logged. |
+| `NOTIFY_SECRET` | Authenticates POST to `/api/notify-landing-enquiry` on Vercel. If not set, `email_status` is set to `skipped`. |
+
+SMTP credentials stay on Vercel — Workers cannot open TCP connections to ports 587/465.
+
+### Vercel env var to add
+
+```
+NOTIFY_SECRET   # same value as Worker NOTIFY_SECRET secret
+```
+
+Add this in the Vercel dashboard → Project → Settings → Environment Variables.
+Existing `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `TO_EMAIL` are unchanged.
+
+---
+
+## Background sync behaviour (Phase 2)
+
+After D1 insert succeeds, `ctx.waitUntil(syncEnquiry(env, id))` runs in the background:
+
+1. **Load row** — `SELECT * FROM landing_enquiries WHERE id = ?`; parse `payload_json` for field data
+2. **Notion** — create Client Sites row; on success set `notion_status='ok'`, `notion_page_id=<id>`; on failure set `notion_status='failed'`, `notion_error=<message>`. Always increment `notion_attempts`.
+3. **Email** — POST to `https://neobookworm.uk/api/notify-landing-enquiry` with `X-Notify-Secret`; on success set `email_status='ok'`; on failure set `email_status='failed'`, `email_error=<message>`. Always increment `email_attempts`.
+4. **Secrets not set** — `NOTION_API_KEY` missing → `notion_status='skipped'`; `NOTIFY_SECRET` missing → `email_status='skipped'`.
+
+The HTTP response (`200 { ok: true, id }`) is always returned before background tasks finish. Notion/email failures **never** affect the HTTP response.
+
+Email includes the Notion page URL when `notionPageId` is set (Notion ran first).
 
 ---
 
@@ -259,16 +293,20 @@ parallel infrastructure — the switch-over happens in Phase 3.
 
 ---
 
-## Phase 2 prerequisites
+## Phase 3 prerequisites
 
 ```
-Phase 1 complete when:
-- [x] D1 database created (remote) — 14 May 2026
-- [x] Migration 0001 applied (remote) — 14 May 2026
-- [x] Worker deployed and POST /landing-enquiry returns 200 + id — 14 May 2026
-- [x] Row visible in D1 (verified with wrangler d1 execute) — 14 May 2026
-- [x] plumbers.html still points at Vercel /api/landing-enquiry (intentional)
+Phase 2 complete when:
+- [ ] NOTION_API_KEY set on Worker (wrangler secret put NOTION_API_KEY)
+- [ ] NOTIFY_SECRET set on Worker and in Vercel env vars; api/notify-landing-enquiry.js deployed
+- [ ] Worker redeployed (npx wrangler deploy) after secrets are set
+- [ ] Test row in D1 shows notion_status='ok' (query with wrangler d1 execute --remote)
+- [ ] Test notification email received via notify endpoint
+- [ ] Failed Notion path tested: POST with wrong NOTION_API_KEY → row saved, notion_status='failed', notion_error populated
+- [ ] NOTIFY_SECRET-not-set path tested: email_status='skipped', Notion still succeeds
+- [ ] plumbers.html still on Vercel /api/landing-enquiry (not yet cut over)
 ```
 
-Phase 2 will add `ctx.waitUntil` to write to Notion after returning the response.  
-Phase 3 will add email notification and cut over the landing pages to the Worker URL.
+Phase 3 will cut over `plumbers.html` and `plumbers-switch.html` to POST directly to
+the Worker URL (`https://neobookworm-landing-enquiry.nickbarrett.workers.dev`), and
+add a retry cron for rows where `notion_status='failed'` or `email_status='failed'`.

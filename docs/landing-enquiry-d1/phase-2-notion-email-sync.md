@@ -2,6 +2,8 @@
 
 ## Prerequisite checks (STOP if any fail — report to user, do not guess)
 
+Make it clear to user what steps he has to take to facilitate putting this code live
+
 Before writing code, verify Phase 1 is complete:
 
 1. **Files exist:** `workers/landing-enquiry/wrangler.toml`, `src/index.js`, `migrations/0001_landing_enquiries.sql`
