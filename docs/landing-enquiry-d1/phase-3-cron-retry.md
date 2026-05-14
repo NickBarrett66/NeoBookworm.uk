@@ -116,6 +116,8 @@ In `api/notify-landing-enquiry.js`: if `type === 'digest'`, send one email to `T
 
 ## Deliverables
 
+- instructions to user on what is needed to put this code live
+
 - Updated `wrangler.toml` with crons
 - `src/scheduled.js` or integrated scheduled handler
 - `src/digest.js` if separate
