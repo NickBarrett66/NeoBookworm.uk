@@ -1057,6 +1057,41 @@ function extractFinalizeFields(body) {
   };
 }
 
+// ─── D1 Prospects: mark as Hot Lead on full intake submission ────────────────
+
+const CF_ACCOUNT_ID_DEFAULT   = '4f0a019a24cacd090cf6b3c3cf31c732';
+const D1_PROSPECTS_ID_DEFAULT = '0ae32598-1680-4995-a010-96b647eacabd';
+
+async function updateProspectToHotLead(email) {
+  const token     = process.env.CF_API_TOKEN;
+  const accountId = process.env.CF_ACCOUNT_ID   || CF_ACCOUNT_ID_DEFAULT;
+  const dbId      = process.env.D1_PROSPECTS_ID || D1_PROSPECTS_ID_DEFAULT;
+
+  if (!token) {
+    console.warn('[intake] CF_API_TOKEN not set — D1 Hot Lead update skipped');
+    return 0;
+  }
+
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${dbId}/query`;
+  const res = await fetch(url, {
+    method:  'POST',
+    headers: {
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sql:    "UPDATE prospects SET status = 'Hot Lead' WHERE email_address = ?",
+      params: [email],
+    }),
+  });
+
+  const data = await res.json();
+  if (!data.success) {
+    throw new Error(data.errors?.[0]?.message || 'D1 query failed');
+  }
+  return data.result?.[0]?.meta?.changes ?? 0;
+}
+
 // ─── Email notification (same SMTP env as contact.js / landing-enquiry.js) ───
 
 /** Public Notion page URL from API page id (UUID with or without dashes). */
@@ -1209,7 +1244,16 @@ async function finalizeIntakeDirectUpload(body) {
   }
 
   const { photoUrls, logoUrl } = urlsFromSessionKeys(keys, photoCount);
-  console.log('[intake] finalize Notion for', uploadId, '| photos:', photoUrls.length, '| logo:', !!logoUrl);
+  console.log('[intake] finalize for', uploadId, '| photos:', photoUrls.length, '| logo:', !!logoUrl);
+
+  try {
+    if (fields.email) {
+      const changed = await updateProspectToHotLead(fields.email.trim());
+      console.log('[intake] D1 Hot Lead update: rows affected =', changed);
+    }
+  } catch (d1Err) {
+    console.error('[intake] D1 Hot Lead update error:', d1Err.message);
+  }
 
   const page = await createNotionRecord(fields, photoUrls, logoUrl);
 
