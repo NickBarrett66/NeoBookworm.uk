@@ -19,9 +19,11 @@ Switch-over happens in Phase 3.
 | **D1 database** | `neobookworm-enquiries` |
 | **D1 database ID** | `771b3047-f977-485e-9cfb-736815931998` |
 | **D1 region** | WEUR (served from AMS) |
-| **Current version ID** | `7a0a701a-f94f-47f2-946e-20ce6e31ba09` |
+| **Current version ID** | `7a0a701a-f94f-47f2-946e-20ce6e31ba09` (Phase 1) — Phase 2 redeployed 14 May 2026 |
 | **Migration applied** | `0001_landing_enquiries.sql` ✅ |
 | **Deployed** | 14 May 2026 |
+| **Secrets set** | `NOTION_API_KEY` ✅, `NOTIFY_SECRET` ✅ |
+| **Vercel notify endpoint** | `api/notify-landing-enquiry.js` deployed ✅ |
 
 ### Phase 1 test results (14 May 2026)
 
@@ -31,6 +33,15 @@ Switch-over happens in Phase 3.
 | Missing email → 400 | `{ "error": "Email address is required." }` ✅ |
 | CORS preflight OPTIONS | `204`, `Access-Control-Allow-Origin: https://neobookworm.uk` ✅ |
 | Row visible in D1 | `notion_status: pending`, `email_status: pending` ✅ |
+
+### Phase 2 test results (14 May 2026)
+
+| Test | Result |
+|---|---|
+| POST valid payload → 200 + id | ✅ |
+| D1 row `notion_status='ok'` after background sync | ✅ |
+| `notion_page_id` populated in D1 | ✅ |
+| Email notification received via `/api/notify-landing-enquiry` | ✅ |
 
 ---
 
@@ -297,14 +308,14 @@ parallel infrastructure — the switch-over happens in Phase 3.
 
 ```
 Phase 2 complete when:
-- [ ] NOTION_API_KEY set on Worker (wrangler secret put NOTION_API_KEY)
-- [ ] NOTIFY_SECRET set on Worker and in Vercel env vars; api/notify-landing-enquiry.js deployed
-- [ ] Worker redeployed (npx wrangler deploy) after secrets are set
-- [ ] Test row in D1 shows notion_status='ok' (query with wrangler d1 execute --remote)
-- [ ] Test notification email received via notify endpoint
+- [x] NOTION_API_KEY set on Worker (wrangler secret put NOTION_API_KEY) — 14 May 2026
+- [x] NOTIFY_SECRET set on Worker and in Vercel env vars; api/notify-landing-enquiry.js deployed — 14 May 2026
+- [x] Worker redeployed (npx wrangler deploy) after secrets are set — 14 May 2026
+- [x] Test row in D1 shows notion_status='ok' (query with wrangler d1 execute --remote) — 14 May 2026
+- [x] Test notification email received via notify endpoint — 14 May 2026
 - [ ] Failed Notion path tested: POST with wrong NOTION_API_KEY → row saved, notion_status='failed', notion_error populated
 - [ ] NOTIFY_SECRET-not-set path tested: email_status='skipped', Notion still succeeds
-- [ ] plumbers.html still on Vercel /api/landing-enquiry (not yet cut over)
+- [x] plumbers.html still on Vercel /api/landing-enquiry (not yet cut over)
 ```
 
 Phase 3 will cut over `plumbers.html` and `plumbers-switch.html` to POST directly to
