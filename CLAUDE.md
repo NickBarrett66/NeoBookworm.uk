@@ -158,7 +158,7 @@ All outbound email from Vercel serverless functions (`api/contact.js`, `api/land
 | `SMTP_PASS` | iCloud app-specific password (not the Apple ID password) |
 | `TO_EMAIL` | `neobookworm@icloud.com` |
 
-**Important for Cloudflare Workers:** iCloud SMTP (and any SMTP) cannot be used directly in a Cloudflare Worker — Workers cannot open TCP connections to port 587 or 465. Any Worker that needs to send email must use an HTTP-based approach. The recommended pattern is to POST to a thin Vercel function (e.g. `/api/notify-enquiry`) that performs the SMTP send using the existing iCloud credentials. This keeps a single email-sending path and avoids adding a new email provider.
+**Important for Cloudflare Workers:** iCloud SMTP (and any SMTP) cannot be used directly in a Cloudflare Worker — Workers cannot open TCP connections to port 587 or 465. Any Worker that needs to send email must use an HTTP-based approach. The recommended pattern is to POST to a thin Vercel function (e.g. `/api/notify-landing-enquiry`) that performs the SMTP send using the existing iCloud credentials. This keeps a single email-sending path and avoids adding a new email provider.
 
 **Client demo sites** are separate static sites, deployed as individual Netlify projects. The permitted deploy command for those demos is:
 ```

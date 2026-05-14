@@ -28,7 +28,7 @@ Create either:
 
 ```toml
 [triggers]
-crons = ["*/15 * * * *", "0 7 * * *"]
+crons = ["*/15 * * * *", "0 8 * * *"]
 ```
 
 ### Retry logic
@@ -51,15 +51,43 @@ LIMIT 20
 
 ### Daily digest
 
-Second cron: `0 7 * * *` (07:00 UTC = 08:00 UK time year-round in GMT/BST) — document in README.
+Second cron: `0 8 * * *` (08:00 UTC). Cloudflare crons are UTC-only — there is no automatic UK DST adjustment:
+
+| Cron (UTC) | UK winter (GMT) | UK summer (BST) |
+|---|---|---|
+| `0 8 * * *` | 08:00 | 09:00 |
+| `0 7 * * *` | 07:00 | 08:00 |
+
+Use `0 8 * * *` and document “08:00 UK in winter, 09:00 in summer” in README (or pick `0 7 * * *` if 08:00 in summer matters more).
 
 Query **all unresolved** rows where `notion_status='failed' OR email_status='failed'` (do not limit to last 24 hours — old failures must not be silently dropped).
 
-Send one email via `https://neobookworm.uk/api/notify-landing-enquiry` or a dedicated digest path on the same notify function (document choice). Recipient: `TO_EMAIL` on Vercel.
+**Digest API (extend Phase 2 notify function — do not invent a separate SMTP path):**
 
-- Subject: `NeoBookworm: landing enquiries needing attention`
-- Body: table of id, created_at, email, biz_name, source, notion_status, email_status, last errors
-- If zero failures, **do not send** (prefer silent).
+`POST https://neobookworm.uk/api/notify-landing-enquiry` with header `X-Notify-Secret` and JSON:
+
+```json
+{
+  "type": "digest",
+  "rows": [
+    {
+      "id": "uuid",
+      "created_at": "ISO8601",
+      "email": "…",
+      "biz_name": "…",
+      "source": "…",
+      "notion_status": "failed",
+      "email_status": "ok",
+      "notion_error": "…",
+      "email_error": null
+    }
+  ]
+}
+```
+
+In `api/notify-landing-enquiry.js`: if `type === 'digest'`, send one email to `TO_EMAIL` with subject `NeoBookworm: landing enquiries needing attention` and a plain-text table of the rows; if `rows` is empty or omitted, return `200` without sending. For `type` absent or any other value, keep existing single-enquiry behaviour from Phase 2.
+
+- If zero failures in D1, **do not POST** (prefer silent — no email).
 
 ## Constraints
 
