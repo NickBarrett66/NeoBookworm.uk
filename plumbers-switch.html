@@ -828,8 +828,9 @@
     }
     .ferr.show { display: block; }
 
-    /* Radio option cards */
-    .radio-group-label {
+    /* Start options accordion (contact-style) */
+    .start-options-wrap { max-width: 860px; margin-top: 0.5rem; }
+    .start-options-label {
       display: block;
       font-size: 11px;
       font-weight: 600;
@@ -838,89 +839,148 @@
       color: var(--amber);
       margin-bottom: 10px;
     }
-    .radio-cards {
+    .start-option-jump {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 14px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      font-weight: 500;
     }
-    .radio-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      background: var(--navy-mid);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: border-color 0.18s, background 0.18s;
+    .start-option-jump a {
+      color: var(--amber);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245,166,35,0.35);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .start-option-jump a:hover {
+      color: var(--amber-dark);
+      border-bottom-color: rgba(212,137,26,0.6);
+    }
+    .start-option-jump a.start-option-jump-active {
+      color: var(--white);
+      border-bottom-color: rgba(245,166,35,0.55);
+    }
+    .start-option-jump-sep {
+      color: rgba(255,255,255,0.22);
       user-select: none;
-      position: relative;
     }
-    .radio-card:hover { border-color: rgba(245,166,35,0.4); }
-    .radio-card.selected {
-      border-color: var(--amber);
+    html.js-start-accordion .start-option.is-open .start-option-footer .start-option-expand {
+      display: none;
+    }
+    .start-option {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+      align-items: start;
+      column-gap: 18px;
+      row-gap: 22px;
       background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.22);
+      border-radius: 12px;
+      padding: 26px 28px;
+      margin-bottom: 22px;
     }
-    .radio-card input[type="radio"] {
+    .start-option:last-of-type { margin-bottom: 0; }
+    .start-option-num {
+      grid-column: 1;
+      grid-row: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(245,166,35,0.08);
+      border: 1px solid rgba(245,166,35,0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--amber);
+      flex-shrink: 0;
+    }
+    .start-option-main {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+    .start-option-footer {
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
+      align-self: center;
+    }
+    .start-option-panel {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      width: 100%;
+      min-width: 0;
+    }
+    .start-option-kicker {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 6px;
+    }
+    .start-option-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--off-white);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .start-option-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .start-option-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber);
+      color: var(--navy);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 22px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .start-option-btn:hover {
+      background: var(--amber-dark);
+      transform: translateY(-1px);
+    }
+    .start-option-panel .bstart { margin-top: 4px; }
+    .intake-panel-note {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 4px;
+    }
+    #contact-fields-holder { display: none; }
+    .visually-hidden {
       position: absolute;
       width: 1px;
       height: 1px;
-      opacity: 0;
+      padding: 0;
+      margin: -1px;
       overflow: hidden;
-      clip: rect(0,0,0,0);
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
-    .radio-circle {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      flex-shrink: 0;
-      margin-top: 2px;
-      transition: border-color 0.18s, background 0.18s;
-      position: relative;
-    }
-    .radio-card.selected .radio-circle {
-      border-color: var(--amber);
-      background: var(--amber);
-    }
-    .radio-card.selected .radio-circle::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--navy);
-    }
-    .radio-card-text { flex: 1; min-width: 0; }
-    .radio-card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--off-white);
-      margin-bottom: 2px;
-      line-height: 1.3;
-    }
-    .radio-card-desc {
-      font-size: 13px;
-      font-weight: 300;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    /* Conditional textarea slide-down */
-    .details-reveal {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.2s ease;
-      margin-top: -4px;
-      margin-bottom: 4px;
-      padding-left: 32px; /* align with radio card text (circle + gap) */
-    }
-    .details-reveal.open { max-height: 280px; }
-    .details-reveal-inner { padding-top: 2px; }
 
     /* Submit button */
     .bstart {
@@ -1218,6 +1278,26 @@
       .hero { padding: 6rem 1.25rem 2.75rem; }
       .cards-grid { grid-template-columns: 1fr; }
       .bstart { display: flex; width: 100%; justify-content: center; }
+      .start-option {
+        padding: 22px 18px;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .start-option-footer {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: stretch;
+      }
+      .start-option-footer .start-option-btn {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
+      .start-option-panel {
+        grid-column: 1 / -1;
+        grid-row: 3;
+      }
       .proof-card { padding: 1.5rem; }
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
     }
@@ -1296,6 +1376,8 @@
   </script>
 </head>
 <body>
+<script>document.documentElement.classList.add('js-start-accordion');</script>
+<noscript><style>.start-option-expand{display:none!important}.start-option-panel{display:block!important}</style></noscript>
 
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -1591,88 +1673,122 @@
 
           <form id="lead-form" novalidate>
 
-            <!-- PART 1 — Contact details -->
-            <div class="field">
-              <label for="f_name">Your name</label>
-              <input type="text" id="f_name" name="name"
-                     placeholder="e.g. James Hart"
-                     autocomplete="name" required>
-              <div class="ferr" id="e_name">Please enter your name</div>
-            </div>
+            <div class="start-options-wrap">
+              <p class="start-options-label" id="start-options-heading">How would you like to get started?</p>
 
-            <div class="field">
-              <label for="f_biz">Your business name</label>
-              <input type="text" id="f_biz" name="bizName"
-                     placeholder="e.g. Hart Plumbing Ltd"
-                     autocomplete="organization" required>
-              <div class="ferr" id="e_biz">Please enter your business name</div>
-            </div>
+              <nav class="start-option-jump" aria-label="Jump to start options">
+                <a href="#option-review" data-start-hash="option-review">Site review</a>
+                <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
+                <a href="#option-switch" data-start-hash="option-switch">Ready to switch</a>
+                <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
+                <a href="#option-inquiry" data-start-hash="option-inquiry">Full inquiry</a>
+              </nav>
 
-            <div class="field">
-              <label for="f_url">Your current website address <span class="opt">so I can review it</span></label>
-              <input type="url" id="f_url" name="currentUrl"
-                     placeholder="e.g. https://www.hartplumbing.co.uk"
-                     autocomplete="url">
-              <div class="ferr" id="e_url">Please enter a valid web address</div>
-            </div>
-
-            <div class="field">
-              <label for="f_email">Your email address</label>
-              <input type="email" id="f_email" name="email"
-                     placeholder="e.g. james@hartplumbing.co.uk"
-                     autocomplete="email" required>
-              <div class="ferr" id="e_email">Please enter a valid email address</div>
-            </div>
-
-            <!-- PART 2 — How to get started (radio option cards) -->
-            <fieldset style="border:none;padding:0;margin:0 0 6px">
-              <legend class="radio-group-label">How would you like to get started?</legend>
-              <div class="radio-cards">
-
-                <label class="radio-card selected" data-value="review_site_first">
-                  <input type="radio" name="start_option" value="review_site_first" checked>
-                  <div class="radio-circle" aria-hidden="true"></div>
-                  <div class="radio-card-text">
-                    <div class="radio-card-title">Review my current site first</div>
-                    <div class="radio-card-desc">I&rsquo;ll take a look at what you have and come back with honest feedback. No commitment.</div>
+              <div id="contact-fields-holder" hidden>
+                <div id="contact-fields">
+                  <div class="field">
+                    <label for="f_name">Your name</label>
+                    <input type="text" id="f_name" name="name"
+                           placeholder="e.g. James Hart"
+                           autocomplete="name" required>
+                    <div class="ferr" id="e_name">Please enter your name</div>
                   </div>
-                </label>
-
-                <label class="radio-card" data-value="ready_to_switch">
-                  <input type="radio" name="start_option" value="ready_to_switch">
-                  <div class="radio-circle" aria-hidden="true"></div>
-                  <div class="radio-card-text">
-                    <div class="radio-card-title">I already know I want to switch</div>
-                    <div class="radio-card-desc">Build me a new site using my existing content. I&rsquo;ll tell you more below.</div>
+                  <div class="field">
+                    <label for="f_biz">Your business name</label>
+                    <input type="text" id="f_biz" name="bizName"
+                           placeholder="e.g. Hart Plumbing Ltd"
+                           autocomplete="organization" required>
+                    <div class="ferr" id="e_biz">Please enter your business name</div>
                   </div>
-                </label>
-
-                <!-- Conditional textarea — revealed when 'ready_to_switch' is selected -->
-                <div class="details-reveal" id="details-reveal" aria-live="polite">
-                  <div class="details-reveal-inner">
-                    <div class="field">
-                      <label for="f_details">Anything else I should know <span class="opt">optional</span></label>
-                      <textarea id="f_details" name="details" rows="5"
-                                placeholder="e.g. Stuck on Wix, unhappy with speed, want to keep my domain at GoDaddy — whatever helps."></textarea>
-                    </div>
+                  <div class="field">
+                    <label for="f_url">Your current website address <span class="opt">so I can review it</span></label>
+                    <input type="url" id="f_url" name="currentUrl"
+                           placeholder="e.g. https://www.hartplumbing.co.uk"
+                           autocomplete="url">
+                    <div class="ferr" id="e_url">Please enter a valid web address</div>
+                  </div>
+                  <div class="field">
+                    <label for="f_email">Your email address</label>
+                    <input type="email" id="f_email" name="email"
+                           placeholder="e.g. james@hartplumbing.co.uk"
+                           autocomplete="email" required>
+                    <div class="ferr" id="e_email">Please enter a valid email address</div>
                   </div>
                 </div>
-
-                <label class="radio-card" data-value="intake_form">
-                  <input type="radio" name="start_option" value="intake_form">
-                  <div class="radio-circle" aria-hidden="true"></div>
-                  <div class="radio-card-text">
-                    <div class="radio-card-title">Fill in the full intake form</div>
-                    <div class="radio-card-desc">More detail up front means I can get closer first time. Takes about five minutes.</div>
-                  </div>
-                </label>
-
               </div>
-            </fieldset>
 
-            <button type="submit" class="bstart" id="submit-btn">Send my details &rarr;</button>
+              <article id="option-review" class="start-option" aria-expanded="false">
+                <input type="radio" name="start_option" value="review_site_first" class="visually-hidden" tabindex="-1" aria-hidden="true">
+                <div class="start-option-num" aria-hidden="true">1</div>
+                <div class="start-option-main">
+                  <p class="start-option-kicker">Site review</p>
+                  <h3 class="start-option-title" id="option-review-heading">Review my current site first</h3>
+                  <p class="start-option-desc">I&rsquo;ll take a look at what you have and come back with honest feedback. No commitment.</p>
+                </div>
+                <div class="start-option-footer">
+                  <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-review" aria-expanded="false" aria-controls="panel-review">
+                    Request a review
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+                <div id="panel-review" class="start-option-panel" role="region" aria-labelledby="option-review-heading" hidden>
+                  <div class="start-option-panel-inner"></div>
+                  <button type="submit" class="bstart start-option-submit" data-default-label="Send my details &rarr;">Send my details &rarr;</button>
+                  <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+                </div>
+              </article>
+
+              <article id="option-switch" class="start-option" aria-expanded="false">
+                <input type="radio" name="start_option" value="ready_to_switch" class="visually-hidden" tabindex="-1" aria-hidden="true">
+                <div class="start-option-num" aria-hidden="true">2</div>
+                <div class="start-option-main">
+                  <p class="start-option-kicker">Ready to switch</p>
+                  <h3 class="start-option-title" id="option-switch-heading">I already know I want to switch</h3>
+                  <p class="start-option-desc">Build me a new site using my existing content. I&rsquo;ll tell you more below.</p>
+                </div>
+                <div class="start-option-footer">
+                  <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-switch" aria-expanded="false" aria-controls="panel-switch">
+                    Send switch details
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+                <div id="panel-switch" class="start-option-panel" role="region" aria-labelledby="option-switch-heading" hidden>
+                  <div class="start-option-panel-inner"></div>
+                  <div class="field">
+                    <label for="f_details">Anything else I should know <span class="opt">optional</span></label>
+                    <textarea id="f_details" name="details" rows="5"
+                              placeholder="e.g. Stuck on Wix, unhappy with speed, want to keep my domain at GoDaddy — whatever helps."></textarea>
+                  </div>
+                  <button type="submit" class="bstart start-option-submit" data-default-label="Send my details &rarr;">Send my details &rarr;</button>
+                  <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+                </div>
+              </article>
+
+              <article id="option-inquiry" class="start-option" aria-expanded="false">
+                <input type="radio" name="start_option" value="intake_form" class="visually-hidden" tabindex="-1" aria-hidden="true">
+                <div class="start-option-num" aria-hidden="true">3</div>
+                <div class="start-option-main">
+                  <p class="start-option-kicker">Full inquiry</p>
+                  <h3 class="start-option-title" id="option-inquiry-heading">Fill in the full intake form</h3>
+                  <p class="start-option-desc">More detail up front means I can get closer first time. Takes about five minutes.</p>
+                </div>
+                <div class="start-option-footer">
+                  <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-inquiry" aria-expanded="false" aria-controls="panel-inquiry">
+                    Start the form
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+                <div id="panel-inquiry" class="start-option-panel" role="region" aria-labelledby="option-inquiry-heading" hidden>
+                  <div class="start-option-panel-inner"></div>
+                  <p class="intake-panel-note">The full intake form takes about five minutes. It covers your services, your area, accreditations and any photos you&rsquo;d like to include &mdash; the more you fill in, the closer I can get on the first version.</p>
+                  <button type="submit" class="bstart start-option-submit" data-default-label="Start the form &rarr;">Start the form &rarr;</button>
+                  <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+                </div>
+              </article>
+
+            </div>
+
             <div id="submit-error">Something went wrong &mdash; please try again, or email me directly.</div>
-            <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
 
           </form>
         </div>
@@ -1756,41 +1872,150 @@
     }catch(e){ return false; }
   }
 
-  /* ── Radio card interaction ── */
+  /* ── Start options accordion ── */
   (function(){
-    var cards=document.querySelectorAll('.radio-card');
-    var detailsReveal=document.getElementById('details-reveal');
+    if (!document.documentElement.classList.contains('js-start-accordion')) return;
 
-    function selectCard(card){
-      cards.forEach(function(c){ c.classList.remove('selected'); });
-      card.classList.add('selected');
-      var inp=card.querySelector('input[type="radio"]');
-      if(inp) inp.checked=true;
-      var val=card.getAttribute('data-value');
-      if(detailsReveal){
-        if(val==='ready_to_switch'){
-          detailsReveal.classList.add('open');
-        } else {
-          detailsReveal.classList.remove('open');
-        }
-      }
+    var IDS = ['option-review', 'option-switch', 'option-inquiry'];
+    var contactFields = document.getElementById('contact-fields');
+    var contactHolder = document.getElementById('contact-fields-holder');
+
+    function returnContactFields(){
+      if (contactFields && contactHolder) contactHolder.appendChild(contactFields);
     }
 
-    cards.forEach(function(card){
-      card.addEventListener('click',function(){ selectCard(card); });
-      card.addEventListener('keydown',function(e){
-        if(e.key==='Enter'||e.key===' '){
+    function moveContactFields(panelInner){
+      if (!contactFields || !panelInner) return;
+      panelInner.appendChild(contactFields);
+    }
+
+    function setJumpActive(id){
+      document.querySelectorAll('.start-option-jump a[data-start-hash]').forEach(function(a){
+        a.classList.toggle('start-option-jump-active', !!id && a.getAttribute('data-start-hash') === id);
+      });
+    }
+
+    function openStartOption(id, opts){
+      opts = opts || {};
+      if (IDS.indexOf(id) === -1) return;
+
+      if (history.replaceState && opts.replaceHash !== false) {
+        history.replaceState(null, '', '#' + id);
+      }
+
+      returnContactFields();
+
+      IDS.forEach(function(sid){
+        var art = document.getElementById(sid);
+        if (!art) return;
+        var open = sid === id;
+        art.classList.toggle('is-open', open);
+        art.setAttribute('aria-expanded', open ? 'true' : 'false');
+        var panel = art.querySelector('.start-option-panel');
+        if (panel) panel.hidden = !open;
+        var btn = art.querySelector('.start-option-expand');
+        if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        var radio = art.querySelector('input[name="start_option"]');
+        if (radio) radio.checked = open;
+      });
+
+      setJumpActive(id);
+
+      var article = document.getElementById(id);
+      if (article) {
+        var inner = article.querySelector('.start-option-panel-inner');
+        moveContactFields(inner);
+      }
+
+      if (opts.scroll !== false && article) {
+        var panel = article.querySelector('.start-option-panel');
+        if (panel && !panel.hidden) {
+          requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+              panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+        }
+      }
+
+      requestAnimationFrame(function(){
+        var nameEl = document.getElementById('f_name');
+        if (nameEl && article && article.classList.contains('is-open')) nameEl.focus();
+      });
+    }
+
+    function collapseAllInitial(){
+      returnContactFields();
+      IDS.forEach(function(sid){
+        var art = document.getElementById(sid);
+        if (!art) return;
+        art.classList.remove('is-open');
+        art.setAttribute('aria-expanded', 'false');
+        var panel = art.querySelector('.start-option-panel');
+        if (panel) panel.hidden = true;
+        var btn = art.querySelector('.start-option-expand');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        var radio = art.querySelector('input[name="start_option"]');
+        if (radio) radio.checked = false;
+      });
+    }
+
+    function bind(){
+      var wrap = document.querySelector('.start-options-wrap');
+      if (wrap) {
+        wrap.addEventListener('click', function(e){
+          var btn = e.target.closest('[data-start-expand]');
+          if (!btn) return;
+          openStartOption(btn.getAttribute('data-start-expand'));
+        });
+      }
+
+      document.querySelectorAll('.start-option-jump a[data-start-hash]').forEach(function(a){
+        a.addEventListener('click', function(e){
           e.preventDefault();
-          selectCard(card);
+          openStartOption(a.getAttribute('data-start-hash'));
+        });
+      });
+
+      window.addEventListener('hashchange', function(){
+        var raw = window.location.hash.replace(/^#/, '');
+        if (IDS.indexOf(raw) !== -1) {
+          openStartOption(raw, { replaceHash: false });
+        } else {
+          collapseAllInitial();
+          setJumpActive(null);
         }
       });
-    });
+
+      document.addEventListener('click', function(e){
+        var region = document.querySelector('.start-options-wrap');
+        if (!region || region.contains(e.target)) return;
+        if (!document.querySelector('.start-option.is-open')) return;
+        collapseAllInitial();
+        setJumpActive(null);
+        if (history.replaceState && window.location.hash) {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      }, true);
+    }
+
+    function boot(){
+      bind();
+      collapseAllInitial();
+      var raw = window.location.hash.replace(/^#/, '');
+      if (IDS.indexOf(raw) !== -1) openStartOption(raw);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
   })();
 
   /* ── Form validation and submission ── */
   (function(){
     var form=document.getElementById('lead-form');
-    var btn=document.getElementById('submit-btn');
     var formHeaderAndContent=document.getElementById('form-header-and-content');
     var tyWrap=document.getElementById('ty-wrap');
     var errBox=document.getElementById('submit-error');
@@ -1851,14 +2076,23 @@
       return checked?checked.value:'review_site_first';
     }
 
+    function resetSubmitBtn(btn){
+      if(!btn) return;
+      btn.disabled=false;
+      var label=btn.getAttribute('data-default-label');
+      if(label) btn.innerHTML=label;
+    }
+
     form.addEventListener('submit',function(ev){
       ev.preventDefault();
       errBox.style.display='none';
       if(!validate()) return;
 
+      var btn=ev.submitter&&ev.submitter.classList.contains('start-option-submit')
+        ? ev.submitter
+        : document.querySelector('.start-option.is-open .start-option-submit');
       var selectedOption=getSelectedOption();
 
-      /* Option 3: redirect to intake form with pre-filled fields */
       if(selectedOption==='intake_form'){
         var nameVal=document.getElementById('f_name').value.trim();
         var bizVal=document.getElementById('f_biz').value.trim();
@@ -1871,9 +2105,8 @@
         return;
       }
 
-      /* Options 1 & 2: POST to API, show thank-you */
-      btn.disabled=true;
-      btn.textContent='Sending\u2026';
+      if(btn) btn.disabled=true;
+      if(btn) btn.textContent='Sending\u2026';
 
       var detailsEl=document.getElementById('f_details');
       var payload={
@@ -1906,8 +2139,7 @@
         });
       })
       .catch(function(err){
-        btn.disabled=false;
-        btn.textContent='Send my details \u2192';
+        resetSubmitBtn(btn);
         errBox.style.display='block';
         if(window.console&&console.warn) console.warn(err);
       });
