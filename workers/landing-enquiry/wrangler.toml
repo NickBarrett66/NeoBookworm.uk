@@ -2,6 +2,8 @@ name            = "neobookworm-landing-enquiry"
 main            = "src/index.js"
 compatibility_date  = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+workers_dev     = true
+preview_urls    = false
 
 # ── D1 database binding ───────────────────────────────────────────────────────
 # Run `npx wrangler d1 create neobookworm-enquiries` once, then paste the
@@ -19,6 +21,13 @@ database_id  = "771b3047-f977-485e-9cfb-736815931998"
 [triggers]
 crons = ["*/15 * * * *", "0 8 * * *"]
 
-# ── Route (optional — configure after DNS is ready) ──────────────────────────
-# Once api.neobookworm.uk is pointed at Cloudflare:
-#   routes = [{ pattern = "api.neobookworm.uk/landing-enquiry", zone_name = "neobookworm.uk" }]
+# ── Custom domain (future) ────────────────────────────────────────────────────
+# Uncomment once neobookworm.uk DNS is managed by Cloudflare (zone present).
+# Until then, the Worker is reached at the .workers.dev URL below.
+#
+# [[routes]]
+# pattern       = "api.neobookworm.uk"
+# custom_domain = true
+# zone_name     = "neobookworm.uk"
+#
+# Production URL (current): https://neobookworm-landing-enquiry.nickbarrett.workers.dev

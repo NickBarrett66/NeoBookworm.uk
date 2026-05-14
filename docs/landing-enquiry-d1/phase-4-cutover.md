@@ -5,10 +5,11 @@
 1. Worker URL live and tested: `https://api.neobookworm.uk/landing-enquiry` (or documented equivalent) returns `200` + CORS for `https://neobookworm.uk`.
 2. Phase 3 complete: retry cron deployed; Nick has seen at least one successful end-to-end test (D1 + Notion + email) via Worker POST.
 3. D1 remote has migration applied; query works.
-4. DNS: `api.neobookworm.uk` proxied through Cloudflare to Worker (Nick confirms — agent should document verification steps, not create Cloudflare account). Use **`[[custom_domains]]`** in `wrangler.toml` (preferred over legacy `[routes]`):
+4. DNS: `api.neobookworm.uk` proxied through Cloudflare to Worker (Nick confirms — agent should document verification steps, not create Cloudflare account). Use **`[[routes]]` with `custom_domain = true`** in `wrangler.toml`:
    ```toml
-   [[custom_domains]]
-   domain = "api.neobookworm.uk"
+   [[routes]]
+   pattern       = "api.neobookworm.uk"
+   custom_domain = true
    ```
 5. Compare Worker vs Vercel behaviour: same JSON contract, same validation errors.
 

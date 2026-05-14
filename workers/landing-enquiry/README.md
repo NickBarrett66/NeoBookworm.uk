@@ -14,16 +14,18 @@ Switch-over happens in Phase 4.
 
 | | |
 |---|---|
-| **Worker URL** | `https://neobookworm-landing-enquiry.nickbarrett.workers.dev` |
+| **Production URL** | `https://neobookworm-landing-enquiry.nickbarrett.workers.dev` |
+| **Custom domain (future)** | `https://api.neobookworm.uk/landing-enquiry` — pending DNS migration to Cloudflare |
 | **Wrangler version** | 4.90.1 |
 | **D1 database** | `neobookworm-enquiries` |
 | **D1 database ID** | `771b3047-f977-485e-9cfb-736815931998` |
 | **D1 region** | WEUR (served from AMS) |
-| **Current version ID** | Phase 3 deployed — see Cloudflare dashboard for current version ID |
+| **Current version ID** | Phase 4 deployed — see Cloudflare dashboard for current version ID |
 | **Migration applied** | `0001_landing_enquiries.sql` ✅ |
-| **Deployed** | 14 May 2026 |
+| **Phase 4 deployed** | 14 May 2026 — `plumbers.html` + `plumbers-switch.html` live on Worker ✅ |
 | **Secrets set** | `NOTION_API_KEY` ✅, `NOTIFY_SECRET` ✅ |
 | **Vercel notify endpoint** | `api/notify-landing-enquiry.js` deployed ✅ |
+| **Vercel landing-enquiry** | Deprecated — returns `410 Gone` as of Phase 4 cutover |
 
 ### Phase 1 test results (14 May 2026)
 
@@ -395,11 +397,76 @@ curl "http://localhost:8787/__scheduled?cron=0+8+*+*+*"
 
 ---
 
-## Regression note
+## Phase 4 cutover (14 May 2026)
 
-`api/landing-enquiry.js` on Vercel is **intentionally untouched**. It continues to
-handle live traffic (Notion write + SMTP email) exactly as before. The Worker is
-parallel infrastructure — the switch-over happens in Phase 3.
+`plumbers.html` and `plumbers-switch.html` now POST to
+`https://neobookworm-landing-enquiry.nickbarrett.workers.dev`.
+`api/landing-enquiry.js` on Vercel now returns `410 Gone`.
+
+**To complete the cutover, run from `workers/landing-enquiry/`:**
+
+```bash
+npx wrangler deploy
+```
+
+The `[[routes]]` custom domain block is commented out — it requires neobookworm.uk's DNS
+to be managed by Cloudflare. Uncomment and redeploy once that migration is done to switch
+the production URL to `https://api.neobookworm.uk/landing-enquiry`.
+
+---
+
+## Post go-live monitoring (first week after Phase 4 cutover)
+
+Run these checks daily for the first week after switching live traffic to the Worker.
+
+### Daily failed-row count
+
+```bash
+npx wrangler d1 execute neobookworm-enquiries --remote \
+  --command "SELECT COUNT(*) AS failing FROM landing_enquiries WHERE notion_status='failed' OR email_status='failed'"
+```
+
+Expected: 0. Any non-zero count means the retry cron isn't clearing rows — investigate with the full failed-row query below.
+
+### Full failed-row details
+
+```bash
+npx wrangler d1 execute neobookworm-enquiries --remote \
+  --command "SELECT id, email, source, notion_status, email_status, notion_attempts, email_attempts, created_at FROM landing_enquiries WHERE notion_status='failed' OR email_status='failed' ORDER BY created_at DESC"
+```
+
+### Cron execution logs
+
+In the Cloudflare dashboard → Workers → neobookworm-landing-enquiry → Logs (or use `wrangler tail`):
+
+```bash
+npx wrangler tail neobookworm-landing-enquiry
+```
+
+Check that the `*/15` retry cron fires every 15 minutes and the `0 8` digest fires each morning.
+
+### D1 row count vs Notion new rows
+
+Compare the count of new rows in D1 for landing sources against new rows in the Notion Client Sites database each day:
+
+```bash
+npx wrangler d1 execute neobookworm-enquiries --remote \
+  --command "SELECT source, COUNT(*) AS total FROM landing_enquiries WHERE created_at > datetime('now','-1 day') GROUP BY source"
+```
+
+Expected: each row has a matching Notion record (`notion_status='ok'`).
+
+### Vercel 410 log check
+
+In the Vercel dashboard → Functions → `api/landing-enquiry` → Logs:
+- Any 410 hit after cutover day means a stale request reached the old endpoint — acceptable if count drops to zero within a few hours.
+- 410 hits after day 2 would indicate a form somewhere still pointing at Vercel — re-check `plumbers.html` and `plumbers-switch.html`.
+
+### Digest email
+
+The daily digest cron (`0 8 * * *` UTC) sends an email to `TO_EMAIL` if any rows are still failing after retries. If you receive a digest email, check the failed-row query above and investigate the specific IDs listed.
+
+If zero rows are failing, no email is sent — silence is healthy.
 
 ---
 
