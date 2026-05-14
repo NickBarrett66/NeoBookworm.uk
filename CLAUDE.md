@@ -428,7 +428,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Item | Priority | Notes |
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
-| landing-enquiry Notion DB | Done | Phase 2 Worker (`workers/landing-enquiry`) creates Notion row via `ctx.waitUntil` background sync after D1 insert. Notion + email (via `api/notify-landing-enquiry.js`) both confirmed working 14 May 2026. `NOTION_API_KEY` and `NOTIFY_SECRET` set as Worker secrets; `NOTIFY_SECRET` also set in Vercel env vars. Original `/api/landing-enquiry` on Vercel unchanged — still handles live traffic until Phase 3 cut-over. |
+| landing-enquiry Notion DB | Done | Phase 3 Worker (`workers/landing-enquiry`) deployed 14 May 2026. D1 insert + background Notion/email sync (Phase 2) + retry cron every 15 min + daily digest at 08:00 UTC (Phase 3). Both crons visible in Cloudflare dashboard. `api/notify-landing-enquiry.js` extended with `type:"digest"` path. Original `/api/landing-enquiry` on Vercel unchanged — still handles live traffic until Phase 4 cut-over. |
 | SMTP env vars for contact form | Done | iCloud SMTP confirmed working in production. Credentials set in Vercel env vars — see Email sending section above. |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |

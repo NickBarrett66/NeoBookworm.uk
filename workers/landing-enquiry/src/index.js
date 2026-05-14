@@ -12,8 +12,9 @@
  */
 
 import { corsHeaders, handleOptions, isAllowedOrigin } from './cors.js';
-import { validateBody } from './validate.js';
-import { syncEnquiry }  from './sync.js';
+import { validateBody }    from './validate.js';
+import { syncEnquiry }     from './sync.js';
+import { handleScheduled } from './scheduled.js';
 
 export default {
   /**
@@ -89,6 +90,17 @@ export default {
     ctx.waitUntil(syncEnquiry(env, id));
 
     return jsonResponse(200, { ok: true, id }, origin);
+  },
+
+  // Cron triggers — expressions defined in wrangler.toml [triggers].
+  // Retry cron runs every 15 min; daily digest runs at 08:00 UTC.
+  /**
+   * @param {ScheduledEvent} event
+   * @param {{ DB: D1Database, NOTIFY_SECRET?: string }} env
+   * @param {ExecutionContext} ctx
+   */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(handleScheduled(event, env));
   },
 };
 

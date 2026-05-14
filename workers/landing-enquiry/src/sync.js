@@ -72,9 +72,12 @@ export async function syncEnquiry(env, id) {
   };
 
   // ── 2. Notion ──────────────────────────────────────────────────────────────
-  let notionPageId = null;
+  // Skip if this leg already succeeded (safe on both first-run and retry).
+  let notionPageId = row.notion_page_id || null;
 
-  if (!env.NOTION_API_KEY) {
+  if (row.notion_status === 'ok' || row.notion_status === 'skipped') {
+    console.log(`[sync] Notion already ${row.notion_status} for ${id} — skipping`);
+  } else if (!env.NOTION_API_KEY) {
     console.warn('[sync] NOTION_API_KEY not set — skipping Notion');
     await updateD1(env.DB, id, {
       notion_status: 'skipped',
@@ -103,6 +106,12 @@ export async function syncEnquiry(env, id) {
   }
 
   // ── 3. Email (via Vercel notify endpoint) ──────────────────────────────────
+  // Skip if this leg already succeeded or was intentionally skipped.
+  if (row.email_status === 'ok' || row.email_status === 'skipped') {
+    console.log(`[sync] Email already ${row.email_status} for ${id} — skipping`);
+    return;
+  }
+
   if (!env.NOTIFY_SECRET) {
     console.warn('[sync] NOTIFY_SECRET not set on Worker — skipping email');
     await updateD1(env.DB, id, {

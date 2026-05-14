@@ -11,6 +11,14 @@ binding      = "DB"
 database_name = "neobookworm-enquiries"
 database_id  = "771b3047-f977-485e-9cfb-736815931998"
 
+# ── Scheduled crons (Phase 3) ─────────────────────────────────────────────────
+# All Cloudflare crons are UTC — there is no automatic DST adjustment.
+#   */15 * * * *  — retry cron: pick up rows where notion_status or email_status is 'failed'
+#   0 8  * * *   — daily digest: email Nick a table of all rows still failing after retries
+#                  08:00 UTC = 08:00 GMT (winter) / 09:00 BST (summer)
+[triggers]
+crons = ["*/15 * * * *", "0 8 * * *"]
+
 # ── Route (optional — configure after DNS is ready) ──────────────────────────
 # Once api.neobookworm.uk is pointed at Cloudflare:
 #   routes = [{ pattern = "api.neobookworm.uk/landing-enquiry", zone_name = "neobookworm.uk" }]

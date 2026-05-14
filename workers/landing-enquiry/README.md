@@ -1,12 +1,12 @@
-# landing-enquiry Worker (Phase 2)
+# landing-enquiry Worker (Phase 3)
 
 Cloudflare Worker that receives landing page enquiries from `plumbers.html` and
 `plumbers-switch.html`, validates them, saves them to D1, and then — in the
 background — creates a Notion row and sends a notification email via Vercel.
 
-**Phase 2 scope:** D1 insert + `ctx.waitUntil` background sync (Notion + email).  
+**Phase 3 scope:** retry cron (`*/15 * * * *`) + daily failed-sync digest (`0 8 * * *`).  
 The existing Vercel `/api/landing-enquiry` is **unchanged** and still handles live traffic.  
-Switch-over happens in Phase 3.
+Switch-over happens in Phase 4.
 
 ---
 
@@ -19,7 +19,7 @@ Switch-over happens in Phase 3.
 | **D1 database** | `neobookworm-enquiries` |
 | **D1 database ID** | `771b3047-f977-485e-9cfb-736815931998` |
 | **D1 region** | WEUR (served from AMS) |
-| **Current version ID** | `7a0a701a-f94f-47f2-946e-20ce6e31ba09` (Phase 1) — Phase 2 redeployed 14 May 2026 |
+| **Current version ID** | Phase 3 deployed — see Cloudflare dashboard for current version ID |
 | **Migration applied** | `0001_landing_enquiries.sql` ✅ |
 | **Deployed** | 14 May 2026 |
 | **Secrets set** | `NOTION_API_KEY` ✅, `NOTIFY_SECRET` ✅ |
@@ -296,6 +296,105 @@ $body = '{"fullName":"Perf Test","bizName":"Perf Co","email":"perf@example.com",
 
 ---
 
+## Scheduled crons (Phase 3)
+
+Two cron triggers are configured in `wrangler.toml` under `[triggers]`.
+
+### Retry cron — `*/15 * * * *`
+
+Runs every 15 minutes. Queries D1 for rows where either sync leg failed and the
+attempt counter is under 5, within the last 7 days:
+
+```sql
+SELECT * FROM landing_enquiries
+WHERE (
+    (notion_status = 'failed' AND notion_attempts < 5)
+    OR (email_status = 'failed' AND email_attempts < 5)
+  )
+  AND created_at > datetime('now', '-7 days')
+ORDER BY created_at ASC
+LIMIT 20
+```
+
+For each row it calls `syncEnquiry(env, id)` — the same function used by the HTTP
+handler. `syncEnquiry` skips any leg that is already `ok` or `skipped`, so a row
+where Notion succeeded but email failed will only retry the email leg.
+
+After 5 attempts on a given leg the row is left as `failed` and is no longer picked
+up by the retry cron (attempt counter is at the cap).
+
+### Daily digest — `0 8 * * *`
+
+Runs at 08:00 UTC each day. Cloudflare crons are UTC-only — no automatic DST adjustment:
+
+| Cron (UTC) | UK winter (GMT) | UK summer (BST) |
+|---|---|---|
+| `0 8 * * *` | 08:00 | 09:00 |
+
+Queries **all** rows (no age limit) where `notion_status='failed'` OR
+`email_status='failed'` — old failures must never be silently dropped.
+
+If any rows are found, POSTs to `https://neobookworm.uk/api/notify-landing-enquiry`
+with `{ type: "digest", rows: [...] }`. Vercel sends one summary email to `TO_EMAIL`
+with a plain-text table of all failing rows.
+
+If zero rows are failing, no POST is made and no email is sent.
+
+### Manual replay command
+
+Check which rows are currently failing:
+
+```bash
+npx wrangler d1 execute neobookworm-enquiries --remote \
+  --command "SELECT id, notion_status, email_status, notion_attempts, email_attempts FROM landing_enquiries WHERE notion_status='failed' OR email_status='failed'"
+```
+
+### Testing the scheduled handler locally
+
+Invoke the scheduled handler without waiting for the real cron:
+
+```bash
+# From workers/landing-enquiry/
+npx wrangler dev --test-scheduled
+```
+
+Then in a second terminal trigger the retry cron:
+
+```bash
+curl "http://localhost:8787/__scheduled?cron=*/15+*+*+*+*"
+```
+
+Trigger the digest cron:
+
+```bash
+curl "http://localhost:8787/__scheduled?cron=0+8+*+*+*"
+```
+
+**Test steps (retry cron):**
+
+1. Seed a failed row in remote D1:
+
+   ```bash
+   npx wrangler d1 execute neobookworm-enquiries --remote \
+     --command "UPDATE landing_enquiries SET notion_status='failed', notion_attempts=1 WHERE id='<your-test-id>'"
+   ```
+
+2. Invoke scheduled handler (local or via `wrangler tail` on the deployed Worker).
+3. Confirm the row moves to `notion_status='ok'` or that `notion_attempts` incremented.
+4. Seed a row with `notion_attempts=5` — confirm it is **not** retried.
+
+**Test steps (digest):**
+
+5. Seed 2 failed rows → run digest handler → email received listing both IDs.
+6. Zero failed rows → confirm no email (check logs only).
+
+**Safety checks:**
+
+7. Rows already `ok` or `skipped` are never re-processed.
+8. No duplicate Notion pages: if `notion_status='ok'`, Notion leg is skipped.
+
+---
+
 ## Regression note
 
 `api/landing-enquiry.js` on Vercel is **intentionally untouched**. It continues to
@@ -304,20 +403,18 @@ parallel infrastructure — the switch-over happens in Phase 3.
 
 ---
 
-## Phase 3 prerequisites
+## Phase 4 prerequisites
 
 ```
-Phase 2 complete when:
-- [x] NOTION_API_KEY set on Worker (wrangler secret put NOTION_API_KEY) — 14 May 2026
-- [x] NOTIFY_SECRET set on Worker and in Vercel env vars; api/notify-landing-enquiry.js deployed — 14 May 2026
-- [x] Worker redeployed (npx wrangler deploy) after secrets are set — 14 May 2026
-- [x] Test row in D1 shows notion_status='ok' (query with wrangler d1 execute --remote) — 14 May 2026
-- [x] Test notification email received via notify endpoint — 14 May 2026
-- [ ] Failed Notion path tested: POST with wrong NOTION_API_KEY → row saved, notion_status='failed', notion_error populated
-- [ ] NOTIFY_SECRET-not-set path tested: email_status='skipped', Notion still succeeds
-- [x] plumbers.html still on Vercel /api/landing-enquiry (not yet cut over)
+Phase 3 complete when:
+- [x] npx wrangler deploy run from workers/landing-enquiry/ after Phase 3 code changes — 14 May 2026
+- [x] Cron triggers visible in Cloudflare dashboard → Workers → neobookworm-landing-enquiry → Triggers — 14 May 2026
+- [ ] Retry tested on at least one artificial failed row (notion_attempts incremented or row moves to 'ok')
+- [ ] Row with notion_attempts >= 5 confirmed not picked up again
+- [ ] Daily digest tested OR explicitly disabled with reason documented here
+- [ ] Worker URL stable: https://neobookworm-landing-enquiry.nickbarrett.workers.dev (or custom route)
+- [ ] Nick confirms ready to switch live form traffic (plumbers.html / plumbers-switch.html)
 ```
 
-Phase 3 will cut over `plumbers.html` and `plumbers-switch.html` to POST directly to
-the Worker URL (`https://neobookworm-landing-enquiry.nickbarrett.workers.dev`), and
-add a retry cron for rows where `notion_status='failed'` or `email_status='failed'`.
+Phase 4 will cut over `plumbers.html` and `plumbers-switch.html` to POST directly to
+the Worker URL, removing the Vercel `/api/landing-enquiry` as the primary path.
