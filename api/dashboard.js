@@ -1,12 +1,13 @@
-// GET /api/dashboard?action=summary
-// GET /api/dashboard?action=list&status=X&page=N&q=search
-// GET /api/dashboard?action=record&id=X
+// GET  /api/dashboard?action=summary
+// GET  /api/dashboard?action=list&status=X&page=N&q=search
+// GET  /api/dashboard?action=record&id=X
+// POST /api/dashboard        body: { action:"update", id, fields:{...} }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
 // Proxies queries to D1 via the Cloudflare REST API.
 //
 // Required env vars:
-//   CF_API_TOKEN       — Cloudflare API token with D1:Read permission
+//   CF_API_TOKEN       — Cloudflare API token with D1:Edit permission
 //   DASHBOARD_SECRET   — token callers must supply as Bearer token
 // Optional:
 //   CF_ACCOUNT_ID      — defaults to the NeoBookworm Cloudflare account
@@ -36,13 +37,28 @@ async function queryD1(sql, params = []) {
   return data.result[0].results;
 }
 
+// Fields that may be updated via the dashboard
+const EDITABLE_FIELDS = [
+  'status', 'notes', 'note', 'disqualify_reason', 'postcard_score',
+  'do_not_contact', 'response_classification', 'demo_url', 'demo_site_name',
+];
+
+function parseBody(req) {
+  const b = req.body;
+  if (!b) return {};
+  if (typeof b === 'object' && !Buffer.isBuffer(b)) return b;
+  try { return JSON.parse(Buffer.isBuffer(b) ? b.toString('utf8') : b); } catch { return null; }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin',  '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'GET')     return res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
   const secret = process.env.DASHBOARD_SECRET;
   if (secret) {
@@ -55,6 +71,37 @@ module.exports = async (req, res) => {
 
   if (!process.env.CF_API_TOKEN) {
     return res.status(500).json({ error: 'CF_API_TOKEN not configured' });
+  }
+
+  // ── POST: update a record ────────────────────────────────────────────────
+  if (req.method === 'POST') {
+    const body = parseBody(req);
+    if (!body || body.action !== 'update') {
+      return res.status(400).json({ error: 'Expected { action: "update", id, fields }' });
+    }
+
+    const { id, fields } = body;
+    if (!id) return res.status(400).json({ error: 'id required' });
+    if (!fields || typeof fields !== 'object') {
+      return res.status(400).json({ error: 'fields object required' });
+    }
+
+    const allowed = Object.keys(fields).filter(k => EDITABLE_FIELDS.includes(k));
+    if (allowed.length === 0) return res.status(400).json({ error: 'No editable fields provided' });
+
+    const setClauses = allowed.map(k => `${k} = ?`).join(', ');
+    const params     = [...allowed.map(k => fields[k]), id];
+
+    try {
+      await queryD1(
+        `UPDATE prospects SET ${setClauses} WHERE notion_id = ?`,
+        params
+      );
+      return res.status(200).json({ ok: true });
+    } catch (err) {
+      console.error('[dashboard update]', err.message);
+      return res.status(500).json({ error: err.message });
+    }
   }
 
   const { action, status, page = '1', q = '' } = req.query;

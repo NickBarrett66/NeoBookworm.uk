@@ -445,6 +445,96 @@
     border-top: 1px solid var(--border);
     margin: 1.25rem 0;
   }
+
+  /* ── Editable fields ───────────────────────────────────────────────────── */
+
+  .edit-section {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .edit-section h3 {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .edit-row {
+    margin-bottom: .9rem;
+  }
+
+  .edit-row label {
+    display: block;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: .3rem;
+  }
+
+  .edit-row select,
+  .edit-row input[type="text"],
+  .edit-row input[type="number"],
+  .edit-row textarea {
+    width: 100%;
+    padding: .55rem .8rem;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--navy-light);
+    color: var(--white);
+    font-size: .9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .edit-row select:focus,
+  .edit-row input:focus,
+  .edit-row textarea:focus { border-color: var(--amber); }
+
+  .edit-row textarea { resize: vertical; min-height: 80px; }
+
+  .edit-row select option { background: var(--navy-light); }
+
+  .disqualify-row { display: none; }
+  .disqualify-row.visible { display: block; }
+
+  .edit-actions {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+
+  #btn-save {
+    padding: .6rem 1.4rem;
+    background: var(--amber);
+    color: var(--navy);
+    border: none;
+    border-radius: 7px;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, opacity .15s;
+  }
+
+  #btn-save:disabled { opacity: .4; cursor: default; }
+  #btn-save:not(:disabled):hover { background: var(--amber-dim); }
+
+  #save-status {
+    font-size: .85rem;
+    min-height: 1.2em;
+  }
+
+  #save-status.ok  { color: var(--green); }
+  #save-status.err { color: var(--red); }
 </style>
 </head>
 <body>
@@ -697,7 +787,7 @@ function renderList({ data: rows, total, page, pageSize }) {
         <td class="muted">${row.rating != null ? row.rating : '—'}</td>
         <td class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</td>
       `;
-      tr.addEventListener('click', () => loadRecord(row.notion_id, row.business_name));
+      tr.addEventListener('click', () => loadRecord(row.notion_id));
       tbody.appendChild(tr);
     });
   }
@@ -714,8 +804,26 @@ function renderList({ data: rows, total, page, pageSize }) {
   document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1, state.searchQuery));
 }
 
+// ── All known statuses ────────────────────────────────────────────────────────
+const ALL_STATUSES = [
+  'Researched',
+  'Researched with website',
+  'Pending CH Validation',
+  'Brief In Progress',
+  'Spec Complete',
+  'Brief Complete',
+  'Demo Built',
+  'Emailed',
+  'Closed - No Response',
+  'CH Checked - Sole Trader',
+  'Ltd - No Email',
+  'Disqualified',
+  'Duplicate',
+  'Suppressed',
+];
+
 // ── Record detail ─────────────────────────────────────────────────────────────
-async function loadRecord(id, name) {
+async function loadRecord(id) {
   const overlay = document.getElementById('modal-overlay');
   const body    = document.getElementById('modal-body');
   body.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
@@ -724,6 +832,7 @@ async function loadRecord(id, name) {
   try {
     const { data: r } = await apiFetch({ action: 'record', id });
     body.innerHTML = renderRecordHtml(r);
+    wireEditSection(r);
   } catch (err) {
     body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
   }
@@ -737,6 +846,10 @@ function renderRecordHtml(r) {
     return `<span class="field-value">${safe}</span>`;
   };
 
+  const statusOptions = ALL_STATUSES.map(s =>
+    `<option value="${escAttr(s)}"${s === r.status ? ' selected' : ''}>${escHtml(s)}</option>`
+  ).join('');
+
   return `
     <h2>${escHtml(r.business_name || 'Unknown')}</h2>
     <div class="modal-status">${escHtml(r.status || '')}${r.trade_category ? ' · ' + escHtml(r.trade_category) : ''}</div>
@@ -748,7 +861,7 @@ function renderRecordHtml(r) {
       </div>
       <div class="field-group">
         <span class="field-label">Email</span>
-        ${val(r.email_address, r.email_address ? `mailto:${r.email_address}` : null)}
+        ${val(r.email_address, r.email_address ? 'mailto:' + r.email_address : null)}
       </div>
       <div class="field-group">
         <span class="field-label">Phone</span>
@@ -844,28 +957,109 @@ function renderRecordHtml(r) {
 
     ${r.research_summary ? `
       <hr class="section-divider">
-      <div class="field-group full">
+      <div class="field-group" style="grid-column:1/-1">
         <span class="field-label">Research summary</span>
         <span class="field-value">${escHtml(r.research_summary)}</span>
       </div>
     ` : ''}
 
-    ${r.notes || r.note ? `
-      <hr class="section-divider">
-      <div class="field-group full">
-        <span class="field-label">Notes</span>
-        <span class="field-value">${escHtml(r.notes || r.note || '')}</span>
-      </div>
-    ` : ''}
+    <!-- Edit section -->
+    <div class="edit-section">
+      <h3>Edit record</h3>
 
-    ${r.disqualify_reason ? `
-      <hr class="section-divider">
-      <div class="field-group full">
-        <span class="field-label">Disqualify reason</span>
-        <span class="field-value">${escHtml(r.disqualify_reason)}</span>
+      <div class="edit-row">
+        <label for="edit-status">Status</label>
+        <select id="edit-status">${statusOptions}</select>
       </div>
-    ` : ''}
+
+      <div class="edit-row disqualify-row" id="disqualify-row">
+        <label for="edit-disqualify">Disqualify reason</label>
+        <input type="text" id="edit-disqualify" value="${escAttr(r.disqualify_reason || '')}" placeholder="Reason for disqualifying…">
+      </div>
+
+      <div class="edit-row">
+        <label for="edit-notes">Notes</label>
+        <textarea id="edit-notes" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea>
+      </div>
+
+      <div class="edit-actions">
+        <button id="btn-save" disabled>Save changes</button>
+        <span id="save-status"></span>
+      </div>
+    </div>
   `;
+}
+
+function wireEditSection(r) {
+  const statusEl      = document.getElementById('edit-status');
+  const disqualifyEl  = document.getElementById('edit-disqualify');
+  const disqualifyRow = document.getElementById('disqualify-row');
+  const notesEl       = document.getElementById('edit-notes');
+  const saveBtn       = document.getElementById('btn-save');
+  const saveStatus    = document.getElementById('save-status');
+
+  const origStatus     = r.status || '';
+  const origDisqualify = r.disqualify_reason || '';
+  const origNotes      = r.notes || r.note || '';
+
+  function toggleDisqualifyRow() {
+    disqualifyRow.classList.toggle('visible', statusEl.value === 'Disqualified');
+  }
+
+  function checkDirty() {
+    const dirty = statusEl.value      !== origStatus     ||
+                  disqualifyEl.value  !== origDisqualify ||
+                  notesEl.value       !== origNotes;
+    saveBtn.disabled = !dirty;
+    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = ''; }
+  }
+
+  toggleDisqualifyRow();
+  statusEl.addEventListener('change', () => { toggleDisqualifyRow(); checkDirty(); });
+  disqualifyEl.addEventListener('input', checkDirty);
+  notesEl.addEventListener('input', checkDirty);
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    saveStatus.textContent = 'Saving…';
+    saveStatus.className = '';
+
+    const fields = {};
+    if (statusEl.value     !== origStatus)     fields.status            = statusEl.value;
+    if (disqualifyEl.value !== origDisqualify) fields.disqualify_reason = disqualifyEl.value;
+    if (notesEl.value      !== origNotes)      fields.notes             = notesEl.value;
+
+    try {
+      const res = await fetch('/api/dashboard', {
+        method:  'POST',
+        headers: { 'Authorization': `Bearer ${state.token}`, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'update', id: r.notion_id, fields }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Save failed');
+
+      if (fields.status !== undefined)            r.status            = fields.status;
+      if (fields.disqualify_reason !== undefined) r.disqualify_reason = fields.disqualify_reason;
+      if (fields.notes !== undefined)             r.notes             = fields.notes;
+
+      const subtitle = document.querySelector('.modal-status');
+      if (subtitle) subtitle.textContent = r.status + (r.trade_category ? ' · ' + r.trade_category : '');
+
+      saveStatus.textContent = 'Saved';
+      saveStatus.className = 'ok';
+      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = ''; }, 2500);
+
+      wireEditSection(r);
+
+      if (state.view === 'list' && state.currentStatus !== r.status) {
+        loadList(state.currentStatus, state.currentPage, state.searchQuery);
+      }
+    } catch (err) {
+      saveStatus.textContent = err.message;
+      saveStatus.className = 'err';
+      saveBtn.disabled = false;
+    }
+  });
 }
 
 // ── Modal close ───────────────────────────────────────────────────────────────
