@@ -67,6 +67,12 @@ const handler = async (req, res) => {
 
     await intake.createNotionRecord(fields, photoUrls, logoUrl);
 
+    try {
+      await intake.sendIntakeNotificationEmail(fields, photoUrls, logoUrl);
+    } catch (mailErr) {
+      console.error('[intake] Email error (Notion row saved):', mailErr.message);
+    }
+
     return res.status(200).json({
       success:    true,
       photoCount: photoUrls.length,

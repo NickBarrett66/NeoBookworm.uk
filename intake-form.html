@@ -611,7 +611,7 @@ function goBack(){if(curStep>1) goToStep(curStep-1);}
 
 function validate(n){
 var ok=true;
-var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
+var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_email','e_email'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
 var pairs=map[n]||[];
 for(var i=0;i<pairs.length;i++){
 var el=document.getElementById(pairs[i][0]);
@@ -622,11 +622,18 @@ else{if(err) err.classList.remove('show');}
 if(n===1){
   var em=document.getElementById('f_email');
   var ee=document.getElementById('e_email');
-  if(em&&em.value.trim() && !isValidEmail(em.value)){
-    ee.textContent='Please enter a valid email address';
-    ee.classList.add('show');
-    if(ok) em.focus();
-    ok=false;
+  if(em){
+    if(!em.value.trim()){
+      ee.textContent='Please enter your email address';
+      ee.classList.add('show');
+      if(ok) em.focus();
+      ok=false;
+    }else if(!isValidEmail(em.value)){
+      ee.textContent='Please enter a valid email address';
+      ee.classList.add('show');
+      if(ok) em.focus();
+      ok=false;
+    }
   }
 }
 return ok;
@@ -706,8 +713,13 @@ fetch('/api/intake-upload-session',{
   }
 
   var jobs=[];
-  for(var ui=0;ui<uploads.length;ui++){
-    jobs.push(putOne(uploads[ui],photosInput.files[ui]));
+  if(uploads.length){
+    if(!photosInput||!photosInput.files||photosInput.files.length<uploads.length){
+      throw new Error('Photo files missing — please re-select your photos and try again');
+    }
+    for(var ui=0;ui<uploads.length;ui++){
+      jobs.push(putOne(uploads[ui],photosInput.files[ui]));
+    }
   }
   if(logoUp&&logoInput&&logoInput.files&&logoInput.files.length>0){
     jobs.push(putOne(logoUp,logoInput.files[0]));
@@ -765,8 +777,13 @@ document.getElementById('tywrap').classList.add('show');
 window.scrollTo(0,0);
 })
 .catch(function(err){
-btn.disabled=false;btn.textContent='Submit \u2192';
-document.getElementById('submit-error').style.display='block';
+btn.disabled=false;
+btn.textContent=curStep===5?'Build my free preview \u2192':'Continue \u2192';
+var errBox=document.getElementById('submit-error');
+errBox.style.display='block';
+errBox.textContent=err&&err.message
+  ?('Something went wrong \u2014 '+err.message+'. Please try again.')
+  :'Something went wrong \u2014 please try again.';
 if(window.console&&console.warn) console.warn(err);
 });
 }

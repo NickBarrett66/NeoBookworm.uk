@@ -975,6 +975,70 @@ function extractFinalizeFields(body) {
   };
 }
 
+// ─── Email notification (same SMTP env as contact.js / landing-enquiry.js) ───
+
+async function sendIntakeNotificationEmail(fields, photoUrls, logoUrl) {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
+  const toEmail  = process.env.TO_EMAIL || 'neobookworm@icloud.com';
+
+  const lines = [
+    'New intake form submission — NeoBookworm',
+    '========================================',
+    `Name:     ${fields.fullName || ''}`,
+    `Business: ${fields.bizName  || ''}`,
+    `Trade:    ${fields.trade    || ''}`,
+    `Email:    ${fields.email    || ''}`,
+    `Phone:    ${fields.phone    || ''}`,
+    `Area:     ${fields.area     || ''}`,
+    '',
+    'Services:',
+    fields.services || '(not provided)',
+    '',
+    'About:',
+    (fields.story || '(not provided)').toString().slice(0, 1500),
+    '',
+    `Photos uploaded: ${(photoUrls && photoUrls.length) || 0}`,
+    logoUrl ? `Logo: ${logoUrl}` : 'Logo: (none)',
+    '',
+    '----------------------------------------',
+    'Submitted via neobookworm.uk/intake-form.html',
+  ];
+  if (photoUrls && photoUrls.length) {
+    lines.push('', 'Photo URLs:');
+    for (let i = 0; i < photoUrls.length; i++) {
+      lines.push(`  ${i + 1}. ${photoUrls[i]}`);
+    }
+  }
+
+  const emailBody = lines.join('\n');
+
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    console.log('[intake] SMTP not configured — would have sent:\n' + emailBody);
+    return;
+  }
+
+  const nodemailer = require('nodemailer');
+  const transporter = nodemailer.createTransport({
+    host:   smtpHost,
+    port:   smtpPort,
+    secure: smtpPort === 465,
+    auth:   { user: smtpUser, pass: smtpPass },
+  });
+
+  await transporter.sendMail({
+    from:    `"NeoBookworm Intake" <${smtpUser}>`,
+    to:      toEmail,
+    replyTo: (fields.email || '').trim() || undefined,
+    subject: `New intake — ${fields.bizName || fields.fullName || 'client'}`,
+    text:    emailBody,
+  });
+
+  console.log('[intake] notification email sent to', toEmail);
+}
+
 async function putSubmittedMarker(uploadId, notionPageId) {
   const key  = submittedMarkerKey(uploadId);
   const body = JSON.stringify({ at: Date.now(), notionPageId: notionPageId || null });
@@ -1059,6 +1123,12 @@ async function finalizeIntakeDirectUpload(body) {
   const page = await createNotionRecord(fields, photoUrls, logoUrl);
 
   try {
+    await sendIntakeNotificationEmail(fields, photoUrls, logoUrl);
+  } catch (mailErr) {
+    console.error('[intake] Email error (Notion row saved):', mailErr.message);
+  }
+
+  try {
     await putSubmittedMarker(uploadId, page && page.id);
   } catch (markErr) {
     console.error('[intake] could not write submitted marker (Notion row exists):', markErr.message);
@@ -1086,4 +1156,5 @@ module.exports = {
   createNotionRecord,
   buildIntakeDirectUploadSession,
   finalizeIntakeDirectUpload,
+  sendIntakeNotificationEmail,
 };
