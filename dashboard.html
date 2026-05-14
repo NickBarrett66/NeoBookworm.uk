@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prospects Dashboard — NeoBookworm</title>
+<title>Dashboard — NeoBookworm</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -49,54 +49,26 @@
     text-align: center;
   }
 
-  .login-box h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: .35rem;
-  }
-
-  .login-box p {
-    color: var(--muted);
-    font-size: .9rem;
-    margin-bottom: 1.5rem;
-  }
+  .login-box h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
+  .login-box p  { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
 
   .login-box input {
-    width: 100%;
-    padding: .75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--navy);
-    color: var(--white);
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    outline: none;
+    width: 100%; padding: .75rem 1rem;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--navy); color: var(--white);
+    font-size: 1rem; margin-bottom: 1rem; outline: none;
   }
-
-  .login-box input:focus {
-    border-color: var(--amber);
-  }
+  .login-box input:focus { border-color: var(--amber); }
 
   .login-box button {
-    width: 100%;
-    padding: .75rem;
-    background: var(--amber);
-    color: var(--navy);
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
+    width: 100%; padding: .75rem;
+    background: var(--amber); color: var(--navy);
+    border: none; border-radius: 8px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
   }
-
   .login-box button:hover { background: var(--amber-dim); }
 
-  #login-error {
-    color: var(--red);
-    font-size: .85rem;
-    margin-top: .75rem;
-    min-height: 1.2em;
-  }
+  #login-error { color: var(--red); font-size: .85rem; margin-top: .75rem; min-height: 1.2em; }
 
   /* ── App shell ─────────────────────────────────────────────────────────── */
 
@@ -105,89 +77,96 @@
   header {
     background: var(--navy-light);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 1.5rem;
+    padding: .75rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .logo {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--amber);
-    text-decoration: none;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--amber); text-decoration: none;
     letter-spacing: -.01em;
   }
 
-  .breadcrumb {
-    color: var(--muted);
-    font-size: .85rem;
+  /* ── Tab navigation ────────────────────────────────────────────────────── */
+
+  .tab-nav {
     display: flex;
-    align-items: center;
-    gap: .4rem;
-    flex: 1;
+    gap: .25rem;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .2rem;
   }
 
-  .breadcrumb span { color: var(--muted); }
-  .breadcrumb .sep { opacity: .4; }
+  .tab-btn {
+    padding: .35rem .9rem;
+    border: none; border-radius: 6px;
+    background: none; color: var(--muted);
+    font-size: .85rem; font-weight: 600;
+    cursor: pointer; transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active { background: var(--navy-card); color: var(--white); }
 
+  .tab-badge {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: .65rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: .05rem .4rem;
+    margin-left: .3rem;
+    vertical-align: middle;
+    line-height: 1.5;
+  }
+
+  .breadcrumb {
+    color: var(--muted); font-size: .85rem;
+    display: flex; align-items: center; gap: .4rem;
+    flex: 1;
+  }
+  .breadcrumb .sep   { opacity: .4; }
   .breadcrumb .active { color: var(--white); }
 
   #btn-back {
     display: none;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: .4rem .9rem;
-    border-radius: 6px;
-    font-size: .85rem;
-    cursor: pointer;
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); padding: .4rem .9rem;
+    border-radius: 6px; font-size: .85rem; cursor: pointer;
   }
-
   #btn-back:hover { color: var(--white); border-color: var(--muted); }
 
   main { padding: 2rem 1.5rem; max-width: 1100px; margin: 0 auto; }
 
   /* ── Loading / error ───────────────────────────────────────────────────── */
 
-  .state-msg {
-    text-align: center;
-    padding: 4rem 1rem;
-    color: var(--muted);
-    font-size: 1rem;
-  }
+  .state-msg { text-align: center; padding: 4rem 1rem; color: var(--muted); }
 
   /* ── Summary view ──────────────────────────────────────────────────────── */
 
   .summary-header {
-    display: flex;
-    align-items: baseline;
+    display: flex; align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: .5rem;
+    margin-bottom: 1.5rem; flex-wrap: wrap; gap: .5rem;
   }
-
   .summary-header h2 { font-size: 1.4rem; font-weight: 700; }
 
   .total-badge {
-    background: var(--navy-card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: .25rem .85rem;
-    font-size: .85rem;
-    color: var(--muted);
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: .25rem .85rem;
+    font-size: .85rem; color: var(--muted);
   }
-
   .total-badge strong { color: var(--white); }
 
   .section-label {
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 1.75rem 0 .75rem;
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin: 1.75rem 0 .75rem;
   }
 
   .cards {
@@ -197,344 +176,194 @@
   }
 
   .card {
-    background: var(--navy-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-    cursor: pointer;
-    transition: border-color .15s, transform .1s;
-    position: relative;
-    overflow: hidden;
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.1rem 1.25rem;
+    cursor: pointer; transition: border-color .15s, transform .1s;
+    position: relative; overflow: hidden;
   }
-
   .card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 4px;
     border-radius: 10px 0 0 10px;
     background: var(--card-color, var(--grey));
   }
-
-  .card:hover {
-    border-color: var(--card-color, var(--muted));
-    transform: translateY(-1px);
-  }
-
-  .card-count {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--card-color, var(--white));
-    margin-bottom: .4rem;
-  }
-
-  .card-label {
-    font-size: .82rem;
-    color: var(--muted);
-    line-height: 1.35;
-  }
+  .card:hover { border-color: var(--card-color, var(--muted)); transform: translateY(-1px); }
+  .card-count { font-size: 2rem; font-weight: 700; line-height: 1; color: var(--card-color, var(--white)); margin-bottom: .4rem; }
+  .card-label { font-size: .82rem; color: var(--muted); line-height: 1.35; }
 
   /* ── List view ─────────────────────────────────────────────────────────── */
 
   .list-header {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-    gap: .75rem;
+    margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem;
   }
+  .list-header h2 { font-size: 1.25rem; font-weight: 700; }
+  .list-header h2 .count-tag { font-size: .75rem; font-weight: 400; color: var(--muted); margin-left: .5rem; }
 
-  .list-header h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
+  .list-controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+
+  #search-input, #enq-search-input {
+    padding: .5rem .9rem; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--navy-card);
+    color: var(--white); font-size: .9rem;
+    width: min(220px, 100%); outline: none;
   }
+  #search-input:focus, #enq-search-input:focus { border-color: var(--amber); }
 
-  .list-header h2 .count-tag {
-    font-size: .75rem;
-    font-weight: 400;
-    color: var(--muted);
-    margin-left: .5rem;
+  .filter-btns { display: flex; gap: .25rem; }
+
+  .filter-btn {
+    padding: .4rem .8rem; border: 1px solid var(--border);
+    border-radius: 6px; background: none;
+    color: var(--muted); font-size: .8rem; cursor: pointer;
   }
-
-  #search-input {
-    padding: .5rem .9rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--navy-card);
-    color: var(--white);
-    font-size: .9rem;
-    width: min(240px, 100%);
-    outline: none;
-  }
-
-  #search-input:focus { border-color: var(--amber); }
+  .filter-btn:hover { color: var(--white); }
+  .filter-btn.active { background: var(--navy-card); color: var(--white); border-color: var(--muted); }
 
   .table-wrap { overflow-x: auto; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: .875rem;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
 
   thead th {
-    text-align: left;
-    padding: .6rem .9rem;
-    color: var(--muted);
-    font-weight: 600;
-    font-size: .75rem;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
+    text-align: left; padding: .6rem .9rem;
+    color: var(--muted); font-weight: 600;
+    font-size: .75rem; letter-spacing: .04em;
+    text-transform: uppercase; border-bottom: 1px solid var(--border);
     white-space: nowrap;
   }
 
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background .1s;
-  }
-
+  tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
   tbody tr:hover { background: var(--navy-card); }
-
-  tbody td {
-    padding: .7rem .9rem;
-    vertical-align: middle;
-    color: var(--white);
-  }
-
+  tbody td { padding: .7rem .9rem; vertical-align: middle; color: var(--white); }
   tbody td.muted { color: var(--muted); }
 
   .pill {
-    display: inline-block;
-    padding: .15rem .55rem;
-    border-radius: 20px;
-    font-size: .72rem;
-    font-weight: 600;
-    background: var(--navy);
-    border: 1px solid var(--border);
-    color: var(--muted);
+    display: inline-block; padding: .15rem .55rem;
+    border-radius: 20px; font-size: .72rem; font-weight: 600;
+    background: var(--navy); border: 1px solid var(--border); color: var(--muted);
   }
-
-  .pill.has-website  { color: var(--green);  border-color: var(--green); }
-  .pill.no-website   { color: var(--grey);   border-color: var(--grey); }
+  .pill.has-website   { color: var(--green);  border-color: var(--green); }
+  .pill.no-website    { color: var(--grey);   border-color: var(--grey); }
+  .pill.ok            { color: var(--green);  border-color: var(--green); }
+  .pill.fail          { color: var(--red);    border-color: var(--red); }
+  .pill.pending-pill  { color: var(--orange); border-color: var(--orange); }
+  .pill.handled       { color: var(--green);  border-color: var(--green); }
+  .pill.unhandled     { color: var(--amber);  border-color: var(--amber); }
 
   .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .75rem;
-    margin-top: 1.5rem;
-    font-size: .875rem;
-    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    gap: .75rem; margin-top: 1.5rem; font-size: .875rem; color: var(--muted);
   }
-
   .pagination button {
-    background: var(--navy-card);
-    border: 1px solid var(--border);
-    color: var(--white);
-    padding: .4rem .9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: .85rem;
+    background: var(--navy-card); border: 1px solid var(--border);
+    color: var(--white); padding: .4rem .9rem;
+    border-radius: 6px; cursor: pointer; font-size: .85rem;
   }
-
-  .pagination button:disabled {
-    opacity: .35;
-    cursor: default;
-  }
-
-  .pagination button:not(:disabled):hover {
-    border-color: var(--amber);
-    color: var(--amber);
-  }
+  .pagination button:disabled { opacity: .35; cursor: default; }
+  .pagination button:not(:disabled):hover { border-color: var(--amber); color: var(--amber); }
 
   /* ── Record detail modal ───────────────────────────────────────────────── */
 
   #modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.65);
-    z-index: 50;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem 1rem;
-    overflow-y: auto;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.65); z-index: 50;
+    align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem; overflow-y: auto;
   }
-
   #modal-overlay.open { display: flex; }
 
   .modal {
-    background: var(--navy-light);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    width: min(740px, 100%);
-    padding: 2rem;
-    position: relative;
+    background: var(--navy-light); border: 1px solid var(--border);
+    border-radius: 14px; width: min(740px, 100%);
+    padding: 2rem; position: relative;
   }
-
   .modal-close {
-    position: absolute;
-    top: 1rem; right: 1rem;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 1.4rem;
-    cursor: pointer;
-    line-height: 1;
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: none; color: var(--muted);
+    font-size: 1.4rem; cursor: pointer; line-height: 1;
   }
-
   .modal-close:hover { color: var(--white); }
+  .modal h2 { font-size: 1.3rem; margin-bottom: .3rem; }
+  .modal .modal-status { font-size: .8rem; color: var(--muted); margin-bottom: 1.5rem; }
 
-  .modal h2 {
-    font-size: 1.3rem;
-    margin-bottom: .3rem;
-  }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem 1.5rem; }
+  @media (max-width: 500px) { .field-grid { grid-template-columns: 1fr; } }
 
-  .modal .modal-status {
-    font-size: .8rem;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-  }
-
-  .field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .9rem 1.5rem;
-  }
-
-  @media (max-width: 500px) {
-    .field-grid { grid-template-columns: 1fr; }
-  }
-
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
-  }
-
-  .field-group.full { grid-column: 1 / -1; }
-
+  .field-group { display: flex; flex-direction: column; gap: .2rem; }
   .field-label {
-    font-size: .7rem;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: var(--muted);
-    font-weight: 600;
+    font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--muted); font-weight: 600;
   }
-
-  .field-value {
-    font-size: .9rem;
-    color: var(--white);
-    word-break: break-word;
-  }
-
-  .field-value a {
-    color: var(--amber);
-    text-decoration: none;
-  }
-
+  .field-value { font-size: .9rem; color: var(--white); word-break: break-word; }
+  .field-value a { color: var(--amber); text-decoration: none; }
   .field-value a:hover { text-decoration: underline; }
-
   .field-value.empty { color: var(--grey); font-style: italic; }
 
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.25rem 0;
-  }
+  .section-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
 
-  /* ── Editable fields ───────────────────────────────────────────────────── */
+  /* ── Edit section ──────────────────────────────────────────────────────── */
 
   .edit-section {
-    background: var(--navy);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-top: 1.5rem;
+    background: var(--navy); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.25rem; margin-top: 1.5rem;
   }
-
   .edit-section h3 {
-    font-size: .75rem;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: 1rem;
+    font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); font-weight: 600; margin-bottom: 1rem;
   }
 
-  .edit-row {
-    margin-bottom: .9rem;
-  }
-
+  .edit-row { margin-bottom: .9rem; }
   .edit-row label {
-    display: block;
-    font-size: .7rem;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: .3rem;
+    display: block; font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--muted); font-weight: 600; margin-bottom: .3rem;
   }
-
   .edit-row select,
   .edit-row input[type="text"],
   .edit-row input[type="number"],
   .edit-row textarea {
-    width: 100%;
-    padding: .55rem .8rem;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    background: var(--navy-light);
-    color: var(--white);
-    font-size: .9rem;
-    font-family: inherit;
-    outline: none;
+    width: 100%; padding: .55rem .8rem;
+    border: 1px solid var(--border); border-radius: 7px;
+    background: var(--navy-light); color: var(--white);
+    font-size: .9rem; font-family: inherit; outline: none;
     transition: border-color .15s;
   }
-
   .edit-row select:focus,
   .edit-row input:focus,
   .edit-row textarea:focus { border-color: var(--amber); }
-
   .edit-row textarea { resize: vertical; min-height: 80px; }
-
   .edit-row select option { background: var(--navy-light); }
+
+  .edit-row input[type="checkbox"] {
+    width: 1.1rem; height: 1.1rem; cursor: pointer;
+    accent-color: var(--amber);
+  }
+
+  .checkbox-row {
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .checkbox-row label {
+    display: inline; font-size: .9rem; text-transform: none;
+    letter-spacing: 0; color: var(--white); font-weight: 400;
+    margin: 0; cursor: pointer;
+  }
 
   .disqualify-row { display: none; }
   .disqualify-row.visible { display: block; }
 
-  .edit-actions {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    margin-top: 1rem;
+  .edit-actions { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; }
+
+  .btn-save {
+    padding: .6rem 1.4rem; background: var(--amber); color: var(--navy);
+    border: none; border-radius: 7px; font-size: .9rem; font-weight: 700;
+    cursor: pointer; transition: background .15s, opacity .15s;
   }
+  .btn-save:disabled { opacity: .4; cursor: default; }
+  .btn-save:not(:disabled):hover { background: var(--amber-dim); }
 
-  #btn-save {
-    padding: .6rem 1.4rem;
-    background: var(--amber);
-    color: var(--navy);
-    border: none;
-    border-radius: 7px;
-    font-size: .9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .15s, opacity .15s;
-  }
-
-  #btn-save:disabled { opacity: .4; cursor: default; }
-  #btn-save:not(:disabled):hover { background: var(--amber-dim); }
-
-  #save-status {
-    font-size: .85rem;
-    min-height: 1.2em;
-  }
-
-  #save-status.ok  { color: var(--green); }
-  #save-status.err { color: var(--red); }
+  .save-status { font-size: .85rem; min-height: 1.2em; }
+  .save-status.ok  { color: var(--green); }
+  .save-status.err { color: var(--red); }
 </style>
 </head>
 <body>
@@ -542,8 +371,8 @@
 <!-- ── Login ──────────────────────────────────────────────────────────────── -->
 <div id="login-overlay">
   <div class="login-box">
-    <h1>Prospects Dashboard</h1>
-    <p>Enter your dashboard access token to continue.</p>
+    <h1>Dashboard</h1>
+    <p>Enter your access token to continue.</p>
     <input type="password" id="token-input" placeholder="Access token" autocomplete="current-password">
     <button id="btn-login">Sign in</button>
     <div id="login-error"></div>
@@ -554,8 +383,12 @@
 <div id="app">
   <header>
     <a class="logo" href="/">NeoBookworm</a>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="prospects">Prospects</button>
+      <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
+    </nav>
     <div class="breadcrumb" id="breadcrumb">
-      <span class="active">Prospects</span>
+      <span class="active">Overview</span>
     </div>
     <button id="btn-back">← Back</button>
   </header>
@@ -577,24 +410,26 @@
 // ── State ────────────────────────────────────────────────────────────────────
 const state = {
   token:          '',
-  view:           'summary',   // 'summary' | 'list'
+  tab:            'prospects',
+  // prospects
+  view:           'summary',
   currentStatus:  '',
   currentPage:    1,
   searchQuery:    '',
   summaryData:    null,
+  // enquiries
+  enqPage:        1,
+  enqSearch:      '',
+  enqHandled:     'all',
+  enqTotal:       0,
+  enqUnhandled:   0,
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
 const PIPELINE_STATUSES = [
-  'Researched',
-  'Researched with website',
-  'Pending CH Validation',
-  'Brief In Progress',
-  'Spec Complete',
-  'Brief Complete',
-  'Demo Built',
-  'Emailed',
-  'Closed - No Response',
+  'Researched', 'Researched with website', 'Pending CH Validation',
+  'Brief In Progress', 'Spec Complete', 'Brief Complete',
+  'Demo Built', 'Emailed', 'Closed - No Response',
 ];
 
 const STATUS_COLOURS = {
@@ -614,6 +449,20 @@ const STATUS_COLOURS = {
   'Suppressed':               '#607090',
 };
 
+const ALL_STATUSES = [
+  'Researched', 'Researched with website', 'Pending CH Validation',
+  'Brief In Progress', 'Spec Complete', 'Brief Complete',
+  'Demo Built', 'Emailed', 'Closed - No Response',
+  'CH Checked - Sole Trader', 'Ltd - No Email',
+  'Disqualified', 'Duplicate', 'Suppressed',
+];
+
+const START_OPTION_LABELS = {
+  'leave_it_with_me': 'Leave it with me',
+  'tell_more':        'Tell me more',
+  'intake_form':      'Intake form',
+};
+
 // ── API ───────────────────────────────────────────────────────────────────────
 async function apiFetch(params) {
   const qs  = new URLSearchParams(params).toString();
@@ -622,6 +471,17 @@ async function apiFetch(params) {
   });
   const data = await res.json();
   if (!data.ok) throw new Error(data.error || 'API error');
+  return data;
+}
+
+async function apiPost(body) {
+  const res = await fetch('/api/dashboard', {
+    method:  'POST',
+    headers: { 'Authorization': `Bearer ${state.token}`, 'Content-Type': 'application/json' },
+    body:    JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'Save failed');
   return data;
 }
 
@@ -634,11 +494,11 @@ document.getElementById('token-input').addEventListener('keydown', e => {
 async function tryLogin() {
   const token = document.getElementById('token-input').value.trim();
   if (!token) return;
-  document.getElementById('btn-login').textContent = 'Checking…';
-  document.getElementById('btn-login').disabled = true;
+  const btn = document.getElementById('btn-login');
+  btn.textContent = 'Checking…'; btn.disabled = true;
 
   try {
-    const res = await fetch('/api/dashboard?action=summary', {
+    const res  = await fetch('/api/dashboard?action=summary', {
       headers: { 'Authorization': `Bearer ${token}` },
     });
     if (res.status === 401) throw new Error('Invalid token');
@@ -647,20 +507,21 @@ async function tryLogin() {
 
     state.token       = token;
     state.summaryData = data.data;
+    state.enqTotal    = data.enquiries?.total    || 0;
+    state.enqUnhandled = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
     sessionStorage.setItem('dash_token', token);
 
+    updateEnqBadge();
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderSummary(data.data);
   } catch (err) {
     document.getElementById('login-error').textContent = err.message;
   } finally {
-    document.getElementById('btn-login').textContent = 'Sign in';
-    document.getElementById('btn-login').disabled = false;
+    btn.textContent = 'Sign in'; btn.disabled = false;
   }
 }
 
-// Auto-login from sessionStorage
 (function autoLogin() {
   const saved = sessionStorage.getItem('dash_token');
   if (!saved) return;
@@ -668,15 +529,45 @@ async function tryLogin() {
   tryLogin();
 })();
 
-// ── Summary view ──────────────────────────────────────────────────────────────
+function updateEnqBadge() {
+  const badge = document.getElementById('enq-badge');
+  if (badge) badge.remove();
+  if (state.enqUnhandled > 0) {
+    const btn = document.getElementById('enq-tab-btn');
+    const b = document.createElement('span');
+    b.id = 'enq-badge'; b.className = 'tab-badge';
+    b.textContent = state.enqUnhandled;
+    btn.appendChild(b);
+  }
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    if (tab === state.tab) return;
+    state.tab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.getElementById('btn-back').style.display = 'none';
+    if (tab === 'prospects') {
+      state.view = 'summary';
+      renderSummary(state.summaryData);
+    } else {
+      state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
+      loadEnquiriesList();
+    }
+  });
+});
+
+// ── Prospects: summary view ───────────────────────────────────────────────────
 function renderSummary(rows) {
   state.view = 'summary';
-  const main = document.getElementById('main-content');
+  const main     = document.getElementById('main-content');
   const byStatus = Object.fromEntries(rows.map(r => [r.status, r.count]));
   const total    = rows.reduce((s, r) => s + r.count, 0);
 
-  const pipelineRows  = PIPELINE_STATUSES.map(s => ({ status: s, count: byStatus[s] || 0 }));
-  const filteredRows  = rows.filter(r => !PIPELINE_STATUSES.includes(r.status));
+  const pipelineRows = PIPELINE_STATUSES.map(s => ({ status: s, count: byStatus[s] || 0 }));
+  const filteredRows = rows.filter(r => !PIPELINE_STATUSES.includes(r.status));
 
   setBreadcrumb([{ label: 'Prospects' }]);
   document.getElementById('btn-back').style.display = 'none';
@@ -686,10 +577,8 @@ function renderSummary(rows) {
       <h2>Prospects Overview</h2>
       <div class="total-badge"><strong>${total.toLocaleString()}</strong> total records</div>
     </div>
-
     <div class="section-label">Active pipeline</div>
     <div class="cards" id="pipeline-cards"></div>
-
     <div class="section-label">Filtered / archived</div>
     <div class="cards" id="filtered-cards"></div>
   `;
@@ -705,21 +594,16 @@ function renderCards(containerId, rows) {
     const card = document.createElement('div');
     card.className = 'card';
     card.style.setProperty('--card-color', colour);
-    card.innerHTML = `
-      <div class="card-count">${count.toLocaleString()}</div>
-      <div class="card-label">${escHtml(status)}</div>
-    `;
+    card.innerHTML = `<div class="card-count">${count.toLocaleString()}</div><div class="card-label">${escHtml(status)}</div>`;
     card.addEventListener('click', () => loadList(status));
     container.appendChild(card);
   });
 }
 
-// ── List view ─────────────────────────────────────────────────────────────────
+// ── Prospects: list view ──────────────────────────────────────────────────────
 async function loadList(status, page = 1, q = '') {
-  state.view          = 'list';
-  state.currentStatus = status;
-  state.currentPage   = page;
-  state.searchQuery   = q;
+  state.view = 'list'; state.currentStatus = status;
+  state.currentPage = page; state.searchQuery = q;
 
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="state-msg">Loading records…</div>';
@@ -730,8 +614,7 @@ async function loadList(status, page = 1, q = '') {
   document.getElementById('btn-back').style.display = '';
 
   try {
-    const data = await apiFetch({ action: 'list', status, page, q });
-    renderList(data);
+    renderList(await apiFetch({ action: 'list', status, page, q }));
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
   }
@@ -747,24 +630,15 @@ function renderList({ data: rows, total, page, pageSize }) {
       <h2>${escHtml(status)} <span class="count-tag">${total.toLocaleString()} records</span></h2>
       <input type="search" id="search-input" placeholder="Search name, town, email…" value="${escAttr(state.searchQuery)}">
     </div>
-
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Business</th>
-            <th>Contact</th>
-            <th>Trade</th>
-            <th>Town</th>
-            <th>Website</th>
-            <th>Rating</th>
-            <th>Last emailed</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Business</th><th>Contact</th><th>Trade</th><th>Town</th>
+          <th>Website</th><th>Rating</th><th>Last emailed</th>
+        </tr></thead>
         <tbody id="records-tbody"></tbody>
       </table>
     </div>
-
     <div class="pagination">
       <button id="pg-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
       <span>Page ${page} of ${Math.max(1, totalPages)}</span>
@@ -773,7 +647,7 @@ function renderList({ data: rows, total, page, pageSize }) {
   `;
 
   const tbody = document.getElementById('records-tbody');
-  if (rows.length === 0) {
+  if (!rows.length) {
     tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No records found</td></tr>';
   } else {
     rows.forEach(row => {
@@ -792,37 +666,16 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   }
 
-  // Search
   let searchTimer;
   document.getElementById('search-input').addEventListener('input', e => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => loadList(status, 1, e.target.value), 350);
   });
-
-  // Pagination
   document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1, state.searchQuery));
   document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1, state.searchQuery));
 }
 
-// ── All known statuses ────────────────────────────────────────────────────────
-const ALL_STATUSES = [
-  'Researched',
-  'Researched with website',
-  'Pending CH Validation',
-  'Brief In Progress',
-  'Spec Complete',
-  'Brief Complete',
-  'Demo Built',
-  'Emailed',
-  'Closed - No Response',
-  'CH Checked - Sole Trader',
-  'Ltd - No Email',
-  'Disqualified',
-  'Duplicate',
-  'Suppressed',
-];
-
-// ── Record detail ─────────────────────────────────────────────────────────────
+// ── Prospects: record modal ───────────────────────────────────────────────────
 async function loadRecord(id) {
   const overlay = document.getElementById('modal-overlay');
   const body    = document.getElementById('modal-body');
@@ -832,7 +685,7 @@ async function loadRecord(id) {
   try {
     const { data: r } = await apiFetch({ action: 'record', id });
     body.innerHTML = renderRecordHtml(r);
-    wireEditSection(r);
+    wireProspectEdit(r);
   } catch (err) {
     body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
   }
@@ -853,144 +706,54 @@ function renderRecordHtml(r) {
   return `
     <h2>${escHtml(r.business_name || 'Unknown')}</h2>
     <div class="modal-status">${escHtml(r.status || '')}${r.trade_category ? ' · ' + escHtml(r.trade_category) : ''}</div>
-
     <div class="field-grid">
-      <div class="field-group">
-        <span class="field-label">Contact name</span>
-        ${val(r.contact_name)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Email</span>
-        ${val(r.email_address, r.email_address ? 'mailto:' + r.email_address : null)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Phone</span>
-        ${val(r.phone)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Town</span>
-        ${val(r.town)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Address</span>
-        ${val(r.address)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Postcode</span>
-        ${val(r.postcode)}
-      </div>
+      <div class="field-group"><span class="field-label">Contact name</span>${val(r.contact_name)}</div>
+      <div class="field-group"><span class="field-label">Email</span>${val(r.email_address, r.email_address ? 'mailto:' + r.email_address : null)}</div>
+      <div class="field-group"><span class="field-label">Phone</span>${val(r.phone)}</div>
+      <div class="field-group"><span class="field-label">Town</span>${val(r.town)}</div>
+      <div class="field-group"><span class="field-label">Address</span>${val(r.address)}</div>
+      <div class="field-group"><span class="field-label">Postcode</span>${val(r.postcode)}</div>
     </div>
-
     <hr class="section-divider">
-
     <div class="field-grid">
-      <div class="field-group">
-        <span class="field-label">Has website</span>
-        ${val(r.has_website ? 'Yes' : 'No')}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Website URL</span>
-        ${val(r.website_url, r.website_url)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Website platform</span>
-        ${val(r.website_platform)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Website agency</span>
-        ${val(r.website_agency)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Rating</span>
-        ${val(r.rating)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Review count</span>
-        ${val(r.review_count)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Postcard score</span>
-        ${val(r.postcard_score)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Prospect segment</span>
-        ${val(r.prospect_segment)}
-      </div>
+      <div class="field-group"><span class="field-label">Has website</span>${val(r.has_website ? 'Yes' : 'No')}</div>
+      <div class="field-group"><span class="field-label">Website URL</span>${val(r.website_url, r.website_url)}</div>
+      <div class="field-group"><span class="field-label">Website platform</span>${val(r.website_platform)}</div>
+      <div class="field-group"><span class="field-label">Website agency</span>${val(r.website_agency)}</div>
+      <div class="field-group"><span class="field-label">Rating</span>${val(r.rating)}</div>
+      <div class="field-group"><span class="field-label">Review count</span>${val(r.review_count)}</div>
+      <div class="field-group"><span class="field-label">Postcard score</span>${val(r.postcard_score)}</div>
+      <div class="field-group"><span class="field-label">Prospect segment</span>${val(r.prospect_segment)}</div>
     </div>
-
     <hr class="section-divider">
-
     <div class="field-grid">
-      <div class="field-group">
-        <span class="field-label">Company type</span>
-        ${val(r.company_type)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">CH number</span>
-        ${val(r.ch_number)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">CH status</span>
-        ${val(r.ch_status)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Incorporation date</span>
-        ${val(r.ch_incorporation_date)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Date first contacted</span>
-        ${val(r.date_first_contacted)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Last email sent</span>
-        ${val(r.last_email_sent)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Contact count</span>
-        ${val(r.contact_count)}
-      </div>
-      <div class="field-group">
-        <span class="field-label">Demo URL</span>
-        ${val(r.demo_url, r.demo_url)}
-      </div>
+      <div class="field-group"><span class="field-label">Company type</span>${val(r.company_type)}</div>
+      <div class="field-group"><span class="field-label">CH number</span>${val(r.ch_number)}</div>
+      <div class="field-group"><span class="field-label">CH status</span>${val(r.ch_status)}</div>
+      <div class="field-group"><span class="field-label">Incorporation date</span>${val(r.ch_incorporation_date)}</div>
+      <div class="field-group"><span class="field-label">Date first contacted</span>${val(r.date_first_contacted)}</div>
+      <div class="field-group"><span class="field-label">Last email sent</span>${val(r.last_email_sent)}</div>
+      <div class="field-group"><span class="field-label">Contact count</span>${val(r.contact_count)}</div>
+      <div class="field-group"><span class="field-label">Demo URL</span>${val(r.demo_url, r.demo_url)}</div>
     </div>
-
-    ${r.research_summary ? `
-      <hr class="section-divider">
-      <div class="field-group" style="grid-column:1/-1">
-        <span class="field-label">Research summary</span>
-        <span class="field-value">${escHtml(r.research_summary)}</span>
-      </div>
-    ` : ''}
-
-    <!-- Edit section -->
+    ${r.research_summary ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Research summary</span><span class="field-value">${escHtml(r.research_summary)}</span></div>` : ''}
     <div class="edit-section">
       <h3>Edit record</h3>
-
-      <div class="edit-row">
-        <label for="edit-status">Status</label>
-        <select id="edit-status">${statusOptions}</select>
-      </div>
-
+      <div class="edit-row"><label for="edit-status">Status</label><select id="edit-status">${statusOptions}</select></div>
       <div class="edit-row disqualify-row" id="disqualify-row">
         <label for="edit-disqualify">Disqualify reason</label>
         <input type="text" id="edit-disqualify" value="${escAttr(r.disqualify_reason || '')}" placeholder="Reason for disqualifying…">
       </div>
-
-      <div class="edit-row">
-        <label for="edit-notes">Notes</label>
-        <textarea id="edit-notes" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea>
-      </div>
-
+      <div class="edit-row"><label for="edit-notes">Notes</label><textarea id="edit-notes" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea></div>
       <div class="edit-actions">
-        <button id="btn-save" disabled>Save changes</button>
-        <span id="save-status"></span>
+        <button class="btn-save" id="btn-save" disabled>Save changes</button>
+        <span class="save-status" id="save-status"></span>
       </div>
     </div>
   `;
 }
 
-function wireEditSection(r) {
+function wireProspectEdit(r) {
   const statusEl      = document.getElementById('edit-status');
   const disqualifyEl  = document.getElementById('edit-disqualify');
   const disqualifyRow = document.getElementById('disqualify-row');
@@ -1002,61 +765,274 @@ function wireEditSection(r) {
   const origDisqualify = r.disqualify_reason || '';
   const origNotes      = r.notes || r.note || '';
 
-  function toggleDisqualifyRow() {
-    disqualifyRow.classList.toggle('visible', statusEl.value === 'Disqualified');
-  }
-
-  function checkDirty() {
-    const dirty = statusEl.value      !== origStatus     ||
-                  disqualifyEl.value  !== origDisqualify ||
-                  notesEl.value       !== origNotes;
+  const toggleDisqualify = () => disqualifyRow.classList.toggle('visible', statusEl.value === 'Disqualified');
+  const checkDirty = () => {
+    const dirty = statusEl.value !== origStatus || disqualifyEl.value !== origDisqualify || notesEl.value !== origNotes;
     saveBtn.disabled = !dirty;
-    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = ''; }
-  }
+    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }
+  };
 
-  toggleDisqualifyRow();
-  statusEl.addEventListener('change', () => { toggleDisqualifyRow(); checkDirty(); });
+  toggleDisqualify();
+  statusEl.addEventListener('change',    () => { toggleDisqualify(); checkDirty(); });
   disqualifyEl.addEventListener('input', checkDirty);
-  notesEl.addEventListener('input', checkDirty);
+  notesEl.addEventListener('input',      checkDirty);
 
   saveBtn.addEventListener('click', async () => {
     saveBtn.disabled = true;
-    saveStatus.textContent = 'Saving…';
-    saveStatus.className = '';
-
+    saveStatus.textContent = 'Saving…'; saveStatus.className = 'save-status';
     const fields = {};
     if (statusEl.value     !== origStatus)     fields.status            = statusEl.value;
     if (disqualifyEl.value !== origDisqualify) fields.disqualify_reason = disqualifyEl.value;
     if (notesEl.value      !== origNotes)      fields.notes             = notesEl.value;
 
     try {
-      const res = await fetch('/api/dashboard', {
-        method:  'POST',
-        headers: { 'Authorization': `Bearer ${state.token}`, 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ action: 'update', id: r.notion_id, fields }),
-      });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'Save failed');
-
+      await apiPost({ action: 'update', id: r.notion_id, fields });
       if (fields.status !== undefined)            r.status            = fields.status;
       if (fields.disqualify_reason !== undefined) r.disqualify_reason = fields.disqualify_reason;
       if (fields.notes !== undefined)             r.notes             = fields.notes;
 
-      const subtitle = document.querySelector('.modal-status');
-      if (subtitle) subtitle.textContent = r.status + (r.trade_category ? ' · ' + r.trade_category : '');
+      const sub = document.querySelector('.modal-status');
+      if (sub) sub.textContent = r.status + (r.trade_category ? ' · ' + r.trade_category : '');
 
-      saveStatus.textContent = 'Saved';
-      saveStatus.className = 'ok';
-      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = ''; }, 2500);
-
-      wireEditSection(r);
+      saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
+      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
+      wireProspectEdit(r);
 
       if (state.view === 'list' && state.currentStatus !== r.status) {
         loadList(state.currentStatus, state.currentPage, state.searchQuery);
       }
     } catch (err) {
-      saveStatus.textContent = err.message;
-      saveStatus.className = 'err';
+      saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
+      saveBtn.disabled = false;
+    }
+  });
+}
+
+// ── Enquiries: list view ──────────────────────────────────────────────────────
+async function loadEnquiriesList(page, q, handled) {
+  if (page    !== undefined) state.enqPage    = page;
+  if (q       !== undefined) state.enqSearch  = q;
+  if (handled !== undefined) state.enqHandled = handled;
+
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading enquiries…</div>';
+  setBreadcrumb([{ label: 'Enquiries' }]);
+  document.getElementById('btn-back').style.display = 'none';
+
+  try {
+    const data = await apiFetch({
+      action:  'enquiries_list',
+      page:    state.enqPage,
+      q:       state.enqSearch,
+      handled: state.enqHandled,
+    });
+    renderEnquiriesList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderEnquiriesList({ data: rows, total, page, pageSize }) {
+  const main       = document.getElementById('main-content');
+  const totalPages = Math.ceil(total / pageSize);
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Enquiries <span class="count-tag">${total.toLocaleString()} records</span></h2>
+      <div class="list-controls">
+        <div class="filter-btns">
+          <button class="filter-btn${state.enqHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
+          <button class="filter-btn${state.enqHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
+          <button class="filter-btn${state.enqHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
+        </div>
+        <input type="search" id="enq-search-input" placeholder="Search name, biz, email…" value="${escAttr(state.enqSearch)}">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Name</th><th>Business</th><th>Source</th>
+          <th>Start option</th><th>Handled</th><th>Notion</th><th>Email</th>
+        </tr></thead>
+        <tbody id="enq-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button id="enq-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
+      <button id="enq-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+    </div>
+  `;
+
+  const tbody = document.getElementById('enq-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="padding:2rem;text-align:center">No enquiries found</td></tr>';
+  } else {
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
+      const startLabel = START_OPTION_LABELS[row.start_option] || row.start_option || '—';
+      const notionCls  = row.notion_status === 'success' ? 'ok' : row.notion_status === 'failed' ? 'fail' : 'pending-pill';
+      const emailCls   = row.email_status  === 'success' ? 'ok' : row.email_status  === 'failed' ? 'fail' : 'pending-pill';
+      tr.innerHTML = `
+        <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
+        <td>${escHtml(row.full_name || '—')}</td>
+        <td>${escHtml(row.biz_name  || '—')}</td>
+        <td class="muted">${escHtml(row.source || '—')}</td>
+        <td class="muted">${escHtml(startLabel)}</td>
+        <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
+        <td><span class="pill ${notionCls}">${escHtml(row.notion_status || '—')}</span></td>
+        <td><span class="pill ${emailCls}">${escHtml(row.email_status  || '—')}</span></td>
+      `;
+      tr.addEventListener('click', () => loadEnquiryRecord(row.id));
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Filter buttons
+  main.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => loadEnquiriesList(1, state.enqSearch, btn.dataset.handled));
+  });
+
+  // Search
+  let searchTimer;
+  document.getElementById('enq-search-input').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadEnquiriesList(1, e.target.value), 350);
+  });
+
+  document.getElementById('enq-prev').addEventListener('click', () => loadEnquiriesList(page - 1));
+  document.getElementById('enq-next').addEventListener('click', () => loadEnquiriesList(page + 1));
+}
+
+// ── Enquiries: record modal ───────────────────────────────────────────────────
+async function loadEnquiryRecord(id) {
+  const overlay = document.getElementById('modal-overlay');
+  const body    = document.getElementById('modal-body');
+  body.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
+  overlay.classList.add('open');
+
+  try {
+    const { data: r } = await apiFetch({ action: 'enquiries_record', id });
+    body.innerHTML = renderEnquiryHtml(r);
+    wireEnquiryEdit(r);
+  } catch (err) {
+    body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
+  }
+}
+
+function renderEnquiryHtml(r) {
+  const val = (v, link) => {
+    if (!v && v !== 0) return '<span class="field-value empty">—</span>';
+    const safe = escHtml(String(v));
+    if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
+    return `<span class="field-value">${safe}</span>`;
+  };
+
+  const dt         = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
+  const startLabel = START_OPTION_LABELS[r.start_option] || r.start_option || '—';
+  const notionCls  = r.notion_status === 'success' ? 'ok' : r.notion_status === 'failed' ? 'fail' : 'pending-pill';
+  const emailCls   = r.email_status  === 'success' ? 'ok' : r.email_status  === 'failed' ? 'fail' : 'pending-pill';
+
+  return `
+    <h2>${escHtml(r.biz_name || 'Unknown')}</h2>
+    <div class="modal-status">${escHtml(dt)} · ${escHtml(r.source || '')} · ${escHtml(startLabel)}</div>
+
+    <div class="field-grid">
+      <div class="field-group"><span class="field-label">Name</span>${val(r.full_name)}</div>
+      <div class="field-group"><span class="field-label">Email</span>${val(r.email, r.email ? 'mailto:' + r.email : null)}</div>
+      <div class="field-group"><span class="field-label">Source</span>${val(r.source)}</div>
+      <div class="field-group"><span class="field-label">Start option</span>${val(startLabel)}</div>
+      <div class="field-group"><span class="field-label">Current URL</span>${val(r.current_url, r.current_url)}</div>
+      <div class="field-group">
+        <span class="field-label">Delivery</span>
+        <span class="field-value">
+          Notion <span class="pill ${notionCls}">${escHtml(r.notion_status || '—')}</span>
+          &nbsp; Email <span class="pill ${emailCls}">${escHtml(r.email_status || '—')}</span>
+        </span>
+      </div>
+    </div>
+
+    ${r.details ? `
+      <hr class="section-divider">
+      <div class="field-group" style="grid-column:1/-1">
+        <span class="field-label">Details / message</span>
+        <span class="field-value">${escHtml(r.details)}</span>
+      </div>
+    ` : ''}
+
+    ${r.notion_error || r.email_error ? `
+      <hr class="section-divider">
+      ${r.notion_error ? `<div class="field-group" style="margin-bottom:.5rem"><span class="field-label">Notion error</span><span class="field-value" style="color:var(--red)">${escHtml(r.notion_error)}</span></div>` : ''}
+      ${r.email_error  ? `<div class="field-group"><span class="field-label">Email error</span><span class="field-value" style="color:var(--red)">${escHtml(r.email_error)}</span></div>` : ''}
+    ` : ''}
+
+    <div class="edit-section">
+      <h3>Edit enquiry</h3>
+      <div class="edit-row">
+        <div class="checkbox-row">
+          <input type="checkbox" id="edit-handled" ${r.handled ? 'checked' : ''}>
+          <label for="edit-handled">Mark as handled</label>
+        </div>
+      </div>
+      <div class="edit-row">
+        <label for="edit-admin-notes">Admin notes</label>
+        <textarea id="edit-admin-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea>
+      </div>
+      <div class="edit-actions">
+        <button class="btn-save" id="enq-btn-save" disabled>Save changes</button>
+        <span class="save-status" id="enq-save-status"></span>
+      </div>
+    </div>
+  `;
+}
+
+function wireEnquiryEdit(r) {
+  const handledEl  = document.getElementById('edit-handled');
+  const notesEl    = document.getElementById('edit-admin-notes');
+  const saveBtn    = document.getElementById('enq-btn-save');
+  const saveStatus = document.getElementById('enq-save-status');
+
+  const origHandled = r.handled ? true : false;
+  const origNotes   = r.admin_notes || '';
+
+  const checkDirty = () => {
+    const dirty = handledEl.checked !== origHandled || notesEl.value !== origNotes;
+    saveBtn.disabled = !dirty;
+    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }
+  };
+
+  handledEl.addEventListener('change', checkDirty);
+  notesEl.addEventListener('input',   checkDirty);
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    saveStatus.textContent = 'Saving…'; saveStatus.className = 'save-status';
+
+    const fields = {};
+    if (handledEl.checked !== origHandled) fields.handled     = handledEl.checked ? 1 : 0;
+    if (notesEl.value     !== origNotes)   fields.admin_notes = notesEl.value;
+
+    try {
+      await apiPost({ action: 'enquiries_update', id: r.id, fields });
+      if (fields.handled     !== undefined) r.handled     = fields.handled;
+      if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
+
+      // Update unhandled badge count
+      if (fields.handled !== undefined) {
+        state.enqUnhandled = Math.max(0, state.enqUnhandled + (fields.handled ? -1 : 1));
+        updateEnqBadge();
+      }
+
+      saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
+      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
+      wireEnquiryEdit(r);
+
+      if (state.tab === 'enquiries') {
+        loadEnquiriesList(state.enqPage, state.enqSearch, state.enqHandled);
+      }
+    } catch (err) {
+      saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
       saveBtn.disabled = false;
     }
   });
@@ -1075,7 +1051,7 @@ function closeModal() {
 
 // ── Back button ───────────────────────────────────────────────────────────────
 document.getElementById('btn-back').addEventListener('click', () => {
-  if (state.view === 'list') renderSummary(state.summaryData);
+  if (state.tab === 'prospects' && state.view === 'list') renderSummary(state.summaryData);
 });
 
 // ── Breadcrumb ────────────────────────────────────────────────────────────────
@@ -1086,7 +1062,6 @@ function setBreadcrumb(items) {
     if (isLast) return `<span class="active">${escHtml(item.label)}</span>`;
     return `<span class="link" style="cursor:pointer;color:var(--muted)" data-idx="${i}">${escHtml(item.label)}</span><span class="sep">/</span>`;
   }).join('');
-
   el.querySelectorAll('.link').forEach(link => {
     const idx = parseInt(link.dataset.idx, 10);
     if (items[idx]?.action) link.addEventListener('click', items[idx].action);
@@ -1096,15 +1071,10 @@ function setBreadcrumb(items) {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function escHtml(str) {
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
-function escAttr(str) {
-  return String(str || '').replace(/"/g, '&quot;');
-}
+function escAttr(str) { return String(str || '').replace(/"/g, '&quot;'); }
 </script>
 </body>
 </html>
