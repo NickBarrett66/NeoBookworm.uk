@@ -1,0 +1,16 @@
+name            = "neobookworm-landing-enquiry"
+main            = "src/index.js"
+compatibility_date  = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ── D1 database binding ───────────────────────────────────────────────────────
+# Run `npx wrangler d1 create neobookworm-enquiries` once, then paste the
+# returned database_id below.
+[[d1_databases]]
+binding      = "DB"
+database_name = "neobookworm-enquiries"
+database_id  = "771b3047-f977-485e-9cfb-736815931998"
+
+# ── Route (optional — configure after DNS is ready) ──────────────────────────
+# Once api.neobookworm.uk is pointed at Cloudflare:
+#   routes = [{ pattern = "api.neobookworm.uk/landing-enquiry", zone_name = "neobookworm.uk" }]

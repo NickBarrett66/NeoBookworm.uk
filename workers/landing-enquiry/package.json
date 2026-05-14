@@ -1,0 +1,16 @@
+{
+  "name": "neobookworm-landing-enquiry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker: validates and saves landing page enquiries to D1",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply neobookworm-enquiries --local",
+    "migrate:remote": "wrangler d1 migrations apply neobookworm-enquiries --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.90.1"
+  }
+}
