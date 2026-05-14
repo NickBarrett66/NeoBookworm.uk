@@ -977,16 +977,25 @@ function extractFinalizeFields(body) {
 
 // ─── Email notification (same SMTP env as contact.js / landing-enquiry.js) ───
 
-async function sendIntakeNotificationEmail(fields, photoUrls, logoUrl) {
+/** Public Notion page URL from API page id (UUID with or without dashes). */
+function notionPageUrl(pageId) {
+  const id = (pageId || '').toString().replace(/-/g, '').trim();
+  return id ? `https://www.notion.so/${id}` : null;
+}
+
+async function sendIntakeNotificationEmail(fields, photoUrls, logoUrl, notionPageId) {
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
   const toEmail  = process.env.TO_EMAIL || 'neobookworm@icloud.com';
 
+  const notionUrl = notionPageUrl(notionPageId);
+
   const lines = [
     'New intake form submission — NeoBookworm',
     '========================================',
+    ...(notionUrl ? [`Notion record: ${notionUrl}`, ''] : []),
     `Name:     ${fields.fullName || ''}`,
     `Business: ${fields.bizName  || ''}`,
     `Trade:    ${fields.trade    || ''}`,
@@ -1123,7 +1132,7 @@ async function finalizeIntakeDirectUpload(body) {
   const page = await createNotionRecord(fields, photoUrls, logoUrl);
 
   try {
-    await sendIntakeNotificationEmail(fields, photoUrls, logoUrl);
+    await sendIntakeNotificationEmail(fields, photoUrls, logoUrl, page && page.id);
   } catch (mailErr) {
     console.error('[intake] Email error (Notion row saved):', mailErr.message);
   }

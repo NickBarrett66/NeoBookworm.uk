@@ -65,10 +65,10 @@ const handler = async (req, res) => {
     }
     console.log('[intake] R2 logo URL:', logoUrl);
 
-    await intake.createNotionRecord(fields, photoUrls, logoUrl);
+    const page = await intake.createNotionRecord(fields, photoUrls, logoUrl);
 
     try {
-      await intake.sendIntakeNotificationEmail(fields, photoUrls, logoUrl);
+      await intake.sendIntakeNotificationEmail(fields, photoUrls, logoUrl, page && page.id);
     } catch (mailErr) {
       console.error('[intake] Email error (Notion row saved):', mailErr.message);
     }
