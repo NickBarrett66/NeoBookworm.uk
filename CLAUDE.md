@@ -146,6 +146,20 @@ Each demo site should:
 
 **NeoBookworm.uk (main marketing site)** is deployed to **Vercel** (production: neobookworm.uk). Backend behaviour lives under `api/` as Vercel serverless routes (for example `api/contact.js` for the quick enquiry form, intake endpoints for onboarding). Set **`TO_EMAIL`**, SMTP, R2, and other secrets in the **Vercel project → Settings → Environment Variables**.
 
+### Email sending (Vercel functions)
+
+All outbound email from Vercel serverless functions (`api/contact.js`, `api/landing-enquiry.js`) uses **iCloud SMTP via Nodemailer**. Credentials are stored as encrypted Vercel environment variables and are confirmed working in production. Do not change the provider or credentials.
+
+| Vercel env var | Value |
+|---|---|
+| `SMTP_HOST` | `smtp.mail.me.com` |
+| `SMTP_PORT` | `587` (STARTTLS; `465` triggers `secure: true`) |
+| `SMTP_USER` | `neobookworm@icloud.com` |
+| `SMTP_PASS` | iCloud app-specific password (not the Apple ID password) |
+| `TO_EMAIL` | `neobookworm@icloud.com` |
+
+**Important for Cloudflare Workers:** iCloud SMTP (and any SMTP) cannot be used directly in a Cloudflare Worker — Workers cannot open TCP connections to port 587 or 465. Any Worker that needs to send email must use an HTTP-based approach. The recommended pattern is to POST to a thin Vercel function (e.g. `/api/notify-enquiry`) that performs the SMTP send using the existing iCloud credentials. This keeps a single email-sending path and avoids adding a new email provider.
+
 **Client demo sites** are separate static sites, deployed as individual Netlify projects. The permitted deploy command for those demos is:
 ```
 netlify deploy
@@ -415,7 +429,7 @@ so keeping it current is essential. Do not wait to be asked.
 |---|---|---|
 | Contact form provider | High | Tally dropped — replacement intake-form.html |
 | landing-enquiry Notion DB | Done | `/api/landing-enquiry` (plumbers + plumbers-switch options 1 & 2) creates a row in **Client Sites** (`4b45078a341941bcb5877e52f3d27c6c`) via `intake-shared.createLandingEnquiryRecord` — same database as full intake. Notes field holds source, start option, current URL, and details. Requires `NOTION_API_KEY` on Vercel. |
-| SMTP env vars for contact form | High | Set TO_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in **Vercel** project env vars to activate email sending (Brevo recommended) |
+| SMTP env vars for contact form | Done | iCloud SMTP confirmed working in production. Credentials set in Vercel env vars — see Email sending section above. |
 | Demo site Midjourney images | High | Desktop required; 8 hero images + full sets per site |
 | Demo site builds | High | All 8 sites to build and deploy |
 | Examples page image integration | Medium | Swap CSS previews for real images once generated |
