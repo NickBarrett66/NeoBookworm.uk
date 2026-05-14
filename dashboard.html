@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospects Dashboard — NeoBookworm</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #0f1f3d;
+    --navy-light:  #162847;
+    --navy-card:   #1a3060;
+    --amber:       #f5a623;
+    --amber-dim:   #c4841a;
+    --white:       #ffffff;
+    --muted:       #8aa0c0;
+    --border:      #243d6a;
+    --green:       #34c97e;
+    --blue:        #4b9cf5;
+    --orange:      #f5813a;
+    --red:         #e05050;
+    --grey:        #607090;
+    --purple:      #9b7fe8;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── Login overlay ─────────────────────────────────────────────────────── */
+
+  #login-overlay {
+    position: fixed; inset: 0;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+  }
+
+  .login-box {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    width: min(400px, 92vw);
+    text-align: center;
+  }
+
+  .login-box h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: .35rem;
+  }
+
+  .login-box p {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-box input {
+    width: 100%;
+    padding: .75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    outline: none;
+  }
+
+  .login-box input:focus {
+    border-color: var(--amber);
+  }
+
+  .login-box button {
+    width: 100%;
+    padding: .75rem;
+    background: var(--amber);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .login-box button:hover { background: var(--amber-dim); }
+
+  #login-error {
+    color: var(--red);
+    font-size: .85rem;
+    margin-top: .75rem;
+    min-height: 1.2em;
+  }
+
+  /* ── App shell ─────────────────────────────────────────────────────────── */
+
+  #app { display: none; }
+
+  header {
+    background: var(--navy-light);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--amber);
+    text-decoration: none;
+    letter-spacing: -.01em;
+  }
+
+  .breadcrumb {
+    color: var(--muted);
+    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    flex: 1;
+  }
+
+  .breadcrumb span { color: var(--muted); }
+  .breadcrumb .sep { opacity: .4; }
+
+  .breadcrumb .active { color: var(--white); }
+
+  #btn-back {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: .4rem .9rem;
+    border-radius: 6px;
+    font-size: .85rem;
+    cursor: pointer;
+  }
+
+  #btn-back:hover { color: var(--white); border-color: var(--muted); }
+
+  main { padding: 2rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+
+  /* ── Loading / error ───────────────────────────────────────────────────── */
+
+  .state-msg {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+
+  /* ── Summary view ──────────────────────────────────────────────────────── */
+
+  .summary-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .summary-header h2 { font-size: 1.4rem; font-weight: 700; }
+
+  .total-badge {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .85rem;
+    font-size: .85rem;
+    color: var(--muted);
+  }
+
+  .total-badge strong { color: var(--white); }
+
+  .section-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.75rem 0 .75rem;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: .75rem;
+  }
+
+  .card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    transition: border-color .15s, transform .1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 10px 0 0 10px;
+    background: var(--card-color, var(--grey));
+  }
+
+  .card:hover {
+    border-color: var(--card-color, var(--muted));
+    transform: translateY(-1px);
+  }
+
+  .card-count {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--card-color, var(--white));
+    margin-bottom: .4rem;
+  }
+
+  .card-label {
+    font-size: .82rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  /* ── List view ─────────────────────────────────────────────────────────── */
+
+  .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: .75rem;
+  }
+
+  .list-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .list-header h2 .count-tag {
+    font-size: .75rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: .5rem;
+  }
+
+  #search-input {
+    padding: .5rem .9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--navy-card);
+    color: var(--white);
+    font-size: .9rem;
+    width: min(240px, 100%);
+    outline: none;
+  }
+
+  #search-input:focus { border-color: var(--amber); }
+
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+  }
+
+  thead th {
+    text-align: left;
+    padding: .6rem .9rem;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: .75rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .1s;
+  }
+
+  tbody tr:hover { background: var(--navy-card); }
+
+  tbody td {
+    padding: .7rem .9rem;
+    vertical-align: middle;
+    color: var(--white);
+  }
+
+  tbody td.muted { color: var(--muted); }
+
+  .pill {
+    display: inline-block;
+    padding: .15rem .55rem;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 600;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .pill.has-website  { color: var(--green);  border-color: var(--green); }
+  .pill.no-website   { color: var(--grey);   border-color: var(--grey); }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    margin-top: 1.5rem;
+    font-size: .875rem;
+    color: var(--muted);
+  }
+
+  .pagination button {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: .4rem .9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .85rem;
+  }
+
+  .pagination button:disabled {
+    opacity: .35;
+    cursor: default;
+  }
+
+  .pagination button:not(:disabled):hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  /* ── Record detail modal ───────────────────────────────────────────────── */
+
+  #modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.65);
+    z-index: 50;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+  }
+
+  #modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: min(740px, 100%);
+    padding: 2rem;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .modal-close:hover { color: var(--white); }
+
+  .modal h2 {
+    font-size: 1.3rem;
+    margin-bottom: .3rem;
+  }
+
+  .modal .modal-status {
+    font-size: .8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .9rem 1.5rem;
+  }
+
+  @media (max-width: 500px) {
+    .field-grid { grid-template-columns: 1fr; }
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+  }
+
+  .field-group.full { grid-column: 1 / -1; }
+
+  .field-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .field-value {
+    font-size: .9rem;
+    color: var(--white);
+    word-break: break-word;
+  }
+
+  .field-value a {
+    color: var(--amber);
+    text-decoration: none;
+  }
+
+  .field-value a:hover { text-decoration: underline; }
+
+  .field-value.empty { color: var(--grey); font-style: italic; }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.25rem 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────────────────────────────────── -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h1>Prospects Dashboard</h1>
+    <p>Enter your dashboard access token to continue.</p>
+    <input type="password" id="token-input" placeholder="Access token" autocomplete="current-password">
+    <button id="btn-login">Sign in</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── App ────────────────────────────────────────────────────────────────── -->
+<div id="app">
+  <header>
+    <a class="logo" href="/">NeoBookworm</a>
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="active">Prospects</span>
+    </div>
+    <button id="btn-back">← Back</button>
+  </header>
+
+  <main id="main-content">
+    <div class="state-msg" id="loading-msg">Loading…</div>
+  </main>
+</div>
+
+<!-- ── Record detail modal ────────────────────────────────────────────────── -->
+<div id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+const state = {
+  token:          '',
+  view:           'summary',   // 'summary' | 'list'
+  currentStatus:  '',
+  currentPage:    1,
+  searchQuery:    '',
+  summaryData:    null,
+};
+
+// ── Status metadata ──────────────────────────────────────────────────────────
+const PIPELINE_STATUSES = [
+  'Researched',
+  'Researched with website',
+  'Pending CH Validation',
+  'Brief In Progress',
+  'Spec Complete',
+  'Brief Complete',
+  'Demo Built',
+  'Emailed',
+  'Closed - No Response',
+];
+
+const STATUS_COLOURS = {
+  'Researched':               '#4b9cf5',
+  'Researched with website':  '#4b9cf5',
+  'Pending CH Validation':    '#f5813a',
+  'Brief In Progress':        '#f5a623',
+  'Spec Complete':            '#34c97e',
+  'Brief Complete':           '#34c97e',
+  'Demo Built':               '#34c97e',
+  'Emailed':                  '#9b7fe8',
+  'Closed - No Response':     '#607090',
+  'CH Checked - Sole Trader': '#607090',
+  'Ltd - No Email':           '#607090',
+  'Disqualified':             '#e05050',
+  'Duplicate':                '#e05050',
+  'Suppressed':               '#607090',
+};
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function apiFetch(params) {
+  const qs  = new URLSearchParams(params).toString();
+  const res = await fetch(`/api/dashboard?${qs}`, {
+    headers: { 'Authorization': `Bearer ${state.token}` },
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'API error');
+  return data;
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+document.getElementById('btn-login').addEventListener('click', tryLogin);
+document.getElementById('token-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryLogin();
+});
+
+async function tryLogin() {
+  const token = document.getElementById('token-input').value.trim();
+  if (!token) return;
+  document.getElementById('btn-login').textContent = 'Checking…';
+  document.getElementById('btn-login').disabled = true;
+
+  try {
+    const res = await fetch('/api/dashboard?action=summary', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (res.status === 401) throw new Error('Invalid token');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+
+    state.token       = token;
+    state.summaryData = data.data;
+    sessionStorage.setItem('dash_token', token);
+
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderSummary(data.data);
+  } catch (err) {
+    document.getElementById('login-error').textContent = err.message;
+  } finally {
+    document.getElementById('btn-login').textContent = 'Sign in';
+    document.getElementById('btn-login').disabled = false;
+  }
+}
+
+// Auto-login from sessionStorage
+(function autoLogin() {
+  const saved = sessionStorage.getItem('dash_token');
+  if (!saved) return;
+  document.getElementById('token-input').value = saved;
+  tryLogin();
+})();
+
+// ── Summary view ──────────────────────────────────────────────────────────────
+function renderSummary(rows) {
+  state.view = 'summary';
+  const main = document.getElementById('main-content');
+  const byStatus = Object.fromEntries(rows.map(r => [r.status, r.count]));
+  const total    = rows.reduce((s, r) => s + r.count, 0);
+
+  const pipelineRows  = PIPELINE_STATUSES.map(s => ({ status: s, count: byStatus[s] || 0 }));
+  const filteredRows  = rows.filter(r => !PIPELINE_STATUSES.includes(r.status));
+
+  setBreadcrumb([{ label: 'Prospects' }]);
+  document.getElementById('btn-back').style.display = 'none';
+
+  main.innerHTML = `
+    <div class="summary-header">
+      <h2>Prospects Overview</h2>
+      <div class="total-badge"><strong>${total.toLocaleString()}</strong> total records</div>
+    </div>
+
+    <div class="section-label">Active pipeline</div>
+    <div class="cards" id="pipeline-cards"></div>
+
+    <div class="section-label">Filtered / archived</div>
+    <div class="cards" id="filtered-cards"></div>
+  `;
+
+  renderCards('pipeline-cards', pipelineRows);
+  renderCards('filtered-cards', filteredRows);
+}
+
+function renderCards(containerId, rows) {
+  const container = document.getElementById(containerId);
+  rows.forEach(({ status, count }) => {
+    const colour = STATUS_COLOURS[status] || '#607090';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--card-color', colour);
+    card.innerHTML = `
+      <div class="card-count">${count.toLocaleString()}</div>
+      <div class="card-label">${escHtml(status)}</div>
+    `;
+    card.addEventListener('click', () => loadList(status));
+    container.appendChild(card);
+  });
+}
+
+// ── List view ─────────────────────────────────────────────────────────────────
+async function loadList(status, page = 1, q = '') {
+  state.view          = 'list';
+  state.currentStatus = status;
+  state.currentPage   = page;
+  state.searchQuery   = q;
+
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading records…</div>';
+  setBreadcrumb([
+    { label: 'Prospects', action: () => renderSummary(state.summaryData) },
+    { label: status },
+  ]);
+  document.getElementById('btn-back').style.display = '';
+
+  try {
+    const data = await apiFetch({ action: 'list', status, page, q });
+    renderList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderList({ data: rows, total, page, pageSize }) {
+  const main       = document.getElementById('main-content');
+  const totalPages = Math.ceil(total / pageSize);
+  const status     = state.currentStatus;
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>${escHtml(status)} <span class="count-tag">${total.toLocaleString()} records</span></h2>
+      <input type="search" id="search-input" placeholder="Search name, town, email…" value="${escAttr(state.searchQuery)}">
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Business</th>
+            <th>Contact</th>
+            <th>Trade</th>
+            <th>Town</th>
+            <th>Website</th>
+            <th>Rating</th>
+            <th>Last emailed</th>
+          </tr>
+        </thead>
+        <tbody id="records-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button id="pg-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
+      <button id="pg-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+    </div>
+  `;
+
+  const tbody = document.getElementById('records-tbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No records found</td></tr>';
+  } else {
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escHtml(row.business_name || '—')}</td>
+        <td class="muted">${escHtml(row.contact_name || '—')}</td>
+        <td class="muted">${escHtml(row.trade_category || '—')}</td>
+        <td class="muted">${escHtml(row.town || '—')}</td>
+        <td><span class="pill ${row.has_website ? 'has-website' : 'no-website'}">${row.has_website ? 'Yes' : 'No'}</span></td>
+        <td class="muted">${row.rating != null ? row.rating : '—'}</td>
+        <td class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</td>
+      `;
+      tr.addEventListener('click', () => loadRecord(row.notion_id, row.business_name));
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Search
+  let searchTimer;
+  document.getElementById('search-input').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadList(status, 1, e.target.value), 350);
+  });
+
+  // Pagination
+  document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1, state.searchQuery));
+  document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1, state.searchQuery));
+}
+
+// ── Record detail ─────────────────────────────────────────────────────────────
+async function loadRecord(id, name) {
+  const overlay = document.getElementById('modal-overlay');
+  const body    = document.getElementById('modal-body');
+  body.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
+  overlay.classList.add('open');
+
+  try {
+    const { data: r } = await apiFetch({ action: 'record', id });
+    body.innerHTML = renderRecordHtml(r);
+  } catch (err) {
+    body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
+  }
+}
+
+function renderRecordHtml(r) {
+  const val = (v, link) => {
+    if (!v && v !== 0) return '<span class="field-value empty">—</span>';
+    const safe = escHtml(String(v));
+    if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
+    return `<span class="field-value">${safe}</span>`;
+  };
+
+  return `
+    <h2>${escHtml(r.business_name || 'Unknown')}</h2>
+    <div class="modal-status">${escHtml(r.status || '')}${r.trade_category ? ' · ' + escHtml(r.trade_category) : ''}</div>
+
+    <div class="field-grid">
+      <div class="field-group">
+        <span class="field-label">Contact name</span>
+        ${val(r.contact_name)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Email</span>
+        ${val(r.email_address, r.email_address ? `mailto:${r.email_address}` : null)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Phone</span>
+        ${val(r.phone)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Town</span>
+        ${val(r.town)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Address</span>
+        ${val(r.address)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Postcode</span>
+        ${val(r.postcode)}
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="field-grid">
+      <div class="field-group">
+        <span class="field-label">Has website</span>
+        ${val(r.has_website ? 'Yes' : 'No')}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Website URL</span>
+        ${val(r.website_url, r.website_url)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Website platform</span>
+        ${val(r.website_platform)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Website agency</span>
+        ${val(r.website_agency)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Rating</span>
+        ${val(r.rating)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Review count</span>
+        ${val(r.review_count)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Postcard score</span>
+        ${val(r.postcard_score)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Prospect segment</span>
+        ${val(r.prospect_segment)}
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="field-grid">
+      <div class="field-group">
+        <span class="field-label">Company type</span>
+        ${val(r.company_type)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">CH number</span>
+        ${val(r.ch_number)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">CH status</span>
+        ${val(r.ch_status)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Incorporation date</span>
+        ${val(r.ch_incorporation_date)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Date first contacted</span>
+        ${val(r.date_first_contacted)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Last email sent</span>
+        ${val(r.last_email_sent)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Contact count</span>
+        ${val(r.contact_count)}
+      </div>
+      <div class="field-group">
+        <span class="field-label">Demo URL</span>
+        ${val(r.demo_url, r.demo_url)}
+      </div>
+    </div>
+
+    ${r.research_summary ? `
+      <hr class="section-divider">
+      <div class="field-group full">
+        <span class="field-label">Research summary</span>
+        <span class="field-value">${escHtml(r.research_summary)}</span>
+      </div>
+    ` : ''}
+
+    ${r.notes || r.note ? `
+      <hr class="section-divider">
+      <div class="field-group full">
+        <span class="field-label">Notes</span>
+        <span class="field-value">${escHtml(r.notes || r.note || '')}</span>
+      </div>
+    ` : ''}
+
+    ${r.disqualify_reason ? `
+      <hr class="section-divider">
+      <div class="field-group full">
+        <span class="field-label">Disqualify reason</span>
+        <span class="field-value">${escHtml(r.disqualify_reason)}</span>
+      </div>
+    ` : ''}
+  `;
+}
+
+// ── Modal close ───────────────────────────────────────────────────────────────
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ── Back button ───────────────────────────────────────────────────────────────
+document.getElementById('btn-back').addEventListener('click', () => {
+  if (state.view === 'list') renderSummary(state.summaryData);
+});
+
+// ── Breadcrumb ────────────────────────────────────────────────────────────────
+function setBreadcrumb(items) {
+  const el = document.getElementById('breadcrumb');
+  el.innerHTML = items.map((item, i) => {
+    const isLast = i === items.length - 1;
+    if (isLast) return `<span class="active">${escHtml(item.label)}</span>`;
+    return `<span class="link" style="cursor:pointer;color:var(--muted)" data-idx="${i}">${escHtml(item.label)}</span><span class="sep">/</span>`;
+  }).join('');
+
+  el.querySelectorAll('.link').forEach(link => {
+    const idx = parseInt(link.dataset.idx, 10);
+    if (items[idx]?.action) link.addEventListener('click', items[idx].action);
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escAttr(str) {
+  return String(str || '').replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
