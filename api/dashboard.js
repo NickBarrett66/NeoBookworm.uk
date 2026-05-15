@@ -3,6 +3,8 @@
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=enquiries_list&page=N&q=search&handled=0|1|all
 // GET  /api/dashboard?action=enquiries_record&id=X
+// GET  /api/dashboard?action=campaigns_list
+// GET  /api/dashboard?action=campaigns_detail&id=<campaign_id>
 // POST /api/dashboard  body: { action:"update",            id, fields:{...} }
 // POST /api/dashboard  body: { action:"enquiries_update",  id, fields:{...} }
 //
@@ -236,6 +238,36 @@ module.exports = async (req, res) => {
       const rows = await queryD1(enquiriesDb(), `SELECT * FROM landing_enquiries WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
       return res.status(200).json({ ok: true, data: rows[0] });
+    }
+
+    // ── Campaigns list ────────────────────────────────────────────────────────
+    if (action === 'campaigns_list') {
+      const rows = await queryD1(prospectsDb(),
+        `SELECT id, trade, landing_page, created_at, scheduled_at, count_total,
+                count_sent, count_replied, status, notes
+         FROM campaigns
+         ORDER BY created_at DESC`
+      );
+      return res.status(200).json({ ok: true, data: rows });
+    }
+
+    // ── Campaigns detail ──────────────────────────────────────────────────────
+    if (action === 'campaigns_detail') {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ error: 'id parameter required' });
+      const [campaignRows, prospectRows] = await Promise.all([
+        queryD1(prospectsDb(), `SELECT * FROM campaigns WHERE id = ?`, [id]),
+        queryD1(prospectsDb(),
+          `SELECT notion_id, business_name, email_address, town, status,
+                  last_email_sent, contact_count
+           FROM prospects
+           WHERE email_campaign_id = ?
+           ORDER BY last_email_sent DESC NULLS LAST, business_name`,
+          [id]
+        ),
+      ]);
+      if (!campaignRows.length) return res.status(404).json({ error: 'Campaign not found' });
+      return res.status(200).json({ ok: true, campaign: campaignRows[0], prospects: prospectRows });
     }
 
     return res.status(400).json({ error: `Unknown action: ${action}` });
