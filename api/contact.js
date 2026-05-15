@@ -4,6 +4,65 @@
 //   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
 // Optional:
 //   TO_EMAIL  (defaults to neobookworm@icloud.com)
+//   CF_ACCOUNT_ID, CF_API_TOKEN, D1_ENQUIRIES_ID (for D1 persistence)
+
+const { randomUUID } = require('crypto');
+
+async function insertContactToDB1(data) {
+  const cfAccountId = process.env.CF_ACCOUNT_ID;
+  const cfApiToken = process.env.CF_API_TOKEN;
+  const d1DbId = process.env.D1_ENQUIRIES_ID;
+
+  if (!cfAccountId || !cfApiToken || !d1DbId) {
+    console.log('D1 not configured. Missing:', {
+      account: !!cfAccountId,
+      token: !!cfApiToken,
+      dbId: !!d1DbId,
+    });
+    return { status: 'skipped', reason: 'D1 not configured' };
+  }
+
+  const enquiryId = randomUUID();
+  const { name, trade, email, phone, message } = data;
+
+  const sql = `INSERT INTO contact_enquiries (id, name, trade, email, phone, message)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  try {
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/d1/database/${d1DbId}/query`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${cfApiToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sql,
+          params: [enquiryId, name, trade || null, email, phone || null, message],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('D1 insert error:', errorData);
+      return;
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      console.error('D1 insert failed:', result.errors);
+      return { status: 'failed', reason: result.errors };
+    }
+
+    console.log('Contact enquiry inserted into D1:', enquiryId);
+    return { status: 'success', id: enquiryId };
+  } catch (err) {
+    console.error('D1 insert exception:', err);
+    return { status: 'error', reason: err.message };
+  }
+}
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -40,6 +99,8 @@ module.exports = async (req, res) => {
     'Sent via the quick contact form on neobookworm.uk',
   ].join('\n');
 
+  const d1Result = await insertContactToDB1(data);
+
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
@@ -48,7 +109,11 @@ module.exports = async (req, res) => {
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.log('SMTP not configured. Would have sent:\n' + emailBody);
-    return res.status(200).json({ ok: true, note: 'SMTP not configured — logged only' });
+    return res.status(200).json({
+      ok: true,
+      note: 'SMTP not configured — logged only',
+      d1: d1Result
+    });
   }
 
   try {
@@ -69,7 +134,7 @@ module.exports = async (req, res) => {
       text: emailBody,
     });
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, d1: d1Result });
   } catch (err) {
     console.error('Email send error:', err);
     return res.status(500).json({ error: 'Failed to send email. Please try again.' });
