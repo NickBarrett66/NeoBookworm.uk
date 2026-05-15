@@ -390,6 +390,12 @@
     border: 1px solid var(--border); border-radius: 6px; font-size: .85rem; cursor: pointer;
   }
   .btn-confirm-no:hover { color: var(--white); border-color: var(--muted); }
+
+  .text-multiline {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: inherit;
+  }
 </style>
 </head>
 <body>
@@ -815,7 +821,7 @@ function renderRecordHtml(r) {
       <div class="field-group"><span class="field-label">Contact count</span>${val(r.contact_count)}</div>
       <div class="field-group"><span class="field-label">Demo URL</span>${val(r.demo_url, r.demo_url)}</div>
     </div>
-    ${r.research_summary ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Research summary</span><span class="field-value">${escHtml(r.research_summary)}</span></div>` : ''}
+    ${r.research_summary ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Research summary</span><span class="field-value text-multiline">${escHtml(r.research_summary)}</span></div>` : ''}
     <div class="edit-section">
       <h3>Edit record</h3>
       <div class="edit-row"><label for="edit-status">Status</label><select id="edit-status">${statusOptions}</select></div>
@@ -823,7 +829,7 @@ function renderRecordHtml(r) {
         <label for="edit-disqualify">Disqualify reason</label>
         <input type="text" id="edit-disqualify" value="${escAttr(r.disqualify_reason || '')}" placeholder="Reason for disqualifying…">
       </div>
-      <div class="edit-row"><label for="edit-notes">Notes</label><textarea id="edit-notes" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea></div>
+      <div class="edit-row"><label for="edit-notes">Notes</label><textarea id="edit-notes" class="text-multiline" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea></div>
       <div class="edit-actions">
         <button class="btn-save" id="btn-save" disabled>Save changes</button>
         <span class="save-status" id="save-status"></span>
@@ -1036,7 +1042,7 @@ function renderEnquiryHtml(r) {
       <hr class="section-divider">
       <div class="field-group" style="grid-column:1/-1">
         <span class="field-label">Details / message</span>
-        <span class="field-value">${escHtml(r.details)}</span>
+        <span class="field-value text-multiline">${escHtml(r.details)}</span>
       </div>
     ` : ''}
 
@@ -1056,7 +1062,7 @@ function renderEnquiryHtml(r) {
       </div>
       <div class="edit-row">
         <label for="edit-admin-notes">Admin notes</label>
-        <textarea id="edit-admin-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea>
+        <textarea id="edit-admin-notes" class="text-multiline" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea>
       </div>
       <div class="edit-actions">
         <button class="btn-save" id="enq-btn-save" disabled>Save changes</button>
@@ -1242,6 +1248,7 @@ function renderIntakeHtml(r) {
     if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
     return `<span class="field-value">${safe}</span>`;
   };
+  const valM = v => (!v && v !== 0) ? '<span class="field-value empty">—</span>' : `<span class="field-value text-multiline">${escHtml(String(v))}</span>`;
 
   let photoUrls = [];
   try { photoUrls = JSON.parse(r.photo_urls || '[]'); } catch { /* ignore */ }
@@ -1284,13 +1291,13 @@ function renderIntakeHtml(r) {
     </div>
     <hr class="section-divider">
     <div class="field-grid">
-      <div class="field-group" style="grid-column:1/-1"><span class="field-label">About</span>${val(r.about)}</div>
-      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Ideal work</span>${val(r.ideal_work)}</div>
-      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Work exclusions</span>${val(r.work_exclusions)}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">About</span>${valM(r.about)}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Ideal work</span>${valM(r.ideal_work)}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Work exclusions</span>${valM(r.work_exclusions)}</div>
       <div class="field-group"><span class="field-label">Colour preferences</span>${val(r.colour_preferences)}</div>
       <div class="field-group"><span class="field-label">Website style</span>${val(r.website_style)}</div>
       <div class="field-group"><span class="field-label">Inspiration URL</span>${val(r.inspiration_url, r.inspiration_url)}</div>
-      <div class="field-group"><span class="field-label">Testimonials</span>${val(r.testimonials)}</div>
+      <div class="field-group"><span class="field-label">Testimonials</span>${valM(r.testimonials)}</div>
       <div class="field-group"><span class="field-label">Trust marks</span>${val(r.trust_marks)}</div>
     </div>
     <hr class="section-divider">
@@ -1299,7 +1306,7 @@ function renderIntakeHtml(r) {
       <div class="field-group"><span class="field-label">Notion page</span>${r.notion_page_id ? val('View in Notion', 'https://www.notion.so/' + r.notion_page_id.replace(/-/g, '')) : '<span class="field-value empty">—</span>'}</div>
       <div class="field-group" style="grid-column:1/-1"><span class="field-label">Work photos (${photoUrls.length})</span>${photosHtml}</div>
     </div>
-    ${r.additional_notes ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Additional notes</span><span class="field-value">${escHtml(r.additional_notes)}</span></div>` : ''}
+    ${r.additional_notes ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Additional notes</span><span class="field-value text-multiline">${escHtml(r.additional_notes)}</span></div>` : ''}
 
     <div class="edit-section">
       <h3>Edit record</h3>
@@ -1310,7 +1317,7 @@ function renderIntakeHtml(r) {
           <label for="intake-edit-handled">Mark as handled</label>
         </div>
       </div>
-      <div class="edit-row"><label for="intake-edit-notes">Admin notes</label><textarea id="intake-edit-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
+      <div class="edit-row"><label for="intake-edit-notes">Admin notes</label><textarea id="intake-edit-notes" class="text-multiline" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
       <div class="edit-actions">
         <button class="btn-save" id="intake-btn-save" disabled>Save changes</button>
         <span class="save-status" id="intake-save-status"></span>
@@ -1511,7 +1518,7 @@ function renderContactHtml(r) {
       <hr class="section-divider">
       <div class="field-group" style="grid-column:1/-1">
         <span class="field-label">Message</span>
-        <span class="field-value">${escHtml(r.message)}</span>
+        <span class="field-value text-multiline">${escHtml(r.message)}</span>
       </div>
     ` : ''}
 
@@ -1523,7 +1530,7 @@ function renderContactHtml(r) {
           <label for="contact-edit-handled">Mark as handled</label>
         </div>
       </div>
-      <div class="edit-row"><label for="contact-edit-notes">Admin notes</label><textarea id="contact-edit-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
+      <div class="edit-row"><label for="contact-edit-notes">Admin notes</label><textarea id="contact-edit-notes" class="text-multiline" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
       <div class="edit-actions">
         <button class="btn-save" id="contact-btn-save" disabled>Save changes</button>
         <span class="save-status" id="contact-save-status"></span>

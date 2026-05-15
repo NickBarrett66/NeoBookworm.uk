@@ -122,6 +122,227 @@ module.exports = async (req, res) => {
       }
     }
 
+    if (action === 'outbox_next') {
+      try {
+        const rows = await queryD1(prospectsDb(),
+          `SELECT o.id, o.campaign_id, o.notion_id, o.business_name,
+                  o.email, o.subject, o.body
+           FROM outbox o
+           JOIN campaigns c ON o.campaign_id = c.id
+           WHERE o.sent = 0
+             AND o.skipped = 0
+             AND o.approved = 1
+             AND c.status = 'active'
+             AND (o.scheduled_not_before IS NULL OR o.scheduled_not_before <= datetime('now'))
+           ORDER BY c.priority DESC, o.created_at ASC
+           LIMIT 1`
+        );
+        return res.status(200).json({ ok: true, data: rows[0] || null });
+      } catch (err) {
+        console.error('[dashboard outbox_next]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_approve') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET approved = 1, approved_at = datetime('now') WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_approve]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_unapprove') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET approved = 0, approved_at = NULL WHERE id = ? AND sent = 0`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_unapprove]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_approve_all') {
+      if (!campaign_id || typeof campaign_id !== 'string') return res.status(400).json({ ok: false, error: 'campaign_id required' });
+      try {
+        const countRows = await queryD1(prospectsDb(),
+          `SELECT COUNT(*) AS n FROM outbox
+           WHERE campaign_id = ? AND sent = 0 AND skipped = 0 AND approved = 0`,
+          [campaign_id]);
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET approved = 1, approved_at = datetime('now')
+           WHERE campaign_id = ? AND sent = 0 AND skipped = 0`,
+          [campaign_id]);
+        return res.status(200).json({ ok: true, approved_count: countRows[0]?.n || 0 });
+      } catch (err) {
+        console.error('[dashboard outbox_approve_all]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_confirm') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await Promise.all([
+          queryD1(prospectsDb(),
+            `UPDATE outbox SET sent = 1, sent_at = datetime('now') WHERE id = ?`,
+            [id]),
+          queryD1(prospectsDb(),
+            `UPDATE prospects
+             SET last_email_sent      = datetime('now'),
+                 date_first_contacted = CASE WHEN date_first_contacted IS NULL
+                                             THEN datetime('now')
+                                             ELSE date_first_contacted END,
+                 contact_count        = COALESCE(contact_count, 0) + 1,
+                 status               = 'Emailed',
+                 email_campaign_id    = (SELECT campaign_id FROM outbox WHERE id = ?)
+             WHERE notion_id = (SELECT notion_id FROM outbox WHERE id = ?)`,
+            [id, id]),
+          queryD1(prospectsDb(),
+            `UPDATE campaigns SET count_sent = count_sent + 1
+             WHERE id = (SELECT campaign_id FROM outbox WHERE id = ?)`,
+            [id]),
+        ]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_confirm]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_error') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      if (body.error === undefined) return res.status(400).json({ ok: false, error: 'error required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET send_error = ?, send_attempts = send_attempts + 1 WHERE id = ?`,
+          [body.error, id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_error]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_edit') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      const OUTBOX_EDITABLE = ['subject', 'body', 'scheduled_not_before'];
+      const editFields = fields && typeof fields === 'object' ? fields : {};
+      const allowed = Object.keys(editFields).filter(k => OUTBOX_EDITABLE.includes(k));
+      if (!allowed.length) return res.status(400).json({ ok: false, error: 'No editable fields provided' });
+      const set    = allowed.map(k => `${k} = ?`).join(', ');
+      const params = [...allowed.map(k => editFields[k]), id];
+      try {
+        await queryD1(prospectsDb(), `UPDATE outbox SET ${set} WHERE id = ?`, params);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_edit]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_skip') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET skipped = 1, skip_reason = ? WHERE id = ?`,
+          [body.reason || null, id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_skip]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_unskip') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET skipped = 0, skip_reason = NULL WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_unskip]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'campaign_activate') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE campaigns SET status = 'active', scheduled_at = datetime('now') WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard campaign_activate]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'campaign_pause') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE campaigns SET status = 'paused' WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard campaign_pause]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'campaign_resume') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE campaigns SET status = 'active' WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard campaign_resume]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'campaign_boost') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      if (typeof body.delta !== 'number') return res.status(400).json({ ok: false, error: 'delta (integer) required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE campaigns SET priority = MAX(-10, MIN(10, priority + ?)) WHERE id = ?`,
+          [body.delta, id]);
+        const rows = await queryD1(prospectsDb(),
+          `SELECT priority FROM campaigns WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true, new_priority: rows[0]?.priority ?? null });
+      } catch (err) {
+        console.error('[dashboard campaign_boost]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_populate') {
+      if (!campaign_id || typeof campaign_id !== 'string') return res.status(400).json({ ok: false, error: 'campaign_id required' });
+      if (!Array.isArray(body.rows) || !body.rows.length) return res.status(400).json({ ok: false, error: 'rows array required' });
+      try {
+        await Promise.all(body.rows.map(row => queryD1(prospectsDb(),
+          `INSERT OR IGNORE INTO outbox (id, campaign_id, notion_id, business_name, email, subject, body, scheduled_not_before)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [crypto.randomUUID(), campaign_id, row.notion_id, row.business_name, row.email, row.subject, row.body, row.scheduled_not_before || null]
+        )));
+        await queryD1(prospectsDb(),
+          `UPDATE campaigns SET count_total = count_total + ? WHERE id = ?`,
+          [body.rows.length, campaign_id]);
+        return res.status(200).json({ ok: true, inserted: body.rows.length });
+      } catch (err) {
+        console.error('[dashboard outbox_populate]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (!id) return res.status(400).json({ error: 'id required' });
     const isDelete = action && action.endsWith('_delete');
     if (!fields && !isDelete) return res.status(400).json({ error: 'fields object required' });
@@ -441,6 +662,32 @@ module.exports = async (req, res) => {
       ]);
       if (!campaignRows.length) return res.status(404).json({ error: 'Campaign not found' });
       return res.status(200).json({ ok: true, campaign: campaignRows[0], prospects: prospectRows });
+    }
+
+    // ── Outbox list ───────────────────────────────────────────────────────────
+    if (action === 'outbox_list') {
+      const { campaign_id: cid } = req.query;
+      if (!cid) return res.status(400).json({ error: 'campaign_id parameter required' });
+      const rows = await queryD1(prospectsDb(),
+        `SELECT id, notion_id, business_name, email, subject,
+                substr(body, 1, 120) AS body_preview,
+                created_at, scheduled_not_before,
+                approved, approved_at,
+                sent, sent_at, skipped, skip_reason, send_error, send_attempts
+         FROM outbox
+         WHERE campaign_id = ?
+         ORDER BY sent ASC, skipped ASC, approved DESC, created_at ASC`,
+        [cid]);
+      return res.status(200).json({ ok: true, data: rows });
+    }
+
+    // ── Outbox record ─────────────────────────────────────────────────────────
+    if (action === 'outbox_record') {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ error: 'id parameter required' });
+      const rows = await queryD1(prospectsDb(), `SELECT * FROM outbox WHERE id = ?`, [id]);
+      if (!rows.length) return res.status(404).json({ error: 'Record not found' });
+      return res.status(200).json({ ok: true, data: rows[0] });
     }
 
     return res.status(400).json({ error: `Unknown action: ${action}` });
