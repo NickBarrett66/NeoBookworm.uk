@@ -122,8 +122,9 @@ module.exports = async (req, res) => {
       }
     }
 
-    if (!id)     return res.status(400).json({ error: 'id required' });
-    if (!fields) return res.status(400).json({ error: 'fields object required' });
+    if (!id) return res.status(400).json({ error: 'id required' });
+    const isDelete = action && action.endsWith('_delete');
+    if (!fields && !isDelete) return res.status(400).json({ error: 'fields object required' });
 
     if (action === 'update') {
       const allowed = Object.keys(fields).filter(k => PROSPECTS_EDITABLE.includes(k));
