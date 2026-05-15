@@ -181,6 +181,39 @@ module.exports = async (req, res) => {
       }
     }
 
+    if (action === 'enquiries_delete') {
+      if (!id) return res.status(400).json({ error: 'id required' });
+      try {
+        await queryD1(enquiriesDb(), `DELETE FROM landing_enquiries WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard enquiries_delete]', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
+    if (action === 'intake_delete') {
+      if (!id) return res.status(400).json({ error: 'id required' });
+      try {
+        await queryD1(enquiriesDb(), `DELETE FROM intake_submissions WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard intake_delete]', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
+    if (action === 'contact_delete') {
+      if (!id) return res.status(400).json({ error: 'id required' });
+      try {
+        await queryD1(enquiriesDb(), `DELETE FROM contact_enquiries WHERE id = ?`, [id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard contact_delete]', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
     return res.status(400).json({ error: `Unknown action: ${action}` });
   }
 
@@ -193,14 +226,18 @@ module.exports = async (req, res) => {
   try {
     // ── Summary: prospect counts + enquiries total ───────────────────────────
     if (action === 'summary') {
-      const [prospectRows, enquiryRows] = await Promise.all([
+      const [prospectRows, enquiryRows, intakeRows, contactRows] = await Promise.all([
         queryD1(prospectsDb(), `SELECT status, COUNT(*) AS count FROM prospects GROUP BY status ORDER BY count DESC`),
         queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM landing_enquiries`),
+        queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM intake_submissions`),
+        queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM contact_enquiries`),
       ]);
       return res.status(200).json({
         ok: true,
-        data: prospectRows,
+        data:     prospectRows,
         enquiries: enquiryRows[0] || { total: 0, handled: 0 },
+        intake:    intakeRows[0]  || { total: 0, handled: 0 },
+        contact:   contactRows[0] || { total: 0, handled: 0 },
       });
     }
 

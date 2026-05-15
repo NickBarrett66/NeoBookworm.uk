@@ -365,6 +365,31 @@
   .save-status { font-size: .85rem; min-height: 1.2em; }
   .save-status.ok  { color: var(--green); }
   .save-status.err { color: var(--red); }
+
+  .btn-delete {
+    padding: .6rem 1.4rem; background: none; color: var(--red);
+    border: 1px solid var(--red); border-radius: 7px;
+    font-size: .9rem; font-weight: 600; cursor: pointer;
+    transition: background .15s, color .15s;
+    margin-left: auto;
+  }
+  .btn-delete:hover { background: var(--red); color: var(--white); }
+  .btn-delete:disabled { opacity: .4; cursor: default; }
+
+  .delete-confirm {
+    display: flex; align-items: center; gap: .6rem; margin-left: auto;
+  }
+  .delete-confirm span { font-size: .85rem; color: var(--muted); }
+  .btn-confirm-yes {
+    padding: .5rem 1rem; background: var(--red); color: var(--white);
+    border: none; border-radius: 6px; font-size: .85rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-confirm-yes:hover { opacity: .85; }
+  .btn-confirm-no {
+    padding: .5rem 1rem; background: none; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 6px; font-size: .85rem; cursor: pointer;
+  }
+  .btn-confirm-no:hover { color: var(--white); border-color: var(--muted); }
 </style>
 </head>
 <body>
@@ -427,6 +452,8 @@ const state = {
   enqHandled:     'all',
   enqTotal:       0,
   enqUnhandled:   0,
+  intakeUnhandled: 0,
+  contactUnhandled: 0,
   // intake
   intakePage:     1,
   intakeSearch:   '',
@@ -522,11 +549,15 @@ async function tryLogin() {
 
     state.token       = token;
     state.summaryData = data.data;
-    state.enqTotal    = data.enquiries?.total    || 0;
+    state.enqTotal     = data.enquiries?.total || 0;
     state.enqUnhandled = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
+    state.intakeUnhandled  = (data.intake?.total  || 0) - (data.intake?.handled  || 0);
+    state.contactUnhandled = (data.contact?.total || 0) - (data.contact?.handled || 0);
     sessionStorage.setItem('dash_token', token);
 
     updateEnqBadge();
+    updateIntakeBadge();
+    updateContactBadge();
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderSummary(data.data);
@@ -552,6 +583,30 @@ function updateEnqBadge() {
     const b = document.createElement('span');
     b.id = 'enq-badge'; b.className = 'tab-badge';
     b.textContent = state.enqUnhandled;
+    btn.appendChild(b);
+  }
+}
+
+function updateIntakeBadge() {
+  const badge = document.getElementById('intake-badge');
+  if (badge) badge.remove();
+  if (state.intakeUnhandled > 0) {
+    const btn = document.getElementById('intake-tab-btn');
+    const b = document.createElement('span');
+    b.id = 'intake-badge'; b.className = 'tab-badge';
+    b.textContent = state.intakeUnhandled;
+    btn.appendChild(b);
+  }
+}
+
+function updateContactBadge() {
+  const badge = document.getElementById('contact-badge');
+  if (badge) badge.remove();
+  if (state.contactUnhandled > 0) {
+    const btn = document.getElementById('contact-tab-btn');
+    const b = document.createElement('span');
+    b.id = 'contact-badge'; b.className = 'tab-badge';
+    b.textContent = state.contactUnhandled;
     btn.appendChild(b);
   }
 }
@@ -1006,6 +1061,7 @@ function renderEnquiryHtml(r) {
       <div class="edit-actions">
         <button class="btn-save" id="enq-btn-save" disabled>Save changes</button>
         <span class="save-status" id="enq-save-status"></span>
+        <button class="btn-delete" id="enq-btn-delete">Delete</button>
       </div>
     </div>
   `;
@@ -1016,6 +1072,16 @@ function wireEnquiryEdit(r) {
   const notesEl    = document.getElementById('edit-admin-notes');
   const saveBtn    = document.getElementById('enq-btn-save');
   const saveStatus = document.getElementById('enq-save-status');
+
+  wireDeleteButton({
+    btnId:            'enq-btn-delete',
+    action:           'enquiries_delete',
+    recordId:         r.id,
+    isUnhandled:      !r.handled,
+    unhandledStateKey:'enqUnhandled',
+    badgeFn:          updateEnqBadge,
+    onDeleted:        () => loadEnquiriesList(state.enqPage, state.enqSearch, state.enqHandled),
+  });
 
   const origHandled = r.handled ? true : false;
   const origNotes   = r.admin_notes || '';
@@ -1042,7 +1108,6 @@ function wireEnquiryEdit(r) {
       if (fields.handled     !== undefined) r.handled     = fields.handled;
       if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
 
-      // Update unhandled badge count
       if (fields.handled !== undefined) {
         state.enqUnhandled = Math.max(0, state.enqUnhandled + (fields.handled ? -1 : 1));
         updateEnqBadge();
@@ -1249,6 +1314,7 @@ function renderIntakeHtml(r) {
       <div class="edit-actions">
         <button class="btn-save" id="intake-btn-save" disabled>Save changes</button>
         <span class="save-status" id="intake-save-status"></span>
+        <button class="btn-delete" id="intake-btn-delete">Delete</button>
       </div>
     </div>
   `;
@@ -1260,6 +1326,16 @@ function wireIntakeEdit(r) {
   const notesEl    = document.getElementById('intake-edit-notes');
   const saveBtn    = document.getElementById('intake-btn-save');
   const saveStatus = document.getElementById('intake-save-status');
+
+  wireDeleteButton({
+    btnId:            'intake-btn-delete',
+    action:           'intake_delete',
+    recordId:         r.id,
+    isUnhandled:      !r.handled,
+    unhandledStateKey:'intakeUnhandled',
+    badgeFn:          updateIntakeBadge,
+    onDeleted:        () => loadIntakeList(state.intakePage, state.intakeSearch, state.intakeHandled),
+  });
 
   const origStatus  = r.status || '';
   const origHandled = r.handled ? true : false;
@@ -1288,6 +1364,11 @@ function wireIntakeEdit(r) {
       if (fields.status      !== undefined) r.status      = fields.status;
       if (fields.handled     !== undefined) r.handled     = fields.handled;
       if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
+
+      if (fields.handled !== undefined) {
+        state.intakeUnhandled = Math.max(0, state.intakeUnhandled + (fields.handled ? -1 : 1));
+        updateIntakeBadge();
+      }
 
       saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
       setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
@@ -1446,6 +1527,7 @@ function renderContactHtml(r) {
       <div class="edit-actions">
         <button class="btn-save" id="contact-btn-save" disabled>Save changes</button>
         <span class="save-status" id="contact-save-status"></span>
+        <button class="btn-delete" id="contact-btn-delete">Delete</button>
       </div>
     </div>
   `;
@@ -1456,6 +1538,16 @@ function wireContactEdit(r) {
   const notesEl    = document.getElementById('contact-edit-notes');
   const saveBtn    = document.getElementById('contact-btn-save');
   const saveStatus = document.getElementById('contact-save-status');
+
+  wireDeleteButton({
+    btnId:            'contact-btn-delete',
+    action:           'contact_delete',
+    recordId:         r.id,
+    isUnhandled:      !r.handled,
+    unhandledStateKey:'contactUnhandled',
+    badgeFn:          updateContactBadge,
+    onDeleted:        () => loadContactList(state.contactPage, state.contactSearch, state.contactHandled),
+  });
 
   const origHandled = r.handled ? true : false;
   const origNotes   = r.admin_notes || '';
@@ -1480,6 +1572,11 @@ function wireContactEdit(r) {
       await apiPost({ action: 'contact_update', id: r.id, fields });
       if (fields.handled     !== undefined) r.handled     = fields.handled;
       if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
+
+      if (fields.handled !== undefined) {
+        state.contactUnhandled = Math.max(0, state.contactUnhandled + (fields.handled ? -1 : 1));
+        updateContactBadge();
+      }
 
       saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
       setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
@@ -1614,6 +1711,50 @@ function renderCampaignDetail(c, prospects) {
     `;
     tr.addEventListener('click', () => loadRecord(p.notion_id));
     tbody.appendChild(tr);
+  });
+}
+
+// ── Shared delete helper ──────────────────────────────────────────────────────
+function wireDeleteButton({ btnId, action, recordId, isUnhandled, unhandledStateKey, badgeFn, onDeleted }) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const parent = btn.parentElement;
+    btn.remove();
+
+    const confirm = document.createElement('div');
+    confirm.className = 'delete-confirm';
+    confirm.innerHTML = `
+      <span>Delete this record?</span>
+      <button class="btn-confirm-yes">Yes, delete</button>
+      <button class="btn-confirm-no">Cancel</button>
+    `;
+    parent.appendChild(confirm);
+
+    confirm.querySelector('.btn-confirm-no').addEventListener('click', () => {
+      confirm.remove();
+      parent.appendChild(btn);
+    });
+
+    confirm.querySelector('.btn-confirm-yes').addEventListener('click', async () => {
+      const yesBtn = confirm.querySelector('.btn-confirm-yes');
+      yesBtn.disabled = true; yesBtn.textContent = 'Deleting…';
+      try {
+        await apiPost({ action, id: recordId });
+        if (isUnhandled && unhandledStateKey && badgeFn) {
+          state[unhandledStateKey] = Math.max(0, state[unhandledStateKey] - 1);
+          badgeFn();
+        }
+        closeModal();
+        onDeleted();
+      } catch (err) {
+        confirm.remove();
+        parent.appendChild(btn);
+        const errEl = parent.querySelector('.save-status');
+        if (errEl) { errEl.textContent = 'Delete failed: ' + err.message; errEl.className = 'save-status err'; }
+      }
+    });
   });
 }
 
