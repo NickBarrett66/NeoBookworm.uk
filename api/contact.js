@@ -74,6 +74,17 @@ async function insertContactToDB1(data) {
       return { status: 'failed', reason: result.errors };
     }
 
+    const queryResult = result.result?.[0];
+    if (!queryResult || !queryResult.success) {
+      console.error('D1 query execution failed:', queryResult);
+      return { status: 'failed', reason: 'Query execution failed' };
+    }
+
+    if (queryResult.meta?.changes !== 1) {
+      console.error('D1 insert did not create a record:', queryResult.meta);
+      return { status: 'failed', reason: `Expected 1 change, got ${queryResult.meta?.changes || 0}` };
+    }
+
     console.log('Contact enquiry inserted into D1:', enquiryId);
     return { status: 'success', id: enquiryId };
   } catch (err) {
