@@ -5,6 +5,7 @@
 // GET  /api/dashboard?action=enquiries_record&id=X
 // POST /api/dashboard  body: { action:"update",            id, fields:{...} }
 // POST /api/dashboard  body: { action:"enquiries_update",  id, fields:{...} }
+// POST /api/dashboard  body: { action:"outreach_sent",     notion_id, campaign_id }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
 // Proxies queries to D1 via the Cloudflare REST API.
@@ -88,7 +89,35 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Invalid JSON body' });
     }
 
-    const { action, id, fields } = body;
+    const { action, id, fields, notion_id, campaign_id } = body;
+
+    if (action === 'outreach_sent') {
+      if (!notion_id || typeof notion_id !== 'string')     return res.status(400).json({ ok: false, error: 'notion_id required' });
+      if (!campaign_id || typeof campaign_id !== 'string') return res.status(400).json({ ok: false, error: 'campaign_id required' });
+      try {
+        await Promise.all([
+          queryD1(prospectsDb(),
+            `UPDATE prospects
+             SET last_email_sent        = datetime('now'),
+                 date_first_contacted   = CASE WHEN date_first_contacted IS NULL THEN datetime('now') ELSE date_first_contacted END,
+                 contact_count          = COALESCE(contact_count, 0) + 1,
+                 status                 = 'Emailed',
+                 email_campaign_id      = ?
+             WHERE notion_id = ?`,
+            [campaign_id, notion_id]
+          ),
+          queryD1(prospectsDb(),
+            `UPDATE campaigns SET count_sent = count_sent + 1 WHERE id = ?`,
+            [campaign_id]
+          ),
+        ]);
+        return res.status(200).json({ ok: true, notion_id, campaign_id });
+      } catch (err) {
+        console.error('[dashboard outreach_sent]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (!id)     return res.status(400).json({ error: 'id required' });
     if (!fields) return res.status(400).json({ error: 'fields object required' });
 

@@ -4,6 +4,59 @@
 //   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
 // Optional:
 //   TO_EMAIL  (defaults to neobookworm@icloud.com)
+//   CF_ACCOUNT_ID, CF_API_TOKEN, D1_ENQUIRIES_ID (for D1 persistence)
+
+const { randomUUID } = require('crypto');
+
+async function insertContactToDB1(data) {
+  const cfAccountId = process.env.CF_ACCOUNT_ID;
+  const cfApiToken = process.env.CF_API_TOKEN;
+  const d1DbId = process.env.D1_ENQUIRIES_ID;
+
+  if (!cfAccountId || !cfApiToken || !d1DbId) {
+    console.log('D1 not configured. Skipping database insert.');
+    return;
+  }
+
+  const enquiryId = randomUUID();
+  const { name, trade, email, phone, message } = data;
+
+  const sql = `INSERT INTO contact_enquiries (id, name, trade, email, phone, message)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  try {
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/d1/database/${d1DbId}/query`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${cfApiToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sql,
+          params: [enquiryId, name, trade || null, email, phone || null, message],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('D1 insert error:', errorData);
+      return;
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      console.error('D1 insert failed:', result.errors);
+      return;
+    }
+
+    console.log('Contact enquiry inserted into D1:', enquiryId);
+  } catch (err) {
+    console.error('D1 insert exception:', err);
+  }
+}
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -39,6 +92,8 @@ module.exports = async (req, res) => {
     '--------------------------------',
     'Sent via the quick contact form on neobookworm.uk',
   ].join('\n');
+
+  await insertContactToDB1(data);
 
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
