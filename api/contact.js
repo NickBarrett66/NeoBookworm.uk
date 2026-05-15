@@ -29,10 +29,25 @@ async function insertContactToDB1(data) {
   const details = [trade, phone, message].filter(Boolean).join('\n\n');
   const payloadJson = JSON.stringify({ name, trade, email, phone, message });
 
+  // Escape single quotes for SQL
+  const escape = (str) => (str || '').replace(/'/g, "''");
+
   const sql = `INSERT INTO landing_enquiries (
     id, created_at, full_name, biz_name, email, start_option, source, details,
     payload_json, notion_status, email_status
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  ) VALUES (
+    '${escape(enquiryId)}',
+    '${escape(now)}',
+    '${escape(name)}',
+    '${escape(trade || '(not provided)')}',
+    '${escape(email)}',
+    'contact_form',
+    'contact_form',
+    '${escape(details)}',
+    '${escape(payloadJson)}',
+    'pending',
+    'pending'
+  )`;
 
   try {
     const response = await fetch(
@@ -43,22 +58,7 @@ async function insertContactToDB1(data) {
           Authorization: `Bearer ${cfApiToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          sql,
-          params: [
-            enquiryId,
-            now,
-            name,
-            trade || '(not provided)',
-            email,
-            'contact_form',
-            'contact_form',
-            details,
-            payloadJson,
-            'pending',
-            'pending',
-          ],
-        }),
+        body: JSON.stringify({ sql }),
       }
     );
 
