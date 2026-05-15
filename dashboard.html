@@ -396,6 +396,215 @@
     word-break: break-word;
     font-family: inherit;
   }
+
+  /* ── Campaign status badges ────────────────────────────────────────────── */
+  .camp-badge {
+    display: inline-block; padding: .15rem .55rem;
+    border-radius: 20px; font-size: .72rem; font-weight: 600;
+    border: 1px solid; background: none;
+  }
+  .camp-badge.draft    { color: #888;    border-color: #888; }
+  .camp-badge.active   { color: #22c55e; border-color: #22c55e; }
+  .camp-badge.paused   { color: #f5a623; border-color: #f5a623; }
+  .camp-badge.complete { color: #3b82f6; border-color: #3b82f6; }
+
+  /* ── Progress bar ────────────────────────────────────────────────────── */
+  .prog-wrap {
+    display: inline-block; width: 80px; height: 5px;
+    background: var(--border); border-radius: 3px;
+    vertical-align: middle; margin-left: .35rem; overflow: hidden;
+  }
+  .prog-fill { height: 100%; border-radius: 3px; background: var(--green); }
+
+  /* ── Priority ────────────────────────────────────────────────────────── */
+  .priority-cell { display: flex; align-items: center; gap: .25rem; }
+  .priority-val  { font-weight: 700; min-width: 2.2em; text-align: center; font-size: .85rem; }
+  .btn-boost {
+    background: var(--navy); border: 1px solid var(--border);
+    color: var(--muted); border-radius: 4px;
+    padding: .1rem .3rem; font-size: .65rem; cursor: pointer; line-height: 1.4;
+    transition: color .15s, border-color .15s;
+  }
+  .btn-boost:hover { color: var(--amber); border-color: var(--amber); }
+
+  /* ── Campaign action buttons ─────────────────────────────────────────── */
+  .btn-camp-action {
+    padding: .3rem .7rem; border-radius: 6px;
+    font-size: .78rem; font-weight: 600; cursor: pointer;
+    border: 1px solid; background: none; white-space: nowrap;
+  }
+  .btn-camp-action:disabled { opacity: .45; cursor: default; }
+  .btn-camp-action.activate { color: #22c55e; border-color: #22c55e; }
+  .btn-camp-action.activate:not(:disabled):hover { background: rgba(34,197,94,.12); }
+  .btn-camp-action.pause    { color: var(--amber); border-color: var(--amber); }
+  .btn-camp-action.pause:not(:disabled):hover    { background: rgba(245,166,35,.12); }
+  .btn-camp-action.resume   { color: #3b82f6; border-color: #3b82f6; }
+  .btn-camp-action.resume:not(:disabled):hover   { background: rgba(59,130,246,.12); }
+
+  /* ── Spinner ─────────────────────────────────────────────────────────── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block; width: .85em; height: .85em;
+    border: 2px solid currentColor; border-top-color: transparent;
+    border-radius: 50%; animation: spin .55s linear infinite; vertical-align: middle;
+  }
+
+  /* ── Outbox section ──────────────────────────────────────────────────── */
+  .outbox-summary-bar {
+    display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+    background: var(--navy); border: 1px solid var(--border);
+    border-radius: 8px; padding: .7rem 1rem;
+    margin-bottom: .75rem; font-size: .875rem;
+  }
+  .outbox-summary-bar .summ-sep  { color: var(--border); }
+  .outbox-summary-bar .summ-btns { margin-left: auto; display: flex; gap: .5rem; }
+
+  .btn-outbox-hdr {
+    padding: .35rem .8rem; border-radius: 6px;
+    font-size: .8rem; font-weight: 600; cursor: pointer; border: 1px solid; background: none;
+  }
+  .btn-outbox-hdr:disabled { opacity: .45; cursor: default; }
+  .btn-outbox-hdr.review:not(:disabled):hover      { background: rgba(245,166,35,.12); }
+  .btn-outbox-hdr.review      { color: var(--amber); border-color: var(--amber); }
+  .btn-outbox-hdr.approve-all { color: #22c55e; border-color: #22c55e; }
+  .btn-outbox-hdr.approve-all:not(:disabled):hover { background: rgba(34,197,94,.12); }
+
+  .outbox-cell-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+  .btn-ob {
+    padding: .22rem .55rem; border-radius: 5px;
+    font-size: .72rem; font-weight: 600; cursor: pointer; border: 1px solid; background: none;
+    white-space: nowrap;
+  }
+  .btn-ob:disabled { opacity: .45; cursor: default; }
+  .btn-ob.preview:not(:disabled):hover { color: var(--white); border-color: var(--muted); }
+  .btn-ob.preview  { color: var(--muted); border-color: var(--border); }
+  .btn-ob.approve  { color: #22c55e; border-color: #22c55e; }
+  .btn-ob.approve:not(:disabled):hover  { background: rgba(34,197,94,.1); }
+  .btn-ob.revoke   { color: var(--grey); border-color: var(--border); font-weight: 400; font-size: .7rem; }
+  .btn-ob.revoke:not(:disabled):hover   { color: var(--muted); border-color: var(--muted); }
+  .btn-ob.skip     { color: var(--red); border-color: var(--red); }
+  .btn-ob.skip:not(:disabled):hover     { background: rgba(224,80,80,.1); }
+  .btn-ob.unskip   { color: var(--muted); border-color: var(--border); }
+  .btn-ob.unskip:not(:disabled):hover   { color: var(--white); }
+
+  /* ── Email preview modal ─────────────────────────────────────────────── */
+  #email-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.72); z-index: 60;
+    align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem; overflow-y: auto;
+  }
+  #email-modal-overlay.open { display: flex; }
+
+  .email-modal {
+    background: var(--navy-light); border: 1px solid var(--border);
+    border-radius: 14px; width: min(760px, 100%); overflow: hidden;
+  }
+  .email-modal-top {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
+  }
+  .email-modal-top h2 { font-size: 1rem; font-weight: 700; flex: 1; margin: 0; }
+  .email-modal-top .modal-close {
+    background: none; border: none; color: var(--muted);
+    font-size: 1.4rem; cursor: pointer; line-height: 1;
+  }
+  .email-modal-top .modal-close:hover { color: var(--white); }
+
+  .email-envelope {
+    margin: 1rem; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.3);
+  }
+  .email-header-pane {
+    background: #eaeaea; padding: .75rem 1rem;
+    font-size: .82rem; line-height: 1.6; border-bottom: 1px solid #ccc;
+  }
+  .email-header-row { display: flex; gap: .5rem; }
+  .email-header-label { color: #666; min-width: 4.5em; font-weight: 600; }
+  .email-header-value { color: #111; word-break: break-word; flex: 1; }
+
+  .email-body-pane {
+    background: #fafafa; padding: 1.25rem 1.1rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: .9rem; line-height: 1.7; color: #1a1a1a;
+    min-height: 160px; white-space: pre-wrap; word-break: break-word;
+  }
+  .email-body-pane a { color: #1558b0; }
+  .email-body-pane a:hover { text-decoration: underline; }
+
+  textarea.email-body-edit {
+    width: 100%; padding: 1.1rem;
+    background: #fff; color: #1a1a1a;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: .9rem; line-height: 1.7;
+    border: none; outline: none; resize: vertical;
+    min-height: 200px; box-sizing: border-box;
+  }
+
+  .email-modal-footer {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    padding: .9rem 1.25rem; border-top: 1px solid var(--border);
+  }
+  .email-modal-footer .edit-btns     { display: flex; gap: .4rem; }
+  .email-modal-footer .approval-btns { margin-left: auto; display: flex; gap: .5rem; }
+
+  .btn-em-edit {
+    padding: .38rem .8rem; border-radius: 6px;
+    font-size: .8rem; font-weight: 600; cursor: pointer;
+    color: var(--muted); border: 1px solid var(--border); background: none;
+  }
+  .btn-em-edit:hover { color: var(--white); border-color: var(--muted); }
+  .btn-em-edit.editing { color: var(--amber); border-color: var(--amber); }
+
+  .btn-em-approve {
+    padding: .42rem 1.1rem; border-radius: 6px;
+    font-size: .875rem; font-weight: 700; cursor: pointer;
+    background: var(--amber); color: var(--navy); border: none;
+  }
+  .btn-em-approve:not(:disabled):hover { background: var(--amber-dim); }
+  .btn-em-approve:disabled { opacity: .5; cursor: default; }
+
+  .btn-em-approve-next {
+    padding: .42rem 1.1rem; border-radius: 6px;
+    font-size: .875rem; font-weight: 700; cursor: pointer;
+    background: #22c55e; color: #fff; border: none;
+  }
+  .btn-em-approve-next:not(:disabled):hover { background: #16a34a; }
+  .btn-em-approve-next:disabled { opacity: .5; cursor: default; }
+
+  .btn-em-approved {
+    padding: .42rem 1.1rem; border-radius: 6px;
+    font-size: .875rem; font-weight: 600;
+    background: none; color: #22c55e; border: 1px solid #22c55e;
+    cursor: default;
+  }
+
+  .btn-em-revoke {
+    padding: .42rem 1.1rem; border-radius: 6px;
+    font-size: .875rem; font-weight: 600; cursor: pointer;
+    background: none; color: var(--muted); border: 1px solid var(--border);
+  }
+  .btn-em-revoke:hover { color: var(--white); border-color: var(--muted); }
+
+  .subject-edit-row { display: flex; gap: .5rem; align-items: center; }
+  .subject-edit-row input {
+    flex: 1; padding: .35rem .65rem;
+    border: 1px solid #bbb; border-radius: 5px; outline: none;
+    font-size: .82rem; font-family: inherit; color: #111; background: #fff;
+  }
+  .subject-edit-row input:focus { border-color: #666; }
+  .btn-ed-save {
+    padding: .3rem .65rem; border-radius: 5px;
+    font-size: .77rem; font-weight: 700; cursor: pointer;
+    background: var(--amber); color: var(--navy); border: none;
+  }
+  .btn-ed-save:hover { background: var(--amber-dim); }
+  .btn-ed-cancel {
+    padding: .3rem .65rem; border-radius: 5px;
+    font-size: .77rem; cursor: pointer;
+    background: none; border: 1px solid var(--border); color: var(--muted);
+  }
+  .btn-ed-cancel:hover { color: var(--white); }
 </style>
 </head>
 <body>
@@ -441,6 +650,24 @@
   </div>
 </div>
 
+<!-- ── Email preview modal ────────────────────────────────────────────────── -->
+<div id="email-modal-overlay" role="dialog" aria-modal="true">
+  <div class="email-modal">
+    <div class="email-modal-top">
+      <h2 id="email-modal-title">Email Preview</h2>
+      <button class="modal-close" id="email-modal-close" aria-label="Close">×</button>
+    </div>
+    <div id="email-modal-body"></div>
+    <div class="email-modal-footer">
+      <div class="edit-btns">
+        <button class="btn-em-edit" id="btn-edit-subject">Edit subject</button>
+        <button class="btn-em-edit" id="btn-edit-body">Edit body</button>
+      </div>
+      <div class="approval-btns" id="email-approval-btns"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── State ────────────────────────────────────────────────────────────────────
 const state = {
@@ -469,8 +696,10 @@ const state = {
   contactSearch:  '',
   contactHandled: 'all',
   // campaigns
-  campView:       'list',
-  campCampaignId: '',
+  campView:        'list',
+  campCampaignId:  '',
+  outboxRows:      [],
+  outboxCampaignId:'',
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
@@ -1623,7 +1852,8 @@ function renderCampaignsList(rows) {
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>ID</th><th>Trade</th><th>Status</th><th>Sent / Total</th><th>Replied</th><th>Created</th>
+          <th>Trade</th><th>Status</th><th>Progress</th><th>Priority</th>
+          <th>Replied</th><th>Created</th><th>Action</th>
         </tr></thead>
         <tbody id="camp-tbody"></tbody>
       </table>
@@ -1631,24 +1861,106 @@ function renderCampaignsList(rows) {
   `;
   const tbody = document.getElementById('camp-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
     return;
   }
   rows.forEach(row => {
     const tr = document.createElement('tr');
-    const dt = row.created_at ? row.created_at.slice(0, 10) : '—';
-    const sentTotal = `${row.count_sent ?? 0} / ${row.count_total ?? 0}`;
-    const statusCls = row.status === 'Active' ? ' ok' : row.status === 'Complete' ? ' handled' : '';
+    const dt     = row.created_at ? row.created_at.slice(0, 10) : '—';
+    const status = (row.status || 'draft').toLowerCase();
+    const total  = row.count_total  ?? 0;
+    const sent   = row.count_sent   ?? 0;
+    const sentPct = total > 0 ? Math.round((sent / total) * 100) : 0;
+    const approved = row.count_approved != null ? row.count_approved : null;
+    const approvedLine = approved != null
+      ? `<div style="font-size:.75rem;color:${approved < total ? 'var(--amber)' : 'var(--muted)'}">${approved} / ${total} approved</div>`
+      : `<div style="font-size:.75rem;color:var(--muted)">— / ${total} approved</div>`;
+    const sentLine = `<div style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.3rem">${sent} / ${total} sent<span class="prog-wrap"><span class="prog-fill" style="width:${sentPct}%"></span></span></div>`;
+    const priority = row.priority != null ? 'P' + row.priority : '—';
+    const rowId = String(row.id);
+
     tr.innerHTML = `
-      <td class="muted" style="font-family:monospace;font-size:.8rem">${escHtml(String(row.id || '—'))}</td>
       <td>${escHtml(row.trade || '—')}</td>
-      <td><span class="pill${statusCls}">${escHtml(row.status || '—')}</span></td>
-      <td class="muted">${escHtml(sentTotal)}</td>
+      <td><span class="camp-badge ${escAttr(status)}">${escHtml(row.status || 'draft')}</span></td>
+      <td>${approvedLine}${sentLine}</td>
+      <td>
+        <div class="priority-cell" id="prio-cell-${escAttr(rowId)}">
+          <button class="btn-boost" data-delta="-1" title="Lower priority">▼</button>
+          <span class="priority-val">${escHtml(priority)}</span>
+          <button class="btn-boost" data-delta="1" title="Raise priority">▲</button>
+        </div>
+      </td>
       <td class="muted">${row.count_replied ?? '—'}</td>
       <td class="muted">${escHtml(dt)}</td>
+      <td id="action-cell-${escAttr(rowId)}"></td>
     `;
-    tr.addEventListener('click', () => loadCampaignDetail(row.id, row));
+
+    tr.addEventListener('click', e => {
+      if (e.target.closest('.btn-boost, .btn-camp-action')) return;
+      loadCampaignDetail(row.id, row);
+    });
+
+    // Wire priority boost buttons
+    tr.querySelectorAll('.btn-boost').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        e.stopPropagation();
+        const delta = parseInt(btn.dataset.delta, 10);
+        const cell  = document.getElementById('prio-cell-' + rowId);
+        const valEl = cell?.querySelector('.priority-val');
+        btn.disabled = true;
+        const prev = valEl?.textContent;
+        if (valEl) valEl.innerHTML = '<span class="spinner"></span>';
+        try {
+          const { new_priority } = await apiPost({ action: 'campaign_boost', id: row.id, delta });
+          row.priority = new_priority;
+          if (valEl) valEl.textContent = new_priority != null ? 'P' + new_priority : '—';
+        } catch {
+          if (valEl) valEl.textContent = prev;
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // Wire action button (uses recursive helper so re-wiring after click is clean)
+    const actionCell = document.getElementById('action-cell-' + rowId);
+    wireCampActionBtn(actionCell, row, tr);
+
     tbody.appendChild(tr);
+  });
+}
+
+function campActionBtnHtml(status) {
+  if (status === 'draft')  return `<button class="btn-camp-action activate" data-action="campaign_activate">Activate</button>`;
+  if (status === 'active') return `<button class="btn-camp-action pause"    data-action="campaign_pause">Pause</button>`;
+  if (status === 'paused') return `<button class="btn-camp-action resume"   data-action="campaign_resume">Resume</button>`;
+  return '';
+}
+
+function wireCampActionBtn(cell, row, tr) {
+  const status = (row.status || 'draft').toLowerCase();
+  cell.innerHTML = campActionBtnHtml(status);
+  const btn = cell.querySelector('.btn-camp-action');
+  if (!btn) return;
+  btn.addEventListener('click', async e => {
+    e.stopPropagation();
+    const act = btn.dataset.action;
+    btn.disabled = true;
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span>';
+    try {
+      await apiPost({ action: act, id: row.id });
+      const newStatus = act === 'campaign_activate' ? 'active'
+                      : act === 'campaign_pause'    ? 'paused'
+                      : act === 'campaign_resume'   ? 'active' : status;
+      row.status = newStatus;
+      const badgeEl = tr.querySelector('.camp-badge');
+      if (badgeEl) { badgeEl.className = `camp-badge ${newStatus}`; badgeEl.textContent = newStatus; }
+      wireCampActionBtn(cell, row, tr);
+    } catch {
+      btn.innerHTML = origHtml;
+      btn.disabled = false;
+    }
   });
 }
 
@@ -1666,30 +1978,37 @@ async function loadCampaignDetail(id, rowHint) {
   document.getElementById('btn-back').style.display = '';
 
   try {
-    const { campaign, prospects } = await apiFetch({ action: 'campaigns_detail', id });
-    renderCampaignDetail(campaign, prospects);
+    const [{ campaign, prospects }, { data: outboxRows }] = await Promise.all([
+      apiFetch({ action: 'campaigns_detail', id }),
+      apiFetch({ action: 'outbox_list', campaign_id: id }),
+    ]);
+    state.outboxRows       = outboxRows;
+    state.outboxCampaignId = id;
+    renderCampaignDetail(campaign, prospects, outboxRows);
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
   }
 }
 
-function renderCampaignDetail(c, prospects) {
-  const main = document.getElementById('main-content');
+function renderCampaignDetail(c, prospects, outboxRows) {
+  const main      = document.getElementById('main-content');
   const sentTotal = `${c.count_sent ?? 0} / ${c.count_total ?? 0}`;
-  const statusCls = c.status === 'Active' ? ' ok' : c.status === 'Complete' ? ' handled' : '';
+  const campSt    = (c.status || 'draft').toLowerCase();
   main.innerHTML = `
     <div class="list-header">
       <div>
         <h2>${escHtml(c.trade || 'Campaign')} <span class="count-tag">${escHtml(String(c.id || ''))}</span></h2>
         <div style="font-size:.82rem;color:var(--muted);margin-top:.3rem">
-          <span class="pill${statusCls}">${escHtml(c.status || '—')}</span>
+          <span class="camp-badge ${escAttr(campSt)}">${escHtml(c.status || 'draft')}</span>
           &nbsp;&nbsp;Sent ${escHtml(sentTotal)}
           &nbsp;&nbsp;Replied ${c.count_replied ?? '—'}
           ${c.notes ? `&nbsp;&nbsp;·&nbsp;&nbsp;${escHtml(c.notes)}` : ''}
         </div>
       </div>
     </div>
-    <div class="section-label">${prospects.length.toLocaleString()} prospect${prospects.length !== 1 ? 's' : ''} in this campaign</div>
+    <div class="section-label">Outbox</div>
+    <div id="outbox-section"></div>
+    <div class="section-label" style="margin-top:1.5rem">${prospects.length.toLocaleString()} prospect${prospects.length !== 1 ? 's' : ''} in this campaign</div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -1699,26 +2018,557 @@ function renderCampaignDetail(c, prospects) {
       </table>
     </div>
   `;
+
+  renderOutboxSection(outboxRows, c.id);
+
   const tbody = document.getElementById('camp-detail-tbody');
   if (!prospects.length) {
     tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No prospects in this campaign</td></tr>';
-    return;
+  } else {
+    prospects.forEach(p => {
+      const tr     = document.createElement('tr');
+      const dt     = p.last_email_sent ? p.last_email_sent.slice(0, 10) : '—';
+      const colour = STATUS_COLOURS[p.status] || '#607090';
+      tr.innerHTML = `
+        <td>${escHtml(p.business_name || '—')}</td>
+        <td class="muted">${escHtml(p.email_address || '—')}</td>
+        <td class="muted">${escHtml(p.town || '—')}</td>
+        <td><span class="pill" style="color:${colour};border-color:${colour}">${escHtml(p.status || '—')}</span></td>
+        <td class="muted">${escHtml(dt)}</td>
+        <td class="muted">${p.contact_count ?? '—'}</td>
+      `;
+      tr.addEventListener('click', () => loadRecord(p.notion_id));
+      tbody.appendChild(tr);
+    });
   }
-  prospects.forEach(p => {
+}
+
+// ── Outbox section ────────────────────────────────────────────────────────────
+function renderOutboxSection(rows, campaignId) {
+  const section = document.getElementById('outbox-section');
+  if (!section) return;
+
+  const cntApproved = rows.filter(r => r.approved && !r.sent && !r.skipped).length;
+  const cntPending  = rows.filter(r => !r.approved && !r.sent && !r.skipped).length;
+  const cntSent     = rows.filter(r => r.sent).length;
+  const cntSkipped  = rows.filter(r => r.skipped).length;
+  const hasPending  = cntPending > 0;
+
+  section.innerHTML = `
+    <div class="outbox-summary-bar" id="outbox-summary-bar">
+      <span><strong>${cntApproved}</strong> approved</span>
+      <span class="summ-sep">·</span>
+      <span><strong>${cntPending}</strong> pending review</span>
+      <span class="summ-sep">·</span>
+      <span><strong>${cntSent}</strong> sent</span>
+      <span class="summ-sep">·</span>
+      <span><strong>${cntSkipped}</strong> skipped</span>
+      <div class="summ-btns">
+        <button class="btn-outbox-hdr review" id="btn-review-all" ${!hasPending ? 'disabled' : ''}>Review &amp; Approve All</button>
+        <button class="btn-outbox-hdr approve-all" id="btn-approve-all" ${!hasPending ? 'disabled' : ''}>Approve All</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Business name</th><th>Email</th><th>Approval</th>
+          <th>Status</th><th>Scheduled</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="outbox-tbody"></tbody>
+      </table>
+    </div>
+  `;
+
+  if (!rows.length) {
+    document.getElementById('outbox-tbody').innerHTML =
+      '<tr><td colspan="7" class="muted" style="padding:1.5rem;text-align:center">No emails in outbox</td></tr>';
+  } else {
+    renderOutboxRows(rows, campaignId);
+  }
+
+  document.getElementById('btn-approve-all')?.addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+    try {
+      await apiPost({ action: 'outbox_approve_all', campaign_id: campaignId });
+      rows.forEach(r => { if (!r.sent && !r.skipped) r.approved = 1; });
+      state.outboxRows = rows;
+      renderOutboxSection(rows, campaignId);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Approve All';
+      alert('Error: ' + err.message);
+    }
+  });
+
+  document.getElementById('btn-review-all')?.addEventListener('click', () => {
+    const firstIdx = rows.findIndex(r => !r.approved && !r.sent && !r.skipped);
+    if (firstIdx !== -1) openEmailPreview(rows[firstIdx].id, rows, firstIdx);
+  });
+}
+
+function renderOutboxRows(rows, campaignId) {
+  const tbody = document.getElementById('outbox-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  rows.forEach((row, idx) => {
     const tr = document.createElement('tr');
-    const dt = p.last_email_sent ? p.last_email_sent.slice(0, 10) : '—';
-    const colour = STATUS_COLOURS[p.status] || '#607090';
-    tr.innerHTML = `
-      <td>${escHtml(p.business_name || '—')}</td>
-      <td class="muted">${escHtml(p.email_address || '—')}</td>
-      <td class="muted">${escHtml(p.town || '—')}</td>
-      <td><span class="pill" style="color:${colour};border-color:${colour}">${escHtml(p.status || '—')}</span></td>
-      <td class="muted">${escHtml(dt)}</td>
-      <td class="muted">${p.contact_count ?? '—'}</td>
-    `;
-    tr.addEventListener('click', () => loadRecord(p.notion_id));
+    tr.id = 'outbox-row-' + row.id;
+
+    const tdNum = document.createElement('td');
+    tdNum.className = 'muted'; tdNum.textContent = String(idx + 1);
+
+    const tdBiz = document.createElement('td');
+    tdBiz.textContent = row.business_name || '—';
+
+    const tdEmail = document.createElement('td');
+    tdEmail.className = 'muted'; tdEmail.textContent = row.email || '—';
+
+    const tdApproval = document.createElement('td');
+    renderOutboxApprovalCell(tdApproval, row);
+
+    const tdStatus = document.createElement('td');
+    renderOutboxStatusCell(tdStatus, row);
+
+    const tdSched = document.createElement('td');
+    tdSched.className = 'muted';
+    tdSched.style.fontSize = '.8rem';
+    tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
+
+    const tdActions = document.createElement('td');
+    renderOutboxActionsCell(tdActions, row, rows, idx, campaignId);
+
+    tr.append(tdNum, tdBiz, tdEmail, tdApproval, tdStatus, tdSched, tdActions);
     tbody.appendChild(tr);
   });
+}
+
+function renderOutboxApprovalCell(td, row) {
+  td.innerHTML = '';
+  if (row.sent || row.skipped) return;
+  const span = document.createElement('span');
+  span.style.fontSize = '.82rem';
+  if (row.approved) {
+    span.style.color = '#22c55e';
+    span.textContent = '✓ Approved';
+  } else {
+    span.style.color = 'var(--grey)';
+    span.textContent = '○ Pending review';
+  }
+  td.appendChild(span);
+}
+
+function renderOutboxStatusCell(td, row) {
+  td.innerHTML = '';
+  td.style.fontSize = '.82rem';
+
+  if (row.sent) {
+    const s = document.createElement('span');
+    s.style.color = '#22c55e'; s.textContent = '✓ Sent';
+    td.appendChild(s);
+    if (row.sent_at) {
+      const d = document.createElement('div');
+      d.style.cssText = 'color:var(--muted);font-size:.75rem';
+      d.textContent = row.sent_at.slice(0, 16);
+      td.appendChild(d);
+    }
+    return;
+  }
+  if (row.send_error) {
+    const s = document.createElement('span');
+    s.style.color = 'var(--red)'; s.title = row.send_error; s.textContent = '⚠ Error';
+    td.appendChild(s); return;
+  }
+  if (row.skipped) {
+    const s = document.createElement('span');
+    s.style.cssText = 'color:var(--grey);font-style:italic'; s.textContent = 'Skipped';
+    td.appendChild(s);
+    if (row.skip_reason) {
+      const d = document.createElement('div');
+      d.style.cssText = 'font-size:.75rem;color:var(--muted)'; d.textContent = row.skip_reason;
+      td.appendChild(d);
+    }
+    return;
+  }
+  if (row.scheduled_not_before && new Date(row.scheduled_not_before) > new Date()) {
+    const s = document.createElement('span');
+    s.style.color = 'var(--muted)';
+    s.textContent = 'Embargoed until ' + row.scheduled_not_before.slice(0, 10);
+    td.appendChild(s); return;
+  }
+  const s = document.createElement('span');
+  s.style.color = row.approved ? '#22c55e' : 'var(--amber)';
+  s.textContent  = row.approved ? 'Ready to send' : 'Awaiting approval';
+  td.appendChild(s);
+}
+
+function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
+  td.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'outbox-cell-actions';
+
+  if (!row.sent && !row.skipped) {
+    const btnPreview = document.createElement('button');
+    btnPreview.className = 'btn-ob preview'; btnPreview.textContent = 'Preview';
+    btnPreview.addEventListener('click', e => { e.stopPropagation(); openEmailPreview(row.id, rows, idx); });
+    wrap.appendChild(btnPreview);
+
+    if (!row.approved) {
+      const btnApprove = document.createElement('button');
+      btnApprove.className = 'btn-ob approve'; btnApprove.textContent = 'Approve';
+      btnApprove.addEventListener('click', async e => {
+        e.stopPropagation(); btnApprove.disabled = true;
+        try {
+          await apiPost({ action: 'outbox_approve', id: row.id });
+          row.approved = 1;
+          const tr = document.getElementById('outbox-row-' + row.id);
+          if (tr) {
+            renderOutboxApprovalCell(tr.cells[3], row);
+            renderOutboxStatusCell(tr.cells[4], row);
+            renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
+          }
+          updateOutboxSummaryBar(rows);
+        } catch (err) { btnApprove.disabled = false; alert('Error: ' + err.message); }
+      });
+      wrap.appendChild(btnApprove);
+    } else {
+      const btnRevoke = document.createElement('button');
+      btnRevoke.className = 'btn-ob revoke'; btnRevoke.textContent = 'Revoke';
+      btnRevoke.addEventListener('click', async e => {
+        e.stopPropagation(); btnRevoke.disabled = true;
+        try {
+          await apiPost({ action: 'outbox_unapprove', id: row.id });
+          row.approved = 0;
+          const tr = document.getElementById('outbox-row-' + row.id);
+          if (tr) {
+            renderOutboxApprovalCell(tr.cells[3], row);
+            renderOutboxStatusCell(tr.cells[4], row);
+            renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
+          }
+          updateOutboxSummaryBar(rows);
+        } catch (err) { btnRevoke.disabled = false; alert('Error: ' + err.message); }
+      });
+      wrap.appendChild(btnRevoke);
+    }
+
+    const btnSkip = document.createElement('button');
+    btnSkip.className = 'btn-ob skip'; btnSkip.textContent = 'Skip';
+    btnSkip.addEventListener('click', async e => {
+      e.stopPropagation();
+      const reason = prompt('Reason for skipping (optional):');
+      if (reason === null) return;
+      btnSkip.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_skip', id: row.id, reason: reason || null });
+        row.skipped = 1; row.skip_reason = reason || null; row.approved = 0;
+        const tr = document.getElementById('outbox-row-' + row.id);
+        if (tr) {
+          renderOutboxApprovalCell(tr.cells[3], row);
+          renderOutboxStatusCell(tr.cells[4], row);
+          renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
+        }
+        updateOutboxSummaryBar(rows);
+      } catch (err) { btnSkip.disabled = false; alert('Error: ' + err.message); }
+    });
+    wrap.appendChild(btnSkip);
+
+  } else if (row.skipped) {
+    const btnUnskip = document.createElement('button');
+    btnUnskip.className = 'btn-ob unskip'; btnUnskip.textContent = 'Unskip';
+    btnUnskip.addEventListener('click', async e => {
+      e.stopPropagation(); btnUnskip.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_unskip', id: row.id });
+        row.skipped = 0; row.skip_reason = null;
+        const tr = document.getElementById('outbox-row-' + row.id);
+        if (tr) {
+          renderOutboxApprovalCell(tr.cells[3], row);
+          renderOutboxStatusCell(tr.cells[4], row);
+          renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
+        }
+        updateOutboxSummaryBar(rows);
+      } catch (err) { btnUnskip.disabled = false; alert('Error: ' + err.message); }
+    });
+    wrap.appendChild(btnUnskip);
+  }
+
+  td.appendChild(wrap);
+}
+
+function updateOutboxSummaryBar(rows) {
+  const bar = document.getElementById('outbox-summary-bar');
+  if (!bar) return;
+  const stats = bar.querySelectorAll('strong');
+  if (stats.length >= 4) {
+    stats[0].textContent = rows.filter(r => r.approved && !r.sent && !r.skipped).length;
+    stats[1].textContent = rows.filter(r => !r.approved && !r.sent && !r.skipped).length;
+    stats[2].textContent = rows.filter(r => r.sent).length;
+    stats[3].textContent = rows.filter(r => r.skipped).length;
+  }
+  const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped);
+  const btnR = bar.querySelector('#btn-review-all');
+  const btnA = bar.querySelector('#btn-approve-all');
+  if (btnR) btnR.disabled = !hasPending;
+  if (btnA) btnA.disabled = !hasPending;
+}
+
+// ── Email preview modal ───────────────────────────────────────────────────────
+async function openEmailPreview(rowId, rows, idx) {
+  const overlay = document.getElementById('email-modal-overlay');
+  const bodyEl  = document.getElementById('email-modal-body');
+  bodyEl.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
+  document.getElementById('email-approval-btns').innerHTML = '';
+  document.getElementById('btn-edit-subject').classList.remove('editing');
+  document.getElementById('btn-edit-body').classList.remove('editing');
+  overlay.classList.add('open');
+
+  try {
+    const { data: fullRow } = await apiFetch({ action: 'outbox_record', id: rowId });
+    renderEmailPreviewContent(fullRow, rows, idx);
+  } catch (err) {
+    bodyEl.innerHTML = `<p style="color:var(--red);padding:1rem">${escHtml(err.message)}</p>`;
+  }
+}
+
+function renderEmailPreviewContent(row, rows, idx) {
+  const titleEl = document.getElementById('email-modal-title');
+  if (titleEl) titleEl.textContent = row.approved
+    ? 'Email Preview — ✓ Approved'
+    : 'Email Preview — Awaiting Approval';
+
+  const bodyEl = document.getElementById('email-modal-body');
+  bodyEl.innerHTML = '';
+
+  const envelope = document.createElement('div');
+  envelope.className = 'email-envelope';
+
+  // Header pane
+  const hPane = document.createElement('div');
+  hPane.className = 'email-header-pane';
+
+  function makeHRow(label, value, id) {
+    const div = document.createElement('div');
+    div.className = 'email-header-row';
+    if (id) div.id = id;
+    const lbl = document.createElement('span');
+    lbl.className = 'email-header-label'; lbl.textContent = label;
+    const val = document.createElement('span');
+    val.className = 'email-header-value'; val.textContent = value;
+    div.append(lbl, val);
+    return div;
+  }
+
+  hPane.appendChild(makeHRow('From:', 'NeoBookworm <neobookworm@icloud.com>'));
+  hPane.appendChild(makeHRow('To:', row.email || ''));
+
+  const subjRow = makeHRow('Subject:', row.subject || '', 'email-subject-row');
+  subjRow.querySelector('.email-header-value').id = 'email-subject-val';
+  hPane.appendChild(subjRow);
+
+  // Body pane
+  const bPane = document.createElement('div');
+  bPane.className = 'email-body-pane';
+  bPane.id = 'email-body-pane';
+  linkifyIntoContainer(row.body || '', bPane);
+
+  envelope.append(hPane, bPane);
+  bodyEl.appendChild(envelope);
+
+  wireEmailFooter(row, rows, idx);
+}
+
+function linkifyIntoContainer(text, container) {
+  container.innerHTML = '';
+  const URL_RE = /https?:\/\/\S+/g;
+  let lastIdx = 0, match;
+  while ((match = URL_RE.exec(text)) !== null) {
+    if (match.index > lastIdx)
+      container.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+    const a = document.createElement('a');
+    a.href = match[0]; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.textContent = match[0];
+    container.appendChild(a);
+    lastIdx = match.index + match[0].length;
+  }
+  if (lastIdx < text.length)
+    container.appendChild(document.createTextNode(text.slice(lastIdx)));
+}
+
+function wireEmailFooter(row, rows, idx) {
+  const btnSubj = document.getElementById('btn-edit-subject');
+  const btnBody = document.getElementById('btn-edit-body');
+  if (btnSubj) { btnSubj.classList.remove('editing'); btnSubj.textContent = 'Edit subject'; btnSubj.onclick = () => startSubjectEdit(row, rows, idx); }
+  if (btnBody) { btnBody.classList.remove('editing');  btnBody.textContent = 'Edit body';    btnBody.onclick = () => startBodyEdit(row, rows, idx); }
+  renderEmailApprovalBtns(row, rows, idx);
+}
+
+function renderEmailApprovalBtns(row, rows, idx) {
+  const zone = document.getElementById('email-approval-btns');
+  if (!zone) return;
+  zone.innerHTML = '';
+
+  if (!row.approved) {
+    const btnApprove = document.createElement('button');
+    btnApprove.className = 'btn-em-approve'; btnApprove.textContent = 'Approve';
+    btnApprove.addEventListener('click', async () => {
+      btnApprove.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_approve', id: row.id });
+        row.approved = 1;
+        const sr = state.outboxRows.find(r => r.id === row.id);
+        if (sr) sr.approved = 1;
+        refreshOutboxRow(row.id, rows, idx);
+        updateOutboxSummaryBar(state.outboxRows);
+        const t = document.getElementById('email-modal-title');
+        if (t) t.textContent = 'Email Preview — ✓ Approved';
+        renderEmailApprovalBtns(row, rows, idx);
+      } catch (err) { btnApprove.disabled = false; alert('Error: ' + err.message); }
+    });
+
+    const btnNext = document.createElement('button');
+    btnNext.className = 'btn-em-approve-next'; btnNext.textContent = 'Approve & Next';
+    btnNext.addEventListener('click', async () => {
+      btnNext.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_approve', id: row.id });
+        row.approved = 1;
+        const sr = state.outboxRows.find(r => r.id === row.id);
+        if (sr) sr.approved = 1;
+        refreshOutboxRow(row.id, rows, idx);
+        updateOutboxSummaryBar(state.outboxRows);
+        const nextIdx = rows.findIndex((r, i) => i > idx && !r.approved && !r.sent && !r.skipped);
+        if (nextIdx !== -1) {
+          openEmailPreview(rows[nextIdx].id, rows, nextIdx);
+        } else {
+          document.getElementById('email-modal-body').innerHTML =
+            '<div class="state-msg" style="color:#22c55e;padding:2rem">All emails reviewed ✓</div>';
+          document.getElementById('email-approval-btns').innerHTML = '';
+          setTimeout(closeEmailModal, 1800);
+        }
+      } catch (err) { btnNext.disabled = false; alert('Error: ' + err.message); }
+    });
+
+    zone.append(btnApprove, btnNext);
+  } else {
+    const approved = document.createElement('button');
+    approved.className = 'btn-em-approved'; approved.textContent = '✓ Approved'; approved.disabled = true;
+
+    const btnRevoke = document.createElement('button');
+    btnRevoke.className = 'btn-em-revoke'; btnRevoke.textContent = 'Revoke Approval';
+    btnRevoke.addEventListener('click', async () => {
+      btnRevoke.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_unapprove', id: row.id });
+        row.approved = 0;
+        const sr = state.outboxRows.find(r => r.id === row.id);
+        if (sr) sr.approved = 0;
+        refreshOutboxRow(row.id, rows, idx);
+        updateOutboxSummaryBar(state.outboxRows);
+        const t = document.getElementById('email-modal-title');
+        if (t) t.textContent = 'Email Preview — Awaiting Approval';
+        renderEmailApprovalBtns(row, rows, idx);
+      } catch (err) { btnRevoke.disabled = false; alert('Error: ' + err.message); }
+    });
+
+    zone.append(approved, btnRevoke);
+  }
+}
+
+function refreshOutboxRow(rowId, rows, idx) {
+  const row = rows[idx];
+  if (!row) return;
+  const tr = document.getElementById('outbox-row-' + rowId);
+  if (!tr) return;
+  renderOutboxApprovalCell(tr.cells[3], row);
+  renderOutboxStatusCell(tr.cells[4], row);
+  renderOutboxActionsCell(tr.cells[6], row, rows, idx, state.outboxCampaignId);
+}
+
+function startSubjectEdit(row, rows, idx) {
+  const btnSubj = document.getElementById('btn-edit-subject');
+  if (!btnSubj) return;
+  btnSubj.classList.add('editing');
+  const subjRow = document.getElementById('email-subject-row');
+  if (!subjRow) return;
+
+  const lbl = subjRow.querySelector('.email-header-label');
+  subjRow.innerHTML = '';
+  if (lbl) subjRow.appendChild(lbl);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'subject-edit-row';
+  const input     = document.createElement('input');  input.type = 'text'; input.value = row.subject || '';
+  const btnSave   = document.createElement('button'); btnSave.className = 'btn-ed-save';   btnSave.textContent = 'Save';
+  const btnCancel = document.createElement('button'); btnCancel.className = 'btn-ed-cancel'; btnCancel.textContent = 'Cancel';
+  wrap.append(input, btnSave, btnCancel);
+  subjRow.appendChild(wrap);
+
+  const restore = () => {
+    subjRow.innerHTML = '';
+    const l2 = document.createElement('span'); l2.className = 'email-header-label'; l2.textContent = 'Subject:';
+    const v2 = document.createElement('span'); v2.className = 'email-header-value'; v2.id = 'email-subject-val'; v2.textContent = row.subject || '';
+    subjRow.append(l2, v2);
+    btnSubj.classList.remove('editing');
+    btnSubj.onclick = () => startSubjectEdit(row, rows, idx);
+  };
+
+  btnCancel.addEventListener('click', restore);
+  btnSave.addEventListener('click', async () => {
+    const val = input.value.trim();
+    if (!val) return;
+    btnSave.disabled = true;
+    try {
+      await apiPost({ action: 'outbox_edit', id: row.id, fields: { subject: val } });
+      row.subject = val;
+      const sr = state.outboxRows.find(r => r.id === row.id);
+      if (sr) sr.subject = val;
+      restore();
+    } catch (err) { btnSave.disabled = false; alert('Error: ' + err.message); }
+  });
+}
+
+function startBodyEdit(row, rows, idx) {
+  const btnBody = document.getElementById('btn-edit-body');
+  if (!btnBody) return;
+  btnBody.classList.add('editing');
+  const bPane = document.getElementById('email-body-pane');
+  if (!bPane) return;
+
+  const ta = document.createElement('textarea');
+  ta.className = 'email-body-edit'; ta.value = row.body || ''; ta.rows = 14;
+
+  const bar = document.createElement('div');
+  bar.style.cssText = 'padding:.5rem 1rem;display:flex;gap:.5rem;background:#f0f0f0;border-top:1px solid #ddd';
+  const btnSave   = document.createElement('button'); btnSave.className = 'btn-ed-save';   btnSave.textContent = 'Save';
+  const btnCancel = document.createElement('button'); btnCancel.className = 'btn-ed-cancel'; btnCancel.textContent = 'Cancel';
+  bar.append(btnSave, btnCancel);
+
+  bPane.innerHTML = ''; bPane.style.padding = '0';
+  bPane.append(ta, bar);
+
+  const restore = (body) => {
+    bPane.innerHTML = ''; bPane.style.padding = '';
+    linkifyIntoContainer(body, bPane);
+    btnBody.classList.remove('editing');
+    btnBody.onclick = () => startBodyEdit(row, rows, idx);
+  };
+
+  btnCancel.addEventListener('click', () => restore(row.body || ''));
+  btnSave.addEventListener('click', async () => {
+    btnSave.disabled = true;
+    try {
+      await apiPost({ action: 'outbox_edit', id: row.id, fields: { body: ta.value } });
+      row.body = ta.value;
+      const sr = state.outboxRows.find(r => r.id === row.id);
+      if (sr) sr.body = ta.value;
+      restore(ta.value);
+    } catch (err) { btnSave.disabled = false; alert('Error: ' + err.message); }
+  });
+}
+
+function closeEmailModal() {
+  document.getElementById('email-modal-overlay').classList.remove('open');
 }
 
 // ── Shared delete helper ──────────────────────────────────────────────────────
@@ -1770,7 +2620,16 @@ document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('email-modal-close').addEventListener('click', closeEmailModal);
+document.getElementById('email-modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('email-modal-overlay')) closeEmailModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('email-modal-overlay').classList.contains('open')) closeEmailModal();
+    else closeModal();
+  }
+});
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
