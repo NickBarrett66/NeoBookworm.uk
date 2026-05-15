@@ -24,9 +24,15 @@ async function insertContactToDB1(data) {
 
   const enquiryId = randomUUID();
   const { name, trade, email, phone, message } = data;
+  const now = new Date().toISOString();
 
-  const sql = `INSERT INTO contact_enquiries (id, name, trade, email, phone, message)
-               VALUES (?, ?, ?, ?, ?, ?)`;
+  const details = [trade, phone, message].filter(Boolean).join('\n\n');
+  const payloadJson = JSON.stringify({ name, trade, email, phone, message });
+
+  const sql = `INSERT INTO landing_enquiries (
+    id, created_at, full_name, biz_name, email, start_option, source, details,
+    payload_json, notion_status, email_status
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   try {
     const response = await fetch(
@@ -39,7 +45,19 @@ async function insertContactToDB1(data) {
         },
         body: JSON.stringify({
           sql,
-          params: [enquiryId, name, trade || null, email, phone || null, message],
+          params: [
+            enquiryId,
+            now,
+            name,
+            trade || '(not provided)',
+            email,
+            'contact_form',
+            'contact_form',
+            details,
+            payloadJson,
+            'pending',
+            'pending',
+          ],
         }),
       }
     );
@@ -47,7 +65,7 @@ async function insertContactToDB1(data) {
     if (!response.ok) {
       const errorData = await response.json();
       console.error('D1 insert error:', errorData);
-      return;
+      return { status: 'failed', reason: errorData };
     }
 
     const result = await response.json();
