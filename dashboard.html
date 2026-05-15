@@ -386,6 +386,7 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="prospects">Prospects</button>
       <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
+      <button class="tab-btn" data-tab="campaigns">Campaigns</button>
     </nav>
     <div class="breadcrumb" id="breadcrumb">
       <span class="active">Overview</span>
@@ -423,6 +424,9 @@ const state = {
   enqHandled:     'all',
   enqTotal:       0,
   enqUnhandled:   0,
+  // campaigns
+  campView:       'list',
+  campCampaignId: '',
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
@@ -552,6 +556,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (tab === 'prospects') {
       state.view = 'summary';
       renderSummary(state.summaryData);
+    } else if (tab === 'campaigns') {
+      state.campView = 'list';
+      loadCampaignsList();
     } else {
       state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
       loadEnquiriesList();
@@ -1038,6 +1045,130 @@ function wireEnquiryEdit(r) {
   });
 }
 
+// ── Campaigns: list view ──────────────────────────────────────────────────────
+async function loadCampaignsList() {
+  state.campView = 'list';
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading campaigns…</div>';
+  setBreadcrumb([{ label: 'Campaigns' }]);
+  document.getElementById('btn-back').style.display = 'none';
+
+  try {
+    const { data } = await apiFetch({ action: 'campaigns_list' });
+    renderCampaignsList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderCampaignsList(rows) {
+  const main = document.getElementById('main-content');
+  const n = rows.length;
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Campaigns <span class="count-tag">${n} campaign${n !== 1 ? 's' : ''}</span></h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>ID</th><th>Trade</th><th>Status</th><th>Sent / Total</th><th>Replied</th><th>Created</th>
+        </tr></thead>
+        <tbody id="camp-tbody"></tbody>
+      </table>
+    </div>
+  `;
+  const tbody = document.getElementById('camp-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
+    return;
+  }
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+    const dt = row.created_at ? row.created_at.slice(0, 10) : '—';
+    const sentTotal = `${row.count_sent ?? 0} / ${row.count_total ?? 0}`;
+    const statusCls = row.status === 'Active' ? ' ok' : row.status === 'Complete' ? ' handled' : '';
+    tr.innerHTML = `
+      <td class="muted" style="font-family:monospace;font-size:.8rem">${escHtml(String(row.id || '—'))}</td>
+      <td>${escHtml(row.trade || '—')}</td>
+      <td><span class="pill${statusCls}">${escHtml(row.status || '—')}</span></td>
+      <td class="muted">${escHtml(sentTotal)}</td>
+      <td class="muted">${row.count_replied ?? '—'}</td>
+      <td class="muted">${escHtml(dt)}</td>
+    `;
+    tr.addEventListener('click', () => loadCampaignDetail(row.id, row));
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Campaigns: detail view ────────────────────────────────────────────────────
+async function loadCampaignDetail(id, rowHint) {
+  state.campView = 'detail';
+  state.campCampaignId = id;
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading campaign…</div>';
+  const label = rowHint?.trade ? `${rowHint.trade} — ${String(id)}` : String(id);
+  setBreadcrumb([
+    { label: 'Campaigns', action: loadCampaignsList },
+    { label: label },
+  ]);
+  document.getElementById('btn-back').style.display = '';
+
+  try {
+    const { campaign, prospects } = await apiFetch({ action: 'campaigns_detail', id });
+    renderCampaignDetail(campaign, prospects);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderCampaignDetail(c, prospects) {
+  const main = document.getElementById('main-content');
+  const sentTotal = `${c.count_sent ?? 0} / ${c.count_total ?? 0}`;
+  const statusCls = c.status === 'Active' ? ' ok' : c.status === 'Complete' ? ' handled' : '';
+  main.innerHTML = `
+    <div class="list-header">
+      <div>
+        <h2>${escHtml(c.trade || 'Campaign')} <span class="count-tag">${escHtml(String(c.id || ''))}</span></h2>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:.3rem">
+          <span class="pill${statusCls}">${escHtml(c.status || '—')}</span>
+          &nbsp;&nbsp;Sent ${escHtml(sentTotal)}
+          &nbsp;&nbsp;Replied ${c.count_replied ?? '—'}
+          ${c.notes ? `&nbsp;&nbsp;·&nbsp;&nbsp;${escHtml(c.notes)}` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="section-label">${prospects.length.toLocaleString()} prospect${prospects.length !== 1 ? 's' : ''} in this campaign</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Business</th><th>Email</th><th>Town</th><th>Status</th><th>Last emailed</th><th>Contacts</th>
+        </tr></thead>
+        <tbody id="camp-detail-tbody"></tbody>
+      </table>
+    </div>
+  `;
+  const tbody = document.getElementById('camp-detail-tbody');
+  if (!prospects.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No prospects in this campaign</td></tr>';
+    return;
+  }
+  prospects.forEach(p => {
+    const tr = document.createElement('tr');
+    const dt = p.last_email_sent ? p.last_email_sent.slice(0, 10) : '—';
+    const colour = STATUS_COLOURS[p.status] || '#607090';
+    tr.innerHTML = `
+      <td>${escHtml(p.business_name || '—')}</td>
+      <td class="muted">${escHtml(p.email_address || '—')}</td>
+      <td class="muted">${escHtml(p.town || '—')}</td>
+      <td><span class="pill" style="color:${colour};border-color:${colour}">${escHtml(p.status || '—')}</span></td>
+      <td class="muted">${escHtml(dt)}</td>
+      <td class="muted">${p.contact_count ?? '—'}</td>
+    `;
+    tr.addEventListener('click', () => loadRecord(p.notion_id));
+    tbody.appendChild(tr);
+  });
+}
+
 // ── Modal close ───────────────────────────────────────────────────────────────
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => {
@@ -1052,6 +1183,7 @@ function closeModal() {
 // ── Back button ───────────────────────────────────────────────────────────────
 document.getElementById('btn-back').addEventListener('click', () => {
   if (state.tab === 'prospects' && state.view === 'list') renderSummary(state.summaryData);
+  if (state.tab === 'campaigns' && state.campView === 'detail') loadCampaignsList();
 });
 
 // ── Breadcrumb ────────────────────────────────────────────────────────────────
