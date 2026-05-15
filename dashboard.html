@@ -203,13 +203,14 @@
 
   .list-controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 
-  #search-input, #enq-search-input {
+  #search-input, #enq-search-input, #intake-search-input, #contact-search-input {
     padding: .5rem .9rem; border: 1px solid var(--border);
     border-radius: 8px; background: var(--navy-card);
     color: var(--white); font-size: .9rem;
     width: min(220px, 100%); outline: none;
   }
-  #search-input:focus, #enq-search-input:focus { border-color: var(--amber); }
+  #search-input:focus, #enq-search-input:focus,
+  #intake-search-input:focus, #contact-search-input:focus { border-color: var(--amber); }
 
   .filter-btns { display: flex; gap: .25rem; }
 
@@ -386,6 +387,8 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="prospects">Prospects</button>
       <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
+      <button class="tab-btn" data-tab="intake" id="intake-tab-btn">Intake</button>
+      <button class="tab-btn" data-tab="contact" id="contact-tab-btn">Contact</button>
       <button class="tab-btn" data-tab="campaigns">Campaigns</button>
     </nav>
     <div class="breadcrumb" id="breadcrumb">
@@ -424,6 +427,14 @@ const state = {
   enqHandled:     'all',
   enqTotal:       0,
   enqUnhandled:   0,
+  // intake
+  intakePage:     1,
+  intakeSearch:   '',
+  intakeHandled:  'all',
+  // contact
+  contactPage:    1,
+  contactSearch:  '',
+  contactHandled: 'all',
   // campaigns
   campView:       'list',
   campCampaignId: '',
@@ -556,12 +567,18 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (tab === 'prospects') {
       state.view = 'summary';
       renderSummary(state.summaryData);
+    } else if (tab === 'enquiries') {
+      state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
+      loadEnquiriesList();
+    } else if (tab === 'intake') {
+      state.intakePage = 1; state.intakeSearch = ''; state.intakeHandled = 'all';
+      loadIntakeList();
+    } else if (tab === 'contact') {
+      state.contactPage = 1; state.contactSearch = ''; state.contactHandled = 'all';
+      loadContactList();
     } else if (tab === 'campaigns') {
       state.campView = 'list';
       loadCampaignsList();
-    } else {
-      state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
-      loadEnquiriesList();
     }
   });
 });
@@ -1038,6 +1055,437 @@ function wireEnquiryEdit(r) {
       if (state.tab === 'enquiries') {
         loadEnquiriesList(state.enqPage, state.enqSearch, state.enqHandled);
       }
+    } catch (err) {
+      saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
+      saveBtn.disabled = false;
+    }
+  });
+}
+
+// ── Intake: list view ─────────────────────────────────────────────────────────
+const INTAKE_STATUSES = ['pending_review', 'in_progress', 'complete', 'cancelled'];
+
+async function loadIntakeList(page, q, handled) {
+  if (page    !== undefined) state.intakePage    = page;
+  if (q       !== undefined) state.intakeSearch  = q;
+  if (handled !== undefined) state.intakeHandled = handled;
+
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading intake submissions…</div>';
+  setBreadcrumb([{ label: 'Intake' }]);
+  document.getElementById('btn-back').style.display = 'none';
+
+  try {
+    const data = await apiFetch({
+      action:  'intake_list',
+      page:    state.intakePage,
+      q:       state.intakeSearch,
+      handled: state.intakeHandled,
+    });
+    renderIntakeList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderIntakeList({ data: rows, total, page, pageSize }) {
+  const main       = document.getElementById('main-content');
+  const totalPages = Math.ceil(total / pageSize);
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Intake <span class="count-tag">${total.toLocaleString()} records</span></h2>
+      <div class="list-controls">
+        <div class="filter-btns">
+          <button class="filter-btn${state.intakeHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
+          <button class="filter-btn${state.intakeHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
+          <button class="filter-btn${state.intakeHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
+        </div>
+        <input type="search" id="intake-search-input" placeholder="Search name, trade, email…" value="${escAttr(state.intakeSearch)}">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Business</th><th>Trade</th><th>Email</th><th>Status</th><th>Handled</th>
+        </tr></thead>
+        <tbody id="intake-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button id="intake-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
+      <button id="intake-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+    </div>
+  `;
+
+  const tbody = document.getElementById('intake-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No intake submissions found</td></tr>';
+  } else {
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
+      const statusCls = row.status === 'complete' ? 'ok' : row.status === 'in_progress' ? 'pending-pill' : row.status === 'cancelled' ? 'fail' : 'unhandled';
+      tr.innerHTML = `
+        <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
+        <td>${escHtml(row.business_name || '—')}</td>
+        <td class="muted">${escHtml(row.trade_category || '—')}</td>
+        <td class="muted">${escHtml(row.email || '—')}</td>
+        <td><span class="pill ${statusCls}">${escHtml(row.status || '—')}</span></td>
+        <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
+      `;
+      tr.addEventListener('click', () => loadIntakeRecord(row.id));
+      tbody.appendChild(tr);
+    });
+  }
+
+  main.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => loadIntakeList(1, state.intakeSearch, btn.dataset.handled));
+  });
+
+  let searchTimer;
+  document.getElementById('intake-search-input').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadIntakeList(1, e.target.value), 350);
+  });
+
+  document.getElementById('intake-prev').addEventListener('click', () => loadIntakeList(page - 1));
+  document.getElementById('intake-next').addEventListener('click', () => loadIntakeList(page + 1));
+}
+
+// ── Intake: record modal ──────────────────────────────────────────────────────
+async function loadIntakeRecord(id) {
+  const overlay = document.getElementById('modal-overlay');
+  const body    = document.getElementById('modal-body');
+  body.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
+  overlay.classList.add('open');
+
+  try {
+    const { data: r } = await apiFetch({ action: 'intake_record', id });
+    body.innerHTML = renderIntakeHtml(r);
+    wireIntakeEdit(r);
+  } catch (err) {
+    body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
+  }
+}
+
+function renderIntakeHtml(r) {
+  const val = (v, link) => {
+    if (!v && v !== 0) return '<span class="field-value empty">—</span>';
+    const safe = escHtml(String(v));
+    if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
+    return `<span class="field-value">${safe}</span>`;
+  };
+
+  let photoUrls = [];
+  try { photoUrls = JSON.parse(r.photo_urls || '[]'); } catch { /* ignore */ }
+
+  const photosHtml = photoUrls.length
+    ? photoUrls.map((u, i) => `<a href="${escAttr(u)}" target="_blank" rel="noopener" style="color:var(--amber);display:block;margin-bottom:.2rem">Photo ${i + 1}</a>`).join('')
+    : '<span class="field-value empty">—</span>';
+
+  const statusOptions = INTAKE_STATUSES.map(s =>
+    `<option value="${escAttr(s)}"${s === r.status ? ' selected' : ''}>${escHtml(s)}</option>`
+  ).join('');
+
+  const dt = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
+  const statusCls = r.status === 'complete' ? 'ok' : r.status === 'in_progress' ? 'pending-pill' : r.status === 'cancelled' ? 'fail' : 'unhandled';
+
+  return `
+    <h2>${escHtml(r.business_name || 'Unknown')}</h2>
+    <div class="modal-status">${escHtml(dt)} · <span class="pill ${statusCls}">${escHtml(r.status || '—')}</span></div>
+
+    <div class="field-grid">
+      <div class="field-group"><span class="field-label">Full name</span>${val(r.full_name)}</div>
+      <div class="field-group"><span class="field-label">Email</span>${val(r.email, r.email ? 'mailto:' + r.email : null)}</div>
+      <div class="field-group"><span class="field-label">Phone</span>${val(r.phone)}</div>
+      <div class="field-group"><span class="field-label">Trade</span>${val(r.trade_category)}</div>
+      <div class="field-group"><span class="field-label">Area</span>${val(r.area)}</div>
+      <div class="field-group"><span class="field-label">Years trading</span>${val(r.years_trading)}</div>
+    </div>
+    <hr class="section-divider">
+    <div class="field-grid">
+      <div class="field-group"><span class="field-label">Services</span>${val(r.services)}</div>
+      <div class="field-group"><span class="field-label">Accreditations</span>${val(r.accreditations)}</div>
+      <div class="field-group"><span class="field-label">Free quotes</span>${val(r.free_quotes)}</div>
+      <div class="field-group"><span class="field-label">Emergency callouts</span>${val(r.emergency_callouts)}</div>
+      <div class="field-group"><span class="field-label">Google Business</span>${val(r.google_business)}</div>
+      <div class="field-group"><span class="field-label">Domain status</span>${val(r.domain_status)}</div>
+      <div class="field-group"><span class="field-label">Domain name</span>${val(r.domain_name)}</div>
+      <div class="field-group"><span class="field-label">Contact methods</span>${val(r.contact_methods)}</div>
+      <div class="field-group"><span class="field-label">Working hours</span>${val(r.working_hours)}</div>
+      <div class="field-group"><span class="field-label">Team size</span>${val(r.team_size)}</div>
+    </div>
+    <hr class="section-divider">
+    <div class="field-grid">
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">About</span>${val(r.about)}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Ideal work</span>${val(r.ideal_work)}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Work exclusions</span>${val(r.work_exclusions)}</div>
+      <div class="field-group"><span class="field-label">Colour preferences</span>${val(r.colour_preferences)}</div>
+      <div class="field-group"><span class="field-label">Website style</span>${val(r.website_style)}</div>
+      <div class="field-group"><span class="field-label">Inspiration URL</span>${val(r.inspiration_url, r.inspiration_url)}</div>
+      <div class="field-group"><span class="field-label">Testimonials</span>${val(r.testimonials)}</div>
+      <div class="field-group"><span class="field-label">Trust marks</span>${val(r.trust_marks)}</div>
+    </div>
+    <hr class="section-divider">
+    <div class="field-grid">
+      <div class="field-group"><span class="field-label">Logo</span>${val(r.logo_url, r.logo_url)}</div>
+      <div class="field-group"><span class="field-label">Notion page</span>${r.notion_page_id ? val('View in Notion', 'https://www.notion.so/' + r.notion_page_id.replace(/-/g, '')) : '<span class="field-value empty">—</span>'}</div>
+      <div class="field-group" style="grid-column:1/-1"><span class="field-label">Work photos (${photoUrls.length})</span>${photosHtml}</div>
+    </div>
+    ${r.additional_notes ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Additional notes</span><span class="field-value">${escHtml(r.additional_notes)}</span></div>` : ''}
+
+    <div class="edit-section">
+      <h3>Edit record</h3>
+      <div class="edit-row"><label for="intake-edit-status">Status</label><select id="intake-edit-status">${statusOptions}</select></div>
+      <div class="edit-row">
+        <div class="checkbox-row">
+          <input type="checkbox" id="intake-edit-handled" ${r.handled ? 'checked' : ''}>
+          <label for="intake-edit-handled">Mark as handled</label>
+        </div>
+      </div>
+      <div class="edit-row"><label for="intake-edit-notes">Admin notes</label><textarea id="intake-edit-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
+      <div class="edit-actions">
+        <button class="btn-save" id="intake-btn-save" disabled>Save changes</button>
+        <span class="save-status" id="intake-save-status"></span>
+      </div>
+    </div>
+  `;
+}
+
+function wireIntakeEdit(r) {
+  const statusEl   = document.getElementById('intake-edit-status');
+  const handledEl  = document.getElementById('intake-edit-handled');
+  const notesEl    = document.getElementById('intake-edit-notes');
+  const saveBtn    = document.getElementById('intake-btn-save');
+  const saveStatus = document.getElementById('intake-save-status');
+
+  const origStatus  = r.status || '';
+  const origHandled = r.handled ? true : false;
+  const origNotes   = r.admin_notes || '';
+
+  const checkDirty = () => {
+    const dirty = statusEl.value !== origStatus || handledEl.checked !== origHandled || notesEl.value !== origNotes;
+    saveBtn.disabled = !dirty;
+    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }
+  };
+
+  statusEl.addEventListener('change', checkDirty);
+  handledEl.addEventListener('change', checkDirty);
+  notesEl.addEventListener('input', checkDirty);
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    saveStatus.textContent = 'Saving…'; saveStatus.className = 'save-status';
+    const fields = {};
+    if (statusEl.value      !== origStatus)  fields.status      = statusEl.value;
+    if (handledEl.checked   !== origHandled) fields.handled     = handledEl.checked ? 1 : 0;
+    if (notesEl.value       !== origNotes)   fields.admin_notes = notesEl.value;
+
+    try {
+      await apiPost({ action: 'intake_update', id: r.id, fields });
+      if (fields.status      !== undefined) r.status      = fields.status;
+      if (fields.handled     !== undefined) r.handled     = fields.handled;
+      if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
+
+      saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
+      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
+      wireIntakeEdit(r);
+
+      if (state.tab === 'intake') loadIntakeList(state.intakePage, state.intakeSearch, state.intakeHandled);
+    } catch (err) {
+      saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
+      saveBtn.disabled = false;
+    }
+  });
+}
+
+// ── Contact: list view ────────────────────────────────────────────────────────
+async function loadContactList(page, q, handled) {
+  if (page    !== undefined) state.contactPage    = page;
+  if (q       !== undefined) state.contactSearch  = q;
+  if (handled !== undefined) state.contactHandled = handled;
+
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading contact enquiries…</div>';
+  setBreadcrumb([{ label: 'Contact' }]);
+  document.getElementById('btn-back').style.display = 'none';
+
+  try {
+    const data = await apiFetch({
+      action:  'contact_list',
+      page:    state.contactPage,
+      q:       state.contactSearch,
+      handled: state.contactHandled,
+    });
+    renderContactList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderContactList({ data: rows, total, page, pageSize }) {
+  const main       = document.getElementById('main-content');
+  const totalPages = Math.ceil(total / pageSize);
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Contact <span class="count-tag">${total.toLocaleString()} records</span></h2>
+      <div class="list-controls">
+        <div class="filter-btns">
+          <button class="filter-btn${state.contactHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
+          <button class="filter-btn${state.contactHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
+          <button class="filter-btn${state.contactHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
+        </div>
+        <input type="search" id="contact-search-input" placeholder="Search name, trade, email…" value="${escAttr(state.contactSearch)}">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Name</th><th>Trade</th><th>Email</th><th>Handled</th>
+        </tr></thead>
+        <tbody id="contact-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button id="contact-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
+      <button id="contact-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+    </div>
+  `;
+
+  const tbody = document.getElementById('contact-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:2rem;text-align:center">No contact enquiries found</td></tr>';
+  } else {
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
+      tr.innerHTML = `
+        <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
+        <td>${escHtml(row.name || '—')}</td>
+        <td class="muted">${escHtml(row.trade || '—')}</td>
+        <td class="muted">${escHtml(row.email || '—')}</td>
+        <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
+      `;
+      tr.addEventListener('click', () => loadContactRecord(row.id));
+      tbody.appendChild(tr);
+    });
+  }
+
+  main.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => loadContactList(1, state.contactSearch, btn.dataset.handled));
+  });
+
+  let searchTimer;
+  document.getElementById('contact-search-input').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadContactList(1, e.target.value), 350);
+  });
+
+  document.getElementById('contact-prev').addEventListener('click', () => loadContactList(page - 1));
+  document.getElementById('contact-next').addEventListener('click', () => loadContactList(page + 1));
+}
+
+// ── Contact: record modal ─────────────────────────────────────────────────────
+async function loadContactRecord(id) {
+  const overlay = document.getElementById('modal-overlay');
+  const body    = document.getElementById('modal-body');
+  body.innerHTML = '<div class="state-msg" style="padding:2rem 0">Loading…</div>';
+  overlay.classList.add('open');
+
+  try {
+    const { data: r } = await apiFetch({ action: 'contact_record', id });
+    body.innerHTML = renderContactHtml(r);
+    wireContactEdit(r);
+  } catch (err) {
+    body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
+  }
+}
+
+function renderContactHtml(r) {
+  const val = (v, link) => {
+    if (!v && v !== 0) return '<span class="field-value empty">—</span>';
+    const safe = escHtml(String(v));
+    if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
+    return `<span class="field-value">${safe}</span>`;
+  };
+
+  const dt = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
+
+  return `
+    <h2>${escHtml(r.name || 'Unknown')}</h2>
+    <div class="modal-status">${escHtml(dt)}${r.trade ? ' · ' + escHtml(r.trade) : ''}</div>
+
+    <div class="field-grid">
+      <div class="field-group"><span class="field-label">Name</span>${val(r.name)}</div>
+      <div class="field-group"><span class="field-label">Email</span>${val(r.email, r.email ? 'mailto:' + r.email : null)}</div>
+      <div class="field-group"><span class="field-label">Trade</span>${val(r.trade)}</div>
+      <div class="field-group"><span class="field-label">Handled</span><span class="pill ${r.handled ? 'handled' : 'unhandled'}">${r.handled ? 'Yes' : 'No'}</span></div>
+    </div>
+
+    ${r.message ? `
+      <hr class="section-divider">
+      <div class="field-group" style="grid-column:1/-1">
+        <span class="field-label">Message</span>
+        <span class="field-value">${escHtml(r.message)}</span>
+      </div>
+    ` : ''}
+
+    <div class="edit-section">
+      <h3>Edit enquiry</h3>
+      <div class="edit-row">
+        <div class="checkbox-row">
+          <input type="checkbox" id="contact-edit-handled" ${r.handled ? 'checked' : ''}>
+          <label for="contact-edit-handled">Mark as handled</label>
+        </div>
+      </div>
+      <div class="edit-row"><label for="contact-edit-notes">Admin notes</label><textarea id="contact-edit-notes" placeholder="Internal notes…">${escHtml(r.admin_notes || '')}</textarea></div>
+      <div class="edit-actions">
+        <button class="btn-save" id="contact-btn-save" disabled>Save changes</button>
+        <span class="save-status" id="contact-save-status"></span>
+      </div>
+    </div>
+  `;
+}
+
+function wireContactEdit(r) {
+  const handledEl  = document.getElementById('contact-edit-handled');
+  const notesEl    = document.getElementById('contact-edit-notes');
+  const saveBtn    = document.getElementById('contact-btn-save');
+  const saveStatus = document.getElementById('contact-save-status');
+
+  const origHandled = r.handled ? true : false;
+  const origNotes   = r.admin_notes || '';
+
+  const checkDirty = () => {
+    const dirty = handledEl.checked !== origHandled || notesEl.value !== origNotes;
+    saveBtn.disabled = !dirty;
+    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }
+  };
+
+  handledEl.addEventListener('change', checkDirty);
+  notesEl.addEventListener('input', checkDirty);
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    saveStatus.textContent = 'Saving…'; saveStatus.className = 'save-status';
+    const fields = {};
+    if (handledEl.checked !== origHandled) fields.handled     = handledEl.checked ? 1 : 0;
+    if (notesEl.value     !== origNotes)   fields.admin_notes = notesEl.value;
+
+    try {
+      await apiPost({ action: 'contact_update', id: r.id, fields });
+      if (fields.handled     !== undefined) r.handled     = fields.handled;
+      if (fields.admin_notes !== undefined) r.admin_notes = fields.admin_notes;
+
+      saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
+      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
+      wireContactEdit(r);
+
+      if (state.tab === 'contact') loadContactList(state.contactPage, state.contactSearch, state.contactHandled);
     } catch (err) {
       saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
       saveBtn.disabled = false;

@@ -1061,6 +1061,7 @@ function extractFinalizeFields(body) {
 
 const CF_ACCOUNT_ID_DEFAULT   = '4f0a019a24cacd090cf6b3c3cf31c732';
 const D1_PROSPECTS_ID_DEFAULT = '0ae32598-1680-4995-a010-96b647eacabd';
+const D1_ENQUIRIES_ID_DEFAULT = '771b3047-f977-485e-9cfb-736815931998';
 
 async function updateProspectToHotLead(email) {
   const token     = process.env.CF_API_TOKEN;
@@ -1090,6 +1091,106 @@ async function updateProspectToHotLead(email) {
     throw new Error(data.errors?.[0]?.message || 'D1 query failed');
   }
   return data.result?.[0]?.meta?.changes ?? 0;
+}
+
+// ─── D1 Enquiries: write full intake submission ───────────────────────────────
+
+async function insertIntakeToD1(uploadId, fields, photoUrls, logoUrl) {
+  const token     = process.env.CF_API_TOKEN;
+  const accountId = process.env.CF_ACCOUNT_ID   || CF_ACCOUNT_ID_DEFAULT;
+  const dbId      = process.env.D1_ENQUIRIES_ID || D1_ENQUIRIES_ID_DEFAULT;
+
+  if (!token) {
+    console.warn('[intake] CF_API_TOKEN not set — D1 intake_submissions insert skipped');
+    return;
+  }
+
+  const yearsRaw = parseInt(String(fields.years || '').trim(), 10);
+  const years    = Number.isFinite(yearsRaw) && yearsRaw >= 0 && yearsRaw <= 120 ? yearsRaw : null;
+
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${dbId}/query`;
+  const res = await fetch(url, {
+    method:  'POST',
+    headers: {
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sql: `INSERT INTO intake_submissions
+              (id, business_name, trade_category, full_name, email, phone, area,
+               services, accreditations, work_exclusions, about, team_size, ideal_work,
+               colour_preferences, website_style, testimonials, trust_marks, domain_name,
+               contact_methods, working_hours, free_quotes, emergency_callouts,
+               google_business, domain_status, inspiration_url, years_trading,
+               additional_notes, photo_urls, logo_url)
+            VALUES
+              (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      params: [
+        uploadId,
+        (fields.bizName        || '').toString().trim() || null,
+        (fields.trade          || '').toString().trim() || null,
+        (fields.fullName       || '').toString().trim() || null,
+        (fields.email          || '').toString().trim() || null,
+        (fields.phone          || '').toString().trim() || null,
+        (fields.area           || '').toString().trim() || null,
+        (fields.services       || '').toString().trim() || null,
+        (fields.accreditations || '').toString().trim() || null,
+        (fields.exclusions     || '').toString().trim() || null,
+        (fields.story          || '').toString().trim() || null,
+        (fields.teamSize       || '').toString().trim() || null,
+        (fields.idealWork      || '').toString().trim() || null,
+        (fields.colourPref     || '').toString().trim() || null,
+        (fields.websiteStyle   || '').toString().trim() || null,
+        (fields.testimonials   || '').toString().trim() || null,
+        (fields.trustmarks     || '').toString().trim() || null,
+        (fields.domainName     || '').toString().trim() || null,
+        (fields.contactMethods || '').toString().trim() || null,
+        (fields.hours          || '').toString().trim() || null,
+        (fields.freeQuotes     || '').toString().trim() || null,
+        (fields.emergency      || '').toString().trim() || null,
+        (fields.googleBiz      || '').toString().trim() || null,
+        (fields.domainStatus   || '').toString().trim() || null,
+        (fields.siteInspo      || '').toString().trim() || null,
+        years,
+        (fields.extra          || '').toString().trim() || null,
+        JSON.stringify(photoUrls || []),
+        logoUrl || null,
+      ],
+    }),
+  });
+
+  const data = await res.json();
+  if (!data.success) {
+    throw new Error(data.errors?.[0]?.message || 'D1 intake_submissions insert failed');
+  }
+  console.log('[intake] D1 intake_submissions row inserted:', uploadId);
+}
+
+async function updateD1IntakeNotionPageId(uploadId, notionPageId) {
+  const token     = process.env.CF_API_TOKEN;
+  const accountId = process.env.CF_ACCOUNT_ID   || CF_ACCOUNT_ID_DEFAULT;
+  const dbId      = process.env.D1_ENQUIRIES_ID || D1_ENQUIRIES_ID_DEFAULT;
+
+  if (!token || !notionPageId) return;
+
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${dbId}/query`;
+  const res = await fetch(url, {
+    method:  'POST',
+    headers: {
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sql:    'UPDATE intake_submissions SET notion_page_id = ? WHERE id = ?',
+      params: [notionPageId, uploadId],
+    }),
+  });
+
+  const data = await res.json();
+  if (!data.success) {
+    throw new Error(data.errors?.[0]?.message || 'D1 notion_page_id update failed');
+  }
+  console.log('[intake] D1 intake_submissions notion_page_id updated:', uploadId, '->', notionPageId);
 }
 
 // ─── Email notification (same SMTP env as contact.js / landing-enquiry.js) ───
@@ -1255,7 +1356,19 @@ async function finalizeIntakeDirectUpload(body) {
     console.error('[intake] D1 Hot Lead update error:', d1Err.message);
   }
 
+  try {
+    await insertIntakeToD1(uploadId, fields, photoUrls, logoUrl);
+  } catch (d1IntakeErr) {
+    console.error('[intake] D1 intake_submissions insert error (continuing):', d1IntakeErr.message);
+  }
+
   const page = await createNotionRecord(fields, photoUrls, logoUrl);
+
+  try {
+    await updateD1IntakeNotionPageId(uploadId, page && page.id);
+  } catch (d1UpdateErr) {
+    console.error('[intake] D1 notion_page_id update error (Notion row saved):', d1UpdateErr.message);
+  }
 
   try {
     await sendIntakeNotificationEmail(fields, photoUrls, logoUrl, page && page.id);

@@ -53,6 +53,8 @@ const PROSPECTS_EDITABLE = [
 ];
 
 const ENQUIRIES_EDITABLE = ['handled', 'admin_notes'];
+const INTAKE_EDITABLE    = ['status', 'handled', 'admin_notes'];
+const CONTACT_EDITABLE   = ['handled', 'admin_notes'];
 
 function parseBody(req) {
   const b = req.body;
@@ -147,6 +149,34 @@ module.exports = async (req, res) => {
         return res.status(200).json({ ok: true });
       } catch (err) {
         console.error('[dashboard enquiries_update]', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
+    if (action === 'intake_update') {
+      const allowed = Object.keys(fields).filter(k => INTAKE_EDITABLE.includes(k));
+      if (!allowed.length) return res.status(400).json({ error: 'No editable fields provided' });
+      const set    = allowed.map(k => `${k} = ?`).join(', ');
+      const params = [...allowed.map(k => fields[k]), id];
+      try {
+        await queryD1(enquiriesDb(), `UPDATE intake_submissions SET ${set} WHERE id = ?`, params);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard intake_update]', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
+    if (action === 'contact_update') {
+      const allowed = Object.keys(fields).filter(k => CONTACT_EDITABLE.includes(k));
+      if (!allowed.length) return res.status(400).json({ error: 'No editable fields provided' });
+      const set    = allowed.map(k => `${k} = ?`).join(', ');
+      const params = [...allowed.map(k => fields[k]), id];
+      try {
+        await queryD1(enquiriesDb(), `UPDATE contact_enquiries SET ${set} WHERE id = ?`, params);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard contact_update]', err.message);
         return res.status(500).json({ error: err.message });
       }
     }
@@ -265,6 +295,82 @@ module.exports = async (req, res) => {
       const { id } = req.query;
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(enquiriesDb(), `SELECT * FROM landing_enquiries WHERE id = ?`, [id]);
+      if (!rows.length) return res.status(404).json({ error: 'Record not found' });
+      return res.status(200).json({ ok: true, data: rows[0] });
+    }
+
+    // ── Intake list ───────────────────────────────────────────────────────────
+    if (action === 'intake_list') {
+      const hasSearch = q && q.trim().length > 0;
+      const searchPct = hasSearch ? `%${q.trim()}%` : null;
+      const conditions = [];
+      const baseParams = [];
+      if (handled === '0') { conditions.push('handled = 0'); }
+      if (handled === '1') { conditions.push('handled = 1'); }
+      if (hasSearch) {
+        conditions.push('(business_name LIKE ? OR email LIKE ? OR trade_category LIKE ?)');
+        baseParams.push(searchPct, searchPct, searchPct);
+      }
+      const where = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
+      const [rows, countRows] = await Promise.all([
+        queryD1(enquiriesDb(),
+          `SELECT id, created_at, business_name, trade_category, email, status, handled
+           FROM intake_submissions${where}
+           ORDER BY created_at DESC
+           LIMIT ? OFFSET ?`,
+          [...baseParams, pageSize, offset]
+        ),
+        queryD1(enquiriesDb(),
+          `SELECT COUNT(*) AS total FROM intake_submissions${where}`,
+          baseParams
+        ),
+      ]);
+      return res.status(200).json({ ok: true, data: rows, total: countRows[0]?.total || 0, page: pageNum, pageSize });
+    }
+
+    // ── Intake record ─────────────────────────────────────────────────────────
+    if (action === 'intake_record') {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ error: 'id parameter required' });
+      const rows = await queryD1(enquiriesDb(), `SELECT * FROM intake_submissions WHERE id = ?`, [id]);
+      if (!rows.length) return res.status(404).json({ error: 'Record not found' });
+      return res.status(200).json({ ok: true, data: rows[0] });
+    }
+
+    // ── Contact list ──────────────────────────────────────────────────────────
+    if (action === 'contact_list') {
+      const hasSearch = q && q.trim().length > 0;
+      const searchPct = hasSearch ? `%${q.trim()}%` : null;
+      const conditions = [];
+      const baseParams = [];
+      if (handled === '0') { conditions.push('handled = 0'); }
+      if (handled === '1') { conditions.push('handled = 1'); }
+      if (hasSearch) {
+        conditions.push('(name LIKE ? OR email LIKE ? OR trade LIKE ?)');
+        baseParams.push(searchPct, searchPct, searchPct);
+      }
+      const where = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
+      const [rows, countRows] = await Promise.all([
+        queryD1(enquiriesDb(),
+          `SELECT id, created_at, name, trade, email, handled
+           FROM contact_enquiries${where}
+           ORDER BY created_at DESC
+           LIMIT ? OFFSET ?`,
+          [...baseParams, pageSize, offset]
+        ),
+        queryD1(enquiriesDb(),
+          `SELECT COUNT(*) AS total FROM contact_enquiries${where}`,
+          baseParams
+        ),
+      ]);
+      return res.status(200).json({ ok: true, data: rows, total: countRows[0]?.total || 0, page: pageNum, pageSize });
+    }
+
+    // ── Contact record ────────────────────────────────────────────────────────
+    if (action === 'contact_record') {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ error: 'id parameter required' });
+      const rows = await queryD1(enquiriesDb(), `SELECT * FROM contact_enquiries WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
       return res.status(200).json({ ok: true, data: rows[0] });
     }
