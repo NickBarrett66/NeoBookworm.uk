@@ -24,7 +24,7 @@ async function insertContactToDB1(data) {
 
   const enquiryId = randomUUID();
   const { name, trade, email, phone, message } = data;
-  const now = new Date().toISOString();
+  const now = new Date().toISOString().replace('T', ' ').replace('Z', '');
 
   const details = [trade, phone, message].filter(Boolean).join('\n\n');
   const payloadJson = JSON.stringify({ name, trade, email, phone, message });
