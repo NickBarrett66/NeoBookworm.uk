@@ -14,8 +14,12 @@ async function insertContactToDB1(data) {
   const d1DbId = process.env.D1_ENQUIRIES_ID;
 
   if (!cfAccountId || !cfApiToken || !d1DbId) {
-    console.log('D1 not configured. Skipping database insert.');
-    return;
+    console.log('D1 not configured. Missing:', {
+      account: !!cfAccountId,
+      token: !!cfApiToken,
+      dbId: !!d1DbId,
+    });
+    return { status: 'skipped', reason: 'D1 not configured' };
   }
 
   const enquiryId = randomUUID();
@@ -49,12 +53,14 @@ async function insertContactToDB1(data) {
     const result = await response.json();
     if (!result.success) {
       console.error('D1 insert failed:', result.errors);
-      return;
+      return { status: 'failed', reason: result.errors };
     }
 
     console.log('Contact enquiry inserted into D1:', enquiryId);
+    return { status: 'success', id: enquiryId };
   } catch (err) {
     console.error('D1 insert exception:', err);
+    return { status: 'error', reason: err.message };
   }
 }
 
@@ -93,7 +99,7 @@ module.exports = async (req, res) => {
     'Sent via the quick contact form on neobookworm.uk',
   ].join('\n');
 
-  await insertContactToDB1(data);
+  const d1Result = await insertContactToDB1(data);
 
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
@@ -103,7 +109,11 @@ module.exports = async (req, res) => {
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.log('SMTP not configured. Would have sent:\n' + emailBody);
-    return res.status(200).json({ ok: true, note: 'SMTP not configured — logged only' });
+    return res.status(200).json({
+      ok: true,
+      note: 'SMTP not configured — logged only',
+      d1: d1Result
+    });
   }
 
   try {
@@ -124,7 +134,7 @@ module.exports = async (req, res) => {
       text: emailBody,
     });
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, d1: d1Result });
   } catch (err) {
     console.error('Email send error:', err);
     return res.status(500).json({ error: 'Failed to send email. Please try again.' });
