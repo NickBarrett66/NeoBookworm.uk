@@ -241,7 +241,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 > 
 > 
 
-> If you like it, a full 5-page site is £499 fixed, £20/month hosting after that, and I handle everything. No deposit — you only pay once you're happy with it.
+> If you like it, a full 5-page site is £299 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
 > 
 
 > 
@@ -288,7 +288,7 @@ Optionally include a local search volume data point if it's strong enough to be 
 > 
 > 
 
-> One thing that might be worth knowing: most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £499 once, then £20 a month — and unlike Checkatrade, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
+> One thing that might be worth knowing: most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £299 once, then £9.99 a month — and unlike Checkatrade, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
 > 
 
 > 
@@ -400,7 +400,7 @@ The **demo is even more powerful here** than for Segments A and B, because they 
 > 
 > 
 
-> Full refresh is £499 fixed, and I migrate all your existing content — you don't start from scratch. Worth a look?
+> Full refresh is £299 fixed, and I migrate all your existing content — you don't start from scratch. Worth a look?
 > 
 
 > 
@@ -547,7 +547,7 @@ The **cost framing** is important for this segment. £499 should be anchored aga
 > 
 > 
 
-> It's £499 for a full 5-page site, £20/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
+> It's £299 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
 > 
 
 > 
@@ -592,7 +592,7 @@ The **cost framing** is important for this segment. £499 should be anchored aga
 > 
 > 
 
-> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £499, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
+> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £299, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
 > 
 
 > 
@@ -680,7 +680,7 @@ const segmentAngles = {
   "D - New Entrant": `
     PROFILE: Brand new to running their own business (0–5 reviews, under 2 years). Cash-aware, time-stretched, but open-minded — hasn't yet formed the 'word of mouth is enough' identity.
     PRIMARY OBJECTION: 'Too early / can't afford it yet.'
-    APPROACH: Open with a warm acknowledgement that they're new and building something (positive, not sympathetic). Frame the website as CREDIBILITY infrastructure — it makes them look established when a potential customer searches their name. Cost anchor: compare £499 to something trade-relevant (a week's materials, a month's van insurance).
+    APPROACH: Open with a warm acknowledgement that they're new and building something (positive, not sympathetic). Frame the website as CREDIBILITY infrastructure — it makes them look established when a potential customer searches their name. Cost anchor: compare £299 to something trade-relevant (a week's materials, a month's van insurance).
     NEVER say: 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings.
     ALWAYS include: The no-risk model ('only pay once you're happy'). A trade-relevant cost anchor.
     TONE: Warm, encouraging, peer-to-peer. Not corporate.
@@ -698,7 +698,7 @@ const segmentFollowUpAngles = {
   },
 
   "B - Growth Phase": {
-    followUp1: `Switch to CHECKATRADE COST COMPARISON angle. Most tradespeople pay £800–£1,500/year for Checkatrade. This site is £499 once + £20/month, and they own it. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
+    followUp1: `Switch to CHECKATRADE COST COMPARISON angle. Most tradespeople pay £800–£1,500/year for Checkatrade. This site is £299 once + £9.99/month, and they own it. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
     followUp2_ltdOnly: `Simple BREAKUP email. No new arguments. Confirm the demo is still live. Leave the door open. 40–60 words.`
   },
 
@@ -725,7 +725,7 @@ These apply regardless of segment. Claude must follow all of them:
 3. **The demo URL appears once, prominently** — not buried, not repeated multiple times.
 4. **No jargon** — no 'SEO', 'digital presence', 'online visibility', 'responsive design', 'CMS', 'conversion rate'. Plain English throughout.
 5. **No calls to action other than 'look at the demo'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
-6. **Pricing mentioned clearly** — £499 fixed, £20/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide.
+6. **Pricing mentioned clearly** — £299 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide.
 7. **Autonomy-preserving close** — every email needs a low-pressure way to say no. The closer the email is to the contact cap, the more prominent this must be.
 8. **Compliance footer** — appended in code, not written by Claude. Two variants: short (PECR/Ltd) and extended (LI/sole trader). Never write the footer as part of the email body.
 9. **Sign-off** — always 'Nick | [NeoBookworm.uk](http://NeoBookworm.uk)'. Nothing else.
