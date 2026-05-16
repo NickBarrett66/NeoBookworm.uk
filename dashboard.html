@@ -1922,11 +1922,11 @@ function renderCampaignsList(rows) {
       });
     });
 
+    tbody.appendChild(tr);
+
     // Wire action button (uses recursive helper so re-wiring after click is clean)
     const actionCell = document.getElementById('action-cell-' + rowId);
     wireCampActionBtn(actionCell, row, tr);
-
-    tbody.appendChild(tr);
   });
 }
 
