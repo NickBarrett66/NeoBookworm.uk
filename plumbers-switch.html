@@ -8,20 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- TRADE-SPECIFIC: Meta title/description/OG -->
-  <title>Already Have a Website? Here's Why Plumbers Switch | NeoBookworm</title>
-  <meta name="description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+  <title>Already Got a Plumbing Website? See What I'd Build Instead | NeoBookworm</title>
+  <meta name="description" content="Got a plumbing website? See what I build — live interactive demos. Free honest review of your current site. You don't pay until it's better than what you've got.">
   <link rel="canonical" href="https://neobookworm.uk/plumbers-switch">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://neobookworm.uk/plumbers-switch">
-  <meta property="og:title" content="Already Have a Website? Here's Why Plumbers Switch | NeoBookworm">
-  <meta property="og:description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+  <meta property="og:title" content="Already Got a Plumbing Website? See What I'd Build Instead | NeoBookworm">
+  <meta property="og:description" content="Got a plumbing website? See what I build — live interactive demos. Free honest review of your current site. You don't pay until it's better than what you've got.">
   <meta property="og:image" content="https://neobookworm.uk/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="NeoBookworm.uk logo on navy background">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Already Have a Website? Here's Why Plumbers Switch | NeoBookworm">
-  <meta name="twitter:description" content="If your plumbing website is slow, expensive or not bringing in work, I'll review it free and show you what I'd build instead. No obligation — you see it before you pay.">
+  <meta name="twitter:title" content="Already Got a Plumbing Website? See What I'd Build Instead | NeoBookworm">
+  <meta name="twitter:description" content="Got a plumbing website? See what I build — live interactive demos. Free honest review of your current site. You don't pay until it's better than what you've got.">
 
   <link rel="preconnect" href="https://vitals.vercel-insights.com">
 
@@ -31,6 +31,11 @@
   <link rel="preload" href="/fonts/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+
+  <!-- Leaflet CSS — non-blocking; needed for service area map modal -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,7 +186,6 @@
       max-width: 1180px;
       margin: 0 auto;
     }
-    /* Eyebrow line box height — demo note top aligns with bottom of eyebrow text */
     .hero .eyebrow {
       line-height: 1.45;
     }
@@ -214,6 +218,27 @@
       line-height: 1.7;
       max-width: 520px;
     }
+    .hero-price-note {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.62);
+      margin-top: 0.5rem;
+    }
+    .hero-price-note strong { color: var(--amber); font-weight: 600; }
+    .hero-secondary-link {
+      font-size: 0.88rem;
+      color: var(--amber);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245,166,35,0.35);
+      transition: color 0.2s, border-color 0.2s;
+      margin-top: 0.25rem;
+      display: inline-block;
+    }
+    .hero-secondary-link:hover {
+      color: var(--amber-dark);
+      border-bottom-color: rgba(212,137,26,0.6);
+    }
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -238,83 +263,14 @@
       box-shadow: 0 6px 22px rgba(154,104,32,0.32);
     }
 
-    /* Browser-frame mockup — clickable, links to the live demo */
-    .hero-mock {
-      position: relative;
-      display: block;
+    .hero-plumber-photo {
       width: 100%;
-      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      background: #1e2433;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-    }
-    .hero-mock:hover {
-      transform: translateY(-3px);
-      border-color: rgba(245,166,35,0.4);
-      box-shadow: 0 28px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.18);
-    }
-    .hero-mock:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
-    .hero-mock-chrome {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 12px;
-      height: 30px;
-      background: linear-gradient(180deg, #3d4450 0%, #2a3038 100%);
-      border-bottom: 1px solid rgba(0,0,0,0.35);
-    }
-    .hero-mock-dots { display: flex; gap: 6px; flex-shrink: 0; }
-    .hero-mock-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
-    .hero-mock-dots span:nth-child(1) { background: #ff5f57; }
-    .hero-mock-dots span:nth-child(2) { background: #febc2e; }
-    .hero-mock-dots span:nth-child(3) { background: #28c840; }
-    .hero-mock-url {
-      flex: 1;
-      min-width: 0;
-      font-family: ui-monospace, 'Segoe UI Mono', monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      background: rgba(0,0,0,0.22);
-      border-radius: 4px;
-      padding: 4px 10px;
-      text-align: center;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .hero-mock-viewport {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1024 / 654;
-      overflow: hidden;
-      background: #ffffff;
-    }
-    .hero-mock-viewport img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 22% top;
       display: block;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
     }
-    .hero-mock-cap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      background: rgba(245,166,35,0.06);
-      border-top: 1px solid var(--border);
-    }
-    .hero-mock-cap-text { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
-    .hero-mock-cap-text strong { color: var(--off-white); font-weight: 600; }
-    .hero-mock-cap-arrow { font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.04em; white-space: nowrap; }
 
     .scroll-hint {
       position: relative;
@@ -339,6 +295,24 @@
     @keyframes scrollPulse {
       0%, 100% { opacity: 0.35; transform: scaleY(1); }
       50%       { opacity: 1;    transform: scaleY(1.25); }
+    }
+
+    /* ─── Honesty block ─── */
+    .honesty-block {
+      background: rgba(255,255,255,0.025);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .honesty-inner {
+      max-width: 720px;
+      border-left: 3px solid var(--amber);
+      padding-left: 1.75rem;
+    }
+    .honesty-inner p {
+      font-size: 1.02rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.85;
+      font-weight: 300;
     }
 
     /* ─── How It Works — striped band (also cost comparison on plumbers-switch) ─── */
@@ -415,52 +389,6 @@
       margin: 0;
     }
 
-    /* ─── Why It Matters ─── */
-    .why-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: start;
-    }
-    .why-image {
-      padding-top: 0;
-      margin-top: 0;
-    }
-    .why-image img {
-      width: 100%;
-      height: auto;
-      max-height: 480px;
-      object-fit: cover;
-      object-position: center top;
-      border-radius: 12px;
-      display: block;
-    }
-    .why-content {
-      max-width: 720px;
-      margin-top: 1.75rem;
-    }
-    .why-content p {
-      font-size: 1.02rem;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.85;
-      font-weight: 300;
-      margin-bottom: 1.4rem;
-    }
-    .why-content p:last-child { margin-bottom: 0; }
-    .why-list {
-      list-style: disc;
-      padding-left: 1.15rem;
-      margin: 0 0 1.4rem;
-    }
-    .why-list li {
-      font-size: 1.02rem;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.75;
-      font-weight: 300;
-      margin: 0.55rem 0;
-    }
-    .why-list strong { color: var(--off-white); font-weight: 700; }
-
     /* ─── Feature cards (6-grid) ─── */
     .cards-grid {
       display: grid;
@@ -491,7 +419,490 @@
       margin: 0;
     }
 
-    /* ─── Social proof ─── */
+    /* Featured (interactive modal) card */
+    .feat-card.featured {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      border: 2px solid var(--amber);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.08) 0%, rgba(245, 166, 35, 0) 100%);
+      transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.28s ease;
+    }
+    .feat-card.featured::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--amber);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+      border-radius: 8px 8px 0 0;
+      pointer-events: none;
+    }
+    .feat-card.featured:hover,
+    .feat-card.featured:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+    }
+    .feat-card.featured:hover::before,
+    .feat-card.featured:focus-visible::before {
+      transform: scaleX(1);
+    }
+    .feat-card.featured:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+    .feat-card.featured::after {
+      content: 'Click to explore';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .feat-card.featured:hover::after,
+    .feat-card.featured:focus-visible::after {
+      opacity: 1;
+    }
+
+    /* ─── Custom-site modal ─── */
+    .custom-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 31, 61, 0.92);
+      z-index: 1200;
+      overflow-y: auto;
+      animation: nbModalFadeIn 0.3s ease-out;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .custom-modal.active {
+      display: flex;
+    }
+    @keyframes nbModalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .custom-modal-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      animation: nbModalSlideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes nbModalSlideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .custom-modal-inner {
+      background: var(--white);
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      padding: 48px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      animation: nbModalScaleIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0.08s backwards;
+      color: var(--navy);
+    }
+    @keyframes nbModalScaleIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .custom-modal-video {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 350px;
+      margin-inline: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(15, 31, 61, 0.06);
+      box-shadow: 0 8px 24px rgba(15, 31, 61, 0.12);
+    }
+    .custom-modal-video video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+    .custom-modal-text h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 3.5vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--navy);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    .custom-modal-text h2 em {
+      font-style: italic;
+      color: var(--amber-dark);
+    }
+    .custom-modal-text p {
+      font-size: 1rem;
+      font-family: var(--sans);
+      color: rgba(15, 31, 61, 0.78);
+      margin-bottom: 20px;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+    .feature-list {
+      list-style: none;
+      margin: 24px 0 28px;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 12px 0 12px 28px;
+      position: relative;
+      color: rgba(15, 31, 61, 0.78);
+      font-size: 0.95rem;
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+    .feature-list li::before {
+      content: '\2713';
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .modal-cta {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(15, 31, 61, 0.12);
+    }
+    .modal-cta p {
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+    .modal-cta p:last-child { margin-bottom: 0; }
+    .area-options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .custom-modal-close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: var(--white);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s ease, transform 0.25s ease;
+      z-index: 1201;
+    }
+    .custom-modal-close:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: rotate(90deg);
+    }
+    .custom-modal-close:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 768px) {
+      .custom-modal-inner {
+        grid-template-columns: 1fr;
+        padding: 32px 20px;
+        gap: 28px;
+      }
+      .custom-modal-content {
+        padding: 24px 16px 32px;
+      }
+      .custom-modal-close {
+        width: 44px;
+        height: 44px;
+        font-size: 24px;
+      }
+      .area-options-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .feat-card.featured {
+        transition: none;
+      }
+      .feat-card.featured::before {
+        transition: none;
+        transform: scaleX(1);
+      }
+      .custom-modal,
+      .custom-modal-content,
+      .custom-modal-inner {
+        animation: none !important;
+      }
+      .custom-modal-close:hover {
+        transform: none;
+      }
+    }
+
+    /* ── Accreditation badges (Gas Safe modal) ── */
+    .nb-badge {
+      display: flex; align-items: stretch; border-radius: 6px; overflow: hidden;
+      height: 52px; font-family: var(--sans);
+    }
+    .nb-badge .nb-mark {
+      width: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .nb-badge .nb-text {
+      background: #fff; padding: 0 10px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .nb-badge .nb-top { font-size: 11px; font-weight: 800; letter-spacing: .06em; line-height: 1; }
+    .nb-badge .nb-bot { font-size: 7.5px; color: #555; letter-spacing: .03em; line-height: 1.4; margin-top: 2px; }
+    .nb-gassafe { border: 1.5px solid #1a6db5; min-width: 130px; }
+    .nb-gassafe .nb-mark { background: #1a6db5; }
+    .nb-gassafe .nb-top { color: #1a6db5; }
+    .nb-gassafe.dk .nb-text { background: #1a2f55; }
+    .nb-gassafe.dk .nb-top { color: #60aaef; }
+    .nb-gassafe.dk .nb-bot { color: #a0b4cc; }
+    .nb-checkatrade { border: 1.5px solid #00a69c; min-width: 160px; background: #fff; }
+    .nb-checkatrade .nb-mark { background: #00a69c; height: 100%; }
+    .nb-checkatrade .nb-top { font-size: 10px; color: #00a69c; }
+    .nb-checkatrade .nb-stars { color: #f5a623; font-size: 11px; letter-spacing: 1px; margin-top: 2px; }
+    .nb-checkatrade .nb-bot { font-size: 7.5px; color: #555; margin-top: 1px; }
+    .nb-checkatrade.dk { background: #1a2f55; }
+    .nb-checkatrade.dk .nb-top { color: #00d4c8; }
+    .nb-checkatrade.dk .nb-bot { color: #a0b4cc; }
+    .nb-insured {
+      display: inline-flex; align-items: center; gap: 8px; border-radius: 6px;
+      border: 1.5px solid #5f5e5a; padding: 0 12px; height: 52px; background: #fff;
+      font-family: var(--sans); min-width: 160px;
+    }
+    .nb-insured svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .nb-insured .nb-top { font-size: 11px; font-weight: 700; color: #2c2c2a; line-height: 1; }
+    .nb-insured .nb-bot { font-size: 7.5px; color: #555; line-height: 1.4; margin-top: 2px; }
+    .nb-insured.dk { background: #1a2f55; border-color: #3a5070; }
+    .nb-insured.dk .nb-top { color: #e0eaf5; }
+    .nb-insured.dk .nb-bot { color: #a0b4cc; }
+    .nb-insured.dk svg path { stroke: #a0b4cc; }
+
+    /* ── Phone frame mock (Call modal) ── */
+    .phone-mock {
+      width: 220px; flex-shrink: 0;
+      background: #1c1c1e; border-radius: 36px; padding: 10px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45);
+      margin: 0 auto;
+    }
+    .phone-mock-inner { background: #fff; border-radius: 28px; overflow: hidden; }
+    .phone-mock-notch {
+      width: 66px; height: 18px; background: #1c1c1e;
+      border-radius: 0 0 12px 12px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .phone-mock-body { padding: 8px 12px 14px; }
+    .phone-biz-name {
+      font-family: var(--serif); font-size: 10px; font-weight: 700; color: var(--navy);
+      padding: 6px 0 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(15,31,61,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .phone-biz-name span { font-size: 7px; color: rgba(15,31,61,0.4); font-family: var(--sans); font-weight: 400; }
+    .phone-call-btn {
+      display: flex; align-items: center; gap: 7px; background: var(--amber);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+      cursor: default; pointer-events: none;
+    }
+    .phone-call-btn svg { flex-shrink: 0; }
+    .phone-call-label { display: flex; flex-direction: column; }
+    .phone-call-label strong { font-size: 10px; font-weight: 700; color: var(--navy); font-family: var(--sans); line-height: 1.2; }
+    .phone-call-label span { font-size: 8.5px; color: rgba(15,31,61,0.7); font-family: var(--sans); margin-top: 1px; }
+    .phone-or {
+      text-align: center; font-size: 7.5px; color: rgba(15,31,61,0.4); font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: 0.06em; margin: 6px 0; position: relative;
+    }
+    .phone-or::before, .phone-or::after {
+      content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+      width: 30%; height: 1px; background: rgba(15,31,61,0.12);
+    }
+    .phone-or::before { left: 0; }
+    .phone-or::after { right: 0; }
+    .phone-field {
+      display: block; width: 100%; background: #f5f5f3; border: 1px solid rgba(15,31,61,0.12);
+      border-radius: 5px; padding: 5px 7px; font-size: 8.5px; font-family: var(--sans);
+      color: rgba(15,31,61,0.45); margin-bottom: 5px; resize: none; line-height: 1.4;
+    }
+    .phone-send-btn {
+      display: block; width: 100%; background: var(--navy); color: #fff;
+      border-radius: 5px; padding: 7px; font-size: 8.5px; font-family: var(--sans);
+      font-weight: 700; text-align: center; letter-spacing: 0.04em;
+    }
+    .phone-mock-home {
+      width: 44px; height: 4px; background: rgba(255,255,255,0.3);
+      border-radius: 2px; margin: 8px auto 2px;
+    }
+
+    /* ── Gallery tab switcher (Photos modal) ── */
+    .gallery-tabs {
+      display: flex; gap: 4px;
+      background: rgba(15,31,61,0.07);
+      border-radius: 8px; padding: 4px;
+      margin-bottom: 24px;
+    }
+    .gallery-tab {
+      flex: 1; padding: 10px 16px;
+      font-family: var(--sans); font-size: 0.875rem; font-weight: 600;
+      border: none; border-radius: 6px; cursor: pointer;
+      color: rgba(15,31,61,0.5); background: transparent;
+      transition: all 0.2s ease;
+    }
+    .gallery-tab.active {
+      background: #fff; color: var(--navy);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    /* ── Before/After slider ── */
+    .ba-slider {
+      position: relative; overflow: hidden;
+      border-radius: 10px; aspect-ratio: 16/10;
+      cursor: ew-resize; user-select: none; touch-action: pan-y;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    }
+    .ba-after { position: absolute; inset: 0; }
+    .ba-before-wrap {
+      position: absolute; inset: 0;
+      clip-path: inset(0 50% 0 0);
+    }
+    .ba-ph-after {
+      width: 100%; height: 100%;
+      background: url('/Images/gallery/bathroom-after.webp') center/cover no-repeat,
+                  linear-gradient(155deg, #cfc7bc 0%, #b4a898 40%, #c0b8ae 100%);
+    }
+    .ba-ph-before {
+      width: 100%; height: 100%;
+      background: url('/Images/gallery/bathroom-before.webp') center/cover no-repeat,
+                  linear-gradient(155deg, #3a342c 0%, #26201a 60%, #312a22 100%);
+    }
+    .ba-label {
+      position: absolute; top: 14px; z-index: 2;
+      font-family: var(--sans); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 4px 10px; border-radius: 4px; pointer-events: none;
+    }
+    .ba-label-before { left: 14px; background: rgba(0,0,0,0.5); color: #fff; }
+    .ba-label-after  { right: 14px; background: rgba(255,255,255,0.5); color: var(--navy); }
+    .ba-handle {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      transform: translateX(-50%); width: 44px;
+      display: flex; flex-direction: column; align-items: center;
+      z-index: 3; pointer-events: none;
+    }
+    .ba-handle-line { flex: 1; width: 2px; background: rgba(255,255,255,0.9); }
+    .ba-handle-circle {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ba-caption {
+      margin-top: 12px; font-size: 0.85rem; color: rgba(15,31,61,0.6);
+      font-family: var(--sans); text-align: center;
+    }
+
+    /* ── Job grid ── */
+    .job-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .job-tile { border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+    .job-tile-ph { width: 100%; height: 100%; display: flex; align-items: flex-end; }
+    .job-tile-caption {
+      width: 100%; padding: 28px 12px 10px;
+      background: linear-gradient(to top, rgba(10,20,40,0.85) 0%, transparent 100%);
+      font-family: var(--sans);
+    }
+    .job-tile-caption strong { display: block; font-size: 0.82rem; font-weight: 700; color: #fff; line-height: 1.3; }
+    .job-tile-caption span { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; display: block; }
+    @media (max-width: 500px) {
+      .job-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Services modal ── */
+    .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .svc-cat {
+      background: rgba(15,31,61,0.04); border: 1px solid rgba(15,31,61,0.1);
+      border-radius: 8px; padding: 16px 18px;
+    }
+    .svc-cat-head { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .svc-cat-icon {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--amber);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .svc-cat-name { font-family: var(--serif); font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+    .svc-cat ul { list-style: none; padding: 0; margin: 0; }
+    .svc-cat ul li {
+      font-size: 0.8rem; font-family: var(--sans); color: rgba(15,31,61,0.65);
+      padding: 3px 0 3px 14px; position: relative; line-height: 1.4;
+    }
+    .svc-cat ul li::before { content: '–'; position: absolute; left: 0; color: var(--amber); font-weight: 700; }
+    .svc-spec-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(15,31,61,0.1);
+    }
+    .svc-spec-header p { font-size: 0.82rem; font-family: var(--sans); color: rgba(15,31,61,0.65); margin: 0; line-height: 1.5; flex: 1; }
+    .svc-spec-item { padding: 13px 0 13px 14px; border-left: 3px solid var(--amber); border-bottom: 1px solid rgba(15,31,61,0.08); }
+    .svc-spec-item:last-child { border-bottom: none; padding-bottom: 13px; }
+    .svc-spec-item strong {
+      display: block; font-family: var(--serif); font-size: 0.95rem; font-weight: 700;
+      color: var(--navy); margin-bottom: 4px;
+    }
+    .svc-spec-item p { font-size: 0.82rem; font-family: var(--sans); color: rgba(15,31,61,0.65); line-height: 1.6; margin: 0; }
+    .svc-emrg-header {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(15,31,61,0.05); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;
+    }
+    .svc-emrg-header span { font-family: var(--sans); font-size: 0.8rem; font-weight: 600; color: var(--navy); }
+    .svc-emrg-item { padding: 11px 0; border-bottom: 1px solid rgba(15,31,61,0.08); }
+    .svc-emrg-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .svc-emrg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .svc-emrg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .svc-emrg-row strong { font-family: var(--sans); font-size: 0.88rem; font-weight: 700; color: var(--navy); flex: 1; }
+    .svc-emrg-badge {
+      font-size: 0.67rem; font-weight: 700; font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .svc-emrg-badge.urgent   { background: rgba(220,38,38,0.1);   color: #b91c1c; }
+    .svc-emrg-badge.same-day { background: rgba(245,166,35,0.18); color: #96670e; }
+    .svc-emrg-badge.next-day { background: rgba(15,31,61,0.07);   color: rgba(15,31,61,0.5); }
+    .svc-emrg-note { font-size: 0.78rem; font-family: var(--sans); color: rgba(15,31,61,0.5); line-height: 1.45; padding-left: 16px; }
+    @media (max-width: 560px) {
+      .svc-grid { grid-template-columns: 1fr; }
+      .svc-emrg-badge { display: none; }
+    }
+
+    /* ─── Social proof (kept in case needed) ─── */
     .proof-wrap {
       margin-top: 2rem;
       display: flex;
@@ -505,29 +916,6 @@
       padding: 2rem 2.5rem;
       max-width: 680px;
       width: 100%;
-    }
-    .proof-quote {
-      font-size: 4rem;
-      line-height: 0.8;
-      color: var(--amber);
-      font-family: var(--serif);
-      font-weight: 900;
-      margin-bottom: 1rem;
-      display: block;
-      opacity: 0.65;
-    }
-    .proof-text {
-      font-size: 1.1rem;
-      font-weight: 300;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.75;
-      font-style: italic;
-      margin-bottom: 1.25rem;
-    }
-    .proof-attr {
-      font-size: 0.875rem;
-      color: var(--muted);
-      font-style: italic;
     }
     .proof-note {
       font-size: 12px;
@@ -619,7 +1007,7 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
 
-    /* ─── Limited availability (2-col like other sections) ─── */
+    /* ─── Limited availability ─── */
     .avail-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -636,9 +1024,6 @@
       color: var(--muted);
       line-height: 1.55;
       margin-top: 2px;
-    }
-    .hero-demo-aside .avail-aside-note {
-      margin-top: 0;
     }
 
     /* ─── FAQ Accordion ─── */
@@ -692,6 +1077,7 @@
       font-weight: 300;
       margin: 0;
     }
+    .faq-answer-inner p + p { margin-top: 0.85rem; }
 
     /* ─── About Nick ─── */
     .about-nick-grid {
@@ -706,7 +1092,6 @@
       grid-row: 1;
       min-width: 0;
     }
-    /* Photo row sits flush under this line; space before headline lives on h2 */
     .about-nick-eyebrow .eyebrow { margin-bottom: 0; }
     .about-nick-copy .section-title { margin-top: 1rem; }
     .about-nick-photo {
@@ -1070,55 +1455,13 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── plumbers-switch: hero CTA row + hero image ─── */
+    /* ─── plumbers-switch: hero CTA row ─── */
     .hero-cta-row {
       margin-top: 1.35rem;
-    }
-    .hero-plumber-photo {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: block;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
-    }
-
-    /* ─── Self-check list ─── */
-    .check-list {
-      list-style: none;
-      padding: 0;
-      margin: 2rem 0 0;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-    }
-    .check-item {
-      display: flex;
       align-items: flex-start;
-      gap: 0.875rem;
-      background: var(--navy-mid);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      font-size: 0.975rem;
-      color: rgba(255,255,255,0.78);
-      font-weight: 400;
-      line-height: 1.5;
-    }
-    .check-icon {
-      flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--amber-pale);
-      border: 1px solid rgba(245,166,35,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--amber);
-      font-size: 11px;
-      font-weight: 700;
-      margin-top: 1px;
+      gap: 0.7rem;
     }
 
     /* ─── Speed score comparison ─── */
@@ -1242,20 +1585,9 @@
         order: 2;
         overflow-x: clip;
       }
-      .why-grid { grid-template-columns: 1fr; }
-      .why-image {
-        order: 2; /* image appears below text on mobile */
-        max-height: 260px;
-        overflow: hidden;
-        border-radius: 12px;
-      }
-      .why-image img {
-        width: 100%;
-        max-height: 300px;
-      }
       .pricing-grid { grid-template-columns: 1fr; }
       .pricing-image {
-        order: 2; /* image below pricing on mobile — price first */
+        order: 2;
       }
       .pricing-image img {
         width: 100%;
@@ -1266,7 +1598,6 @@
     @media (max-width: 960px) {
       .hero-demo-aside { margin-top: 0; }
       .hero-grid { grid-template-columns: 1fr; gap: 2.25rem; }
-      .hero-mock { max-width: 560px; margin: 0 auto; }
       .hero-plumber-photo { max-width: 560px; margin: 0 auto; }
       .steps-grid { grid-template-columns: 1fr; gap: 2rem; }
       .cards-grid { grid-template-columns: 1fr 1fr; }
@@ -1404,12 +1735,14 @@
     <div class="hero-grid">
       <div class="hero-copy">
         <span class="eyebrow">For plumbers who already have a website</span>
-        <h1>Your website might be the reason customers aren&rsquo;t <em>calling.</em></h1>
+        <h1>You&rsquo;ve already got one. The question is whether it&rsquo;s actually <em>working.</em></h1>
         <div class="gold-line"></div>
-        <p class="hero-sub">Most plumber websites were built once and never properly looked after. They load slowly on mobile, they&rsquo;re difficult to update, and they cost more per month than they should &mdash; without bringing in the work to justify it.</p>
-        <p class="hero-sub" style="margin-top:0.85rem;">I&rsquo;ll review your current site for free and tell you honestly what I&rsquo;d change. If you want me to build something better, you see it before you pay anything.</p>
+        <p class="hero-sub">Having a website and having a website that brings in work are two different things. If yours is slow on a phone, hard to update, or just quietly sitting there, it might be costing you jobs rather than winning them.</p>
+        <p class="hero-sub" style="margin-top:0.85rem;">I&rsquo;ll look at your current site honestly and tell you what I&rsquo;d change and what I&rsquo;d keep &mdash; for free, no obligation. If you want me to build something better, you see the finished site before anything changes or any money changes hands. You don&rsquo;t pay until it&rsquo;s better than what you&rsquo;ve got.</p>
+        <span class="hero-price-note"><strong>£299 fixed &mdash; £199 while I have launch availability.</strong> Monthly is always £9.99.</span>
         <div class="hero-cta-row">
-          <a href="#start" class="btn-primary">Get a free site review &rarr;</a>
+          <a href="#option-review" class="btn-primary" data-start-open="option-review">Get a free site review &rarr;</a>
+          <a href="#what-i-build" class="hero-secondary-link">See the standard I build to first &darr;</a>
         </div>
       </div>
 
@@ -1424,48 +1757,97 @@
       </div>
     </div>
     <div class="scroll-hint" aria-hidden="true">
-      <span>Five quick questions</span>
+      <span>When not to switch</span>
       <div class="scroll-bar"></div>
     </div>
   </section>
 
-  <!-- ══ SELF-CHECK ══ -->
-  <section class="self-check">
+  <!-- ══ HONESTY BLOCK ══ -->
+  <section class="honesty-block">
     <div class="section-inner">
-      <span class="eyebrow">Is your current site letting you down?</span>
-      <h2 class="section-title">Five questions worth <em>asking yourself.</em></h2>
+      <span class="eyebrow">Worth saying upfront</span>
+      <h2 class="section-title">When you probably <em>shouldn&rsquo;t</em> switch.</h2>
       <div class="gold-line"></div>
-      <ul class="check-list">
-        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Is your site more than three years old?</span></li>
-        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Does it load slowly when you open it on your phone?</span></li>
-        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Are you paying more than &pound;15 a month to keep it live?</span></li>
-        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Do you have to wait days (or longer) to get changes made?</span></li>
-        <li class="check-item"><span class="check-icon" aria-hidden="true">&#10003;</span><span>Can you remember the last time it actually brought in a job?</span></li>
-      </ul>
-      <p style="font-size:0.95rem; color:rgba(255,255,255,0.62); margin-top:1.5rem;">If you answered yes to two or more of those, it&rsquo;s worth at least having a look at what else is out there.</p>
+      <div class="honesty-inner">
+        <p>If your current site is fast, works properly on a phone, brings you work, and you own it outright &mdash; keep it. There&rsquo;s no case for switching just for the sake of it. This page is for plumbers whose site is doing one of a few specific things: a domain that lapsed and now shows a holding page when people search for them, a Wix or Squarespace site they&rsquo;re paying rent on every month and never quite got round to sorting properly, a site someone else manages and they&rsquo;re not sure they even own the domain, or a real site with one fixable gap &mdash; no Gas Safe number visible, no working contact form, loads slowly on a phone. If that sounds like yours, read on.</p>
+      </div>
     </div>
   </section>
 
-  <!-- ══ WHAT'S DIFFERENT ══ -->
+  <!-- ══ FOUR SITUATIONS ══ -->
   <section class="includes">
     <div class="section-inner">
-      <span class="eyebrow">What makes the difference</span>
-      <h2 class="section-title">Speed. Simplicity. Someone who <em>actually responds.</em></h2>
+      <span class="eyebrow">Which situation sounds like yours?</span>
+      <h2 class="section-title">Four reasons plumbers <em>look at switching.</em></h2>
       <div class="gold-line"></div>
       <div class="cards-grid">
         <div class="feat-card">
-          <h3>Built for mobile first</h3>
-          <p>Most plumber sites were designed on a desktop and squeezed onto a phone as an afterthought. Every site I build is tested on mobile from the first line of code &mdash; because that&rsquo;s where your customers are when they need someone urgently.</p>
+          <h3>The domain lapsed</h3>
+          <p>You had a site, the renewal reminder got buried, and now the URL shows a registrar parking page. Anyone you give your address to &mdash; or who searches your name &mdash; hits a dead end. You&rsquo;ve done this before so you know what&rsquo;s involved; this time it stays live. My hosting is &pound;9.99 a month with no annual renewal trap &mdash; once it&rsquo;s up, it stays up.</p>
         </div>
         <div class="feat-card">
-          <h3>Fast by design</h3>
-          <p>Page builder tools like Wix and Squarespace load a lot of code your site doesn&rsquo;t need. Sites I build are hand-coded and lightweight &mdash; they score 90+ on Google&rsquo;s mobile speed test, compared to 20&ndash;40 for a typical trades site built on a page builder.</p>
+          <h3>You built it yourself on Wix (or similar)</h3>
+          <p>You put the time in, it works after a fashion, but you&rsquo;re paying Wix their monthly fee indefinitely for something that carries their branding. A Wix Premium plan at &pound;17/month is over &pound;200 a year &mdash; and you still don&rsquo;t own it. With me, you pay once and it&rsquo;s yours outright: no platform rent, no branding, no annual price hikes.</p>
         </div>
         <div class="feat-card">
-          <h3>Changes done by me, directly</h3>
-          <p>No tickets, no account managers, no waiting a week. If you want something changed on your site, you email me and I do it &mdash; usually within a day. You deal with one person throughout.</p>
+          <h3>Someone else manages it</h3>
+          <p>A web agency or freelancer built it and probably manages it still. That might be fine &mdash; but it&rsquo;s worth knowing whether the domain is registered in your name or theirs. Everything I build, the domain and files belong to you from day one. No lock-in, no contract beyond month-to-month, moveable whenever you want.</p>
+        </div>
+        <div class="feat-card">
+          <h3>It&rsquo;s real, but something&rsquo;s off</h3>
+          <p>You have a proper site and it&rsquo;s been there a while, but something is quietly costing you jobs: your Gas Safe number isn&rsquo;t visible, there&rsquo;s no working contact form, or it loads slowly enough on a phone that people give up. These aren&rsquo;t reasons to start from scratch, but they are reasons to compare what you&rsquo;ve got against what a built-from-scratch site looks like.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ══ WHAT YOU'D BE SWITCHING TO ══ -->
+  <section class="includes" id="what-i-build">
+    <div class="section-inner">
+      <span class="eyebrow">What you&rsquo;d be switching to</span>
+      <h2 class="section-title">Everything your current site probably <em>doesn&rsquo;t have &mdash; in one place.</em></h2>
+      <div class="gold-line"></div>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.62); margin-bottom:0.5rem;">These aren&rsquo;t screenshots or promises &mdash; they&rsquo;re live, interactive demonstrations of what goes into every site I build. Click any card to explore.</p>
+      <div class="cards-grid">
+        <!-- Interactive: opens Gas Safe badge demo modal -->
+        <div class="feat-card featured" id="gasSafeCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="gasSafeModal" aria-label="Open details: Gas Safe front and centre">
+          <h3>Gas Safe front and centre</h3>
+          <p>Your licence number goes on every page &mdash; linked to the register so customers can verify it in one click. Most Wix and template sites don&rsquo;t do this properly.</p>
+        </div>
+        <!-- Interactive: opens service area map modal -->
+        <div class="feat-card featured" id="areaCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="areaModal" aria-label="Open details: your area, spelled out">
+          <h3>Your area, spelled out</h3>
+          <p>An interactive map showing exactly where you cover &mdash; postcode districts, radius from base, or county-wide. Three styles to choose from. Click to see them.</p>
+        </div>
+        <!-- Interactive: opens services layout demo modal -->
+        <div class="feat-card featured" id="servicesCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="servicesModal" aria-label="Open details: services in plain English">
+          <h3>Services in plain English</h3>
+          <p>Written around how you actually work &mdash; not a generic list. All-rounder, heating specialist, or emergency-first: click to see three real layout approaches.</p>
+        </div>
+        <!-- Interactive: opens gallery layout demo modal -->
+        <div class="feat-card featured" id="photosCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="photosModal" aria-label="Open details: photos of real work">
+          <h3>Photos of real work</h3>
+          <p>Before-and-afters or a job-by-job gallery &mdash; whichever shows your work best. Drag the slider to compare. Real photos do more than any amount of copy.</p>
+        </div>
+        <!-- Interactive: opens mobile contact demo modal -->
+        <div class="feat-card featured" id="callCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="callModal" aria-label="Open details: tap to call, tap to message">
+          <h3>Tap to call, tap to message</h3>
+          <p>Most people searching for a plumber are on their mobile. Your number needs to be one tap &mdash; not buried three scrolls into a contact page. Click to see what this looks like.</p>
+        </div>
+        <!-- Interactive: opens Paul avatar modal -->
+        <div class="feat-card featured" id="customCard" role="button" tabindex="0"
+             aria-haspopup="dialog" aria-controls="modal" aria-label="Open details: your business, not a template">
+          <h3>Your business, not a template</h3>
+          <p>No two sites look the same. Built from scratch around how your business actually works &mdash; your colours, your sections, your layout. Click to see what I mean.</p>
+        </div>
+      </div>
+
+      <!-- Speed comparison — a concrete technical fact, not a client claim -->
       <div class="speed-compare">
         <div class="speed-box speed-bad">
           <div class="speed-score">24</div>
@@ -1477,7 +1859,7 @@
           <div class="speed-label">NeoBookworm build<br>(mobile)</div>
         </div>
       </div>
-      <p class="speed-note">Scores from Google PageSpeed Insights &mdash; the tool Google uses to assess how fast your site loads on a phone.</p>
+      <p class="speed-note">How fast it loads on a phone &mdash; the score Google looks at when deciding how to rank your site in local search.</p>
     </div>
   </section>
 
@@ -1485,7 +1867,7 @@
   <section class="cost-compare">
     <div class="section-inner">
       <span class="eyebrow">What you&rsquo;re actually paying</span>
-      <h2 class="section-title">Most plumbers pay more than they realise &mdash; for <em>less than they think.</em></h2>
+      <h2 class="section-title">The honest numbers &mdash; what you pay now vs what you&rsquo;d <em>pay with me.</em></h2>
       <div class="gold-line"></div>
       <table class="compare-table">
         <thead>
@@ -1498,18 +1880,23 @@
         <tbody>
           <tr>
             <td>Build cost</td>
-            <td>Already paid (but locked to that provider)</td>
-            <td>&pound;299 &mdash; or &pound;199 while availability lasts</td>
+            <td>Already paid &mdash; but tied to that platform or provider</td>
+            <td>&pound;299 fixed &mdash; or &pound;199 while I have launch availability</td>
           </tr>
           <tr>
             <td>Monthly cost</td>
             <td>&pound;15&ndash;20 (Wix/Squarespace) or &pound;40&ndash;100+ (agency retainer)</td>
-            <td>&pound;9.99 &mdash; cancel any month</td>
+            <td>&pound;9.99 &mdash; cancel any month, no contract</td>
           </tr>
           <tr>
             <td>Getting changes made</td>
-            <td>Extra charge, or slow turnaround</td>
-            <td>Included &mdash; email Nick, done within a day</td>
+            <td>Extra charge, or slow turnaround through a third party</td>
+            <td>Included &mdash; email me, done within a day</td>
+          </tr>
+          <tr>
+            <td>Who owns it</td>
+            <td>Often the platform, or the agency &mdash; worth checking</td>
+            <td>You do, outright, from day one</td>
           </tr>
           <tr>
             <td>Contract</td>
@@ -1518,7 +1905,7 @@
           </tr>
         </tbody>
       </table>
-      <p style="font-size:0.875rem; font-style:italic; color:var(--muted); margin-top:1.25rem;">A Wix Premium plan at &pound;17/month is &pound;204/year. NeoBookworm is &pound;119.88/year &mdash; and the site will load significantly faster.</p>
+      <p style="font-size:0.875rem; font-style:italic; color:var(--muted); margin-top:1.25rem;">A Wix Premium plan at &pound;17/month is &pound;204/year &mdash; and after three years you&rsquo;ve spent &pound;612 on a site you still don&rsquo;t own. NeoBookworm is &pound;299 once, then &pound;119.88/year. After year one you&rsquo;re saving money, on a site that loads significantly faster and that you own outright.</p>
     </div>
   </section>
 
@@ -1536,8 +1923,8 @@
             </div>
             <span class="step-num">1</span>
           </div>
-          <h3>Send me your URL</h3>
-          <p>Fill in the form below with your website address. I&rsquo;ll take a proper look at it and come back to you with an honest assessment of what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d do differently.</p>
+          <h3>I look at what you&rsquo;ve got</h3>
+          <p>Send me your current site &mdash; or just get in touch with your details. I&rsquo;ll take a proper look and come back to you with an honest assessment: what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d do differently. No charge, no obligation, no sales call.</p>
         </div>
         <div class="step">
           <div class="step-header">
@@ -1546,8 +1933,8 @@
             </div>
             <span class="step-num">2</span>
           </div>
-          <h3>I build your new site</h3>
-          <p>If you want to go ahead, I build a new version of your plumbing site using your existing content, photos, and services. You get a link to view the finished site before anything goes live or changes hands.</p>
+          <h3>I build the new one</h3>
+          <p>If you decide to go ahead, I build your new site using your existing content, photos, and services. You get a link to view the finished site before anything goes live, changes hands, or is paid. If it&rsquo;s not right, just say so &mdash; no invoice, no awkward conversation.</p>
         </div>
         <div class="step">
           <div class="step-header">
@@ -1556,8 +1943,8 @@
             </div>
             <span class="step-num">3</span>
           </div>
-          <h3>We switch it over</h3>
-          <p>Once you&rsquo;re happy, I point your existing domain at the new site. Done correctly, there&rsquo;s no disruption to your Google presence. You don&rsquo;t pay until you&rsquo;re satisfied with what you see.</p>
+          <h3>I move it over</h3>
+          <p>Once you&rsquo;re happy, I point your existing domain at the new site. Done properly, there&rsquo;s no disruption to how you appear in Google and no downtime. Your domain stays yours throughout &mdash; registered in your name, not mine. You don&rsquo;t pay until it&rsquo;s better than what you had.</p>
         </div>
       </div>
     </div>
@@ -1579,8 +1966,9 @@
         <div class="about-nick-copy">
           <h2 class="section-title">One person. <em>Direct.</em></h2>
           <div class="gold-line"></div>
-          <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before getting fed up watching brilliant local tradespeople lose work to competitors with better-looking websites.</p>
+          <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before deciding I&rsquo;d rather help local tradespeople get a fair deal on their web presence.</p>
           <p>I&rsquo;m not an agency. When you email me, I reply. When your site needs changing, I do it &mdash; not a helpdesk in another time zone.</p>
+          <p>NeoBookworm is new, which is exactly why the model works the way it does: you see the finished site before you pay anything, and I&rsquo;ll review your current one for free first so you can judge the quality of my work before committing to anything. I&rsquo;d rather show you than tell you.</p>
         </div>
       </div>
     </div>
@@ -1596,60 +1984,85 @@
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-1">
-            Will I lose my Google ranking when I switch?
+            You&rsquo;re new &mdash; why should I trust you with my site?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-1" role="region">
             <div class="faq-answer-inner">
-              <p>No &mdash; as long as the domain stays the same (which it will) and the switch is done properly. I set up redirects so Google knows every old page maps to the right new page. In practice, rankings stay stable and often improve because the new site loads faster and is better structured.</p>
+              <p>Honestly, that&rsquo;s a fair question and I&rsquo;d ask it too. The answer is in the model: you don&rsquo;t pay anything until you&rsquo;ve seen the finished site and decided you&rsquo;re happy with it. There&rsquo;s nothing at risk on your end. And before any of that, I&rsquo;ll review your current site for free &mdash; so you can judge the quality of my thinking before you commit to anything. If after that you&rsquo;re not convinced, no problem at all. I&rsquo;m building this business up, which means I have every reason to get this right.</p>
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-2">
-            What happens to my domain name?
+            Will I lose my Google ranking when I switch?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-2" role="region">
             <div class="faq-answer-inner">
-              <p>Your domain stays yours &mdash; it&rsquo;s registered in your name and that doesn&rsquo;t change. Once the new site is ready, I&rsquo;ll walk you through pointing it at the new site, or do it with you if you prefer. The whole process takes a few minutes.</p>
+              <p>No &mdash; as long as the domain stays the same (which it will) and the switch is done properly. I set up redirects so Google knows every old page maps to the right new page. In practice, rankings stay stable and often improve because the new site loads faster and is better structured. I&rsquo;ll also show you the load speed score on both sites so you can see the concrete difference before anything goes live.</p>
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
-            Can you use my existing photos and content?
+            What happens to my domain name?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-3" role="region">
             <div class="faq-answer-inner">
-              <p>Yes &mdash; that&rsquo;s the starting point. Send me anything you have: photos of your work, your services list, your Gas Safe number, any reviews you want included. If there are gaps, I&rsquo;ll work around them and flag what would be worth adding later.</p>
+              <p>Your domain stays yours &mdash; it&rsquo;s registered in your name and that doesn&rsquo;t change. Once the new site is ready, I&rsquo;ll walk you through pointing it at the new site, or do it with you if you prefer. The whole process takes a few minutes and your existing domain keeps working throughout.</p>
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-4">
-            I&rsquo;m still in a contract with my current provider &mdash; can I still get started?
+            Someone else manages my site &mdash; is this awkward?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-4" role="region">
             <div class="faq-answer-inner">
-              <p>Yes. I&rsquo;ll build your new site now so it&rsquo;s ready to go the moment you&rsquo;re out of your contract. You don&rsquo;t pay anything until you&rsquo;ve seen it and decided you want it. Some people use the preview period to decide whether it&rsquo;s worth switching at all.</p>
+              <p>Not at all. The one thing worth checking beforehand is whether the domain is registered in your name or theirs &mdash; it&rsquo;s worth knowing who owns it. Everything I build, you own outright from day one: the domain, the files, the hosting account. No lock-in, no ongoing contract with me beyond month-to-month, moveable whenever you want. If your current arrangement works for you, that&rsquo;s genuinely fine &mdash; there&rsquo;s no pressure here.</p>
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-5">
-            How do I know the new site will actually be better?
+            Can you use my existing photos and content?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-5" role="region">
             <div class="faq-answer-inner">
-              <p>I&rsquo;ll show you the PageSpeed score on the finished site before you commit to anything. I&rsquo;ll also send you the score for your current site so you can compare directly. If the numbers don&rsquo;t back up the claim, you walk away owing nothing.</p>
+              <p>Yes &mdash; that&rsquo;s the starting point. Switching doesn&rsquo;t mean starting from scratch; I take what you already have, fix the gaps, and build the new site around your existing content. Send me anything you have: work photos, services list, Gas Safe number, any reviews you want included. If there are gaps, I&rsquo;ll work around them and flag what would be worth adding.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-6">
+            I&rsquo;m still in a contract with my current provider &mdash; can I still get started?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-6" role="region">
+            <div class="faq-answer-inner">
+              <p>Yes. I&rsquo;ll build your new site now so it&rsquo;s ready to go the moment you&rsquo;re out of your contract. You don&rsquo;t pay anything until you&rsquo;ve seen it and decided you want it. Some people use the preview period to make up their mind about whether it&rsquo;s worth switching at all.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-7">
+            How do I know the new site will actually be better?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-7" role="region">
+            <div class="faq-answer-inner">
+              <p>The comparison is concrete: I&rsquo;ll show you the load speed score on your current site and on the finished new one before you commit to anything. You can also start with the free review &mdash; that&rsquo;s a real assessment of your site with no strings attached, so you can judge the quality of what I do before you decide whether to go further.</p>
+              <p>If after seeing the finished site you&rsquo;re not satisfied, you walk away owing nothing. No invoice, no awkward conversation. The model only works if the result is genuinely better than what you had.</p>
             </div>
           </div>
         </div>
@@ -1659,25 +2072,24 @@
   </section>
 
   <!-- ══ FORM ══ -->
-  <!-- Identical across all trades (source field value and textarea placeholder change per trade) -->
   <section class="form-section" id="start">
     <div class="section-inner">
 
       <!-- This block is hidden after successful API submission -->
       <div id="form-header-and-content">
         <span class="eyebrow">Get started</span>
-        <h2 class="section-title">Tell me about your business — and how you&rsquo;d like <em>to move forward.</em></h2>
+        <h2 class="section-title">How would you like <em>to proceed?</em></h2>
         <div class="gold-line"></div>
         <div class="form-wrap">
-          <p class="form-sub">Add your website link if you know it &mdash; I&rsquo;ll take a look before we speak. Then choose how you&rsquo;d like to proceed and hit the button.</p>
+          <p class="form-sub">Choose the option that fits where you are right now. All three paths start the same way &mdash; your details, then what you&rsquo;d like to do next.</p>
 
           <form id="lead-form" novalidate>
 
             <div class="start-options-wrap">
-              <p class="start-options-label" id="start-options-heading">How would you like to get started?</p>
+              <p class="start-options-label" id="start-options-heading">What would you like to do?</p>
 
               <nav class="start-option-jump" aria-label="Jump to start options">
-                <a href="#option-review" data-start-hash="option-review">Site review</a>
+                <a href="#option-review" data-start-hash="option-review">Free site review</a>
                 <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
                 <a href="#option-switch" data-start-hash="option-switch">Ready to switch</a>
                 <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
@@ -1701,7 +2113,7 @@
                     <div class="ferr" id="e_biz">Please enter your business name</div>
                   </div>
                   <div class="field">
-                    <label for="f_url">Your current website address <span class="opt">so I can review it</span></label>
+                    <label for="f_url">Your current website address <span class="opt">so I can take a look</span></label>
                     <input type="url" id="f_url" name="currentUrl"
                            placeholder="e.g. https://www.hartplumbing.co.uk"
                            autocomplete="url">
@@ -1721,9 +2133,9 @@
                 <input type="radio" name="start_option" value="review_site_first" class="visually-hidden" tabindex="-1" aria-hidden="true">
                 <div class="start-option-num" aria-hidden="true">1</div>
                 <div class="start-option-main">
-                  <p class="start-option-kicker">Site review</p>
-                  <h3 class="start-option-title" id="option-review-heading">Review my current site first</h3>
-                  <p class="start-option-desc">I&rsquo;ll take a look at what you have and come back with honest feedback. No commitment.</p>
+                  <p class="start-option-kicker">Free site review</p>
+                  <h3 class="start-option-title" id="option-review-heading">Review my current site &mdash; free, no obligation</h3>
+                  <p class="start-option-desc">I&rsquo;ll look at what you have and come back with an honest assessment: what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d change. Nothing to commit to, no charge.</p>
                 </div>
                 <div class="start-option-footer">
                   <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-review" aria-expanded="false" aria-controls="panel-review">
@@ -1743,24 +2155,24 @@
                 <div class="start-option-num" aria-hidden="true">2</div>
                 <div class="start-option-main">
                   <p class="start-option-kicker">Ready to switch</p>
-                  <h3 class="start-option-title" id="option-switch-heading">I already know I want to switch</h3>
-                  <p class="start-option-desc">Build me a new site using my existing content. I&rsquo;ll tell you more below.</p>
+                  <h3 class="start-option-title" id="option-switch-heading">I want to go ahead and switch</h3>
+                  <p class="start-option-desc">You&rsquo;ve seen enough. I&rsquo;ll build your new site from your existing content &mdash; you see the finished version before anything goes live or gets paid.</p>
                 </div>
                 <div class="start-option-footer">
                   <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-switch" aria-expanded="false" aria-controls="panel-switch">
-                    Send switch details
+                    Get started
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
                 </div>
                 <div id="panel-switch" class="start-option-panel" role="region" aria-labelledby="option-switch-heading" hidden>
                   <div class="start-option-panel-inner"></div>
                   <div class="field">
-                    <label for="f_details">Anything else I should know <span class="opt">optional</span></label>
+                    <label for="f_details">Anything useful I should know <span class="opt">optional</span></label>
                     <textarea id="f_details" name="details" rows="5"
-                              placeholder="e.g. Stuck on Wix, unhappy with speed, want to keep my domain at GoDaddy — whatever helps."></textarea>
+                              placeholder="e.g. Currently on Wix, want to keep my domain at GoDaddy, have Gas Safe number 573421 — whatever helps me get started."></textarea>
                   </div>
                   <button type="submit" class="bstart start-option-submit" data-default-label="Send my details &rarr;">Send my details &rarr;</button>
-                  <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+                  <p class="form-privacy">I&rsquo;ll only use your details to reply about switching your site. No marketing emails, no passing your details on.</p>
                 </div>
               </article>
 
@@ -1770,7 +2182,7 @@
                 <div class="start-option-main">
                   <p class="start-option-kicker">Full inquiry</p>
                   <h3 class="start-option-title" id="option-inquiry-heading">Fill in the full intake form</h3>
-                  <p class="start-option-desc">More detail up front means I can get closer first time. Takes about five minutes.</p>
+                  <p class="start-option-desc">More detail up front means I can get closer on the first version. Takes about five minutes and covers services, area, accreditations, and photos.</p>
                 </div>
                 <div class="start-option-footer">
                   <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-inquiry" aria-expanded="false" aria-controls="panel-inquiry">
@@ -1782,7 +2194,7 @@
                   <div class="start-option-panel-inner"></div>
                   <p class="intake-panel-note">The full intake form takes about five minutes. It covers your services, your area, accreditations and any photos you&rsquo;d like to include &mdash; the more you fill in, the closer I can get on the first version.</p>
                   <button type="submit" class="bstart start-option-submit" data-default-label="Start the form &rarr;">Start the form &rarr;</button>
-                  <p class="form-privacy">I&rsquo;ll only use your details to reply about your site review. No marketing emails, no passing your details on.</p>
+                  <p class="form-privacy">I&rsquo;ll only use your details to contact you about your site. No marketing emails, no passing your details on.</p>
                 </div>
               </article>
 
@@ -1795,11 +2207,10 @@
       </div>
 
       <!-- Thank-you state — shown after successful Option 1 or 2 submission -->
-      <!-- Identical across all trades -->
       <div class="ty-wrap" id="ty-wrap" aria-live="polite">
         <div class="ty-icon" aria-hidden="true">&#10022;</div>
         <h2 class="ty-title">You&rsquo;re all <em>done.</em></h2>
-        <p class="ty-body">I&rsquo;ll review your site and come back to you within one working day with honest feedback on what I&rsquo;d change &mdash; and what I&rsquo;d keep.</p>
+        <p class="ty-body" id="ty-body-text">I&rsquo;ll come back to you within one working day &mdash; a genuine, personal reply, not a form response.</p>
         <div class="gold-line"></div>
         <p class="ty-foot">Questions in the meantime? Reach me at <span id="ctaEmail"></span></p>
       </div>
@@ -1808,6 +2219,443 @@
   </section>
 
 </main>
+
+<!-- ══ SIX FEATURE MODALS ══ -->
+
+<!-- Modal: services layout demo (triggered by #servicesCard) -->
+<div class="custom-modal" id="servicesModal" role="dialog" aria-modal="true" aria-labelledby="modal-services-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="servicesCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+
+      <div class="custom-modal-text">
+        <h2 id="modal-services-heading">Your services, written for the way <em>you</em> work.</h2>
+        <p>A services section isn&rsquo;t just a list &mdash; it&rsquo;s the first thing a customer reads to decide if you&rsquo;re the right plumber for them. Three approaches below: pick whichever matches how you run your business.</p>
+      </div>
+
+      <div class="gallery-tabs" role="tablist" aria-label="Services layout options">
+        <button class="gallery-tab active" id="tabAllRounder" role="tab" aria-selected="true"  aria-controls="panelAllRounder">All-rounder</button>
+        <button class="gallery-tab"        id="tabSpecialist" role="tab" aria-selected="false" aria-controls="panelSpecialist">Specialist</button>
+        <button class="gallery-tab"        id="tabEmergency"  role="tab" aria-selected="false" aria-controls="panelEmergency">Emergency</button>
+      </div>
+
+      <!-- Panel 1: All-rounder -->
+      <div id="panelAllRounder" role="tabpanel" aria-labelledby="tabAllRounder">
+        <div class="svc-grid">
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C9 6 6 9 6 13a6 6 0 0 0 12 0c0-4-3-7-6-11z" stroke="#0f1f3d" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 17v-4" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Boilers &amp; Heating</span>
+            </div>
+            <ul>
+              <li>New boiler installation</li>
+              <li>Annual boiler servicing</li>
+              <li>Power flushing</li>
+            </ul>
+          </div>
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18h16M4 18v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1M4 18c0-4 2-7 8-7s8 3 8 7M8 11V7a4 4 0 0 1 8 0v4" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Bathrooms</span>
+            </div>
+            <ul>
+              <li>Full bathroom fits</li>
+              <li>Shower installation</li>
+              <li>Taps, basins &amp; toilets</li>
+            </ul>
+          </div>
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Plumbing &amp; Repairs</span>
+            </div>
+            <ul>
+              <li>Leaks &amp; burst pipes</li>
+              <li>Cylinder &amp; tank work</li>
+              <li>Outdoor tap installation</li>
+            </ul>
+          </div>
+          <div class="svc-cat">
+            <div class="svc-cat-head">
+              <div class="svc-cat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v6M12 2l-3 3M12 2l3 3" stroke="#0f1f3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10h14l-1.5 9H6.5L5 10z" stroke="#0f1f3d" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="svc-cat-name">Drainage</span>
+            </div>
+            <ul>
+              <li>Blocked drains &amp; toilets</li>
+              <li>Outside drain clearance</li>
+              <li>Overflow &amp; waste repairs</li>
+            </ul>
+          </div>
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Organised by job type so customers land straight on their problem &mdash; not a wall of text they have to read through.</p>
+      </div>
+
+      <!-- Panel 2: Specialist -->
+      <div id="panelSpecialist" role="tabpanel" aria-labelledby="tabSpecialist" hidden>
+        <div class="svc-spec-header">
+          <div class="nb-badge nb-gassafe" style="flex-shrink:0;">
+            <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+            <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER<br>Reg. No. 573421</div></div>
+          </div>
+          <p>Heating and boiler specialist covering Swindon and surrounding Wiltshire. All gas work Gas Safe registered.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>New boiler installation</strong>
+          <p>Replace your old boiler with a modern A-rated combi or system boiler. We supply and fit &mdash; Worcester Bosch, Vaillant or Ideal. Most installations completed in one day.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Boiler repair &amp; servicing</strong>
+          <p>Annual Gas Safe service to keep your boiler running safely and your manufacturer&rsquo;s warranty valid. Fast-turnaround repairs on all makes and models.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Power flushing</strong>
+          <p>Clears sludge and debris from your heating system. Reduces energy bills, extends boiler life, and fixes those cold spots on radiators that never seem to warm up.</p>
+        </div>
+        <div class="svc-spec-item">
+          <strong>Central heating installation</strong>
+          <p>Full system design and installation &mdash; new pipework, radiators, and thermostatic controls. Priced in writing before we start, no surprises when the job is done.</p>
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Works best if you want to be known as the go-to heating person in your area, not a generalist who also does boilers.</p>
+      </div>
+
+      <!-- Panel 3: Emergency -->
+      <div id="panelEmergency" role="tabpanel" aria-labelledby="tabEmergency" hidden>
+        <div class="svc-emrg-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#0f1f3d" stroke-width="1.5"/><path d="M12 7v5l3 3" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Available 24 hours &mdash; Paul answers the phone directly.</span>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#dc2626;"></span>
+            <strong>Burst pipe</strong>
+            <span class="svc-emrg-badge urgent">Emergency</span>
+          </div>
+          <p class="svc-emrg-note">Stop the damage before it spreads. Call now and we&rsquo;ll be with you as fast as we can get there.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#dc2626;"></span>
+            <strong>No heating or hot water</strong>
+            <span class="svc-emrg-badge urgent">Emergency</span>
+          </div>
+          <p class="svc-emrg-note">Boiler breakdown or complete loss of hot water &mdash; we prioritise these, especially in winter.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#f5a623;"></span>
+            <strong>Blocked drain or toilet</strong>
+            <span class="svc-emrg-badge same-day">Same day</span>
+          </div>
+          <p class="svc-emrg-note">Kitchen, bathroom or outside &mdash; we&rsquo;ll clear it and check what caused it.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:#f5a623;"></span>
+            <strong>Leaking pipe or joint</strong>
+            <span class="svc-emrg-badge same-day">Same day</span>
+          </div>
+          <p class="svc-emrg-note">Don&rsquo;t let a small drip become a big repair bill. Turn off the water and call us.</p>
+        </div>
+        <div class="svc-emrg-item">
+          <div class="svc-emrg-row">
+            <span class="svc-emrg-dot" style="background:rgba(15,31,61,0.25);"></span>
+            <strong>Cylinder or tank replacement</strong>
+            <span class="svc-emrg-badge next-day">Next day</span>
+          </div>
+          <p class="svc-emrg-note">Hot water cylinder given up? We carry common sizes in stock to get you back up quickly.</p>
+        </div>
+        <p class="ba-caption" style="margin-top:14px;">Works best if speed and availability are your main selling point &mdash; customers in a crisis aren&rsquo;t browsing, they&rsquo;re calling the first number they trust.</p>
+      </div>
+
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me which fits how you work</strong> when you fill in the form below &mdash; or describe how you run your business and I&rsquo;ll suggest the right approach.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal: gallery layout demo (triggered by #photosCard) -->
+<div class="custom-modal" id="photosModal" role="dialog" aria-modal="true" aria-labelledby="modal-photos-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="photosCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+
+      <div class="custom-modal-text">
+        <h2 id="modal-photos-heading">Your gallery, <em>your way.</em></h2>
+        <p>Real photos build more trust than anything you can write. Two ways I can present your work &mdash; pick whichever suits your jobs best, or we can mix and match.</p>
+        <!-- NOTE: Gallery images below are placeholder demonstrations. Real job photos supplied by the client replace these. -->
+      </div>
+
+      <div class="gallery-tabs" role="tablist" aria-label="Gallery layout options">
+        <button class="gallery-tab active" id="tabBA" role="tab" aria-selected="true" aria-controls="panelBA">Before &amp; After</button>
+        <button class="gallery-tab" id="tabGrid" role="tab" aria-selected="false" aria-controls="panelGrid">Job Gallery</button>
+      </div>
+
+      <!-- Panel A: Before/After slider -->
+      <div id="panelBA" role="tabpanel" aria-labelledby="tabBA">
+        <div class="ba-slider" id="baSlider">
+          <div class="ba-after">
+            <!-- PLACEHOLDER: Replace with real after photo -->
+            <div class="ba-ph-after"></div>
+          </div>
+          <div class="ba-before-wrap" id="baBeforeWrap">
+            <!-- PLACEHOLDER: Replace with real before photo -->
+            <div class="ba-ph-before"></div>
+          </div>
+          <span class="ba-label ba-label-before" aria-hidden="true">Before</span>
+          <span class="ba-label ba-label-after" aria-hidden="true">After</span>
+          <div class="ba-handle" id="baHandleEl" aria-hidden="true">
+            <div class="ba-handle-line"></div>
+            <div class="ba-handle-circle">
+              <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M6 7H1M1 7L4 4M1 7L4 10" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 7H19M19 7L16 4M19 7L16 10" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="ba-handle-line"></div>
+          </div>
+        </div>
+        <p class="ba-caption">Drag the handle to compare &mdash; works the same way on a phone with a swipe.</p>
+      </div>
+
+      <!-- Panel B: Job grid -->
+      <div id="panelGrid" role="tabpanel" aria-labelledby="tabGrid" hidden>
+        <div class="job-grid">
+          <!-- PLACEHOLDER: All four tiles below use placeholder imagery. Real job photos from the client replace these. -->
+          <div class="job-tile">
+            <div class="job-tile-ph" style="background:linear-gradient(135deg,#2a3a50 0%,#1a2a3a 100%);">
+              <div class="job-tile-caption">
+                <strong>Boiler replacement</strong>
+                <span>Swindon &middot; Worcester Bosch combi — placeholder</span>
+              </div>
+            </div>
+          </div>
+          <div class="job-tile">
+            <div class="job-tile-ph" style="background:linear-gradient(135deg,#3a2a20 0%,#2a1a10 100%);">
+              <div class="job-tile-caption">
+                <strong>Full bathroom refit</strong>
+                <span>Chippenham &middot; 4-day install — placeholder</span>
+              </div>
+            </div>
+          </div>
+          <div class="job-tile">
+            <div class="job-tile-ph" style="background:linear-gradient(135deg,#1a3025 0%,#0a2015 100%);">
+              <div class="job-tile-caption">
+                <strong>Emergency leak repair</strong>
+                <span>Royal Wootton Bassett &middot; Same-day — placeholder</span>
+              </div>
+            </div>
+          </div>
+          <div class="job-tile">
+            <div class="job-tile-ph" style="background:linear-gradient(135deg,#2a2040 0%,#1a1030 100%);">
+              <div class="job-tile-caption">
+                <strong>Outdoor pipework</strong>
+                <span>Marlborough &middot; Garden office supply — placeholder</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="ba-caption" style="margin-top:12px;">Each photo shows the job type and where it was done &mdash; replaced with your real work photos when the site is built.</p>
+      </div>
+
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Send me your best photos</strong> via the form below &mdash; before/afters if you have them, finished jobs otherwise. Phone photos are fine.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Gas Safe badge demo (triggered by #gasSafeCard) -->
+<div class="custom-modal" id="gasSafeModal" role="dialog" aria-modal="true" aria-labelledby="modal-gassafe-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="gasSafeCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:28px; padding:40px 48px;">
+      <div class="custom-modal-text">
+        <h2 id="modal-gassafe-heading">Your registration, verified in <em>one click.</em></h2>
+        <p>Your Gas Safe number goes on every page &mdash; not buried in small print, but displayed as a proper badge, linked live to the public register. A customer who wants to check you&rsquo;re legit can do it in seconds, before they even pick up the phone. Most Wix and template sites don&rsquo;t do this.</p>
+      </div>
+
+      <div>
+        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:rgba(15,31,61,0.4); margin-bottom:8px;">In your site header</div>
+        <div style="background:#fff; border:1px solid rgba(15,31,61,0.1); border-radius:8px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <span style="font-family:var(--serif); font-size:1rem; font-weight:700; color:var(--navy);">Paul&rsquo;s Plumbing</span>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div class="nb-badge nb-gassafe">
+              <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+              <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER<br>Reg. No. 573421</div></div>
+            </div>
+            <div class="nb-insured">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#5f5e5a" stroke-width="1.5" fill="none"/><path d="M9 12L11 14L15 10" stroke="#5f5e5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div><div class="nb-top">Fully Insured</div><div class="nb-bot">Public liability cover<br>up to &pound;5 million</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:rgba(15,31,61,0.4); margin-bottom:8px;">On your dark sections &amp; footer</div>
+        <div style="background:var(--navy); border-radius:8px; padding:18px 20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <div class="nb-badge nb-gassafe dk">
+            <div class="nb-mark"><svg width="18" height="22" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="white" opacity="0.9"/><path d="M12 24C10 24 8.5 22.5 8.5 20.5C8.5 18.5 10 17 11 15.5C11 17 11.8 17.5 12.5 16.5C13.2 15.5 13 14 12 13C14.5 14 16.5 16.5 16.5 19.5C16.5 22 14.5 24 12 24Z" fill="#f5a623"/></svg></div>
+            <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">REGISTER &middot; Reg. No. 573421</div></div>
+          </div>
+          <div class="nb-badge nb-checkatrade dk">
+            <div class="nb-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12L10 17L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="nb-text"><div class="nb-top">CHECKATRADE</div><div class="nb-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="nb-bot">4.9 &middot; 94 reviews</div></div>
+          </div>
+          <div class="nb-insured dk">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#a0b4cc" stroke-width="1.5" fill="none"/><path d="M9 12L11 14L15 10" stroke="#a0b4cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><div class="nb-top">Fully Insured</div><div class="nb-bot">Public liability &pound;5m</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me your Gas Safe number</strong> in the form below and I&rsquo;ll link it straight to the register. Checkatrade reviews can go on too if you have them.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: tap to call / contact demo (triggered by #callCard) -->
+<div class="custom-modal" id="callModal" role="dialog" aria-modal="true" aria-labelledby="modal-call-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="callCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:840px; grid-template-columns:auto 1fr; gap:44px; padding:40px 48px; align-items:start;">
+
+      <div class="phone-mock" aria-hidden="true">
+        <div class="phone-mock-inner">
+          <div class="phone-mock-notch"></div>
+          <div class="phone-mock-body">
+            <div class="phone-biz-name">
+              Paul&rsquo;s Plumbing <span>Swindon &amp; surrounding areas</span>
+            </div>
+            <div class="phone-call-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14 14.6C14.2 14.4 14.6 14.3 14.9 14.5C16 14.9 17.2 15.1 18.5 15.1C19 15.1 19.4 15.5 19.4 16V18.5C19.4 19 19 19.4 18.5 19.4C9.7 19.4 2.6 12.3 2.6 3.5C2.6 3 3 2.6 3.5 2.6H6C6.5 2.6 6.9 3 6.9 3.5C6.9 4.8 7.1 6 7.5 7.1C7.6 7.4 7.5 7.8 7.3 8L5.5 9.8C5.5 10 6 10.5 6.6 10.8Z" fill="#0f1f3d"/></svg>
+              <div class="phone-call-label">
+                <strong>Call Paul</strong>
+                <span>07700 900 123</span>
+              </div>
+            </div>
+            <div class="phone-or">or send a message</div>
+            <input class="phone-field" type="text" placeholder="Your name" disabled aria-hidden="true">
+            <textarea class="phone-field" rows="3" placeholder="What do you need help with?" disabled aria-hidden="true"></textarea>
+            <div class="phone-send-btn">Send message &rarr;</div>
+          </div>
+        </div>
+        <div class="phone-mock-home"></div>
+      </div>
+
+      <div class="custom-modal-text">
+        <h2 id="modal-call-heading">One tap to call. Works on <em>every phone.</em></h2>
+        <p>Most people searching for a plumber are on their mobile &mdash; not sitting at a desk. If your current site doesn&rsquo;t have a large, obvious tap-to-call button on every page, you&rsquo;re losing the people most likely to ring.</p>
+        <ul class="feature-list">
+          <li>Large tap-to-call button, styled so it&rsquo;s impossible to miss</li>
+          <li>Contact form that works on a small screen &mdash; no tiny fields or horizontal scrolling</li>
+          <li>Both options on every page, not just a dedicated contact page</li>
+          <li>Your number in a size people can actually read without zooming</li>
+        </ul>
+        <div class="modal-cta">
+          <p><strong>Call only, form only, or both</strong> &mdash; tell me how you prefer to hear from customers and I&rsquo;ll set it up that way.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal: custom site / Paul avatar (triggered by #customCard) -->
+<div class="custom-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-custom-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="closeBtn" aria-label="Close dialog">&times;</button>
+
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner">
+      <div class="custom-modal-video">
+        <!-- src set in JS on first open — tied to tap gesture (iOS Safari). Preload none until then. -->
+        <video
+          id="avatarIntroVideo"
+          width="350"
+          height="350"
+          muted
+          loop
+          playsinline
+          preload="none"
+        ></video>
+      </div>
+
+      <div class="custom-modal-text">
+        <h2 id="modal-custom-heading">Built around <em>your</em> business &mdash; not a layout I already had.</h2>
+
+        <p>Every switcher worries their new site will just look like the last one. It won&rsquo;t. You choose:</p>
+
+        <ul class="feature-list">
+          <li>Whether you want an avatar like Paul here or not</li>
+          <li>Your colours and fonts</li>
+          <li>Which sections you actually need &mdash; your story, job photos, testimonials, whatever matters</li>
+          <li>How your gallery looks</li>
+          <li>Where your phone number and contact form sit on the page</li>
+          <li>What questions the contact form asks</li>
+        </ul>
+
+        <p>Every site is different because every plumber is different. The starting point is your existing content &mdash; not a template.</p>
+
+        <div class="modal-cta">
+          <p><strong>Tell me what you&rsquo;d want to keep and what you&rsquo;d want to change</strong> in the form below &mdash; that&rsquo;s where we start.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: service area map (triggered by #areaCard) -->
+<div class="custom-modal" id="areaModal" role="dialog" aria-modal="true" aria-labelledby="modal-area-heading" aria-hidden="true">
+  <button type="button" class="custom-modal-close" id="areaCloseBtn" aria-label="Close dialog">&times;</button>
+  <div class="custom-modal-content">
+    <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px;">
+      <div class="custom-modal-text">
+        <h2 id="modal-area-heading">Your service area, shown <em>your</em> way.</h2>
+        <p>When I build your site, you choose how your coverage area appears on the map. Three options &mdash; pick whichever matches how you think about your patch.</p>
+      </div>
+      <div class="area-options-grid">
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:2px solid var(--amber); height:220px;" id="areaMap1"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">Postcode districts</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">Exact postcode boundaries — SN1, SN2, SN3 and so on. Ideal if you think in postcodes and want to be precise about which areas you cover.</p>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:1px solid rgba(15,31,61,0.15); height:220px;" id="areaMap2"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">Radius from base</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">A circle showing how far you travel from your base. Simple, clear, and works well if you cover a consistent area in all directions.</p>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border-radius:8px; overflow:hidden; border:1px solid rgba(15,31,61,0.15); height:220px;" id="areaMap3"></div>
+          <div>
+            <strong style="font-family:var(--serif); font-size:1rem; color:var(--navy); display:block; margin-bottom:4px;">County-wide</strong>
+            <p style="font-size:0.85rem; color:rgba(15,31,61,0.7); line-height:1.55; margin:0;">Your full county boundary. Best if you genuinely cover the whole area and want to keep it simple for customers to understand.</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Tell me which style you&rsquo;d like</strong> in the form below and I&rsquo;ll build it exactly that way.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ FOOTER (minimal: copyright + Privacy, Terms, Contact) ══ -->
 <footer>
@@ -2013,11 +2861,28 @@
     }
   })();
 
+  /* ── Hero CTA: "Get a free site review" scrolls to form and opens option 1 ── */
+  (function(){
+    var heroCta = document.querySelector('a[data-start-open="option-review"]');
+    if (!heroCta) return;
+    heroCta.addEventListener('click', function(e){
+      e.preventDefault();
+      var section = document.getElementById('start');
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+      /* Open panel after scroll settles */
+      setTimeout(function(){
+        var btn = document.querySelector('[data-start-expand="option-review"]');
+        if (btn) btn.click();
+      }, 600);
+    });
+  })();
+
   /* ── Form validation and submission ── */
   (function(){
     var form=document.getElementById('lead-form');
     var formHeaderAndContent=document.getElementById('form-header-and-content');
     var tyWrap=document.getElementById('ty-wrap');
+    var tyBodyText=document.getElementById('ty-body-text');
     var errBox=document.getElementById('submit-error');
 
     var textFields=[
@@ -2131,6 +2996,14 @@
         });
       })
       .then(function(){
+        /* Tailor thank-you message to the option chosen */
+        if(tyBodyText){
+          if(selectedOption==='review_site_first'){
+            tyBodyText.textContent='I\u2019ll look at your current site and come back to you within one working day with honest feedback \u2014 what I\u2019d change and what I\u2019d keep. A personal reply, not a form response.';
+          } else {
+            tyBodyText.textContent='I\u2019ll be in touch within one working day to get started. I\u2019ll use your existing content and come back to you with any questions before I build anything.';
+          }
+        }
         formHeaderAndContent.style.display='none';
         tyWrap.classList.add('show');
         window.scrollTo({
@@ -2143,6 +3016,409 @@
         errBox.style.display='block';
         if(window.console&&console.warn) console.warn(err);
       });
+    });
+  })();
+
+  /* ── Custom-site modal (#customCard) ── */
+  (function(){
+    var AVATAR_MP4 = '/plumber-avatar-optimized.mp4';
+    var customCard = document.getElementById('customCard');
+    var modal = document.getElementById('modal');
+    var closeBtn = document.getElementById('closeBtn');
+    var vid = document.getElementById('avatarIntroVideo');
+    if (!customCard || !modal || !closeBtn || !vid) return;
+
+    function primeAvatarVideo(){
+      if (!vid.dataset.srcBound){
+        vid.src = AVATAR_MP4;
+        vid.dataset.srcBound = '1';
+      }
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.setAttribute('muted', '');
+      vid.playsInline = true;
+      vid.setAttribute('playsinline', '');
+      vid.setAttribute('webkit-playsinline', '');
+      vid.removeAttribute('controls');
+    }
+
+    function tryPlayAvatarVideo(){
+      var p = vid.play();
+      if (p && typeof p.catch === 'function'){
+        p.catch(function(){});
+      }
+    }
+
+    vid.addEventListener('loadedmetadata', function(){
+      if (modal.classList.contains('active')) tryPlayAvatarVideo();
+    });
+    vid.addEventListener('canplay', function(){
+      if (modal.classList.contains('active')) tryPlayAvatarVideo();
+    });
+
+    function openModal(){
+      primeAvatarVideo();
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      tryPlayAvatarVideo();
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          tryPlayAvatarVideo();
+          closeBtn.focus();
+        });
+      });
+    }
+
+    function closeModal(){
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      try { vid.pause(); } catch (err) {}
+      customCard.focus();
+    }
+
+    customCard.addEventListener('touchend', function(e){
+      openModal();
+      e.preventDefault();
+    }, { passive: false });
+
+    customCard.addEventListener('click', openModal);
+    customCard.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openModal();
+      }
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)){
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')){
+        closeModal();
+      }
+    });
+  })();
+
+  /* ── Services modal (#servicesCard) — 3-way tab switcher ── */
+  (function(){
+    var card     = document.getElementById('servicesCard');
+    var modal    = document.getElementById('servicesModal');
+    var closeBtn = document.getElementById('servicesCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+
+    var tabs   = [
+      document.getElementById('tabAllRounder'),
+      document.getElementById('tabSpecialist'),
+      document.getElementById('tabEmergency')
+    ];
+    var panels = [
+      document.getElementById('panelAllRounder'),
+      document.getElementById('panelSpecialist'),
+      document.getElementById('panelEmergency')
+    ];
+
+    function switchTab(idx) {
+      tabs.forEach(function(t, i) {
+        var active = (i === idx);
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+        if (active) panels[i].removeAttribute('hidden');
+        else         panels[i].setAttribute('hidden', '');
+      });
+    }
+    tabs.forEach(function(t, i){ t.addEventListener('click', function(){ switchTab(i); }); });
+
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      switchTab(0);
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+  })();
+
+  /* ── Photos modal (#photosCard) — tabs + before/after slider ── */
+  (function(){
+    var card     = document.getElementById('photosCard');
+    var modal    = document.getElementById('photosModal');
+    var closeBtn = document.getElementById('photosCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+
+    var tabBA    = document.getElementById('tabBA');
+    var tabGrid  = document.getElementById('tabGrid');
+    var panelBA  = document.getElementById('panelBA');
+    var panelGrid = document.getElementById('panelGrid');
+
+    function switchTab(toBA) {
+      if (toBA) {
+        tabBA.classList.add('active');    tabBA.setAttribute('aria-selected', 'true');
+        tabGrid.classList.remove('active'); tabGrid.setAttribute('aria-selected', 'false');
+        panelBA.removeAttribute('hidden');
+        panelGrid.setAttribute('hidden', '');
+      } else {
+        tabGrid.classList.add('active');  tabGrid.setAttribute('aria-selected', 'true');
+        tabBA.classList.remove('active'); tabBA.setAttribute('aria-selected', 'false');
+        panelGrid.removeAttribute('hidden');
+        panelBA.setAttribute('hidden', '');
+      }
+    }
+    if (tabBA)   tabBA.addEventListener('click',   function(){ switchTab(true); });
+    if (tabGrid) tabGrid.addEventListener('click', function(){ switchTab(false); });
+
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      switchTab(true);
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+
+    /* Before/After slider */
+    var slider     = document.getElementById('baSlider');
+    var beforeWrap = document.getElementById('baBeforeWrap');
+    var handleEl   = document.getElementById('baHandleEl');
+    if (!slider || !beforeWrap || !handleEl) return;
+    var dragging = false;
+
+    function setPos(p) {
+      p = Math.max(5, Math.min(95, p));
+      beforeWrap.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)';
+      handleEl.style.left = p + '%';
+    }
+    function relX(e) {
+      var rect = slider.getBoundingClientRect();
+      var cx = e.touches ? e.touches[0].clientX : e.clientX;
+      return ((cx - rect.left) / rect.width) * 100;
+    }
+    slider.addEventListener('mousedown', function(e){ dragging = true; setPos(relX(e)); e.preventDefault(); });
+    slider.addEventListener('touchstart', function(e){ dragging = true; setPos(relX(e)); }, { passive: true });
+    document.addEventListener('mousemove', function(e){ if (dragging) setPos(relX(e)); });
+    document.addEventListener('touchmove', function(e){ if (dragging) setPos(relX(e)); }, { passive: true });
+    document.addEventListener('mouseup',   function(){ dragging = false; });
+    document.addEventListener('touchend',  function(){ dragging = false; });
+    setPos(50);
+  })();
+
+  /* ── Gas Safe modal (#gasSafeCard) ── */
+  (function(){
+    var card     = document.getElementById('gasSafeCard');
+    var modal    = document.getElementById('gasSafeModal');
+    var closeBtn = document.getElementById('gasSafeCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+  })();
+
+  /* ── Call modal (#callCard) ── */
+  (function(){
+    var card     = document.getElementById('callCard');
+    var modal    = document.getElementById('callModal');
+    var closeBtn = document.getElementById('callCloseBtn');
+    if (!card || !modal || !closeBtn) return;
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      card.focus();
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('touchend', function(e){ open(); e.preventDefault(); }, { passive: false });
+    card.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      var inner = modal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+  })();
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  /* ── Area modal (#areaCard) ── */
+  (function () {
+    var areaCard   = document.getElementById('areaCard');
+    var areaModal  = document.getElementById('areaModal');
+    var areaClose  = document.getElementById('areaCloseBtn');
+    if (!areaCard || !areaModal || !areaClose) return;
+
+    var mapsInit = false;
+    var AMBER      = '#f5a623';
+    var AMBER_FILL = 'rgba(245,166,35,0.22)';
+    var NAVY       = '#0f1f3d';
+    var NAVY_FILL  = 'rgba(15,31,61,0.07)';
+    var TILE_URL   = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+    var TILE_ATTR  = '&copy; Stadia Maps &copy; OpenStreetMap';
+    var R2_BASE    = 'https://pub-21917a0ea3ab48be8f0209e81af0a6ed.r2.dev/data';
+
+    function refreshMap(map) {
+      setTimeout(function(){ map.invalidateSize(); }, 250);
+    }
+
+    function initMaps() {
+      if (mapsInit) return;
+      mapsInit = true;
+
+      var swindon = [51.5558, -1.7797];
+      var wiltshireCentre = [51.30, -1.95];
+
+      var m1 = L.map('areaMap1', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .setView(swindon, 10);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m1);
+      refreshMap(m1);
+      fetch(R2_BASE + '/SN.geojson')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var CORE = ['SN1','SN2','SN3','SN4','SN5','SN25','SN26'];
+          var layers = [];
+          data.features.forEach(function(f) {
+            var isCore = CORE.indexOf(f.properties.name) !== -1;
+            var layer = L.geoJSON(f, { style: {
+              color: isCore ? AMBER : NAVY,
+              weight: isCore ? 2 : 0.8,
+              fillColor: isCore ? AMBER_FILL : NAVY_FILL,
+              fillOpacity: 1,
+              opacity: isCore ? 1 : 0.3
+            }}).addTo(m1);
+            if (isCore) layers.push(layer);
+          });
+          m1.fitBounds(L.featureGroup(layers).getBounds(), { padding: [8, 8] });
+          m1.invalidateSize();
+        })
+        .catch(function(err){ if (window.console) console.error('SN.geojson fetch failed:', err); });
+
+      var radiusMetres = 10 * 1609.34;
+      var radiusBounds = L.latLng(swindon).toBounds(radiusMetres * 2);
+      var m2 = L.map('areaMap2', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .fitBounds(radiusBounds, { padding: [8, 8] });
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m2);
+      L.circle(swindon, {
+        radius: radiusMetres,
+        color: AMBER,
+        weight: 2.5,
+        fillColor: AMBER_FILL,
+        fillOpacity: 1
+      }).addTo(m2);
+      L.circleMarker(swindon, { radius: 5, color: NAVY, fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(m2);
+      refreshMap(m2);
+
+      var m3 = L.map('areaMap3', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+        .setView(wiltshireCentre, 9);
+      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m3);
+      refreshMap(m3);
+      fetch(R2_BASE + '/wiltshire.geojson')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          var layer = L.geoJSON(data, { style: {
+            color: AMBER,
+            weight: 2.5,
+            fillColor: AMBER_FILL,
+            fillOpacity: 1
+          }}).addTo(m3);
+          m3.fitBounds(layer.getBounds(), { padding: [8, 8] });
+          m3.invalidateSize();
+        })
+        .catch(function(err){ if (window.console) console.error('wiltshire.geojson fetch failed:', err); });
+    }
+
+    function openAreaModal() {
+      areaModal.classList.add('active');
+      areaModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      areaClose.focus();
+      setTimeout(initMaps, 300);
+    }
+
+    function closeAreaModal() {
+      areaModal.classList.remove('active');
+      areaModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      areaCard.focus();
+    }
+
+    areaCard.addEventListener('click', openAreaModal);
+    areaCard.addEventListener('touchend', function(e){ openAreaModal(); e.preventDefault(); }, { passive: false });
+    areaCard.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openAreaModal(); }
+    });
+    areaClose.addEventListener('click', closeAreaModal);
+    areaModal.addEventListener('click', function(e){
+      var inner = areaModal.querySelector('.custom-modal-inner');
+      if (inner && !inner.contains(e.target)) closeAreaModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
     });
   })();
 </script>
