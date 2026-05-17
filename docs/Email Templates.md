@@ -346,149 +346,413 @@ Optionally include a local search volume data point if it's strong enough to be 
 
 ---
 
-# Segment C — The Outdated Website Owner
+# Segment C — Has-Website Prospects
 
-## Profile
+Segment C covers all `has-website` campaign prospects. It splits into four sub-segments based on the `website_sub_segment` field populated by `neobookworm-website-audit`. Each sub-segment has a distinct profile, objection, and email angle.
 
-Already has a website, but it's visibly outdated: pre-2018 design, not mobile-responsive, broken links, expired SSL, or poor PageSpeed score. They've already accepted the concept of having a website — the barrier is switching cost and sunk cost.
+**Important — landing page vs demo URL:** Has-website campaigns point to a trade landing page (e.g. `neobookworm.uk/plumbers-switch`), not a bespoke demo built for this prospect. The landing page shows example sites and explains the switch process. Never frame the link as "a demo I built for you" — it is a page showing what I build for others. Reference it as: "here's what the end result looks like:" or "examples of what I build for plumbers:" followed by the plain URL on its own line.
 
-## Primary objection
+**Risk reversal for all C sub-segments:** The standard "you don't pay until you're happy with it" framing is even stronger here — reframe it as: *"you don't pay until it's better than what you've got."* The prospect has something to compare against. This removes the only real objection.
 
-"I've already got one" / "I paid for that" (sunk cost fallacy). They know it's not great but feel attached to what they spent.
+**Review-count modifiers:** The C sub-segment determines the email angle. The A/B/D review-count logic still informs tone and personalisation within each sub-segment — an established C2 prospect with 80 reviews gets a different opening than a C2 with 8 — but the website state drives the argument.
 
-## Psychological approach
+---
 
-This segment requires a different opening to all others: **lead with a specific, non-judgmental audit of their current site**, not the demo. Naming a concrete problem ("it doesn't load on mobile") demonstrates expertise and gives them a specific, solvable reason to engage — without implying they made a bad decision.
+## Segment C1 — Dead Domain
 
-The reframe: *"You didn't make a mistake — websites from that era look like that. This is what an updated one looks like."*
+### Profile
 
-The **demo is even more powerful here** than for Segments A and B, because they can do a direct comparison between their current site and the new one.
+Had a website; the domain has lapsed. Now serves a registrar parking page or fails to load entirely. They once valued having a site, paid for one, and lost it — usually through inattention rather than a deliberate decision. The parking page is actively damaging: anyone who searches their name or types the old URL sees a placeholder instead of a business.
 
-## Email 1 — Initial Outreach
+### Primary objection
+
+"I had one and it wasn't worth the hassle" or simply haven't noticed / haven't got round to sorting it. Loss-aversion is the lever — they already know what it's like to have a site.
+
+### Psychological approach
+
+**Lead with the damage, not the opportunity.** The parking page is a concrete, verifiable, existing problem — not a theoretical future benefit. They don't need convincing that websites have value; they already demonstrated that when they built the first one. The argument is: you're losing something you used to have, and fixing it is less effort than you think.
+
+The tone should be matter-of-fact, not alarming. State the fact ("your old domain now shows a parking page"), then move immediately to the solution. Do not dwell on the negative.
+
+Do not frame this as "you need a new website" — frame it as "you need your old one back, but better."
+
+### Email 1 — Initial Outreach
 
 **Subject line options:**
-
-- `[Business Name] — noticed something about your site`
-- `Quick thing about your website`
-- `[Business Name] site — worth 30 seconds`
+- `[Business Name] — your old site`
+- `[Business Name] — noticed your domain`
+- `Quick thing about [businessname.co.uk]`
 
 **Structure:**
-
-1. Open with a specific, factual observation about their current site — no judgment, just a fact ("it doesn't load on mobile", "the SSL certificate has expired", "it scores X on PageSpeed")
-2. Acknowledge they've already done the hard part (they have a site — they get it)
-3. Show the demo as an updated version
-4. Remove switching friction — mention that content migration is handled
-5. Compliance footer
+1. State the domain problem plainly — one sentence, no judgement
+2. Acknowledge they've been through this before (they built the first one — they get it)
+3. Landing page link — "here's what the end result looks like:"
+4. Risk reversal: "don't pay until it's better than what you had"
+5. Pricing — one sentence
+6. Autonomy-preserving close
+7. Sign-off and footer
 
 **Example output:**
 
 > Hi [Name],
-> 
+>
+> Your old domain — [domain] — is currently showing a registrar parking page when anyone searches for you. Anyone [Name] sends your way and types it in gets a dead end.
+>
+> You've been through building a site before, so you know what's involved. I build them for [trade]s — here's what the end result looks like:
+>
+> neobookworm.uk/plumbers-switch
+>
+> You don't pay until it's better than what you had. Full 5-page site is £299 fixed, £9.99/month after that.
+>
+> Worth a look, or not — no pressure either way.
+>
+> Nick | NeoBookworm.uk
 
-> 
-> 
+**Word count target:** 85–105 words.
 
-> I had a look at [current website URL] — the work looks great, but the site isn't loading properly on mobile, which is how most people will see it. On a phone the layout breaks and the contact details are hard to find.
-> 
+**What NOT to write:**
+- ❌ "You need a website" — they know; they had one
+- ❌ "In today's digital world..." — generic, eye-rolling
+- ❌ Implying they were negligent for letting it lapse
+- ❌ Multiple problems — the parking page is enough
 
-> 
-> 
+### Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
 
-> You've already done the hard bit — you know you need a website. I've put together an updated version showing what it could look like with a modern layout: [demo URL]
-> 
+**Timing:** 5–7 days after Email 1.
 
-> 
-> 
+**Angle:** Switch to the **ownership and continuity** angle. The first site lapsed because it was tied to a hosting contract they forgot about or stopped paying. This one is set-and-forget: £9.99/month, no annual renewal trap, no domain expiry surprises.
 
-> Full refresh is £299 fixed, and I migrate all your existing content — you don't start from scratch. Worth a look?
-> 
+**Example output:**
 
-> 
-> 
+> Hi [Name],
+>
+> Quick follow-up — examples of what I build are here if you want a look:
+>
+> neobookworm.uk/plumbers-switch
+>
+> One thing worth knowing: the main reason domains lapse is annual renewal reminders getting buried. My hosting is a flat £9.99/month — no yearly renewal, no surprise expiry. Once it's live, it stays live.
+>
+> Won't chase after this — just wanted to make sure you'd seen it.
+>
+> Nick | NeoBookworm.uk
 
-> Nick | [NeoBookworm.uk](http://NeoBookworm.uk)
-> 
+**Word count target:** 70–90 words.
+
+### Email 3 — Final follow-up (Ltd companies only)
+
+**Timing:** 10–14 days after Email 2.
+
+**Angle:** Short breakup. Leave the door open. No new arguments.
+
+**Example output:**
+
+> Hi [Name],
+>
+> Last one from me. If you ever want to get something live again, I'm easy to find — just reply.
+>
+> neobookworm.uk/plumbers-switch
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 30–45 words.
+
+---
+
+## Segment C2 — DIY Template
+
+### Profile
+
+Has a live website on Wix, GoDaddy, Squarespace, or Google Sites — built by the owner, typically carrying platform branding ("Create your own website — try Wix"). Currently paying a monthly or annual platform fee for a site they built themselves at some point and may not have touched since. The platform is making money from them monthly; they are not getting full value.
+
+### Primary objection
+
+"I've already got one and it works fine." The sunk cost of their own time building it, plus the inertia of a working (if mediocre) solution. Mild pride of ownership.
+
+### Psychological approach
+
+**Lead with cost and control, not quality.** Criticising the site's appearance triggers the sunk-cost defence immediately. Instead, make it a purely economic and ownership argument: they are renting someone else's platform indefinitely, paying monthly for something they built, with Wix/GoDaddy branding on it. The switch is financially rational regardless of aesthetics.
+
+The "you don't pay until it's better than what you've got" framing is strongest here — the prospect can do a direct side-by-side comparison between their Wix site and the landing page examples.
+
+Do not mention SEO, rankings, or design quality. The argument is ownership and cost only.
+
+### Email 1 — Initial Outreach
+
+**Subject line options:**
+- `[Business Name] — paying for Wix?`
+- `[Business Name] — own your site outright`
+- `Quick thing about your website`
+
+**Structure:**
+1. State the platform fact — one sentence, purely factual ("your site is on Wix — you're paying their monthly fee for it")
+2. The ownership argument — £299 once vs paying Wix forever, no branding
+3. Landing page link
+4. Risk reversal: "don't pay until it's better than what you've got"
+5. Pricing — one sentence
+6. Autonomy-preserving close
+7. Sign-off and footer
+
+**Example output:**
+
+> Hi [Name],
+>
+> I had a look at your site — it's on Wix, which means you're paying their monthly fee for a site that carries their branding. That's fine, but there's an alternative: for £299 I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
+>
+> Examples of what I build for plumbers:
+>
+> neobookworm.uk/plumbers-switch
+>
+> You don't pay until it's better than what you've got — so there's nothing to lose in having a look.
+>
+> Worth a glance?
+>
+> Nick | NeoBookworm.uk
 
 **Word count target:** 90–110 words.
 
 **What NOT to write:**
+- ❌ "Your Wix site looks basic/unprofessional" — opinion, triggers defensiveness
+- ❌ Anything about SEO, rankings, or Google
+- ❌ "You need a proper website" — condescending
+- ❌ Multiple arguments — cost and ownership is the single point
 
-- ❌ "Your website looks outdated" *(too judgmental)*
-- ❌ "Nobody builds sites like that anymore" *(condescending)*
-- ❌ Any generic statement about needing a new website — stay specific to their actual site issue
-- ❌ Listing multiple problems — pick the single most compelling one
-
-## Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
+### Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** Concrete performance data — specific PageSpeed score or mobile usability issue, compared to a competitor or industry benchmark. Slightly more technical than Email 1 because they've already shown they're tech-adjacent by having a site.
+**Angle:** Switch to the **long-term cost comparison**. Calculate what they're paying Wix/GoDaddy annually vs the total cost of NeoBookworm over the same period. Make the maths concrete.
 
 **Example output:**
 
 > Hi [Name],
-> 
+>
+> Following up — examples are still here:
+>
+> neobookworm.uk/plumbers-switch
+>
+> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £299 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
+>
+> Won't chase after this — just wanted the numbers to be visible.
+>
+> Nick | NeoBookworm.uk
 
-> 
-> 
+**Word count target:** 75–95 words.
 
-> Following up on the demo I sent — still live here: [demo URL]
-> 
+**Note:** Adjust the Wix/GoDaddy cost figure if the prospect's platform is different — GoDaddy runs higher (£200–£300/year), Squarespace higher still (£150–£250/year). Use whichever platform was identified in the audit.
 
-> 
-> 
-
-> One concrete thing: your current site scores around [X]/100 on Google's PageSpeed test. Google uses that score as a ranking factor — so it's actively working against you in search results. The updated version would score significantly higher.
-> 
-
-> 
-> 
-
-> If you'd like to talk it through, happy to. If not, no worries at all.
-> 
-
-> 
-> 
-
-> Nick | [NeoBookworm.uk](http://NeoBookworm.uk)
-> 
-
-**Word count target:** 70–90 words.
-
-**Note:** If PageSpeed score isn't available from the research, use the mobile-responsiveness point instead.
-
-## Email 3 — Final follow-up (Ltd companies only)
+### Email 3 — Final follow-up (Ltd companies only)
 
 **Timing:** 10–14 days after Email 2.
 
-**Angle:** Easy transition — emphasise that switching is low-effort. The fear of "going through it all again" is a real barrier for this segment.
+**Angle:** Simple breakup. One sentence on the ownership point. Leave the door open.
 
 **Example output:**
 
 > Hi [Name],
-> 
+>
+> Last one from me. The examples page is still there if you ever want to compare:
+>
+> neobookworm.uk/plumbers-switch
+>
+> Nick | NeoBookworm.uk
 
-> 
-> 
-
-> Last message. The main thing I'd want you to know: switching doesn't mean starting over. I take what's on your current site, update it, and build the new one around your existing content. It's usually a one-week turnaround.
-> 
-
-> 
-> 
-
-> Demo is still here: [demo URL]
-> 
-
-> 
-> 
-
-> Nick | [NeoBookworm.uk](http://NeoBookworm.uk)
-> 
-
-**Word count target:** 50–70 words.
+**Word count target:** 25–40 words.
 
 ---
+
+## Segment C3 — Agency-managed
+
+### Profile
+
+Has a live website with evidence of a third-party agency in the relationship — agency footer credit, agency email infrastructure (SPF records), or a clearly custom-built site they wouldn't have built themselves. They have an existing professional relationship with someone who manages their web presence. May be on a monthly retainer or have a support contract.
+
+### Primary objection
+
+"My website guy sorts all that." They have a trusted third party — a relationship NeoBookworm is intruding on. This is the most resistant segment because the objection is personal, not logical.
+
+### Psychological approach
+
+**This is the softest pitch in the entire portfolio.** Do not lead with cost, do not criticise the agency's work, do not imply the relationship is a bad one. The argument is purely about ownership and independence: whatever they paid the agency for, the prospect should own the domain and the site assets outright — and if they do, great; if they don't, that's worth knowing.
+
+**The tone must be entirely non-adversarial.** There is a real person or business on the other side of this relationship. The email should feel like useful information, not a sales pitch. If they're happy with their agency, the correct outcome is no reply — and that's fine.
+
+**Priority note:** This sub-segment has the lowest expected conversion rate. Do not invest more email-drafting effort in Segment C3 than C1/C2/C4. Keep it short.
+
+### Email 1 — Initial Outreach
+
+**Subject line options:**
+- `[Business Name] — one thing worth knowing`
+- `Quick question about your site`
+- `[Business Name] — do you own your domain?`
+
+**Structure:**
+1. One neutral observation — acknowledge they have a site, no criticism
+2. The single ownership question: do they own the domain outright?
+3. Landing page link — framed as "what I build, in case it's ever useful"
+4. Risk reversal: brief
+5. Autonomy-preserving close — this must be the most prominent it is in any sub-segment
+6. Sign-off and footer
+
+**Example output:**
+
+> Hi [Name],
+>
+> I noticed you have a website — looks like someone built it for you, which is good. One thing worth checking if you haven't: make sure the domain is registered in your name, not the agency's. It's worth knowing who owns it.
+>
+> For context, I build sites for [trade]s — here's what they look like if it's ever useful:
+>
+> neobookworm.uk/plumbers-switch
+>
+> If you're sorted, completely ignore this.
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 75–95 words.
+
+**What NOT to write:**
+- ❌ Any criticism of their current site or agency
+- ❌ Cost comparisons — not the right angle here
+- ❌ Urgency or pressure — this prospect is the least likely to respond quickly
+- ❌ "You're locked in" — too adversarial
+- ❌ Multiple points — the domain ownership question is the only one
+
+### Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
+
+**Timing:** 5–7 days after Email 1.
+
+**Angle:** Switch to **independence and no lock-in**. Short and informational. Do not press.
+
+**Example output:**
+
+> Hi [Name],
+>
+> Quick follow-up. The main thing I'd want you to know: every site I build, the client owns the domain, the files, and the hosting account outright — no lock-in, no ongoing contract. If you ever want to move it, you can.
+>
+> Examples here if useful: neobookworm.uk/plumbers-switch
+>
+> Won't message again after this.
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 55–75 words.
+
+### Email 3 — Final follow-up (Ltd companies only)
+
+**Timing:** 10–14 days after Email 2.
+
+**Angle:** Minimal. Leave the door open. Nothing more.
+
+**Example output:**
+
+> Hi [Name],
+>
+> Last one. If you ever want a second option, I'm easy to find.
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 20–30 words.
+
+---
+
+## Segment C4 — Functional but Weak
+
+### Profile
+
+Has a live website on a real domain, no obvious platform branding, appears to have been built with some care — but has one concrete, verifiable flaw identified in the audit (no Gas Safe number, no contact form, no SSL, no mobile viewport, empty copyright year, etc.). The site is real but has a specific gap that a potential customer would notice.
+
+### Primary objection
+
+"It works fine for me." They don't see the gap because they're not approaching the site as a customer would. They need to see the specific problem from the outside.
+
+### Psychological approach
+
+**Lead with the one audit finding, stated as a customer experience fact.** Not "your site is missing X" — that's a technical critique they'll dismiss. Instead: "someone searching for you at 9pm on their phone can't find a way to contact you." Frame the problem in terms of a lost job or missed call, not a technical deficiency.
+
+The `Problem:` line from the audit block in `research_summary` is the opening. Use it verbatim or very close to it. Do not add extra problems. Do not editorialize.
+
+The risk reversal is the strongest it has been since the prospect has a working site to compare against: "you don't pay until it's better than what you've got."
+
+### Email 1 — Initial Outreach
+
+**Subject line options:**
+- `[Business Name] — one thing I noticed`
+- `[Business Name] — quick thing about your site`
+- `[specific issue, e.g. "your Gas Safe number"]`
+
+**Structure:**
+1. State the single audit problem as a customer experience observation — one sentence, factual, no judgement
+2. Acknowledge they have a site (the hard part is done)
+3. Landing page link
+4. Risk reversal: "don't pay until it's better than what you've got"
+5. Pricing — one sentence
+6. Autonomy-preserving close
+7. Sign-off and footer
+
+**Example output (no Gas Safe number):**
+
+> Hi [Name],
+>
+> I had a look at your site — the work looks good, but your Gas Safe registration number isn't on there. It's one of the first things a homeowner checks before calling a gas engineer they don't know.
+>
+> You've already done the hard bit — you have a site. Here's what an updated one looks like:
+>
+> neobookworm.uk/plumbers-switch
+>
+> You don't pay until it's better than what you've got. A full 5-page site is £299 fixed, £9.99/month after that.
+>
+> Worth a look, or not — up to you.
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 90–110 words.
+
+**What NOT to write:**
+- ❌ "Your website looks outdated/unprofessional" — opinion
+- ❌ Listing multiple problems — one only
+- ❌ "Nobody's going to contact you with a site like that" — too harsh
+- ❌ Generic website pitch — it must be grounded in the specific audit finding
+
+### Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
+
+**Timing:** 5–7 days after Email 1.
+
+**Angle:** Switch to a **concrete performance signal** — PageSpeed score, mobile test result, or a second specific gap found in the audit (if one exists). Slightly more technical, because they've shown they're tech-adjacent by having a built site.
+
+**Example output:**
+
+> Hi [Name],
+>
+> Following up — examples are still here:
+>
+> neobookworm.uk/plumbers-switch
+>
+> One concrete thing: your site scores around [X]/100 on Google's mobile speed test. Google uses that as a ranking signal, so it's working against you in local search results. A rebuilt site would score significantly higher.
+>
+> If not the right time, no problem.
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 65–85 words.
+
+**Note:** If no PageSpeed score is available, fall back to a second specific observation from the audit, or use the mobile-responsiveness point. Do not invent a score.
+
+### Email 3 — Final follow-up (Ltd companies only)
+
+**Timing:** 10–14 days after Email 2.
+
+**Angle:** Easy transition. The fear for this segment is effort — "going through it all again." Emphasise that content migration is included and turnaround is fast.
+
+**Example output:**
+
+> Hi [Name],
+>
+> Last one from me. The main thing: switching doesn't mean starting over. I take what's on your current site, fix the gaps, and build the new one around your existing content. Usually a one-week turnaround.
+>
+> neobookworm.uk/plumbers-switch
+>
+> Nick | NeoBookworm.uk
+
+**Word count target:** 45–65 words.
 
 # Segment D — The New Entrant
 
@@ -508,7 +772,7 @@ The tone should be **warm and peer-to-peer** — acknowledging that starting out
 
 **Never:** imply they're struggling, mention competitors, talk about growth or scaling, or use business-development language. These all feel overwhelming to someone in their first two years.
 
-The **cost framing** is important for this segment. £499 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
+The **cost framing** is important for this segment. £299 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
 
 ## Email 1 — Initial Outreach
 
@@ -576,7 +840,7 @@ The **cost framing** is important for this segment. £499 should be anchored aga
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** The cost anchor — make the £499 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
+**Angle:** The cost anchor — make the £299 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
 
 **Example output:**
 
@@ -668,13 +932,40 @@ const segmentAngles = {
     TONE: Direct, warm, opportunity-framing. Slightly energetic.
     LENGTH: 90–110 words.`,
 
-  "C - Bad Website": `
-    PROFILE: Has an existing website that is outdated, not mobile-friendly, or technically broken.
-    PRIMARY OBJECTION: 'I've already got one' / sunk cost.
-    APPROACH: Open with ONE specific, factual (not judgmental) observation about their current site (mobile issue, SSL, PageSpeed). Acknowledge they've already accepted the concept. Show the demo as a direct upgrade. Mention that content migration is included — they don't start from scratch.
-    NEVER say: 'your site looks bad/outdated/old', 'nobody builds sites like that', generic website pitches.
-    ALWAYS include: The specific site issue identified. 'I migrate all your existing content.'
-    TONE: Technical but accessible. Problem-solution framing.
+  "C1 - Dead Domain": `
+    PROFILE: Had a website; domain has lapsed. Now shows a registrar parking page. Already demonstrated they value having a site.
+    PRIMARY OBJECTION: 'Had one, wasn't worth the hassle' — or simply haven't noticed.
+    APPROACH: State the parking page fact plainly — one sentence, no judgement. Acknowledge they've done this before (they built the first one). Frame the fix as getting it back, not starting fresh.
+    NEVER say: 'you need a website', imply negligence, or list multiple problems.
+    ALWAYS include: The specific domain and what it shows. Risk reversal as 'don't pay until it's better than what you had.' Landing page URL (not a demo URL).
+    TONE: Matter-of-fact. Informational. No alarm.
+    LENGTH: 85–105 words.`,
+
+  "C2 - DIY Template": `
+    PROFILE: Live site on Wix, GoDaddy, Squarespace, or Google Sites. Built by the owner. Paying a monthly/annual platform fee. Site may carry platform branding.
+    PRIMARY OBJECTION: 'I've already got one and it works fine.'
+    APPROACH: Lead with cost and control — not quality. Make it a purely economic and ownership argument. They are renting a platform indefinitely for something they built. £299 once, own it, no platform branding. Do NOT mention design quality or appearance.
+    NEVER say: 'your Wix site looks basic', anything about SEO or rankings, 'you need a proper website'.
+    ALWAYS include: The specific platform identified in the audit. Long-term cost comparison. Risk reversal as 'don't pay until it's better than what you've got.' Landing page URL.
+    TONE: Economic, factual, peer-to-peer.
+    LENGTH: 90–110 words.`,
+
+  "C3 - Agency": `
+    PROFILE: Live site with evidence of a third-party agency. May be on a retainer or support contract. Has an existing relationship with someone who manages their web presence.
+    PRIMARY OBJECTION: 'My website guy sorts all that.'
+    APPROACH: Softest pitch in the portfolio. Do not criticise the agency or the site. Lead with the domain ownership question — do they own it outright? Frame as useful information, not a sales pitch. If they're happy with their agency, the correct outcome is no reply.
+    NEVER say: anything critical of their agency or site, cost comparisons, 'you're locked in', anything urgent.
+    ALWAYS include: The ownership/independence angle. A prominent autonomy-preserving close. Landing page URL framed as 'in case it's ever useful'.
+    TONE: Entirely non-adversarial. Informational.
+    LENGTH: 75–95 words. Shortest of all C sub-segments.`,
+
+  "C4 - Functional but Weak": `
+    PROFILE: Live site on a real domain, built with some care, but with one concrete verifiable flaw from the audit (no Gas Safe number, no contact form, no SSL, no mobile viewport, etc.).
+    PRIMARY OBJECTION: 'It works fine for me.'
+    APPROACH: Lead with the ONE audit Problem: line, stated as a customer experience observation — not a technical critique. Frame in terms of a lost job or missed call. Do not editorialize. Use the exact Problem: wording from research_summary.
+    NEVER say: 'your site looks outdated/unprofessional', list multiple problems, invent a PageSpeed score.
+    ALWAYS include: The specific audit finding, verbatim or very close. Risk reversal as 'don't pay until it's better than what you've got.' Content migration angle (switching doesn't mean starting over). Landing page URL.
+    TONE: Technical but accessible. Specific and factual.
     LENGTH: 90–110 words.`,
 
   "D - New Entrant": `
@@ -702,13 +993,28 @@ const segmentFollowUpAngles = {
     followUp2_ltdOnly: `Simple BREAKUP email. No new arguments. Confirm the demo is still live. Leave the door open. 40–60 words.`
   },
 
-  "C - Bad Website": {
-    followUp1: `Switch to PERFORMANCE DATA angle. Reference their PageSpeed score if available, or the mobile-responsiveness issue from Email 1. Mention Google uses this as a ranking factor. Slightly more technical — they've shown they're tech-adjacent. End with natural final-contact language for sole traders. Include the demo URL. 70–90 words.`,
-    followUp2_ltdOnly: `EASY TRANSITION angle. The main fear for this segment is 'going through it all again'. Emphasise that switching is low-effort — content migration included, one-week turnaround. Short. 50–70 words.`
+  "C1 - Dead Domain": {
+    followUp1: `Switch to OWNERSHIP AND CONTINUITY angle. The first site lapsed because it was tied to a hosting contract that got forgotten. This one is £9.99/month flat — no annual renewal, no domain expiry surprises. Once live, it stays live. End with natural final-contact language for sole traders. Include the landing page URL (not a demo URL). 70–90 words.`,
+    followUp2_ltdOnly: `Short breakup. Leave the door open. No new arguments. One sentence max. 30–45 words.`
+  },
+
+  "C2 - DIY Template": {
+    followUp1: `Switch to LONG-TERM COST COMPARISON angle. Make the maths concrete: Wix/GoDaddy/Squarespace annual cost × 3 years vs NeoBookworm £299 once + £120/year. After year one they're saving money on a site they own. Adjust the platform cost figure to match the platform identified in the audit. End with natural final-contact language for sole traders. Include the landing page URL. 75–95 words.`,
+    followUp2_ltdOnly: `Simple breakup. One sentence referencing ownership. Leave the door open. Include the landing page URL. 25–40 words.`
+  },
+
+  "C3 - Agency": {
+    followUp1: `Switch to INDEPENDENCE AND NO LOCK-IN angle. Every site I build, the client owns the domain, files, and hosting account outright — no lock-in, no ongoing contract, moveable at any time. Short and informational. Do not press. End with natural final-contact language for sole traders. Include the landing page URL. 55–75 words.`,
+    followUp2_ltdOnly: `Minimal. Leave the door open. Nothing more. 20–30 words.`
+  },
+
+  "C4 - Functional but Weak": {
+    followUp1: `Switch to CONCRETE PERFORMANCE SIGNAL angle. Reference PageSpeed score if available from the audit — mention Google uses it as a ranking signal. If no score available, use a second specific gap from the audit or the mobile-responsiveness point. Slightly more technical — they've shown they're tech-adjacent by having a built site. End with natural final-contact language for sole traders. Include the landing page URL. 65–85 words.`,
+    followUp2_ltdOnly: `EASY TRANSITION angle. The fear is effort — 'going through it all again'. Content migration included, one-week turnaround, they don't start from scratch. Short. Include the landing page URL. 45–65 words.`
   },
 
   "D - New Entrant": {
-    followUp1: `Switch to NO-RISK + COST ANCHOR angle. Lead with the satisfaction-first payment model (no penny until happy). Anchor £499 against something trade-relevant (materials, van insurance). End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
+    followUp1: `Switch to NO-RISK + COST ANCHOR angle. Lead with the satisfaction-first payment model (no penny until happy). Anchor £299 against something trade-relevant (materials, van insurance). End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
     followUp2_ltdOnly: `FUTURE-FOCUS angle. The demo will be more valuable as their reviews grow. Leave the door open. Short and warm. 40–60 words.`
   }
 };
@@ -763,4 +1069,4 @@ const localSearchVolumes = {
 
 ---
 
-*Templates updated: 29 March 2026. Based on objections research (March 2026), live example run analysis (March 2026), and UK legislative contact cap constraints. Previous version: [outreach-templates.md](http://outreach-templates.md) from Agent 2 & 3 build session.*
+*Templates updated: 17 May 2026. Segment C expanded from a single "Outdated Website Owner" profile into four sub-segments (C1 Dead Domain, C2 DIY Template, C3 Agency-managed, C4 Functional but Weak) to support the has-website campaign pipeline and `neobookworm-website-audit` skill. `segmentAngles` and `segmentFollowUpAngles` updated accordingly. Pricing corrected to £299 throughout. Previous version: 29 March 2026.*
