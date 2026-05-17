@@ -467,6 +467,8 @@
     cursor: pointer; user-select: none;
     border-bottom: 1px dashed var(--border);
     white-space: nowrap;
+    min-width: 18rem;
+    display: inline-block;
   }
   .camp-id-cell:hover { color: var(--amber); border-color: var(--amber); }
 
@@ -2077,7 +2079,7 @@ function renderCampaignsList(rows) {
       </td>
       <td class="muted">${row.count_replied ?? '—'}</td>
       <td class="muted">${escHtml(dt)}</td>
-      <td><span class="camp-id-cell" data-id="${escAttr(rowId)}" title="${escAttr(rowId)}">${escHtml(rowId.slice(0, 8))}…</span></td>
+      <td><span class="camp-id-cell" data-id="${escAttr(rowId)}" title="${escAttr(rowId)}">${escHtml(rowId.slice(0, 25))}…</span></td>
       <td id="action-cell-${escAttr(rowId)}"></td>
     `;
 
