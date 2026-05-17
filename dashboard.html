@@ -260,11 +260,37 @@
     display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
     margin-bottom: .75rem; font-size: .83rem; color: var(--muted);
   }
-  .btn-clear-filters {
+  .btn-clear-filters, .btn-clear-sorts {
     background: none; border: 1px solid var(--border); border-radius: 5px;
     color: var(--amber); font-size: .78rem; padding: .2rem .6rem; cursor: pointer;
   }
-  .btn-clear-filters:hover { background: var(--navy-card); }
+  .btn-clear-filters:hover, .btn-clear-sorts:hover { background: var(--navy-card); }
+  .filter-active-bar .sep { opacity: .4; }
+
+  /* ── Prospect column sorting ───────────────────────────────────────────── */
+  .sortable-th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .sortable-th:hover { color: var(--white); }
+  .sortable-th:not(.is-sorted)::after {
+    content: ' ⇅';
+    font-size: .65rem;
+    opacity: .22;
+  }
+  .sort-indicator {
+    display: inline-flex; align-items: center; gap: 2px;
+    margin-left: .3rem; color: var(--amber);
+    font-size: .82rem; vertical-align: middle;
+  }
+  .sort-badge {
+    display: inline-block;
+    background: var(--amber); color: var(--navy);
+    border-radius: 3px; padding: 0 .22rem;
+    line-height: 1.5; font-size: .6rem; font-weight: 800;
+    vertical-align: middle;
+  }
 
   .pill {
     display: inline-block; padding: .15rem .55rem;
@@ -702,6 +728,17 @@ const EMPTY_COL_FILTERS = () => ({
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
 });
 
+// Column config for the Prospects list — order matches table column order
+const PROSPECT_COLS = [
+  { label: 'Business',     col: 'business_name'   },
+  { label: 'Contact',      col: 'contact_name'    },
+  { label: 'Trade',        col: 'trade_category'  },
+  { label: 'Town',         col: 'town'            },
+  { label: 'Website',      col: 'has_website'     },
+  { label: 'Rating',       col: 'rating'          },
+  { label: 'Last emailed', col: 'last_email_sent' },
+];
+
 const state = {
   token:          '',
   tab:            'prospects',
@@ -710,6 +747,7 @@ const state = {
   currentStatus:  '',
   currentPage:    1,
   colFilters:     EMPTY_COL_FILTERS(),
+  colSorts:       [],
   summaryData:    null,
   // enquiries
   enqPage:        1,
@@ -941,7 +979,7 @@ function renderCards(containerId, rows) {
     card.className = 'card';
     card.style.setProperty('--card-color', colour);
     card.innerHTML = `<div class="card-count">${count.toLocaleString()}</div><div class="card-label">${escHtml(status)}</div>`;
-    card.addEventListener('click', () => { state.colFilters = EMPTY_COL_FILTERS(); loadList(status); });
+    card.addEventListener('click', () => { state.colFilters = EMPTY_COL_FILTERS(); state.colSorts = []; loadList(status); });
     container.appendChild(card);
   });
 }
@@ -962,14 +1000,18 @@ async function loadList(status, page = 1) {
   try {
     const cf = state.colFilters;
     const params = { action: 'list', status, page };
-    if (cf.q_business)     params.q_business     = cf.q_business;
-    if (cf.q_contact)      params.q_contact      = cf.q_contact;
-    if (cf.q_trade)        params.q_trade        = cf.q_trade;
-    if (cf.q_town)         params.q_town         = cf.q_town;
-    if (cf.has_website !== '')  params.has_website  = cf.has_website;
-    if (cf.min_rating)     params.min_rating     = cf.min_rating;
-    if (cf.max_rating)     params.max_rating     = cf.max_rating;
-    if (cf.emailed_filter) params.emailed_filter = cf.emailed_filter;
+    if (cf.q_business)      params.q_business     = cf.q_business;
+    if (cf.q_contact)       params.q_contact      = cf.q_contact;
+    if (cf.q_trade)         params.q_trade        = cf.q_trade;
+    if (cf.q_town)          params.q_town         = cf.q_town;
+    if (cf.has_website !== '') params.has_website  = cf.has_website;
+    if (cf.min_rating)      params.min_rating     = cf.min_rating;
+    if (cf.max_rating)      params.max_rating     = cf.max_rating;
+    if (cf.emailed_filter)  params.emailed_filter = cf.emailed_filter;
+    state.colSorts.forEach((s, i) => {
+      params[`sort${i + 1}_col`] = s.col;
+      params[`sort${i + 1}_dir`] = s.dir;
+    });
     renderList(await apiFetch(params));
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
@@ -981,20 +1023,42 @@ function renderList({ data: rows, total, page, pageSize }) {
   const totalPages = Math.ceil(total / pageSize);
   const status     = state.currentStatus;
   const cf         = state.colFilters;
+  const cs         = state.colSorts;
   const hasFilter  = Object.values(cf).some(v => v !== '');
+  const hasSorts   = cs.length > 0;
+
+  // Build sortable column header cells
+  const headerCells = PROSPECT_COLS.map(({ label, col }) => {
+    const sortIdx = cs.findIndex(s => s.col === col);
+    const sorted  = sortIdx !== -1;
+    const dir     = sorted ? cs[sortIdx].dir : '';
+    const arrow   = dir === 'asc' ? '↑' : dir === 'desc' ? '↓' : '';
+    const badge   = sorted ? `<span class="sort-badge">${sortIdx + 1}</span>` : '';
+    const ind     = sorted ? `<span class="sort-indicator">${arrow}${badge}</span>` : '';
+    const cls     = `sortable-th${sorted ? ' is-sorted' : ''}`;
+    return `<th class="${cls}" data-sort-col="${col}">${escHtml(label)}${ind}</th>`;
+  }).join('');
+
+  // Active bar (filters + sorts info)
+  const barParts = [];
+  if (hasFilter) barParts.push(`Filters active <button class="btn-clear-filters" id="btn-clear-filters">Clear filters</button>`);
+  if (hasSorts) {
+    const sortDesc = cs.map(s => `${PROSPECT_COLS.find(c => c.col === s.col)?.label ?? s.col} ${s.dir === 'asc' ? '↑' : '↓'}`).join(' → ');
+    barParts.push(`Sorted: ${escHtml(sortDesc)} <button class="btn-clear-sorts" id="btn-clear-sorts">Clear sorts</button>`);
+  }
+  const activeBar = barParts.length
+    ? `<div class="filter-active-bar">${barParts.join('<span class="sep"> · </span>')}</div>`
+    : '';
 
   main.innerHTML = `
     <div class="list-header">
       <h2>${escHtml(status)} <span class="count-tag">${total.toLocaleString()} records</span></h2>
     </div>
-    ${hasFilter ? `<div class="filter-active-bar">Filters active <button class="btn-clear-filters" id="btn-clear-filters">Clear all filters</button></div>` : ''}
+    ${activeBar}
     <div class="table-wrap">
       <table>
         <thead>
-          <tr>
-            <th>Business</th><th>Contact</th><th>Trade</th><th>Town</th>
-            <th>Website</th><th>Rating</th><th>Last emailed</th>
-          </tr>
+          <tr>${headerCells}</tr>
           <tr class="filter-row">
             <th><input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}"></th>
             <th><input type="search" class="col-filter" data-col="q_contact"  placeholder="Filter…" value="${escAttr(cf.q_contact)}"></th>
@@ -1052,7 +1116,25 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   }
 
-  // Wire column filters with debounce for text inputs, immediate for selects
+  // Sort: click cycles unsorted→asc→desc→removed; max 3 active sorts
+  main.querySelectorAll('.sortable-th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col      = th.dataset.sortCol;
+      const existing = state.colSorts.find(s => s.col === col);
+      if (existing) {
+        if (existing.dir === 'asc') {
+          existing.dir = 'desc';
+        } else {
+          state.colSorts = state.colSorts.filter(s => s.col !== col);
+        }
+      } else if (state.colSorts.length < 3) {
+        state.colSorts.push({ col, dir: 'asc' });
+      }
+      loadList(status, 1);
+    });
+  });
+
+  // Filter inputs: debounced for text, immediate for selects
   let filterTimer;
   main.querySelectorAll('.col-filter').forEach(input => {
     const evt = input.tagName === 'SELECT' ? 'change' : 'input';
@@ -1063,10 +1145,18 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   });
 
-  const clearBtn = document.getElementById('btn-clear-filters');
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
+  const clearFiltersBtn = document.getElementById('btn-clear-filters');
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
       state.colFilters = EMPTY_COL_FILTERS();
+      loadList(status, 1);
+    });
+  }
+
+  const clearSortsBtn = document.getElementById('btn-clear-sorts');
+  if (clearSortsBtn) {
+    clearSortsBtn.addEventListener('click', () => {
+      state.colSorts = [];
       loadList(status, 1);
     });
   }

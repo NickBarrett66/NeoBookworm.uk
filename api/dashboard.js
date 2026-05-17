@@ -1,5 +1,5 @@
 // GET  /api/dashboard?action=summary
-// GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never
+// GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=enquiries_list&page=N&q=search&handled=0|1|all
 // GET  /api/dashboard?action=enquiries_record&id=X
@@ -445,6 +445,9 @@ module.exports = async (req, res) => {
     q_business = '', q_contact = '', q_trade = '', q_town = '',
     has_website = '', min_rating = '', max_rating = '',
     emailed_filter = '',
+    sort1_col = '', sort1_dir = 'asc',
+    sort2_col = '', sort2_dir = 'asc',
+    sort3_col = '', sort3_dir = 'asc',
   } = req.query;
   const pageNum  = Math.max(1, parseInt(page, 10) || 1);
   const pageSize = 50;
@@ -500,6 +503,20 @@ module.exports = async (req, res) => {
 
       const where = conditions.map((c, i) => (i === 0 ? `WHERE ${c}` : `AND ${c}`)).join(' ');
 
+      // Build ORDER BY from up to 3 sort columns
+      const SORT_COLS_ALLOWED = new Set([
+        'business_name','contact_name','trade_category','town',
+        'has_website','rating','last_email_sent',
+      ]);
+      const orderClauses = [];
+      for (const [col, dir] of [[sort1_col,sort1_dir],[sort2_col,sort2_dir],[sort3_col,sort3_dir]]) {
+        if (!col || !SORT_COLS_ALLOWED.has(col)) continue;
+        const d    = dir === 'desc' ? 'DESC' : 'ASC';
+        const expr = col === 'rating' ? 'CAST(rating AS REAL)' : col;
+        orderClauses.push(`${expr} ${d}`);
+      }
+      const orderBy = orderClauses.length ? orderClauses.join(', ') : 'business_name ASC';
+
       const [rows, countRows] = await Promise.all([
         queryD1(prospectsDb(),
           `SELECT notion_id, business_name, contact_name, trade_category, town,
@@ -507,7 +524,7 @@ module.exports = async (req, res) => {
                   last_email_sent, date_first_contacted, demo_url, prospect_segment
            FROM prospects
            ${where}
-           ORDER BY business_name
+           ORDER BY ${orderBy}
            LIMIT ? OFFSET ?`,
           [...filterParams, pageSize, offset]
         ),
