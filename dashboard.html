@@ -203,13 +203,13 @@
 
   .list-controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 
-  #search-input, #enq-search-input, #intake-search-input, #contact-search-input {
+  #enq-search-input, #intake-search-input, #contact-search-input {
     padding: .5rem .9rem; border: 1px solid var(--border);
     border-radius: 8px; background: var(--navy-card);
     color: var(--white); font-size: .9rem;
     width: min(220px, 100%); outline: none;
   }
-  #search-input:focus, #enq-search-input:focus,
+  #enq-search-input:focus,
   #intake-search-input:focus, #contact-search-input:focus { border-color: var(--amber); }
 
   .filter-btns { display: flex; gap: .25rem; }
@@ -238,6 +238,33 @@
   tbody tr:hover { background: var(--navy-card); }
   tbody td { padding: .7rem .9rem; vertical-align: middle; color: var(--white); }
   tbody td.muted { color: var(--muted); }
+
+  /* ── Prospect column filters ───────────────────────────────────────────── */
+  .filter-row th {
+    padding: .25rem .45rem .5rem;
+    vertical-align: top;
+    background: var(--navy-light);
+    border-bottom: 2px solid var(--border);
+  }
+  .col-filter {
+    width: 100%; padding: .28rem .45rem;
+    border: 1px solid var(--border); border-radius: 5px;
+    background: var(--navy); color: var(--white);
+    font-size: .78rem; font-family: inherit; outline: none;
+  }
+  .col-filter:focus { border-color: var(--amber); }
+  .col-filter option { background: var(--navy-card); }
+  .rating-filter-wrap { display: flex; gap: 3px; }
+  .rating-filter-wrap .col-filter { min-width: 0; }
+  .filter-active-bar {
+    display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+    margin-bottom: .75rem; font-size: .83rem; color: var(--muted);
+  }
+  .btn-clear-filters {
+    background: none; border: 1px solid var(--border); border-radius: 5px;
+    color: var(--amber); font-size: .78rem; padding: .2rem .6rem; cursor: pointer;
+  }
+  .btn-clear-filters:hover { background: var(--navy-card); }
 
   .pill {
     display: inline-block; padding: .15rem .55rem;
@@ -670,6 +697,11 @@
 
 <script>
 // ── State ────────────────────────────────────────────────────────────────────
+const EMPTY_COL_FILTERS = () => ({
+  q_business: '', q_contact: '', q_trade: '', q_town: '',
+  has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
+});
+
 const state = {
   token:          '',
   tab:            'prospects',
@@ -677,7 +709,7 @@ const state = {
   view:           'summary',
   currentStatus:  '',
   currentPage:    1,
-  searchQuery:    '',
+  colFilters:     EMPTY_COL_FILTERS(),
   summaryData:    null,
   // enquiries
   enqPage:        1,
@@ -909,15 +941,15 @@ function renderCards(containerId, rows) {
     card.className = 'card';
     card.style.setProperty('--card-color', colour);
     card.innerHTML = `<div class="card-count">${count.toLocaleString()}</div><div class="card-label">${escHtml(status)}</div>`;
-    card.addEventListener('click', () => loadList(status));
+    card.addEventListener('click', () => { state.colFilters = EMPTY_COL_FILTERS(); loadList(status); });
     container.appendChild(card);
   });
 }
 
 // ── Prospects: list view ──────────────────────────────────────────────────────
-async function loadList(status, page = 1, q = '') {
+async function loadList(status, page = 1) {
   state.view = 'list'; state.currentStatus = status;
-  state.currentPage = page; state.searchQuery = q;
+  state.currentPage = page;
 
   const main = document.getElementById('main-content');
   main.innerHTML = '<div class="state-msg">Loading records…</div>';
@@ -928,7 +960,17 @@ async function loadList(status, page = 1, q = '') {
   document.getElementById('btn-back').style.display = '';
 
   try {
-    renderList(await apiFetch({ action: 'list', status, page, q }));
+    const cf = state.colFilters;
+    const params = { action: 'list', status, page };
+    if (cf.q_business)     params.q_business     = cf.q_business;
+    if (cf.q_contact)      params.q_contact      = cf.q_contact;
+    if (cf.q_trade)        params.q_trade        = cf.q_trade;
+    if (cf.q_town)         params.q_town         = cf.q_town;
+    if (cf.has_website !== '')  params.has_website  = cf.has_website;
+    if (cf.min_rating)     params.min_rating     = cf.min_rating;
+    if (cf.max_rating)     params.max_rating     = cf.max_rating;
+    if (cf.emailed_filter) params.emailed_filter = cf.emailed_filter;
+    renderList(await apiFetch(params));
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
   }
@@ -938,18 +980,48 @@ function renderList({ data: rows, total, page, pageSize }) {
   const main       = document.getElementById('main-content');
   const totalPages = Math.ceil(total / pageSize);
   const status     = state.currentStatus;
+  const cf         = state.colFilters;
+  const hasFilter  = Object.values(cf).some(v => v !== '');
 
   main.innerHTML = `
     <div class="list-header">
       <h2>${escHtml(status)} <span class="count-tag">${total.toLocaleString()} records</span></h2>
-      <input type="search" id="search-input" placeholder="Search name, town, email…" value="${escAttr(state.searchQuery)}">
     </div>
+    ${hasFilter ? `<div class="filter-active-bar">Filters active <button class="btn-clear-filters" id="btn-clear-filters">Clear all filters</button></div>` : ''}
     <div class="table-wrap">
       <table>
-        <thead><tr>
-          <th>Business</th><th>Contact</th><th>Trade</th><th>Town</th>
-          <th>Website</th><th>Rating</th><th>Last emailed</th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th>Business</th><th>Contact</th><th>Trade</th><th>Town</th>
+            <th>Website</th><th>Rating</th><th>Last emailed</th>
+          </tr>
+          <tr class="filter-row">
+            <th><input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}"></th>
+            <th><input type="search" class="col-filter" data-col="q_contact"  placeholder="Filter…" value="${escAttr(cf.q_contact)}"></th>
+            <th><input type="search" class="col-filter" data-col="q_trade"    placeholder="Filter…" value="${escAttr(cf.q_trade)}"></th>
+            <th><input type="search" class="col-filter" data-col="q_town"     placeholder="Filter…" value="${escAttr(cf.q_town)}"></th>
+            <th>
+              <select class="col-filter" data-col="has_website">
+                <option value=""  ${cf.has_website === ''  ? 'selected' : ''}>All</option>
+                <option value="1" ${cf.has_website === '1' ? 'selected' : ''}>Yes</option>
+                <option value="0" ${cf.has_website === '0' ? 'selected' : ''}>No</option>
+              </select>
+            </th>
+            <th>
+              <div class="rating-filter-wrap">
+                <input type="number" class="col-filter" data-col="min_rating" placeholder="Min" min="0" max="5" step="0.1" value="${escAttr(cf.min_rating)}">
+                <input type="number" class="col-filter" data-col="max_rating" placeholder="Max" min="0" max="5" step="0.1" value="${escAttr(cf.max_rating)}">
+              </div>
+            </th>
+            <th>
+              <select class="col-filter" data-col="emailed_filter">
+                <option value=""        ${cf.emailed_filter === ''        ? 'selected' : ''}>Any</option>
+                <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
+                <option value="never"   ${cf.emailed_filter === 'never'   ? 'selected' : ''}>Never</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
         <tbody id="records-tbody"></tbody>
       </table>
     </div>
@@ -980,13 +1052,27 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   }
 
-  let searchTimer;
-  document.getElementById('search-input').addEventListener('input', e => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => loadList(status, 1, e.target.value), 350);
+  // Wire column filters with debounce for text inputs, immediate for selects
+  let filterTimer;
+  main.querySelectorAll('.col-filter').forEach(input => {
+    const evt = input.tagName === 'SELECT' ? 'change' : 'input';
+    input.addEventListener(evt, () => {
+      state.colFilters[input.dataset.col] = input.value;
+      clearTimeout(filterTimer);
+      filterTimer = setTimeout(() => loadList(status, 1), input.tagName === 'SELECT' ? 0 : 350);
+    });
   });
-  document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1, state.searchQuery));
-  document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1, state.searchQuery));
+
+  const clearBtn = document.getElementById('btn-clear-filters');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      state.colFilters = EMPTY_COL_FILTERS();
+      loadList(status, 1);
+    });
+  }
+
+  document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1));
+  document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1));
 }
 
 // ── Prospects: record modal ───────────────────────────────────────────────────
@@ -1113,7 +1199,7 @@ function wireProspectEdit(r) {
       wireProspectEdit(r);
 
       if (state.view === 'list' && state.currentStatus !== r.status) {
-        loadList(state.currentStatus, state.currentPage, state.searchQuery);
+        loadList(state.currentStatus, state.currentPage);
       }
     } catch (err) {
       saveStatus.textContent = err.message; saveStatus.className = 'save-status err';

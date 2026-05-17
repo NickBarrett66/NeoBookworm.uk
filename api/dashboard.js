@@ -1,5 +1,5 @@
 // GET  /api/dashboard?action=summary
-// GET  /api/dashboard?action=list&status=X&page=N&q=search
+// GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=enquiries_list&page=N&q=search&handled=0|1|all
 // GET  /api/dashboard?action=enquiries_record&id=X
@@ -440,7 +440,12 @@ module.exports = async (req, res) => {
   }
 
   // ── GET ──────────────────────────────────────────────────────────────────
-  const { action, status, page = '1', q = '', handled = 'all' } = req.query;
+  const {
+    action, status, page = '1', q = '', handled = 'all',
+    q_business = '', q_contact = '', q_trade = '', q_town = '',
+    has_website = '', min_rating = '', max_rating = '',
+    emailed_filter = '',
+  } = req.query;
   const pageNum  = Math.max(1, parseInt(page, 10) || 1);
   const pageSize = 50;
   const offset   = (pageNum - 1) * pageSize;
@@ -467,17 +472,33 @@ module.exports = async (req, res) => {
     if (action === 'list') {
       if (!status) return res.status(400).json({ error: 'status parameter required' });
 
-      const hasSearch   = q && q.trim().length > 0;
-      const searchPct   = hasSearch ? `%${q.trim()}%` : null;
-      const searchWhere = hasSearch
-        ? ` AND (business_name LIKE ? OR contact_name LIKE ? OR town LIKE ? OR email_address LIKE ?)`
-        : '';
-      const listParams  = hasSearch
-        ? [status, searchPct, searchPct, searchPct, searchPct, pageSize, offset]
-        : [status, pageSize, offset];
-      const countParams = hasSearch
-        ? [status, searchPct, searchPct, searchPct, searchPct]
-        : [status];
+      const conditions = ['status = ?'];
+      const filterParams = [status];
+
+      // Per-column filters
+      if (q_business.trim()) { conditions.push('business_name LIKE ?');  filterParams.push(`%${q_business.trim()}%`); }
+      if (q_contact.trim())  { conditions.push('contact_name LIKE ?');   filterParams.push(`%${q_contact.trim()}%`);  }
+      if (q_trade.trim())    { conditions.push('trade_category LIKE ?'); filterParams.push(`%${q_trade.trim()}%`);    }
+      if (q_town.trim())     { conditions.push('town LIKE ?');           filterParams.push(`%${q_town.trim()}%`);     }
+      if (has_website === '0' || has_website === '1') {
+        conditions.push('has_website = ?'); filterParams.push(Number(has_website));
+      }
+      if (min_rating !== '' && !isNaN(Number(min_rating))) {
+        conditions.push('CAST(rating AS REAL) >= ?'); filterParams.push(Number(min_rating));
+      }
+      if (max_rating !== '' && !isNaN(Number(max_rating))) {
+        conditions.push('CAST(rating AS REAL) <= ?'); filterParams.push(Number(max_rating));
+      }
+      if (emailed_filter === 'never')   { conditions.push('last_email_sent IS NULL');     }
+      if (emailed_filter === 'emailed') { conditions.push('last_email_sent IS NOT NULL'); }
+      // Legacy global search (q) — kept for backward compatibility
+      if (q.trim()) {
+        conditions.push('(business_name LIKE ? OR contact_name LIKE ? OR town LIKE ? OR email_address LIKE ?)');
+        const pct = `%${q.trim()}%`;
+        filterParams.push(pct, pct, pct, pct);
+      }
+
+      const where = conditions.map((c, i) => (i === 0 ? `WHERE ${c}` : `AND ${c}`)).join(' ');
 
       const [rows, countRows] = await Promise.all([
         queryD1(prospectsDb(),
@@ -485,14 +506,14 @@ module.exports = async (req, res) => {
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment
            FROM prospects
-           WHERE status = ?${searchWhere}
+           ${where}
            ORDER BY business_name
            LIMIT ? OFFSET ?`,
-          listParams
+          [...filterParams, pageSize, offset]
         ),
         queryD1(prospectsDb(),
-          `SELECT COUNT(*) AS total FROM prospects WHERE status = ?${searchWhere}`,
-          countParams
+          `SELECT COUNT(*) AS total FROM prospects ${where}`,
+          filterParams
         ),
       ]);
 
