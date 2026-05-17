@@ -461,6 +461,15 @@
   .camp-badge.paused   { color: #f5a623; border-color: #f5a623; }
   .camp-badge.complete { color: #3b82f6; border-color: #3b82f6; }
 
+  .camp-id-cell {
+    font-family: 'Courier New', monospace;
+    font-size: .75rem; color: var(--muted);
+    cursor: pointer; user-select: none;
+    border-bottom: 1px dashed var(--border);
+    white-space: nowrap;
+  }
+  .camp-id-cell:hover { color: var(--amber); border-color: var(--amber); }
+
   /* ── Progress bar ────────────────────────────────────────────────────── */
   .prog-wrap {
     display: inline-block; width: 80px; height: 5px;
@@ -2029,7 +2038,7 @@ function renderCampaignsList(rows) {
       <table>
         <thead><tr>
           <th>Trade</th><th>Status</th><th>Progress</th><th>Priority</th>
-          <th>Replied</th><th>Created</th><th>Action</th>
+          <th>Replied</th><th>Created</th><th>Campaign ID</th><th>Action</th>
         </tr></thead>
         <tbody id="camp-tbody"></tbody>
       </table>
@@ -2037,7 +2046,7 @@ function renderCampaignsList(rows) {
   `;
   const tbody = document.getElementById('camp-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
     return;
   }
   rows.forEach(row => {
@@ -2068,6 +2077,7 @@ function renderCampaignsList(rows) {
       </td>
       <td class="muted">${row.count_replied ?? '—'}</td>
       <td class="muted">${escHtml(dt)}</td>
+      <td><span class="camp-id-cell" data-id="${escAttr(rowId)}" title="${escAttr(rowId)}">${escHtml(rowId.slice(0, 8))}…</span></td>
       <td id="action-cell-${escAttr(rowId)}"></td>
     `;
 
@@ -2099,6 +2109,18 @@ function renderCampaignsList(rows) {
     });
 
     tbody.appendChild(tr);
+
+    // Copy campaign ID on click
+    tr.querySelector('.camp-id-cell').addEventListener('click', async e => {
+      e.stopPropagation();
+      const el = e.currentTarget;
+      try {
+        await navigator.clipboard.writeText(el.dataset.id);
+        const prev = el.textContent;
+        el.textContent = 'Copied!';
+        setTimeout(() => { el.textContent = prev; }, 1200);
+      } catch { /* clipboard not available */ }
+    });
 
     // Wire action button (uses recursive helper so re-wiring after click is clean)
     const actionCell = document.getElementById('action-cell-' + rowId);
