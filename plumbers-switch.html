@@ -1026,6 +1026,84 @@
       margin-top: 2px;
     }
 
+    /* ─── Browser mock (hero demo) ─── */
+    .hero-mock {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1e2433;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .hero-mock:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245,166,35,0.4);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.18);
+    }
+    .hero-mock:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+    .hero-mock-chrome {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      height: 30px;
+      background: linear-gradient(180deg, #3d4450 0%, #2a3038 100%);
+      border-bottom: 1px solid rgba(0,0,0,0.35);
+    }
+    .hero-mock-dots { display: flex; gap: 6px; flex-shrink: 0; }
+    .hero-mock-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+    .hero-mock-dots span:nth-child(1) { background: #ff5f57; }
+    .hero-mock-dots span:nth-child(2) { background: #febc2e; }
+    .hero-mock-dots span:nth-child(3) { background: #28c840; }
+    .hero-mock-url {
+      flex: 1;
+      min-width: 0;
+      font-family: ui-monospace, 'Segoe UI Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.22);
+      border-radius: 4px;
+      padding: 4px 10px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hero-mock-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1024 / 654;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .hero-mock-viewport img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 22% top;
+      display: block;
+    }
+    .hero-mock-cap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(245,166,35,0.06);
+      border-top: 1px solid var(--border);
+    }
+    .hero-mock-cap-text { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
+    .hero-mock-cap-text strong { color: var(--off-white); font-weight: 600; }
+    .hero-mock-cap-arrow { font-size: 13px; font-weight: 600; color: var(--amber); letter-spacing: 0.04em; white-space: nowrap; }
+
     /* ─── FAQ Accordion ─── */
     .faq-list {
       margin-top: 2rem;
@@ -1310,6 +1388,25 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.38);
       margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .recommended-pill {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--amber);
+      border-radius: 3px;
+      padding: 2px 6px;
+      line-height: 1.4;
+    }
+    .start-option--recommended {
+      border-color: rgba(245,166,35,0.4);
     }
     .start-option-title {
       font-family: var(--serif);
@@ -1735,11 +1832,11 @@
     <div class="hero-grid">
       <div class="hero-copy">
         <span class="eyebrow">For plumbers who already have a website</span>
-        <h1>You&rsquo;ve already got one. The question is whether it&rsquo;s actually <em>working.</em></h1>
+        <h1>You&rsquo;ve already taken the website step. <em>Most plumbers haven&rsquo;t.</em></h1>
         <div class="gold-line"></div>
-        <p class="hero-sub">Having a website and having a website that brings in work are two different things. If yours is slow on a phone, hard to update, or just quietly sitting there, it might be costing you jobs rather than winning them.</p>
-        <p class="hero-sub" style="margin-top:0.85rem;">I&rsquo;ll look at your current site honestly and tell you what I&rsquo;d change and what I&rsquo;d keep &mdash; for free, no obligation. If you want me to build something better, you see the finished site before anything changes or any money changes hands. You don&rsquo;t pay until it&rsquo;s better than what you&rsquo;ve got.</p>
-        <span class="hero-price-note"><strong>£299 fixed &mdash; £199 while I have launch availability.</strong> Monthly is always £9.99.</span>
+        <p class="hero-sub">That puts you ahead. But there&rsquo;s a real gap between having a website and having one that earns its keep &mdash; one that loads quickly on a phone, shows your Gas Safe number properly, and brings in enquiries from people searching for a plumber in your area.</p>
+        <p class="hero-sub" style="margin-top:0.85rem;">I&rsquo;ll look at your current site and tell you honestly what&rsquo;s working and what isn&rsquo;t &mdash; for free, no obligation. If you want to go further, you see the finished replacement before anything goes live or any money changes hands. You don&rsquo;t pay until it&rsquo;s better than what you&rsquo;ve got.</p>
+        <span class="hero-price-note">Free, no-obligation site review &mdash; honest opinion within one working day.<br><strong>£299 fixed &mdash; currently £199 while I&rsquo;m building up examples.</strong> Monthly is always £9.99.</span>
         <div class="hero-cta-row">
           <a href="#option-review" class="btn-primary" data-start-open="option-review">Get a free site review &rarr;</a>
           <a href="#what-i-build" class="hero-secondary-link">See the standard I build to first &darr;</a>
@@ -1747,30 +1844,36 @@
       </div>
 
       <div class="hero-demo-aside">
-        <img class="hero-plumber-photo"
-             src="/Images/home-hero.webp"
-             alt="Illustrative hero — professional trades web presence"
-             width="663"
-             height="499"
-             loading="eager"
-             decoding="async">
+        <div class="avail-aside-note">This is an example of the standard I build to. Yours would be written and designed around your business, your area, and the work you want more of.</div>
+        <a class="hero-mock"
+           href="https://hartley-plumbing-njb-demo.netlify.app/"
+           target="_blank"
+           rel="noopener"
+           aria-label="View the Hartley Plumbing demo site (opens in a new tab)">
+          <div class="hero-mock-chrome">
+            <div class="hero-mock-dots"><span></span><span></span><span></span></div>
+            <div class="hero-mock-url">hartley-plumbing-njb-demo.netlify.app</div>
+          </div>
+          <div class="hero-mock-viewport">
+            <img src="Images/demo-hartley-plumbing.jpg"
+                 srcset="Images/demo-hartley-plumbing-680.webp 680w,
+                         Images/demo-hartley-plumbing.jpg 800w"
+                 sizes="(max-width: 960px) 92vw, 540px"
+                 width="1024" height="654"
+                 alt="Hartley Plumbing — example plumber website built by NeoBookworm"
+                 loading="eager"
+                 decoding="async">
+          </div>
+          <div class="hero-mock-cap">
+            <span class="hero-mock-cap-text">Example: <strong>Hartley Plumbing</strong> demo site</span>
+            <span class="hero-mock-cap-arrow">View live &rarr;</span>
+          </div>
+        </a>
       </div>
     </div>
     <div class="scroll-hint" aria-hidden="true">
-      <span>When not to switch</span>
+      <span>What you&rsquo;d be switching to</span>
       <div class="scroll-bar"></div>
-    </div>
-  </section>
-
-  <!-- ══ HONESTY BLOCK ══ -->
-  <section class="honesty-block">
-    <div class="section-inner">
-      <span class="eyebrow">Worth saying upfront</span>
-      <h2 class="section-title">When you probably <em>shouldn&rsquo;t</em> switch.</h2>
-      <div class="gold-line"></div>
-      <div class="honesty-inner">
-        <p>If your current site is fast, works properly on a phone, brings you work, and you own it outright &mdash; keep it. There&rsquo;s no case for switching just for the sake of it. This page is for plumbers whose site is doing one of a few specific things: a domain that lapsed and now shows a holding page when people search for them, a Wix or Squarespace site they&rsquo;re paying rent on every month and never quite got round to sorting properly, a site someone else manages and they&rsquo;re not sure they even own the domain, or a real site with one fixable gap &mdash; no Gas Safe number visible, no working contact form, loads slowly on a phone. If that sounds like yours, read on.</p>
-      </div>
     </div>
   </section>
 
@@ -1787,7 +1890,7 @@
         </div>
         <div class="feat-card">
           <h3>You built it yourself on Wix (or similar)</h3>
-          <p>You put the time in, it works after a fashion, but you&rsquo;re paying Wix their monthly fee indefinitely for something that carries their branding. A Wix Premium plan at &pound;17/month is over &pound;200 a year &mdash; and you still don&rsquo;t own it. With me, you pay once and it&rsquo;s yours outright: no platform rent, no branding, no annual price hikes.</p>
+          <p>You put the time in, it works after a fashion, but you&rsquo;re paying Wix their monthly fee indefinitely for something that carries their branding &mdash; and you still don&rsquo;t own it. With me, you pay once and it&rsquo;s yours outright: no platform rent, no branding, no annual price hikes.</p>
         </div>
         <div class="feat-card">
           <h3>Someone else manages it</h3>
@@ -1795,7 +1898,7 @@
         </div>
         <div class="feat-card">
           <h3>It&rsquo;s real, but something&rsquo;s off</h3>
-          <p>You have a proper site and it&rsquo;s been there a while, but something is quietly costing you jobs: your Gas Safe number isn&rsquo;t visible, there&rsquo;s no working contact form, or it loads slowly enough on a phone that people give up. These aren&rsquo;t reasons to start from scratch, but they are reasons to compare what you&rsquo;ve got against what a built-from-scratch site looks like.</p>
+          <p>You have a proper site and it&rsquo;s been there a while, but something is quietly costing you jobs: your Gas Safe number isn&rsquo;t visible, there&rsquo;s no working contact form, or it loads slowly enough on a phone that people give up. If this is you, take the free site review below &mdash; I&rsquo;ll tell you honestly whether a rebuild is worth it or whether your existing site just needs a couple of targeted fixes.</p>
         </div>
       </div>
     </div>
@@ -1805,9 +1908,9 @@
   <section class="includes" id="what-i-build">
     <div class="section-inner">
       <span class="eyebrow">What you&rsquo;d be switching to</span>
-      <h2 class="section-title">Everything your current site probably <em>doesn&rsquo;t have &mdash; in one place.</em></h2>
+      <h2 class="section-title">The standard I build to &mdash; <em>interactive demos, not promises.</em></h2>
       <div class="gold-line"></div>
-      <p style="font-size:0.95rem; color:rgba(255,255,255,0.62); margin-bottom:0.5rem;">These aren&rsquo;t screenshots or promises &mdash; they&rsquo;re live, interactive demonstrations of what goes into every site I build. Click any card to explore.</p>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.62); margin-bottom:0.5rem;">These aren&rsquo;t screenshots &mdash; they&rsquo;re live, interactive demonstrations of what goes into every site I build. Click any card to explore.</p>
       <div class="cards-grid">
         <!-- Interactive: opens Gas Safe badge demo modal -->
         <div class="feat-card featured" id="gasSafeCard" role="button" tabindex="0"
@@ -1851,7 +1954,7 @@
       <div class="speed-compare">
         <div class="speed-box speed-bad">
           <div class="speed-score">24</div>
-          <div class="speed-label">Typical Wix / page-builder<br>plumber site (mobile)</div>
+          <div class="speed-label">Typical Wix / page-builder<br>plumber site &mdash; mobile (20&ndash;40 is common)</div>
         </div>
         <div class="speed-arrow">&#8594;</div>
         <div class="speed-box speed-good">
@@ -1859,7 +1962,26 @@
           <div class="speed-label">NeoBookworm build<br>(mobile)</div>
         </div>
       </div>
-      <p class="speed-note">How fast it loads on a phone &mdash; the score Google looks at when deciding how to rank your site in local search.</p>
+      <p class="speed-note">How fast it loads on a phone &mdash; the score Google looks at when deciding how to rank your site in local search. PageSpeed scores vary across Wix and Squarespace plumber sites; the 96 is from sites I&rsquo;ve built. You can <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener" style="color:var(--amber);">test your own site here</a>.</p>
+    </div>
+  </section>
+
+  <!-- ══ HONESTY BLOCK ══ -->
+  <section class="honesty-block">
+    <div class="section-inner">
+      <span class="eyebrow">Worth saying upfront</span>
+      <h2 class="section-title">When you probably <em>shouldn&rsquo;t</em> switch.</h2>
+      <div class="gold-line"></div>
+      <div class="honesty-inner">
+        <p>If your current site is fast, works properly on a phone, brings you work, and you own it outright &mdash; keep it. There&rsquo;s no case for switching just for the sake of it. This page is for plumbers whose site is doing one of these specific things:</p>
+        <ul style="margin-top:1rem; padding-left:1.25rem; color:rgba(255,255,255,0.72); font-size:1.02rem; line-height:2; font-weight:300;">
+          <li>The domain lapsed and now shows a parking page when people search for you</li>
+          <li>You&rsquo;re on Wix or Squarespace and paying monthly rent for something you don&rsquo;t own</li>
+          <li>Someone else manages it and you&rsquo;re not sure the domain is even in your name</li>
+          <li>You have a real site but something specific is costing you jobs &mdash; no Gas Safe number, no working contact form, loads slowly on a phone</li>
+        </ul>
+        <p style="margin-top:1rem;">If none of that applies, you&rsquo;re probably fine. If any of it does, read on.</p>
+      </div>
     </div>
   </section>
 
@@ -1885,7 +2007,7 @@
           </tr>
           <tr>
             <td>Monthly cost</td>
-            <td>&pound;15&ndash;20 (Wix/Squarespace) or &pound;40&ndash;100+ (agency retainer)</td>
+            <td>&pound;15&ndash;20 (Wix/Squarespace) or &pound;40&ndash;250+ (agency retainer)</td>
             <td>&pound;9.99 &mdash; cancel any month, no contract</td>
           </tr>
           <tr>
@@ -1905,7 +2027,7 @@
           </tr>
         </tbody>
       </table>
-      <p style="font-size:0.875rem; font-style:italic; color:var(--muted); margin-top:1.25rem;">A Wix Premium plan at &pound;17/month is &pound;204/year &mdash; and after three years you&rsquo;ve spent &pound;612 on a site you still don&rsquo;t own. NeoBookworm is &pound;299 once, then &pound;119.88/year. After year one you&rsquo;re saving money, on a site that loads significantly faster and that you own outright.</p>
+      <p style="font-size:0.875rem; font-style:italic; color:var(--muted); margin-top:1.25rem;">Year 1: Wix &pound;204 vs NeoBookworm &pound;419. Year 3: Wix &pound;612 vs NeoBookworm &pound;539. Break-even around year 2.5 &mdash; and after that you&rsquo;re saving money on a site you actually own, that loads significantly faster, and that nobody can take away from you.</p>
     </div>
   </section>
 
@@ -1925,6 +2047,7 @@
           </div>
           <h3>I look at what you&rsquo;ve got</h3>
           <p>Send me your current site &mdash; or just get in touch with your details. I&rsquo;ll take a proper look and come back to you with an honest assessment: what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d do differently. No charge, no obligation, no sales call.</p>
+          <p style="font-style:italic; font-size:0.85rem; color:rgba(255,255,255,0.45); margin-top:0.75rem;">Your time: 0 minutes &mdash; send the URL, I do the rest.</p>
         </div>
         <div class="step">
           <div class="step-header">
@@ -1935,6 +2058,7 @@
           </div>
           <h3>I build the new one</h3>
           <p>If you decide to go ahead, I build your new site using your existing content, photos, and services. You get a link to view the finished site before anything goes live, changes hands, or is paid. If it&rsquo;s not right, just say so &mdash; no invoice, no awkward conversation.</p>
+          <p style="font-style:italic; font-size:0.85rem; color:rgba(255,255,255,0.45); margin-top:0.75rem;">Your time: 10&ndash;15 minutes reviewing the preview.</p>
         </div>
         <div class="step">
           <div class="step-header">
@@ -1945,6 +2069,7 @@
           </div>
           <h3>I move it over</h3>
           <p>Once you&rsquo;re happy, I point your existing domain at the new site. Done properly, there&rsquo;s no disruption to how you appear in Google and no downtime. Your domain stays yours throughout &mdash; registered in your name, not mine. You don&rsquo;t pay until it&rsquo;s better than what you had.</p>
+          <p style="font-style:italic; font-size:0.85rem; color:rgba(255,255,255,0.45); margin-top:0.75rem;">Your time: 5 minutes pointing the domain &mdash; or I&rsquo;ll do it with you on a call.</p>
         </div>
       </div>
     </div>
@@ -1968,7 +2093,7 @@
           <div class="gold-line"></div>
           <p>I&rsquo;m Nick Barrett, based in Swindon. I spent 25 years in technology &mdash; building software and managing complex projects for a major bank &mdash; before deciding I&rsquo;d rather help local tradespeople get a fair deal on their web presence.</p>
           <p>I&rsquo;m not an agency. When you email me, I reply. When your site needs changing, I do it &mdash; not a helpdesk in another time zone.</p>
-          <p>NeoBookworm is new, which is exactly why the model works the way it does: you see the finished site before you pay anything, and I&rsquo;ll review your current one for free first so you can judge the quality of my work before committing to anything. I&rsquo;d rather show you than tell you.</p>
+          <p>I&rsquo;m deliberately running the model this way &mdash; free review first, pay only when it&rsquo;s better than what you had &mdash; because I&rsquo;d rather earn your business by showing you the work than by selling you on it.</p>
         </div>
       </div>
     </div>
@@ -1984,22 +2109,10 @@
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-1">
-            You&rsquo;re new &mdash; why should I trust you with my site?
-            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="faq-answer" id="faq-1" role="region">
-            <div class="faq-answer-inner">
-              <p>Honestly, that&rsquo;s a fair question and I&rsquo;d ask it too. The answer is in the model: you don&rsquo;t pay anything until you&rsquo;ve seen the finished site and decided you&rsquo;re happy with it. There&rsquo;s nothing at risk on your end. And before any of that, I&rsquo;ll review your current site for free &mdash; so you can judge the quality of my thinking before you commit to anything. If after that you&rsquo;re not convinced, no problem at all. I&rsquo;m building this business up, which means I have every reason to get this right.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-btn" aria-expanded="false" aria-controls="faq-2">
             Will I lose my Google ranking when I switch?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
-          <div class="faq-answer" id="faq-2" role="region">
+          <div class="faq-answer" id="faq-1" role="region">
             <div class="faq-answer-inner">
               <p>No &mdash; as long as the domain stays the same (which it will) and the switch is done properly. I set up redirects so Google knows every old page maps to the right new page. In practice, rankings stay stable and often improve because the new site loads faster and is better structured. I&rsquo;ll also show you the load speed score on both sites so you can see the concrete difference before anything goes live.</p>
             </div>
@@ -2007,13 +2120,25 @@
         </div>
 
         <div class="faq-item">
-          <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-2">
             What happens to my domain name?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-2" role="region">
+            <div class="faq-answer-inner">
+              <p>Your domain stays yours &mdash; it&rsquo;s registered in your name and that doesn&rsquo;t change. Once the new site is ready, I&rsquo;ll walk you through pointing it at the new site, or do it with you if you prefer. The whole process takes a few minutes and your existing domain keeps working throughout.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
+            Can you use my existing photos and content?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-3" role="region">
             <div class="faq-answer-inner">
-              <p>Your domain stays yours &mdash; it&rsquo;s registered in your name and that doesn&rsquo;t change. Once the new site is ready, I&rsquo;ll walk you through pointing it at the new site, or do it with you if you prefer. The whole process takes a few minutes and your existing domain keeps working throughout.</p>
+              <p>Yes &mdash; that&rsquo;s the starting point. Switching doesn&rsquo;t mean starting from scratch; I take what you already have, fix the gaps, and build the new site around your existing content. Send me anything you have: work photos, services list, Gas Safe number, any reviews you want included. If there are gaps, I&rsquo;ll work around them and flag what would be worth adding.</p>
             </div>
           </div>
         </div>
@@ -2032,22 +2157,10 @@
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-5">
-            Can you use my existing photos and content?
-            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="faq-answer" id="faq-5" role="region">
-            <div class="faq-answer-inner">
-              <p>Yes &mdash; that&rsquo;s the starting point. Switching doesn&rsquo;t mean starting from scratch; I take what you already have, fix the gaps, and build the new site around your existing content. Send me anything you have: work photos, services list, Gas Safe number, any reviews you want included. If there are gaps, I&rsquo;ll work around them and flag what would be worth adding.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-btn" aria-expanded="false" aria-controls="faq-6">
             I&rsquo;m still in a contract with my current provider &mdash; can I still get started?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
-          <div class="faq-answer" id="faq-6" role="region">
+          <div class="faq-answer" id="faq-5" role="region">
             <div class="faq-answer-inner">
               <p>Yes. I&rsquo;ll build your new site now so it&rsquo;s ready to go the moment you&rsquo;re out of your contract. You don&rsquo;t pay anything until you&rsquo;ve seen it and decided you want it. Some people use the preview period to make up their mind about whether it&rsquo;s worth switching at all.</p>
             </div>
@@ -2055,14 +2168,50 @@
         </div>
 
         <div class="faq-item">
-          <button class="faq-btn" aria-expanded="false" aria-controls="faq-7">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-6">
             How do I know the new site will actually be better?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-6" role="region">
+            <div class="faq-answer-inner">
+              <p>The comparison is concrete: I&rsquo;ll show you the load speed score on your current site and on the finished new one before you commit to anything. You can also start with the free review &mdash; that&rsquo;s a real assessment of your site with no strings attached, so you can judge the quality of what I do before you decide whether to go further.</p>
+              <p>If after seeing the finished site you&rsquo;re not satisfied, you walk away owing nothing. No invoice, no awkward conversation. The model only works if the result is genuinely better than what you had.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-7">
+            How long does the whole thing take, start to finish?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-7" role="region">
             <div class="faq-answer-inner">
-              <p>The comparison is concrete: I&rsquo;ll show you the load speed score on your current site and on the finished new one before you commit to anything. You can also start with the free review &mdash; that&rsquo;s a real assessment of your site with no strings attached, so you can judge the quality of what I do before you decide whether to go further.</p>
-              <p>If after seeing the finished site you&rsquo;re not satisfied, you walk away owing nothing. No invoice, no awkward conversation. The model only works if the result is genuinely better than what you had.</p>
+              <p>The free site review comes back within one working day. If you decide to go ahead, building the new site typically takes one to two weeks depending on how much content I have to work with. The domain switch itself takes a few minutes once you&rsquo;re happy. From first contact to live new site, most people are done within two to three weeks &mdash; and you don&rsquo;t pay a penny until you&rsquo;re satisfied with the result.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-8">
+            What if my current designer or agency is awkward about handing over the domain?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-8" role="region">
+            <div class="faq-answer-inner">
+              <p>This is the real reason "someone else manages it" can be uncomfortable &mdash; and it&rsquo;s worth being direct about. If the domain is registered in your name, you have the login credentials, and you can point it wherever you want. If it&rsquo;s registered in their name, you&rsquo;ll need to either request a transfer or register a fresh domain yourself (typically under &pound;15/year). I can walk you through either route. The first thing to do is find out who actually owns it &mdash; the free site review is a good moment to do that, and I can help you check.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq-9">
+            You&rsquo;re new &mdash; why should I trust you with my site?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+          </button>
+          <div class="faq-answer" id="faq-9" role="region">
+            <div class="faq-answer-inner">
+              <p>Honestly, that&rsquo;s a fair question and I&rsquo;d ask it too. The answer is in the model: you don&rsquo;t pay anything until you&rsquo;ve seen the finished site and decided you&rsquo;re happy with it. There&rsquo;s nothing at risk on your end. And before any of that, I&rsquo;ll review your current site for free &mdash; so you can judge the quality of my thinking before you commit to anything. If after that you&rsquo;re not convinced, no problem at all. I&rsquo;m building this business up, which means I have every reason to get this right.</p>
             </div>
           </div>
         </div>
@@ -2129,11 +2278,11 @@
                 </div>
               </div>
 
-              <article id="option-review" class="start-option" aria-expanded="false">
+              <article id="option-review" class="start-option start-option--recommended" aria-expanded="false">
                 <input type="radio" name="start_option" value="review_site_first" class="visually-hidden" tabindex="-1" aria-hidden="true">
                 <div class="start-option-num" aria-hidden="true">1</div>
                 <div class="start-option-main">
-                  <p class="start-option-kicker">Free site review</p>
+                  <p class="start-option-kicker">Free site review <span class="recommended-pill">Recommended</span></p>
                   <h3 class="start-option-title" id="option-review-heading">Review my current site &mdash; free, no obligation</h3>
                   <p class="start-option-desc">I&rsquo;ll look at what you have and come back with an honest assessment: what&rsquo;s working, what isn&rsquo;t, and what I&rsquo;d change. Nothing to commit to, no charge.</p>
                 </div>
@@ -2773,6 +2922,13 @@
       if (article) {
         var inner = article.querySelector('.start-option-panel-inner');
         moveContactFields(inner);
+      }
+
+      /* Hide URL field for Option 3 — intake form already asks for it */
+      var urlField = document.getElementById('f_url');
+      if (urlField) {
+        var urlWrap = urlField.closest('.field');
+        if (urlWrap) urlWrap.style.display = (id === 'option-inquiry') ? 'none' : '';
       }
 
       if (opts.scroll !== false && article) {
