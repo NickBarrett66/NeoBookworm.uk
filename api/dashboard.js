@@ -262,12 +262,17 @@ module.exports = async (req, res) => {
     if (action === 'outbox_confirm') {
       if (!id) return res.status(400).json({ ok: false, error: 'id required' });
       try {
-        await Promise.all([
-          queryD1(prospectsDb(),
-            `UPDATE outbox SET sent = 1, sent_at = datetime('now') WHERE id = ?`,
-            [id]),
-          queryD1(prospectsDb(),
-            `UPDATE prospects
+        // Fetch seq_num so we know which email in the sequence this is
+        const outboxRows = await queryD1(prospectsDb(),
+          `SELECT seq_num, notion_id, campaign_id FROM outbox WHERE id = ?`, [id]);
+        if (!outboxRows.length) return res.status(404).json({ ok: false, error: 'Outbox row not found' });
+        const seqNum = outboxRows[0].seq_num ?? 1;
+
+        // Build the prospects UPDATE depending on which email in the sequence this is.
+        // E1 (seq_num = 1): set status, date_first_contacted (if null), contact_count, last_email_sent.
+        // E2/E3 (seq_num > 1): only update last_email_sent.
+        const prospectsUpdate = seqNum === 1
+          ? `UPDATE prospects
              SET last_email_sent      = datetime('now'),
                  date_first_contacted = CASE WHEN date_first_contacted IS NULL
                                              THEN datetime('now')
@@ -275,8 +280,18 @@ module.exports = async (req, res) => {
                  contact_count        = COALESCE(contact_count, 0) + 1,
                  status               = 'Emailed',
                  email_campaign_id    = (SELECT campaign_id FROM outbox WHERE id = ?)
-             WHERE notion_id = (SELECT notion_id FROM outbox WHERE id = ?)`,
-            [id, id]),
+             WHERE notion_id = (SELECT notion_id FROM outbox WHERE id = ?)`
+          : `UPDATE prospects
+             SET last_email_sent = datetime('now')
+             WHERE notion_id = (SELECT notion_id FROM outbox WHERE id = ?)`;
+
+        const prospectsParams = seqNum === 1 ? [id, id] : [id];
+
+        await Promise.all([
+          queryD1(prospectsDb(),
+            `UPDATE outbox SET sent = 1, sent_at = datetime('now') WHERE id = ?`,
+            [id]),
+          queryD1(prospectsDb(), prospectsUpdate, prospectsParams),
           queryD1(prospectsDb(),
             `UPDATE campaigns SET count_sent = count_sent + 1
              WHERE id = (SELECT campaign_id FROM outbox WHERE id = ?)`,
