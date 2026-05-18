@@ -1,3 +1,9 @@
+// Migration: add sequence support to outbox
+// Run once in Cloudflare D1 console (neobookworm-prospects DB)
+// ALTER TABLE outbox ADD COLUMN seq_num INTEGER NOT NULL DEFAULT 1;        -- 1, 2, or 3
+// ALTER TABLE outbox ADD COLUMN suppressed INTEGER NOT NULL DEFAULT 0;     -- 1 = stop sequence for this prospect
+// ALTER TABLE prospects ADD COLUMN sequence_suppressed INTEGER NOT NULL DEFAULT 0; -- mirrors suppressed state at prospect level
+
 // GET  /api/dashboard?action=summary
 // GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
@@ -122,16 +128,83 @@ module.exports = async (req, res) => {
       }
     }
 
+    if (action === 'outbox_approve_prospect') {
+      if (!body.notion_id || !body.campaign_id) return res.status(400).json({ ok: false, error: 'notion_id and campaign_id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET approved = 1, approved_at = datetime('now')
+           WHERE notion_id = ? AND campaign_id = ? AND sent = 0 AND skipped = 0 AND suppressed = 0`,
+          [body.notion_id, body.campaign_id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_approve_prospect]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_unapprove_prospect') {
+      if (!body.notion_id || !body.campaign_id) return res.status(400).json({ ok: false, error: 'notion_id and campaign_id required' });
+      try {
+        await queryD1(prospectsDb(),
+          `UPDATE outbox SET approved = 0, approved_at = NULL
+           WHERE notion_id = ? AND campaign_id = ? AND sent = 0`,
+          [body.notion_id, body.campaign_id]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_unapprove_prospect]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_suppress_prospect') {
+      if (!body.notion_id || !body.campaign_id) return res.status(400).json({ ok: false, error: 'notion_id and campaign_id required' });
+      try {
+        await Promise.all([
+          queryD1(prospectsDb(),
+            `UPDATE outbox SET suppressed = 1
+             WHERE notion_id = ? AND campaign_id = ? AND sent = 0`,
+            [body.notion_id, body.campaign_id]),
+          queryD1(prospectsDb(),
+            `UPDATE prospects SET sequence_suppressed = 1 WHERE notion_id = ?`,
+            [body.notion_id]),
+        ]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_suppress_prospect]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    if (action === 'outbox_unsuppress_prospect') {
+      if (!body.notion_id || !body.campaign_id) return res.status(400).json({ ok: false, error: 'notion_id and campaign_id required' });
+      try {
+        await Promise.all([
+          queryD1(prospectsDb(),
+            `UPDATE outbox SET suppressed = 0
+             WHERE notion_id = ? AND campaign_id = ? AND sent = 0`,
+            [body.notion_id, body.campaign_id]),
+          queryD1(prospectsDb(),
+            `UPDATE prospects SET sequence_suppressed = 0 WHERE notion_id = ?`,
+            [body.notion_id]),
+        ]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard outbox_unsuppress_prospect]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (action === 'outbox_next') {
       try {
         const rows = await queryD1(prospectsDb(),
           `SELECT o.id, o.campaign_id, o.notion_id, o.business_name,
-                  o.email, o.subject, o.body
+                  o.email, o.subject, o.body, o.seq_num
            FROM outbox o
            JOIN campaigns c ON o.campaign_id = c.id
            WHERE o.sent = 0
              AND o.skipped = 0
              AND o.approved = 1
+             AND o.suppressed = 0
              AND c.status = 'active'
              AND (o.scheduled_not_before IS NULL OR o.scheduled_not_before <= datetime('now'))
            ORDER BY c.priority DESC, o.created_at ASC
@@ -173,11 +246,11 @@ module.exports = async (req, res) => {
       try {
         const countRows = await queryD1(prospectsDb(),
           `SELECT COUNT(*) AS n FROM outbox
-           WHERE campaign_id = ? AND sent = 0 AND skipped = 0 AND approved = 0`,
+           WHERE campaign_id = ? AND sent = 0 AND skipped = 0 AND suppressed = 0 AND approved = 0`,
           [campaign_id]);
         await queryD1(prospectsDb(),
           `UPDATE outbox SET approved = 1, approved_at = datetime('now')
-           WHERE campaign_id = ? AND sent = 0 AND skipped = 0`,
+           WHERE campaign_id = ? AND sent = 0 AND skipped = 0 AND suppressed = 0`,
           [campaign_id]);
         return res.status(200).json({ ok: true, approved_count: countRows[0]?.n || 0 });
       } catch (err) {
@@ -687,7 +760,7 @@ module.exports = async (req, res) => {
     if (action === 'campaigns_detail') {
       const { id } = req.query;
       if (!id) return res.status(400).json({ error: 'id parameter required' });
-      const [campaignRows, prospectRows] = await Promise.all([
+      const [campaignRows, prospectRows, outboxSummary] = await Promise.all([
         queryD1(prospectsDb(), `SELECT * FROM campaigns WHERE id = ?`, [id]),
         queryD1(prospectsDb(),
           `SELECT notion_id, business_name, email_address, town, status,
@@ -697,9 +770,21 @@ module.exports = async (req, res) => {
            ORDER BY last_email_sent DESC NULLS LAST, business_name`,
           [id]
         ),
+        queryD1(prospectsDb(),
+          `SELECT o.notion_id, o.business_name, o.email,
+                  COUNT(*) AS total_emails,
+                  SUM(CASE WHEN o.sent = 1 THEN 1 ELSE 0 END) AS sent_count,
+                  SUM(CASE WHEN o.suppressed = 1 THEN 1 ELSE 0 END) AS suppressed_count,
+                  MAX(o.suppressed) AS is_suppressed
+           FROM outbox o
+           WHERE o.campaign_id = ?
+           GROUP BY o.notion_id, o.business_name, o.email
+           ORDER BY o.business_name ASC`,
+          [id]
+        ),
       ]);
       if (!campaignRows.length) return res.status(404).json({ error: 'Campaign not found' });
-      return res.status(200).json({ ok: true, campaign: campaignRows[0], prospects: prospectRows });
+      return res.status(200).json({ ok: true, campaign: campaignRows[0], prospects: prospectRows, outbox_summary: outboxSummary });
     }
 
     // ── Outbox list ───────────────────────────────────────────────────────────
@@ -711,10 +796,12 @@ module.exports = async (req, res) => {
                 substr(body, 1, 120) AS body_preview,
                 created_at, scheduled_not_before,
                 approved, approved_at,
-                sent, sent_at, skipped, skip_reason, send_error, send_attempts
+                sent, sent_at, skipped, skip_reason,
+                send_error, send_attempts,
+                seq_num, suppressed
          FROM outbox
          WHERE campaign_id = ?
-         ORDER BY sent ASC, skipped ASC, approved DESC, created_at ASC`,
+         ORDER BY notion_id ASC, seq_num ASC`,
         [cid]);
       return res.status(200).json({ ok: true, data: rows });
     }

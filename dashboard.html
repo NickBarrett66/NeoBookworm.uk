@@ -520,8 +520,43 @@
     border-radius: 8px; padding: .7rem 1rem;
     margin-bottom: .75rem; font-size: .875rem;
   }
+  .outbox-summary-bar .summ-lines { display: flex; flex-direction: column; gap: .2rem; flex: 1; min-width: 12rem; }
+  .outbox-summary-bar .summ-line2 { color: var(--muted); font-size: .82rem; }
   .outbox-summary-bar .summ-sep  { color: var(--border); }
   .outbox-summary-bar .summ-btns { margin-left: auto; display: flex; gap: .5rem; }
+
+  tr.outbox-prospect-header { background: var(--navy-card); cursor: pointer; }
+  tr.outbox-prospect-header.suppressed { border-left: 3px solid var(--purple); }
+  tr.outbox-prospect-header td { padding: .65rem .75rem; vertical-align: middle; }
+  .outbox-prospect-header-inner {
+    display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; width: 100%;
+  }
+  .outbox-toggle { color: var(--muted); font-size: .7rem; width: 1rem; flex-shrink: 0; user-select: none; }
+  .outbox-prospect-name { font-weight: 700; }
+  .outbox-prospect-email { color: var(--muted); font-size: .82rem; }
+  .outbox-prospect-badge {
+    font-size: .72rem; font-weight: 600; padding: .15rem .5rem; border-radius: 4px;
+    border: 1px solid; white-space: nowrap;
+  }
+  .outbox-prospect-actions { margin-left: auto; display: flex; gap: .35rem; flex-wrap: wrap; }
+  .btn-ob-seq {
+    padding: .22rem .55rem; border-radius: 5px; font-size: .72rem; font-weight: 600;
+    cursor: pointer; border: 1px solid; background: none; white-space: nowrap;
+  }
+  .btn-ob-seq.approve { color: #22c55e; border-color: #22c55e; }
+  .btn-ob-seq.approve:not(:disabled):hover { background: rgba(34,197,94,.1); }
+  .btn-ob-seq.revoke { color: var(--grey); border-color: var(--border); }
+  .btn-ob-seq.revoke:not(:disabled):hover { color: var(--muted); }
+  .btn-ob-seq.suppress { color: var(--red); border-color: var(--red); }
+  .btn-ob-seq.suppress:not(:disabled):hover { background: rgba(224,80,80,.1); }
+  .btn-ob-seq.unsuppress { color: var(--muted); border-color: var(--border); font-weight: 400; font-size: .7rem; }
+  .btn-ob-seq.unsuppress:not(:disabled):hover { color: var(--white); }
+
+  tr.outbox-seq-row td { font-size: .85rem; }
+  tr.outbox-seq-row td:first-child { border-left: 3px solid var(--border); padding-left: 1.25rem; }
+  tr.outbox-seq-row.suppressed td { opacity: .75; }
+  .outbox-seq-label { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+  .outbox-subject { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .btn-outbox-hdr {
     padding: .35rem .8rem; border-radius: 6px;
@@ -781,6 +816,7 @@ const state = {
   campCampaignId:  '',
   outboxRows:      [],
   outboxCampaignId:'',
+  outboxCollapsed: new Set(),
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
@@ -2244,35 +2280,103 @@ function renderCampaignDetail(c, prospects, outboxRows) {
 }
 
 // ── Outbox section ────────────────────────────────────────────────────────────
+function outboxSeqLabel(seqNum) {
+  const n = Number(seqNum) || 1;
+  if (n === 1) return '1st Email';
+  if (n === 2) return '2nd Email';
+  if (n === 3) return 'Final Email';
+  return n + 'th Email';
+}
+
+function groupOutboxByProspect(rows) {
+  const map = new Map();
+  rows.forEach(row => {
+    const key = row.notion_id || row.id;
+    if (!map.has(key)) {
+      map.set(key, {
+        notion_id: row.notion_id,
+        business_name: row.business_name,
+        email: row.email,
+        rows: [],
+      });
+    }
+    map.get(key).rows.push(row);
+  });
+  map.forEach(g => g.rows.sort((a, b) => (Number(a.seq_num) || 1) - (Number(b.seq_num) || 1)));
+  return Array.from(map.values());
+}
+
+function computeOutboxSummaryStats(rows) {
+  const now = new Date();
+  const prospectIds = new Set(rows.map(r => r.notion_id || r.id));
+  let embargoed = 0;
+  let pending = 0;
+  let suppressed = 0;
+  rows.forEach(r => {
+    if (r.suppressed) suppressed++;
+    else if (!r.skipped && !r.sent && !r.approved) pending++;
+    else if (!r.skipped && !r.sent && r.approved && r.scheduled_not_before && new Date(r.scheduled_not_before) > now) embargoed++;
+  });
+  return {
+    prospectCount: prospectIds.size,
+    totalEmails: rows.length,
+    sent: rows.filter(r => r.sent).length,
+    embargoed,
+    pending,
+    skipped: rows.filter(r => r.skipped).length,
+    suppressed,
+  };
+}
+
+function getProspectGroupBadge(group) {
+  const rs = group.rows;
+  const isSuppressed = rs.some(r => r.suppressed);
+  const sentCount = rs.filter(r => r.sent).length;
+  const skippedAny = rs.some(r => r.skipped);
+  const unsent = rs.filter(r => !r.sent);
+  const unsentApproved = unsent.filter(r => r.approved && !r.skipped && !r.suppressed);
+
+  if (isSuppressed) return { text: '✦ Replied — stopped', color: 'var(--purple)', border: 'var(--purple)' };
+  if (sentCount === rs.length) return { text: '✓ Complete', color: '#22c55e', border: '#22c55e' };
+  if (sentCount > 0 && sentCount < rs.length) return { text: '→ In progress', color: 'var(--blue)', border: 'var(--blue)' };
+  if (skippedAny) return { text: '⊘ Skipped', color: 'var(--grey)', border: 'var(--border)' };
+  if (unsent.length && unsentApproved.length === unsent.length) return { text: '✓ Approved', color: '#4ade80', border: '#22c55e' };
+  if (unsentApproved.length > 0) return { text: '◑ Part-approved', color: 'var(--amber)', border: 'var(--amber)' };
+  return { text: '○ Pending', color: 'var(--muted)', border: 'var(--border)' };
+}
+
+function rerenderOutboxPreserveScroll(rows, campaignId) {
+  const y = window.scrollY;
+  renderOutboxSection(rows, campaignId);
+  requestAnimationFrame(() => window.scrollTo(0, y));
+}
+
 function renderOutboxSection(rows, campaignId) {
   const section = document.getElementById('outbox-section');
   if (!section) return;
 
-  const cntApproved = rows.filter(r => r.approved && !r.sent && !r.skipped).length;
-  const cntPending  = rows.filter(r => !r.approved && !r.sent && !r.skipped).length;
-  const cntSent     = rows.filter(r => r.sent).length;
-  const cntSkipped  = rows.filter(r => r.skipped).length;
-  const hasPending  = cntPending > 0;
+  const stats = computeOutboxSummaryStats(rows);
+  const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
+  const groups = groupOutboxByProspect(rows);
+  const isGrouped = groups.some(g => g.rows.length > 1);
 
   section.innerHTML = `
     <div class="outbox-summary-bar" id="outbox-summary-bar">
-      <span><strong>${cntApproved}</strong> approved</span>
-      <span class="summ-sep">·</span>
-      <span><strong>${cntPending}</strong> pending review</span>
-      <span class="summ-sep">·</span>
-      <span><strong>${cntSent}</strong> sent</span>
-      <span class="summ-sep">·</span>
-      <span><strong>${cntSkipped}</strong> skipped</span>
+      <div class="summ-lines">
+        <div><strong>${stats.prospectCount}</strong> prospect${stats.prospectCount !== 1 ? 's' : ''} in sequence</div>
+        <div class="summ-line2">${stats.totalEmails} emails — ${stats.sent} sent · ${stats.embargoed} embargoed · ${stats.pending} awaiting approval · ${stats.skipped} skipped · ${stats.suppressed} suppressed</div>
+      </div>
       <div class="summ-btns">
         <button class="btn-outbox-hdr review" id="btn-review-all" ${!hasPending ? 'disabled' : ''}>Review &amp; Approve All</button>
-        <button class="btn-outbox-hdr approve-all" id="btn-approve-all" ${!hasPending ? 'disabled' : ''}>Approve All</button>
+        <button class="btn-outbox-hdr approve-all" id="btn-approve-all" ${!hasPending ? 'disabled' : ''}>Approve All Emails</button>
       </div>
     </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>#</th><th>Business name</th><th>Email</th><th>Approval</th>
-          <th>Status</th><th>Scheduled</th><th>Actions</th>
+          ${isGrouped
+            ? '<th>Sequence</th><th>Subject</th><th>Scheduled</th><th>Approval</th><th>Status</th><th>Actions</th>'
+            : '<th>#</th><th>Business name</th><th>Email</th><th>Approval</th><th>Status</th><th>Scheduled</th><th>Actions</th>'}
         </tr></thead>
         <tbody id="outbox-tbody"></tbody>
       </table>
@@ -2281,9 +2385,9 @@ function renderOutboxSection(rows, campaignId) {
 
   if (!rows.length) {
     document.getElementById('outbox-tbody').innerHTML =
-      '<tr><td colspan="7" class="muted" style="padding:1.5rem;text-align:center">No emails in outbox</td></tr>';
+      `<tr><td colspan="${isGrouped ? 6 : 7}" class="muted" style="padding:1.5rem;text-align:center">No emails in outbox</td></tr>`;
   } else {
-    renderOutboxRows(rows, campaignId);
+    renderOutboxRows(rows, campaignId, groups, isGrouped);
   }
 
   document.getElementById('btn-approve-all')?.addEventListener('click', async e => {
@@ -2292,61 +2396,249 @@ function renderOutboxSection(rows, campaignId) {
     btn.innerHTML = '<span class="spinner"></span>';
     try {
       await apiPost({ action: 'outbox_approve_all', campaign_id: campaignId });
-      rows.forEach(r => { if (!r.sent && !r.skipped) r.approved = 1; });
+      rows.forEach(r => { if (!r.sent && !r.skipped && !r.suppressed) r.approved = 1; });
       state.outboxRows = rows;
-      renderOutboxSection(rows, campaignId);
+      rerenderOutboxPreserveScroll(rows, campaignId);
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Approve All';
+      btn.textContent = 'Approve All Emails';
       alert('Error: ' + err.message);
     }
   });
 
   document.getElementById('btn-review-all')?.addEventListener('click', () => {
-    const firstIdx = rows.findIndex(r => !r.approved && !r.sent && !r.skipped);
+    const firstIdx = rows.findIndex(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
     if (firstIdx !== -1) openEmailPreview(rows[firstIdx].id, rows, firstIdx);
   });
 }
 
-function renderOutboxRows(rows, campaignId) {
+function renderProspectHeaderRow(tbody, group, campaignId, rows, colSpan) {
+  const rs = group.rows;
+  const notionId = group.notion_id;
+  const isSuppressed = rs.some(r => r.suppressed);
+  const sentCount = rs.filter(r => r.sent).length;
+  const allSent = sentCount === rs.length;
+  const partiallySent = sentCount > 0 && sentCount < rs.length;
+  const collapsed = state.outboxCollapsed.has(notionId);
+  const badge = getProspectGroupBadge(group);
+
+  const tr = document.createElement('tr');
+  tr.className = 'outbox-prospect-header' + (isSuppressed ? ' suppressed' : '');
+  tr.dataset.notionId = notionId;
+
+  const td = document.createElement('td');
+  td.colSpan = colSpan;
+
+  const inner = document.createElement('div');
+  inner.className = 'outbox-prospect-header-inner';
+
+  const toggle = document.createElement('span');
+  toggle.className = 'outbox-toggle';
+  toggle.textContent = collapsed ? '▶' : '▼';
+
+  const name = document.createElement('span');
+  name.className = 'outbox-prospect-name';
+  name.textContent = group.business_name || '—';
+
+  const email = document.createElement('span');
+  email.className = 'outbox-prospect-email';
+  email.textContent = group.email || '—';
+
+  const badgeEl = document.createElement('span');
+  badgeEl.className = 'outbox-prospect-badge';
+  badgeEl.style.color = badge.color;
+  badgeEl.style.borderColor = badge.border;
+  badgeEl.textContent = badge.text;
+
+  const actions = document.createElement('div');
+  actions.className = 'outbox-prospect-actions';
+
+  if (isSuppressed) {
+    const btnUnsuppress = document.createElement('button');
+    btnUnsuppress.className = 'btn-ob-seq unsuppress';
+    btnUnsuppress.textContent = 'Unsuppress';
+    btnUnsuppress.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm(`Resume sequence for ${group.business_name || 'this prospect'}?`)) return;
+      btnUnsuppress.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_unsuppress_prospect', notion_id: notionId, campaign_id: campaignId });
+        rs.forEach(r => { if (!r.sent) r.suppressed = 0; });
+        state.outboxRows = rows;
+        rerenderOutboxPreserveScroll(rows, campaignId);
+      } catch (err) { btnUnsuppress.disabled = false; alert('Error: ' + err.message); }
+    });
+    actions.appendChild(btnUnsuppress);
+  } else if (!allSent) {
+    if (!partiallySent) {
+      const btnApprove = document.createElement('button');
+      btnApprove.className = 'btn-ob-seq approve';
+      btnApprove.textContent = 'Approve Sequence';
+      btnApprove.addEventListener('click', async e => {
+        e.stopPropagation();
+        btnApprove.disabled = true;
+        try {
+          await apiPost({ action: 'outbox_approve_prospect', notion_id: notionId, campaign_id: campaignId });
+          rs.forEach(r => { if (!r.sent && !r.skipped && !r.suppressed) r.approved = 1; });
+          state.outboxRows = rows;
+          rerenderOutboxPreserveScroll(rows, campaignId);
+        } catch (err) { btnApprove.disabled = false; alert('Error: ' + err.message); }
+      });
+      const btnRevoke = document.createElement('button');
+      btnRevoke.className = 'btn-ob-seq revoke';
+      btnRevoke.textContent = 'Revoke Sequence';
+      btnRevoke.addEventListener('click', async e => {
+        e.stopPropagation();
+        btnRevoke.disabled = true;
+        try {
+          await apiPost({ action: 'outbox_unapprove_prospect', notion_id: notionId, campaign_id: campaignId });
+          rs.forEach(r => { if (!r.sent) r.approved = 0; });
+          state.outboxRows = rows;
+          rerenderOutboxPreserveScroll(rows, campaignId);
+        } catch (err) { btnRevoke.disabled = false; alert('Error: ' + err.message); }
+      });
+      actions.append(btnApprove, btnRevoke);
+    }
+    const btnSuppress = document.createElement('button');
+    btnSuppress.className = 'btn-ob-seq suppress';
+    btnSuppress.textContent = 'Suppress';
+    btnSuppress.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm(`Stop all remaining emails to ${group.business_name || 'this prospect'}? This cannot be auto-reversed.`)) return;
+      btnSuppress.disabled = true;
+      try {
+        await apiPost({ action: 'outbox_suppress_prospect', notion_id: notionId, campaign_id: campaignId });
+        rs.forEach(r => { if (!r.sent) r.suppressed = 1; });
+        state.outboxRows = rows;
+        rerenderOutboxPreserveScroll(rows, campaignId);
+      } catch (err) { btnSuppress.disabled = false; alert('Error: ' + err.message); }
+    });
+    actions.appendChild(btnSuppress);
+  }
+
+  inner.append(toggle, name, email, badgeEl, actions);
+  td.appendChild(inner);
+  tr.appendChild(td);
+
+  tr.addEventListener('click', e => {
+    if (e.target.closest('button')) return;
+    if (state.outboxCollapsed.has(notionId)) state.outboxCollapsed.delete(notionId);
+    else state.outboxCollapsed.add(notionId);
+    rerenderOutboxPreserveScroll(rows, campaignId);
+  });
+
+  tbody.appendChild(tr);
+  return collapsed;
+}
+
+function renderOutboxSubRow(tbody, row, rows, idx, campaignId, hidden) {
+  const tr = document.createElement('tr');
+  tr.id = 'outbox-row-' + row.id;
+  tr.className = 'outbox-seq-row' + (row.suppressed ? ' suppressed' : '');
+  tr.dataset.notionId = row.notion_id;
+  if (hidden) tr.style.display = 'none';
+
+  const tdSeq = document.createElement('td');
+  tdSeq.className = 'outbox-seq-label';
+  tdSeq.textContent = outboxSeqLabel(row.seq_num);
+
+  const tdSubj = document.createElement('td');
+  tdSubj.className = 'outbox-subject';
+  tdSubj.title = row.subject || '';
+  tdSubj.textContent = row.subject || '—';
+
+  const tdSched = document.createElement('td');
+  tdSched.className = 'muted';
+  tdSched.style.fontSize = '.8rem';
+  tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
+
+  const tdApproval = document.createElement('td');
+  tdApproval.dataset.outboxCol = 'approval';
+  renderOutboxApprovalCell(tdApproval, row);
+
+  const tdStatus = document.createElement('td');
+  tdStatus.dataset.outboxCol = 'status';
+  renderOutboxStatusCell(tdStatus, row);
+
+  const tdActions = document.createElement('td');
+  tdActions.dataset.outboxCol = 'actions';
+  renderOutboxActionsCell(tdActions, row, rows, idx, campaignId);
+
+  tr.append(tdSeq, tdSubj, tdSched, tdApproval, tdStatus, tdActions);
+  tbody.appendChild(tr);
+}
+
+function renderOutboxFlatRow(tbody, row, rows, idx, campaignId, rowNum) {
+  const tr = document.createElement('tr');
+  tr.id = 'outbox-row-' + row.id;
+
+  const tdNum = document.createElement('td');
+  tdNum.className = 'muted'; tdNum.textContent = String(rowNum);
+
+  const tdBiz = document.createElement('td');
+  tdBiz.textContent = row.business_name || '—';
+
+  const tdEmail = document.createElement('td');
+  tdEmail.className = 'muted'; tdEmail.textContent = row.email || '—';
+
+  const tdApproval = document.createElement('td');
+  tdApproval.dataset.outboxCol = 'approval';
+  renderOutboxApprovalCell(tdApproval, row);
+
+  const tdStatus = document.createElement('td');
+  tdStatus.dataset.outboxCol = 'status';
+  renderOutboxStatusCell(tdStatus, row);
+
+  const tdSched = document.createElement('td');
+  tdSched.className = 'muted';
+  tdSched.style.fontSize = '.8rem';
+  tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
+
+  const tdActions = document.createElement('td');
+  tdActions.dataset.outboxCol = 'actions';
+  renderOutboxActionsCell(tdActions, row, rows, idx, campaignId);
+
+  tr.append(tdNum, tdBiz, tdEmail, tdApproval, tdStatus, tdSched, tdActions);
+  tbody.appendChild(tr);
+}
+
+function renderOutboxRows(rows, campaignId, groups, isGrouped) {
   const tbody = document.getElementById('outbox-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  rows.forEach((row, idx) => {
-    const tr = document.createElement('tr');
-    tr.id = 'outbox-row-' + row.id;
 
-    const tdNum = document.createElement('td');
-    tdNum.className = 'muted'; tdNum.textContent = String(idx + 1);
+  if (!isGrouped) {
+    groups.forEach((group, gi) => {
+      const row = group.rows[0];
+      const idx = rows.indexOf(row);
+      renderOutboxFlatRow(tbody, row, rows, idx, campaignId, gi + 1);
+    });
+    return;
+  }
 
-    const tdBiz = document.createElement('td');
-    tdBiz.textContent = row.business_name || '—';
-
-    const tdEmail = document.createElement('td');
-    tdEmail.className = 'muted'; tdEmail.textContent = row.email || '—';
-
-    const tdApproval = document.createElement('td');
-    renderOutboxApprovalCell(tdApproval, row);
-
-    const tdStatus = document.createElement('td');
-    renderOutboxStatusCell(tdStatus, row);
-
-    const tdSched = document.createElement('td');
-    tdSched.className = 'muted';
-    tdSched.style.fontSize = '.8rem';
-    tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
-
-    const tdActions = document.createElement('td');
-    renderOutboxActionsCell(tdActions, row, rows, idx, campaignId);
-
-    tr.append(tdNum, tdBiz, tdEmail, tdApproval, tdStatus, tdSched, tdActions);
-    tbody.appendChild(tr);
+  groups.forEach(group => {
+    const collapsed = renderProspectHeaderRow(tbody, group, campaignId, rows, 6);
+    group.rows.forEach(row => {
+      const idx = rows.indexOf(row);
+      renderOutboxSubRow(tbody, row, rows, idx, campaignId, collapsed);
+    });
   });
+}
+
+function refreshOutboxRowCells(rowId, row, rows, idx, campaignId) {
+  const tr = document.getElementById('outbox-row-' + rowId);
+  if (!tr) return;
+  const approvalTd = tr.querySelector('[data-outbox-col="approval"]');
+  const statusTd = tr.querySelector('[data-outbox-col="status"]');
+  const actionsTd = tr.querySelector('[data-outbox-col="actions"]');
+  if (approvalTd) renderOutboxApprovalCell(approvalTd, row);
+  if (statusTd) renderOutboxStatusCell(statusTd, row);
+  if (actionsTd) renderOutboxActionsCell(actionsTd, row, rows, idx, campaignId);
 }
 
 function renderOutboxApprovalCell(td, row) {
   td.innerHTML = '';
-  if (row.sent || row.skipped) return;
+  if (row.suppressed || row.sent || row.skipped) return;
   const span = document.createElement('span');
   span.style.fontSize = '.82rem';
   if (row.approved) {
@@ -2373,6 +2665,12 @@ function renderOutboxStatusCell(td, row) {
       d.textContent = row.sent_at.slice(0, 16);
       td.appendChild(d);
     }
+    return;
+  }
+  if (row.suppressed) {
+    const s = document.createElement('span');
+    s.style.cssText = 'color:var(--grey)'; s.textContent = 'Suppressed';
+    td.appendChild(s);
     return;
   }
   if (row.send_error) {
@@ -2408,6 +2706,18 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
   const wrap = document.createElement('div');
   wrap.className = 'outbox-cell-actions';
 
+  if (row.suppressed && !row.sent) {
+    ['Preview', 'Revoke', 'Skip'].forEach(label => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-ob ' + label.toLowerCase();
+      btn.textContent = label;
+      btn.disabled = true;
+      wrap.appendChild(btn);
+    });
+    td.appendChild(wrap);
+    return;
+  }
+
   if (!row.sent && !row.skipped) {
     const btnPreview = document.createElement('button');
     btnPreview.className = 'btn-ob preview'; btnPreview.textContent = 'Preview';
@@ -2422,12 +2732,7 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
         try {
           await apiPost({ action: 'outbox_approve', id: row.id });
           row.approved = 1;
-          const tr = document.getElementById('outbox-row-' + row.id);
-          if (tr) {
-            renderOutboxApprovalCell(tr.cells[3], row);
-            renderOutboxStatusCell(tr.cells[4], row);
-            renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
-          }
+          refreshOutboxRowCells(row.id, row, rows, idx, campaignId);
           updateOutboxSummaryBar(rows);
         } catch (err) { btnApprove.disabled = false; alert('Error: ' + err.message); }
       });
@@ -2440,12 +2745,7 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
         try {
           await apiPost({ action: 'outbox_unapprove', id: row.id });
           row.approved = 0;
-          const tr = document.getElementById('outbox-row-' + row.id);
-          if (tr) {
-            renderOutboxApprovalCell(tr.cells[3], row);
-            renderOutboxStatusCell(tr.cells[4], row);
-            renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
-          }
+          refreshOutboxRowCells(row.id, row, rows, idx, campaignId);
           updateOutboxSummaryBar(rows);
         } catch (err) { btnRevoke.disabled = false; alert('Error: ' + err.message); }
       });
@@ -2462,12 +2762,7 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
       try {
         await apiPost({ action: 'outbox_skip', id: row.id, reason: reason || null });
         row.skipped = 1; row.skip_reason = reason || null; row.approved = 0;
-        const tr = document.getElementById('outbox-row-' + row.id);
-        if (tr) {
-          renderOutboxApprovalCell(tr.cells[3], row);
-          renderOutboxStatusCell(tr.cells[4], row);
-          renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
-        }
+        refreshOutboxRowCells(row.id, row, rows, idx, campaignId);
         updateOutboxSummaryBar(rows);
       } catch (err) { btnSkip.disabled = false; alert('Error: ' + err.message); }
     });
@@ -2486,12 +2781,7 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
       try {
         await apiPost({ action: 'outbox_unskip', id: row.id });
         row.skipped = 0; row.skip_reason = null;
-        const tr = document.getElementById('outbox-row-' + row.id);
-        if (tr) {
-          renderOutboxApprovalCell(tr.cells[3], row);
-          renderOutboxStatusCell(tr.cells[4], row);
-          renderOutboxActionsCell(tr.cells[6], row, rows, idx, campaignId);
-        }
+        refreshOutboxRowCells(row.id, row, rows, idx, campaignId);
         updateOutboxSummaryBar(rows);
       } catch (err) { btnUnskip.disabled = false; alert('Error: ' + err.message); }
     });
@@ -2504,14 +2794,14 @@ function renderOutboxActionsCell(td, row, rows, idx, campaignId) {
 function updateOutboxSummaryBar(rows) {
   const bar = document.getElementById('outbox-summary-bar');
   if (!bar) return;
-  const stats = bar.querySelectorAll('strong');
-  if (stats.length >= 4) {
-    stats[0].textContent = rows.filter(r => r.approved && !r.sent && !r.skipped).length;
-    stats[1].textContent = rows.filter(r => !r.approved && !r.sent && !r.skipped).length;
-    stats[2].textContent = rows.filter(r => r.sent).length;
-    stats[3].textContent = rows.filter(r => r.skipped).length;
+  const s = computeOutboxSummaryStats(rows);
+  const strong = bar.querySelector('strong');
+  const line2 = bar.querySelector('.summ-line2');
+  if (strong) strong.textContent = s.prospectCount;
+  if (line2) {
+    line2.textContent = `${s.totalEmails} emails — ${s.sent} sent · ${s.embargoed} embargoed · ${s.pending} awaiting approval · ${s.skipped} skipped · ${s.suppressed} suppressed`;
   }
-  const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped);
+  const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
   const btnR = bar.querySelector('#btn-review-all');
   const btnA = bar.querySelector('#btn-approve-all');
   if (btnR) btnR.disabled = !hasPending;
@@ -2538,9 +2828,11 @@ async function openEmailPreview(rowId, rows, idx) {
 
 function renderEmailPreviewContent(row, rows, idx) {
   const titleEl = document.getElementById('email-modal-title');
+  const seqPart = outboxSeqLabel(row.seq_num);
   if (titleEl) titleEl.textContent = row.sent
-    ? `Email Preview — ✓ Sent${row.sent_at ? ' ' + row.sent_at.slice(0, 10) : ''}`
-    : row.approved ? 'Email Preview — ✓ Approved' : 'Email Preview — Awaiting Approval';
+    ? `${seqPart} — ✓ Sent${row.sent_at ? ' ' + row.sent_at.slice(0, 10) : ''}`
+    : row.suppressed ? `${seqPart} — Suppressed`
+    : row.approved ? `${seqPart} — ✓ Approved` : `${seqPart} — Awaiting Approval`;
 
   const bodyEl = document.getElementById('email-modal-body');
   bodyEl.innerHTML = '';
@@ -2603,7 +2895,7 @@ function linkifyIntoContainer(text, container) {
 function wireEmailFooter(row, rows, idx) {
   const btnSubj = document.getElementById('btn-edit-subject');
   const btnBody = document.getElementById('btn-edit-body');
-  if (row.sent) {
+  if (row.sent || row.suppressed) {
     if (btnSubj) { btnSubj.style.display = 'none'; }
     if (btnBody) { btnBody.style.display = 'none'; }
     document.getElementById('email-approval-btns').innerHTML = '';
@@ -2632,7 +2924,7 @@ function renderEmailApprovalBtns(row, rows, idx) {
         refreshOutboxRow(row.id, rows, idx);
         updateOutboxSummaryBar(state.outboxRows);
         const t = document.getElementById('email-modal-title');
-        if (t) t.textContent = 'Email Preview — ✓ Approved';
+        if (t) t.textContent = `${outboxSeqLabel(row.seq_num)} — ✓ Approved`;
         renderEmailApprovalBtns(row, rows, idx);
       } catch (err) { btnApprove.disabled = false; alert('Error: ' + err.message); }
     });
@@ -2648,7 +2940,7 @@ function renderEmailApprovalBtns(row, rows, idx) {
         if (sr) sr.approved = 1;
         refreshOutboxRow(row.id, rows, idx);
         updateOutboxSummaryBar(state.outboxRows);
-        const nextIdx = rows.findIndex((r, i) => i > idx && !r.approved && !r.sent && !r.skipped);
+        const nextIdx = rows.findIndex((r, i) => i > idx && !r.approved && !r.sent && !r.skipped && !r.suppressed);
         if (nextIdx !== -1) {
           openEmailPreview(rows[nextIdx].id, rows, nextIdx);
         } else {
@@ -2677,7 +2969,7 @@ function renderEmailApprovalBtns(row, rows, idx) {
         refreshOutboxRow(row.id, rows, idx);
         updateOutboxSummaryBar(state.outboxRows);
         const t = document.getElementById('email-modal-title');
-        if (t) t.textContent = 'Email Preview — Awaiting Approval';
+        if (t) t.textContent = `${outboxSeqLabel(row.seq_num)} — Awaiting Approval`;
         renderEmailApprovalBtns(row, rows, idx);
       } catch (err) { btnRevoke.disabled = false; alert('Error: ' + err.message); }
     });
@@ -2689,11 +2981,7 @@ function renderEmailApprovalBtns(row, rows, idx) {
 function refreshOutboxRow(rowId, rows, idx) {
   const row = rows[idx];
   if (!row) return;
-  const tr = document.getElementById('outbox-row-' + rowId);
-  if (!tr) return;
-  renderOutboxApprovalCell(tr.cells[3], row);
-  renderOutboxStatusCell(tr.cells[4], row);
-  renderOutboxActionsCell(tr.cells[6], row, rows, idx, state.outboxCampaignId);
+  refreshOutboxRowCells(rowId, row, rows, idx, state.outboxCampaignId);
 }
 
 function startSubjectEdit(row, rows, idx) {
