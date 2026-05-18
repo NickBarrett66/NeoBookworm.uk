@@ -847,9 +847,13 @@
       align-items: baseline;
       gap: 1rem;
       padding: 14px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .pricing-row:last-of-type { border-bottom: none; }
+    .pricing-row + .pricing-option {
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .pricing-option .pricing-row {
+      padding-bottom: 8px;
+    }
     .pricing-label {
       font-size: 0.95rem;
       font-weight: 400;
@@ -883,9 +887,7 @@
       color: var(--muted);
       font-style: italic;
       line-height: 1.6;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 0 0 14px 0.75rem;
     }
     .pricing-reassure {
       font-size: 14px;
@@ -2006,14 +2008,16 @@
               <div class="pricing-label">One-off build <small>Limited availability price (normally £299)</small></div>
               <div class="pricing-amount">£199</div>
             </div>
-            <div class="pricing-row">
-              <div class="pricing-label">
-                Keep it live and looked after
-                <small>Covers everything. No annual contracts. Cancel anytime.</small>
+            <div class="pricing-option">
+              <div class="pricing-row">
+                <div class="pricing-label">
+                  Keep it live and looked after
+                  <small>Covers everything. No annual contracts. Cancel anytime.</small>
+                </div>
+                <div class="pricing-amount">£9.99<small>/mo</small></div>
               </div>
-              <div class="pricing-amount">£9.99<small>/mo</small></div>
+              <div class="pricing-aside">If you&rsquo;d rather run it yourself, I&rsquo;ll hand the files over and you&rsquo;re on your way.</div>
             </div>
-            <div class="pricing-aside">If you&rsquo;d rather run it yourself, I&rsquo;ll hand the files over and you&rsquo;re on your way.</div>
           </div>
           <p class="pricing-reassure">You don&rsquo;t pay anything until you&rsquo;ve seen the site and decided you want it.</p>
         </div>
@@ -2048,19 +2052,21 @@
           </button>
           <div class="faq-answer" id="faq-2" role="region">
             <div class="faq-answer-inner">
-              <p>Nothing. I handle the build, the hosting, updates, and security. You don&rsquo;t need to log in to anything or touch any code. If you want something changed on the site, you email me and I do it &mdash; usually within a day. That&rsquo;s it.</p>
+              <p>On the &pound;9.99/month plan, you don&rsquo;t run the website &mdash; I do. No code, and no logging in for everyday upkeep &mdash; hosting, security, and keeping the site live are on me.</p>
+              <p>If you&rsquo;d rather run it yourself after launch, I hand everything over. You still won&rsquo;t write code, but you may need to log in occasionally (often your web address or hosting provider). I&rsquo;ll guide you through anything that needs your account.</p>
             </div>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false" aria-controls="faq-3">
-            What if I want to change something on the site later?
+            How do updates work once the site is live?
             <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
           </button>
           <div class="faq-answer" id="faq-3" role="region">
             <div class="faq-answer-inner">
-              <p>Changes are included in the monthly plan &mdash; just email me and I&rsquo;ll get it done. If you ever want to take the site over yourself, I can hand you the files and point you in the right direction. Either way works.</p>
+              <p>On the monthly plan, just email me. Small, routine changes are included each month &mdash; enough for the tweaks most trades need (prices, hours, a photo). Larger changes &mdash; new pages, new sections, a proper rework &mdash; we agree a price before I start.</p>
+              <p>If you&rsquo;re not on the monthly plan, you can update the site yourself once you have it, or email me &mdash; I&rsquo;ll quote before I start (most small jobs are straightforward).</p>
             </div>
           </div>
         </div>
