@@ -17,6 +17,16 @@ For each segment you'll find:
 
 ---
 
+## Critical context — source and URL model
+
+**Prospect source is a variable, not a constant.** Prospects may be discovered via any platform: Checkatrade, Rated People, TrustATrader, Google Business Profile, Facebook, Companies House, or others. Templates never hardcode "Checkatrade" as the source. The actual platform is inserted at personalisation time as `[platform]`. If a specific data point (review count, rating, years trading) is available from that platform, use it; if not, draw on whatever public information Agent 2 found. The tone of the source reference should match the platform — "your Checkatrade profile" reads naturally; "your Companies House filing" would not.
+
+**No bespoke demo is pre-built for Segments A, B, and D.** Prospects without a website are directed to a trade-specific landing page (e.g. `neobookworm.uk/plumbers`) that shows examples of what can be built and includes a lead capture form. Never frame this link as "a demo I built for you." Frame it as: "here's an example of the kind of site I build for [trade]s:" or "examples of what I build for [trade]s:" followed by the plain URL on its own line. Segment C (has-website) prospects are directed to the `-switch` variant (e.g. `neobookworm.uk/plumbers-switch`).
+
+**The risk reversal carries more weight without a pre-built demo.** In the original demo-first model, the bespoke site did the heavy lifting (reciprocity, endowment effect, effort eliminated). Without it, "you don't pay until you're happy with it" must appear in Email 1 for all no-website segments — not just in follow-ups.
+
+---
+
 # Segment A — The Established Operator
 
 ## Profile
@@ -34,7 +44,7 @@ This is an **identity objection**. You cannot argue against their success — th
 The specific reframes that work for Segment A:
 
 - **Referral amplification**: their existing customers want to recommend them but have nothing to send. A website is for their advocates, not for strangers.
-- **Ownership vs dependency**: Checkatrade dependency is a genuine vulnerability. Price increases are real. Frame the website as an asset they own — not a platform they rent.
+- **Ownership vs dependency**: dependency on any third-party platform is a genuine vulnerability. Price increases are real. Frame the website as an asset they own — not a platform they rent. If the prospect is on Checkatrade specifically, name it; otherwise keep the framing generic.
 - **Future-proofing**: not implying work will dry up, but acknowledging that having an owned digital asset is sensible for any business.
 
 Critically: **never mention getting more work, being busier, or reaching new customers**. These all imply they're not already successful, which is identity-threatening.
@@ -47,15 +57,16 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 
 - `[Business name] — worth 30 seconds`
 - `Thought you'd want to see this`
-- `Built something for you` *(only if demo is strong enough to lead with)*
+- `Your [trade] online — a thought`
 
 **Structure:**
 
-1. Open by validating their track record with a specific detail (review count, years, a tagline from their profile)
+1. Open by validating their track record with a specific detail (review count, years, a tagline — drawn from whatever source Agent 2 used, not assumed to be Checkatrade)
 2. Make one clear, specific point — not a list of benefits
-3. Show the demo with zero-friction framing
-4. Autonomy-preserving close
-5. Compliance footer
+3. Show the landing page link with zero-friction framing
+4. Risk reversal — "you don't pay until you're happy with it" (must appear in Email 1)
+5. Autonomy-preserving close
+6. Compliance footer
 
 **Example output (Claude should produce something like this, not copy it verbatim):**
 
@@ -71,19 +82,19 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 > 
 > 
 
-> The one thing those [X] happy customers can't do right now is send anyone a link. When someone in [coverage area] wants to pass your name on, there's nothing to point them to. I've put together a site that changes that — nothing flashy, just somewhere for your reputation to live online.
+> The one thing those [X] happy customers can't do right now is send anyone a link. When someone in [coverage area] wants to pass your name on, there's nothing to point them to.
+>
+> Here's an example of the kind of site I build for [trade]s:
+>
+> neobookworm.uk/[trade]
+>
+> You don't pay until you're happy with it.
 > 
 
 > 
 > 
 
-> Worth a look: [demo URL]
-> 
-
-> 
-> 
-
-> If it's not for you, no problem at all.
+> Worth a look, or not — no pressure either way.
 > 
 
 > 
@@ -109,6 +120,10 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 
 **Angle:** Switch from the referral angle to the **ownership/dependency angle**. They may have seen Email 1 and not responded — a new angle gives them a fresh reason to engage rather than restating the first point.
 
+**Checkatrade variant** (use when the prospect is a Checkatrade member): mention Checkatrade price increases (40–50% year-on-year) and frame the website as an asset they own versus a platform they rent.
+
+**Generic variant** (use when the prospect is not on Checkatrade, or their platform is unknown): frame around directory sites and lead platforms as rented shopfronts — the prospect pays monthly for visibility someone else controls. A website is the only bit of the internet they actually own.
+
 **Example output:**
 
 > Hi [Name],
@@ -123,13 +138,15 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 > 
 > 
 
-> One thing worth knowing: Checkatrade raised prices significantly again this year — tradespeople are reporting increases of 40–50%. A website costs less than one year's Checkatrade subscription and you own it outright. No algorithm, no annual price hike, no competition with five other [trade]s on the same lead.
+> One thing worth knowing: lead generation platforms raise prices every year, and the visibility they give you can change overnight. A website costs less than one year's platform fees and you own it outright. No algorithm, no annual price hike, no sharing leads with other [trade]s.
+>
+> [Checkatrade variant: "Checkatrade raised prices significantly again this year — tradespeople are reporting increases of 40–50%. A website costs less than one year's Checkatrade subscription and you own it outright."]
 > 
 
 > 
 > 
 
-> The demo I put together is still live: [demo URL]
+> Examples are still here: neobookworm.uk/[trade]
 > 
 
 > 
@@ -174,7 +191,7 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 > 
 > 
 
-> The demo is still there if the timing ever feels right: [demo URL]
+> The examples page is still there if the timing ever feels right: neobookworm.uk/[trade]
 > 
 
 > 
@@ -191,7 +208,7 @@ Critically: **never mention getting more work, being busier, or reaching new cus
 
 ## Profile
 
-5–15 reviews, 2–7 years trading, review velocity steady or increasing. Actively building their reputation. May have Facebook but no website. Checkatrade is a stepping stone for them, not their identity.
+5–15 reviews, 2–7 years trading, review velocity steady or increasing. Actively building their reputation. May have Facebook but no website. Any directory platform or lead site is a stepping stone for them, not their identity.
 
 ## Primary objection
 
@@ -203,21 +220,21 @@ This is **the highest-conversion segment**. The objection is not philosophical �
 
 The tone should be **excited and opportunity-framing** — not hushed deference like Segment A. These people are building something and the email should match that energy.
 
-The **specific niche or differentiator** from their research is the most powerful hook. Claude should always reference something specific from their Checkatrade profile in the opening line — never start with a generic observation.
+The **specific niche or differentiator** from their research is the most powerful hook. Claude should always reference something specific from their profile (on whatever platform Agent 2 used) in the opening line — never start with a generic observation.
 
 ## Email 1 — Initial Outreach
 
 **Subject line options:**
 
-- `Built this for [Business Name]`
 - `[Business Name] — took 30 seconds to look at this`
 - `Your [trade] site — have a look`
+- `[Business Name] — something that might interest you`
 
 **Structure:**
 
-1. Open with a specific, genuine observation from their profile (niche, service, area, something that shows you read it)
-2. Immediately show the demo
-3. Remove effort and risk in one line
+1. Open with a specific, genuine observation from their profile (niche, service, area, something that shows you read it — drawn from whatever source Agent 2 used)
+2. Show the landing page link — frame it as examples of what can be built, not a pre-built demo
+3. Remove risk in one line: "you don't pay until you're happy with it"
 4. Ultra-low-friction close
 5. Compliance footer
 
@@ -229,13 +246,15 @@ The **specific niche or differentiator** from their research is the most powerfu
 > 
 > 
 
-> I noticed your Checkatrade profile — [specific personalisation detail from research: their niche, a service they call out, their coverage area, something specific]. That kind of thing is exactly what makes a decent website — it gives people a reason to call you specifically, not just whoever comes up first.
+> I came across [Business Name] — [specific personalisation detail from research: their niche, a service they call out, their coverage area, something specific]. That kind of thing is exactly what makes a decent website — it gives people a reason to call you specifically, not just whoever comes up first.
 > 
 
 > 
 > 
 
-> I've put together a demo for [Business Name] — it's live now: [demo URL]
+> Here's an example of the kind of site I'd build for [Business Name]:
+>
+> neobookworm.uk/[trade]
 > 
 
 > 
@@ -270,7 +289,11 @@ The **specific niche or differentiator** from their research is the most powerfu
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** Switch from the demo/effort angle to the **Checkatrade cost comparison** angle. This is the most effective rational argument for Segment B because they're already paying Checkatrade and feel the sting of it.
+**Angle:** Switch from the examples-page angle to the **platform cost comparison** angle — the most effective rational argument for this segment.
+
+**Checkatrade variant** (use when the prospect is a Checkatrade member): most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £299 once, then £9.99/month — and unlike Checkatrade, they own it.
+
+**Generic variant** (use when the prospect is not on Checkatrade, or their platform is unknown): frame around whatever platform they were found on (Rated People, TrustATrader, Facebook ads, etc.), or use "lead generation platforms" generically. The key point is ownership: they're paying indefinitely for visibility on someone else's platform.
 
 Optionally include a local search volume data point if it's strong enough to be credible for their trade (use the `localSearchVolumes` lookup in agent3-worker.js).
 
@@ -282,13 +305,15 @@ Optionally include a local search volume data point if it's strong enough to be 
 > 
 > 
 
-> Quick follow-up on the site I put together for you — still live here: [demo URL]
+> Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 > 
 
 > 
 > 
 
-> One thing that might be worth knowing: most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £299 once, then £9.99 a month — and unlike Checkatrade, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
+> One thing worth knowing: most tradespeople pay hundreds of pounds a year for lead generation platforms. This site costs £299 once, then £9.99 a month — and unlike any platform, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
+>
+> [Checkatrade variant: "Most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £299 once, then £9.99 a month — and unlike Checkatrade, you own it."]
 > 
 
 > 
@@ -317,7 +342,7 @@ Optionally include a local search volume data point if it's strong enough to be 
 
 **Timing:** 10–14 days after Email 2.
 
-**Angle:** Social proof — brief reference to the demo-first model working for similar tradespeople, or a simple direct breakup that leaves the door open.
+**Angle:** Simple direct breakup that leaves the door open.
 
 **Example output:**
 
@@ -327,7 +352,9 @@ Optionally include a local search volume data point if it's strong enough to be 
 > 
 > 
 
-> Last one from me. The demo for [Business Name] is still live at [demo URL] — no expiry on it.
+> Last one from me. The examples page is still there if you ever want to see the kind of site I'd build:
+>
+> neobookworm.uk/[trade]
 > 
 
 > 
@@ -778,18 +805,19 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 
 **Subject line options:**
 
-- `[Business Name] — made you something`
 - `Starting out as a [trade] — this might help`
 - `[Business Name] site — have a look`
+- `[Business Name] — worth a look`
 
 **Structure:**
 
-1. Open with a warm, genuine acknowledgement that they're new and building something — not as a weakness, as a positive
+1. Open with a warm, genuine acknowledgement that they're new and building something — not as a weakness, as a positive (draw on whatever platform or source Agent 2 found them through, without assuming Checkatrade)
 2. Frame the website as credibility infrastructure — it makes you look like someone who's been doing this for years
-3. Show the demo
-4. Make the cost feel accessible — anchor it simply, don't oversell
-5. Autonomy-preserving close
-6. Compliance footer
+3. Show the landing page link — frame it as examples of what can be built
+4. Risk reversal: "you don't pay until you're happy with it" (must appear in Email 1)
+5. Make the cost feel accessible — anchor it simply, don't oversell
+6. Autonomy-preserving close
+7. Compliance footer
 
 **Example output:**
 
@@ -799,13 +827,15 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 > 
 > 
 
-> I can see [Business Name] is fairly new to Checkatrade — good to see you building up reviews. Starting out in the [trade] trade takes time to get going, and one of the fastest ways to look established is to have a professional website. When someone searches your name after a recommendation, a good site tells them you're the real thing.
+> I came across [Business Name] — good to see you building up your reputation. Starting out in the [trade] trade takes time to get going, and one of the fastest ways to look established is to have a professional website. When someone searches your name after a recommendation, a good site tells them you're the real thing.
 > 
 
 > 
 > 
 
-> I've built a demo for you — it's live now: [demo URL]
+> Here's an example of the kind of site I'd build for [Business Name]:
+>
+> neobookworm.uk/[trade]
 > 
 
 > 
@@ -834,7 +864,7 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 - ❌ "Your competitors already have websites" *(discouraging)*
 - ❌ "Grow your business" *(corporate language, feels distant)*
 - ❌ Mentioning SEO, rankings, or digital strategy
-- ❌ Implying they need saving or that Checkatrade isn't enough
+- ❌ Implying they need saving or that any platform they're on isn't enough
 
 ## Email 2 — Follow-up (sole traders: FINAL; Ltd: second of three)
 
@@ -850,7 +880,7 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 > 
 > 
 
-> Just following up on the demo I put together — still live here: [demo URL]
+> Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 > 
 
 > 
@@ -887,7 +917,7 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 > 
 > 
 
-> Last one from me. The demo is still live at [demo URL] — no rush on it.
+> Last one from me. The examples page is still there — no rush on it: neobookworm.uk/[trade]
 > 
 
 > 
@@ -915,20 +945,20 @@ This section contains the exact `segmentAngles` and guidance object to use when 
 ```jsx
 const segmentAngles = {
   "A - Established": `
-    PROFILE: Long-established tradesperson (15+ reviews, 7+ years), likely fully booked through word of mouth.
+    PROFILE: Long-established tradesperson (15+ reviews or equivalent signals, 7+ years trading), likely fully booked through word of mouth. Found via [platform] — use the actual source when personalising, do not assume Checkatrade.
     PRIMARY OBJECTION: Doesn't need it — reputation is everything to them.
-    APPROACH: Affirm their success first using a SPECIFIC detail from the research (review count, years trading, a tagline, something that shows you read their profile). Then make ONE point: their happy customers want to recommend them but have nowhere to send people. Frame the website as serving their existing reputation, not replacing it.
-    NEVER say: 'more enquiries', 'grow your business', 'competitors', 'SEO', 'digital marketing', 'in today's world'.
-    ALWAYS include: Autonomy-preserving close ('no problem if not for you', 'just worth knowing it's there').
+    APPROACH: Affirm their success first using a SPECIFIC detail from the research (review count, years trading, a tagline, something that shows you read their profile — from whatever source Agent 2 used). Then make ONE point: their happy customers want to recommend them but have nowhere to send people. Frame the website as serving their existing reputation, not replacing it. Include risk reversal ('you don't pay until you're happy with it') in Email 1.
+    NEVER say: 'more enquiries', 'grow your business', 'competitors', 'SEO', 'digital marketing', 'in today's world'. Never frame the landing page as a demo built for them.
+    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'examples of what I build for [trade]s'. Risk reversal in Email 1. Autonomy-preserving close ('no problem if not for you', 'just worth knowing it's there').
     TONE: Respectful peer-to-peer. Understated. Not salesy.
     LENGTH: 80–100 words (body only).`,
 
   "B - Growth Phase": `
-    PROFILE: Building their business (5–15 reviews, 2–7 years), active on Checkatrade, may have Facebook but no website.
+    PROFILE: Building their business (5–15 reviews or equivalent signals, 2–7 years trading), may be active on Checkatrade, Rated People, or similar platforms, may have Facebook but no website. Found via [platform] — use the actual source when personalising, do not assume Checkatrade.
     PRIMARY OBJECTION: Haven't got round to it / too busy.
-    APPROACH: Open with a SPECIFIC observation from their research (a niche they mention, a service they emphasise, their coverage area). Lead immediately with the demo — it's already built, they just need to look. Remove effort and risk in a single sentence.
-    NEVER say: 'you need a website', generic digital statistics, anything about SEO.
-    ALWAYS include: The demo URL prominently. 'You only pay once you're happy with it.'
+    APPROACH: Open with a SPECIFIC observation from their research (a niche they mention, a service they emphasise, their coverage area — drawn from whatever source Agent 2 used). Direct and energetic. Show the trade landing page as examples of what can be built. Remove risk with the satisfaction-first payment model.
+    NEVER say: 'you need a website', generic digital statistics, anything about SEO. Never frame the landing page as a demo built for them — it is examples of what I build.
+    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build for [Business Name]'. 'You only pay once you're happy with it.'
     TONE: Direct, warm, opportunity-framing. Slightly energetic.
     LENGTH: 90–110 words.`,
 
@@ -969,11 +999,11 @@ const segmentAngles = {
     LENGTH: 90–110 words.`,
 
   "D - New Entrant": `
-    PROFILE: Brand new to running their own business (0–5 reviews, under 2 years). Cash-aware, time-stretched, but open-minded — hasn't yet formed the 'word of mouth is enough' identity.
+    PROFILE: New tradesperson (0–5 reviews or equivalent signals, under 2 years trading). Cash-aware, time-stretched, but open-minded — hasn't yet formed the 'word of mouth is enough' identity. Found via [platform] — use the actual source when personalising, do not assume Checkatrade. Do not reference the platform by name in the email unless it reads naturally.
     PRIMARY OBJECTION: 'Too early / can't afford it yet.'
-    APPROACH: Open with a warm acknowledgement that they're new and building something (positive, not sympathetic). Frame the website as CREDIBILITY infrastructure — it makes them look established when a potential customer searches their name. Cost anchor: compare £299 to something trade-relevant (a week's materials, a month's van insurance).
-    NEVER say: 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings.
-    ALWAYS include: The no-risk model ('only pay once you're happy'). A trade-relevant cost anchor.
+    APPROACH: Open with a warm acknowledgement that they're new and building something (positive, not sympathetic). Do not name the platform they were found on in the opener. Frame the website as CREDIBILITY infrastructure — it makes them look established when a potential customer searches their name. Show the trade landing page as examples of what can be built. Cost anchor: compare £299 to something trade-relevant (a week's materials, a month's van insurance).
+    NEVER say: 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings. Never frame the landing page as a demo built for them.
+    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build'. The no-risk model ('only pay once you're happy') in Email 1. A trade-relevant cost anchor.
     TONE: Warm, encouraging, peer-to-peer. Not corporate.
     LENGTH: 100–120 words.`
 };
@@ -984,13 +1014,13 @@ const segmentAngles = {
 ```jsx
 const segmentFollowUpAngles = {
   "A - Established": {
-    followUp1: `Switch to the OWNERSHIP/DEPENDENCY angle. Mention Checkatrade price increases (real, 40–50% year-on-year). Frame the website as an asset they own vs a platform they rent. End with natural final-contact language for sole traders ('won't message again after this'). Include the demo URL. 70–90 words.`,
-    followUp2_ltdOnly: `COMPETITOR AWARENESS angle — the only email where this is appropriate. Use the local search volume figure for their trade in Swindon (from the localSearchVolumes lookup). Frame as factual observation, not a threat. Short and direct. Include 'last message from me'. 50–70 words.`
+    followUp1: `Switch to the OWNERSHIP/DEPENDENCY angle. Frame the website as an asset they own vs visibility they rent from a platform. If the prospect is on Checkatrade, mention Checkatrade price increases (real, 40–50% year-on-year) specifically. If not, use the generic frame: lead generation platforms raise prices every year; a website is the only bit of the internet they actually own. End with natural final-contact language for sole traders ('won't message again after this'). Include the trade landing page URL (neobookworm.uk/[trade]). 70–90 words.`,
+    followUp2_ltdOnly: `COMPETITOR AWARENESS angle — the only email where this is appropriate. Use the local search volume figure for their trade in Swindon (from the localSearchVolumes lookup). Frame as factual observation, not a threat. Short and direct. Include 'last message from me'. Include the trade landing page URL. 50–70 words.`
   },
 
   "B - Growth Phase": {
-    followUp1: `Switch to CHECKATRADE COST COMPARISON angle. Most tradespeople pay £800–£1,500/year for Checkatrade. This site is £299 once + £9.99/month, and they own it. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
-    followUp2_ltdOnly: `Simple BREAKUP email. No new arguments. Confirm the demo is still live. Leave the door open. 40–60 words.`
+    followUp1: `Switch to PLATFORM COST COMPARISON angle. This site is £299 once + £9.99/month, and they own it — unlike any lead generation platform. If the prospect is on Checkatrade, use the Checkatrade-specific figure: most tradespeople in Wiltshire pay £800–£1,500/year for Checkatrade. If not on Checkatrade, use the generic angle: they're paying indefinitely for visibility on someone else's platform. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the trade landing page URL (neobookworm.uk/[trade]). 80–100 words.`,
+    followUp2_ltdOnly: `Simple BREAKUP email. No new arguments. Reference the examples page. Leave the door open. Include the trade landing page URL. 40–60 words.`
   },
 
   "C1 - Dead Domain": {
@@ -1014,8 +1044,8 @@ const segmentFollowUpAngles = {
   },
 
   "D - New Entrant": {
-    followUp1: `Switch to NO-RISK + COST ANCHOR angle. Lead with the satisfaction-first payment model (no penny until happy). Anchor £299 against something trade-relevant (materials, van insurance). End with natural final-contact language for sole traders. Include the demo URL. 80–100 words.`,
-    followUp2_ltdOnly: `FUTURE-FOCUS angle. The demo will be more valuable as their reviews grow. Leave the door open. Short and warm. 40–60 words.`
+    followUp1: `Switch to NO-RISK + COST ANCHOR angle. Lead with the satisfaction-first payment model (no penny until happy). Anchor £299 against something trade-relevant (materials, van insurance). End with natural final-contact language for sole traders. Include the trade landing page URL (neobookworm.uk/[trade]). 80–100 words.`,
+    followUp2_ltdOnly: `FUTURE-FOCUS angle. As their reputation grows, a website becomes more and more useful. Leave the door open. Short and warm. Include the trade landing page URL. 40–60 words.`
   }
 };
 ```
@@ -1028,9 +1058,9 @@ These apply regardless of segment. Claude must follow all of them:
 
 1. **Open with personalisation** — the first sentence must reference something specific from the Agent 2 research. Never open with 'I hope this finds you well', 'My name is Nick', or any generic opener.
 2. **One argument per email** — never list multiple reasons or benefits. Pick the single most compelling point and make it well.
-3. **The demo URL appears once, prominently** — not buried, not repeated multiple times.
+3. **One URL appears once, prominently** — the landing page URL (or `-switch` variant for has-website segments) appears once per email, not buried and not repeated. Never frame it as "the demo I built for you" in Segments A, B, and D — it is a page showing examples of what can be built.
 4. **No jargon** — no 'SEO', 'digital presence', 'online visibility', 'responsive design', 'CMS', 'conversion rate'. Plain English throughout.
-5. **No calls to action other than 'look at the demo'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
+5. **No calls to action other than 'look at the examples page'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
 6. **Pricing mentioned clearly** — £299 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide.
 7. **Autonomy-preserving close** — every email needs a low-pressure way to say no. The closer the email is to the contact cap, the more prominent this must be.
 8. **Compliance footer** — appended in code, not written by Claude. Two variants: short (PECR/Ltd) and extended (LI/sole trader). Never write the footer as part of the email body.
@@ -1069,4 +1099,4 @@ const localSearchVolumes = {
 
 ---
 
-*Templates updated: 17 May 2026. Segment C expanded from a single "Outdated Website Owner" profile into four sub-segments (C1 Dead Domain, C2 DIY Template, C3 Agency-managed, C4 Functional but Weak) to support the has-website campaign pipeline and `neobookworm-website-audit` skill. `segmentAngles` and `segmentFollowUpAngles` updated accordingly. Pricing corrected to £299 throughout. Previous version: 29 March 2026.*
+*Templates updated: 18 May 2026. Source-agnostic model adopted: all Checkatrade assumptions removed from Segments A, B, and D. Prospects may be discovered via any platform; the source is a variable inserted at personalisation time. Bespoke per-prospect demo model replaced with trade-specific landing pages (`neobookworm.uk/[trade]` for no-website segments; `neobookworm.uk/[trade]-switch` for has-website segments, which Segment C already used). All email examples, subject lines, structure notes, `segmentAngles`, and `segmentFollowUpAngles` updated accordingly. Checkatrade cost comparison retained as a conditional variant for Checkatrade-member prospects only. Previous update: 17 May 2026.*
