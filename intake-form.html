@@ -200,6 +200,47 @@ select option{background:#fff;color:#1a1a1a}
 .tyline{height:1px;background:linear-gradient(to right,var(--gold),transparent);width:56px;margin-bottom:22px}
 .tyct{font-size:13px;color:var(--mu);line-height:1.6}
 .tyct a{color:var(--gold);text-decoration:none}
+.ca-wrap{margin-bottom:22px}
+.ca-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ca-head label{margin-bottom:0}
+.ca-help{width:22px;height:22px;padding:0;border:none;background:transparent;color:var(--mu);font-size:16px;line-height:1;cursor:pointer;border-radius:50%;flex-shrink:0;transition:color .18s}
+.ca-help:hover,.ca-help:focus{color:var(--gold);outline:none}
+.ca-modes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:640px){.ca-modes{grid-template-columns:1fr}}
+.ca-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.ca-card{display:block;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:12px 11px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;height:100%}
+.ca-card-title{display:block;font-size:13px;font-weight:600;color:var(--tx);line-height:1.3;margin-bottom:4px;letter-spacing:0;text-transform:none}
+.ca-card-sub{display:block;font-size:11px;font-weight:300;color:var(--mu);line-height:1.45;letter-spacing:0;text-transform:none}
+.ca-radio:focus-visible+.ca-card{outline:2px solid var(--gold);outline-offset:2px}
+.ca-radio:checked+.ca-card{border-color:var(--gold);background:var(--gp);box-shadow:0 0 0 2px var(--gp)}
+.ca-panels{position:relative}
+.ca-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height .25s ease,opacity .2s ease;margin-top:0;pointer-events:none}
+.ca-panel.open{max-height:520px;opacity:1;margin-top:4px;pointer-events:auto}
+.ca-panel .fi{margin-bottom:14px}
+.ca-panel .fi:last-child{margin-bottom:0}
+.ca-panel label{font-size:11px}
+.ca-hint{font-size:12px;color:var(--mu);margin-top:5px;line-height:1.5;font-style:italic}
+.ca-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.ca-row{grid-template-columns:1fr}}
+.ca-ferr{font-size:12px;color:var(--er);margin-top:5px;display:none}
+.ca-ferr.show{display:block}
+.ca-wrap input.ca-err,.ca-wrap select.ca-err,.ca-wrap textarea.ca-err{border-color:var(--er);box-shadow:0 0 0 3px rgba(224,112,96,.15)}
+.ca-modal-overlay{position:fixed;inset:0;background:rgba(8,14,28,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.ca-modal-overlay.open{opacity:1;visibility:visible}
+.ca-modal{background:#f8f6f2;color:#1a1a1a;border-radius:10px;max-width:520px;width:100%;max-height:min(90vh,640px);overflow-y:auto;padding:26px 24px 22px;position:relative;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+.ca-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:transparent;font-size:22px;line-height:1;color:#666;cursor:pointer;border-radius:6px}
+.ca-modal-close:hover,.ca-modal-close:focus{color:#1a1a1a;background:rgba(0,0,0,.06);outline:none}
+.ca-modal h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#0f1f3d;margin:0 32px 18px 0;line-height:1.25}
+.ca-modal-panels{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.ca-modal-panel{display:flex;gap:14px;align-items:flex-start;padding:12px;background:#fff;border:1px solid rgba(15,31,61,.1);border-radius:8px}
+.ca-modal-ico{flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.ca-ico-grid{display:grid;grid-template-columns:repeat(3,10px);gap:3px}
+.ca-ico-grid span{width:10px;height:10px;background:#0f1f3d;border-radius:2px;opacity:.85}
+.ca-ico-radius{width:36px;height:36px;border:2px solid #0f1f3d;border-radius:50%;position:relative}
+.ca-ico-radius::after{content:'';position:absolute;top:50%;left:50%;width:6px;height:6px;margin:-3px 0 0 -3px;background:#f5a623;border-radius:50%}
+.ca-ico-county{width:34px;height:22px;background:#0f1f3d;border-radius:4px}
+.ca-modal-panel p{font-size:13px;line-height:1.55;color:#444;margin:0;font-weight:400}
+.ca-modal-note{font-size:12px;color:#666;line-height:1.55;margin:0}
 </style>
 
 <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
@@ -289,10 +330,118 @@ select option{background:#fff;color:#1a1a1a}
     <div class="fi"><label for="f_phone">Phone <span class="opt">(for the site)</span></label><input type="tel" id="f_phone" placeholder="e.g. 07700 900 000"><div class="ferr" id="e_phone">Please enter a phone number</div></div>
     <div class="fi"><label for="f_email">Email address</label><input type="email" id="f_email" placeholder="e.g. james@hartleyplumbing.co.uk"><div class="ferr" id="e_email">Please enter a valid email</div></div>
   </div>
-  <div class="tcol">
-    <div class="fi"><label for="f_area">Area you cover</label><input type="text" id="f_area" placeholder="e.g. Swindon and Wiltshire"><div class="ferr" id="e_area">Please enter your coverage area</div></div>
-    <div class="fi"><label for="f_years">Years trading <span class="opt">optional</span></label><input type="number" id="f_years" placeholder="e.g. 12" min="0" max="60"></div>
+  <div class="fi ca-wrap">
+    <div class="ca-head">
+      <label id="ca_heading_label" for="ca_mode_pc">Area you cover</label>
+      <button type="button" class="ca-help" id="ca_help_btn" aria-label="How would you like to show your area?">&#9432;</button>
+    </div>
+    <div class="ca-modes" role="radiogroup" aria-labelledby="ca_heading_label">
+      <div>
+        <input type="radio" name="ca_mode" id="ca_mode_pc" value="postcode" class="ca-radio">
+        <label for="ca_mode_pc" class="ca-card"><span class="ca-card-title">Postcode districts</span><span class="ca-card-sub">The specific areas you cover — e.g. SN1, SN2, BA14</span></label>
+      </div>
+      <div>
+        <input type="radio" name="ca_mode" id="ca_mode_rad" value="radius" class="ca-radio">
+        <label for="ca_mode_rad" class="ca-card"><span class="ca-card-title">Radius from my base</span><span class="ca-card-sub">A circle out from where you&rsquo;re based</span></label>
+      </div>
+      <div>
+        <input type="radio" name="ca_mode" id="ca_mode_cty" value="county" class="ca-radio">
+        <label for="ca_mode_cty" class="ca-card"><span class="ca-card-title">My whole county</span><span class="ca-card-sub">You cover the full county and want to keep it simple</span></label>
+      </div>
+      <div>
+        <input type="radio" name="ca_mode" id="ca_mode_oth" value="other" class="ca-radio">
+        <label for="ca_mode_oth" class="ca-card"><span class="ca-card-title">Something else — I&rsquo;ll describe it</span><span class="ca-card-sub">Crosses county lines, multiple areas, or anything that doesn&rsquo;t fit the above</span></label>
+      </div>
+    </div>
+    <input type="hidden" id="f_area" value="">
+    <div class="ferr" id="e_area" role="alert">Please choose how you cover your area and fill in the details</div>
+    <div class="ca-panels">
+      <div class="ca-panel" id="ca_panel_pc" aria-hidden="true">
+        <div class="fi">
+          <label for="ca_pc_input">Postcode districts</label>
+          <input type="text" id="ca_pc_input" autocomplete="off" aria-describedby="ca_pc_hint ca_e_pc">
+          <p class="ca-hint" id="ca_pc_hint">Just the letters and first number or numbers — e.g. SN1, SN2, BA14. Separate with commas.</p>
+          <div class="ca-ferr" id="ca_e_pc" role="alert"></div>
+        </div>
+      </div>
+      <div class="ca-panel" id="ca_panel_rad" aria-hidden="true">
+        <div class="ca-row">
+          <div class="fi">
+            <label for="ca_rad_base">Base location</label>
+            <input type="text" id="ca_rad_base" placeholder="Town or postcode — e.g. Swindon or SN1" aria-describedby="ca_e_rad_base">
+            <div class="ca-ferr" id="ca_e_rad_base" role="alert">Please enter your base town or postcode</div>
+          </div>
+          <div class="fi">
+            <label for="ca_rad_dist">Distance</label>
+            <select id="ca_rad_dist" aria-describedby="ca_e_rad_dist">
+              <option value="" disabled selected>Choose distance…</option>
+              <option value="5">5 miles</option>
+              <option value="10">10 miles</option>
+              <option value="15">15 miles</option>
+              <option value="20">20 miles</option>
+              <option value="25">25 miles</option>
+              <option value="30">30 miles</option>
+              <option value="further">Further — I&rsquo;ll add a note below</option>
+            </select>
+            <div class="ca-ferr" id="ca_e_rad_dist" role="alert">Please choose a distance</div>
+          </div>
+        </div>
+        <div class="fi ca-rad-note-wrap" id="ca_rad_note_wrap" hidden>
+          <label for="ca_rad_note">Describe your range</label>
+          <textarea id="ca_rad_note" rows="3" placeholder="e.g. up to 50 miles for larger jobs, 20 miles for small callouts" aria-describedby="ca_e_rad_note"></textarea>
+          <div class="ca-ferr" id="ca_e_rad_note" role="alert">Please describe your range</div>
+        </div>
+      </div>
+      <div class="ca-panel" id="ca_panel_cty" aria-hidden="true">
+        <div class="fi">
+          <label for="ca_cty_select">County</label>
+          <select id="ca_cty_select" aria-describedby="ca_e_cty">
+            <option value="" disabled selected>Select your county…</option>
+            <optgroup label="England">
+              <option>Bedfordshire</option><option>Berkshire</option><option>Bristol</option><option>Buckinghamshire</option><option>Cambridgeshire</option><option>Cheshire</option><option>City of London</option><option>Cornwall</option><option>Cumbria</option><option>Derbyshire</option><option>Devon</option><option>Dorset</option><option>Durham</option><option>East Riding of Yorkshire</option><option>East Sussex</option><option>Essex</option><option>Gloucestershire</option><option>Greater London</option><option>Greater Manchester</option><option>Hampshire</option><option>Herefordshire</option><option>Hertfordshire</option><option>Isle of Wight</option><option>Isles of Scilly</option><option>Kent</option><option>Lancashire</option><option>Leicestershire</option><option>Lincolnshire</option><option>Merseyside</option><option>Norfolk</option><option>North Yorkshire</option><option>Northamptonshire</option><option>Northumberland</option><option>Nottinghamshire</option><option>Oxfordshire</option><option>Rutland</option><option>Shropshire</option><option>Somerset</option><option>South Yorkshire</option><option>Staffordshire</option><option>Suffolk</option><option>Surrey</option><option>Tyne and Wear</option><option>Warwickshire</option><option>West Midlands</option><option>West Sussex</option><option>West Yorkshire</option><option>Wiltshire</option><option>Worcestershire</option>
+            </optgroup>
+            <optgroup label="Wales">
+              <option>Blaenau Gwent</option><option>Bridgend</option><option>Caerphilly</option><option>Cardiff</option><option>Carmarthenshire</option><option>Ceredigion</option><option>Conwy</option><option>Denbighshire</option><option>Flintshire</option><option>Gwynedd</option><option>Isle of Anglesey</option><option>Merthyr Tydfil</option><option>Monmouthshire</option><option>Neath Port Talbot</option><option>Newport</option><option>Pembrokeshire</option><option>Powys</option><option>Rhondda Cynon Taf</option><option>Swansea</option><option>Torfaen</option><option>Vale of Glamorgan</option><option>Wrexham</option>
+            </optgroup>
+            <optgroup label="Scotland">
+              <option>Aberdeen City</option><option>Aberdeenshire</option><option>Angus</option><option>Argyll and Bute</option><option>Clackmannanshire</option><option>Dumfries and Galloway</option><option>Dundee City</option><option>East Ayrshire</option><option>East Dunbartonshire</option><option>East Lothian</option><option>East Renfrewshire</option><option>Edinburgh City</option><option>Falkirk</option><option>Fife</option><option>Glasgow City</option><option>Highland</option><option>Inverclyde</option><option>Midlothian</option><option>Moray</option><option>Na h-Eileanan Siar</option><option>North Ayrshire</option><option>North Lanarkshire</option><option>Orkney Islands</option><option>Perth and Kinross</option><option>Renfrewshire</option><option>Scottish Borders</option><option>Shetland Islands</option><option>South Ayrshire</option><option>South Lanarkshire</option><option>Stirling</option><option>West Dunbartonshire</option><option>West Lothian</option>
+            </optgroup>
+          </select>
+          <div class="ca-ferr" id="ca_e_cty" role="alert">Please select your county</div>
+        </div>
+      </div>
+      <div class="ca-panel" id="ca_panel_oth" aria-hidden="true">
+        <div class="fi">
+          <label for="ca_oth_text">Describe your coverage area</label>
+          <textarea id="ca_oth_text" placeholder="e.g. Wiltshire and the western edge of Hampshire, or within an hour's drive of Bristol" aria-describedby="ca_e_oth"></textarea>
+          <div class="ca-ferr" id="ca_e_oth" role="alert">Please describe your coverage area</div>
+        </div>
+      </div>
+    </div>
   </div>
+  <div class="fi"><label for="f_years">Years trading <span class="opt">optional</span></label><input type="number" id="f_years" placeholder="e.g. 12" min="0" max="60"></div>
+
+<div class="ca-modal-overlay" id="ca_modal" role="dialog" aria-modal="true" aria-labelledby="ca_modal_title" hidden>
+  <div class="ca-modal">
+    <button type="button" class="ca-modal-close" id="ca_modal_close" aria-label="Close">&times;</button>
+    <h3 id="ca_modal_title">How would you like to show your area?</h3>
+    <div class="ca-modal-panels">
+      <div class="ca-modal-panel">
+        <div class="ca-modal-ico" aria-hidden="true"><div class="ca-ico-grid"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div><strong style="display:block;font-size:13px;margin-bottom:4px;color:#0f1f3d">Postcode districts</strong><p>Exact postcode boundaries — SN1, SN2, SN3 and so on. Ideal if you think in postcodes and want to be precise about which areas you cover.</p></div>
+      </div>
+      <div class="ca-modal-panel">
+        <div class="ca-modal-ico" aria-hidden="true"><div class="ca-ico-radius"></div></div>
+        <div><strong style="display:block;font-size:13px;margin-bottom:4px;color:#0f1f3d">Radius from base</strong><p>A circle showing how far you travel from your base. Simple, clear, and works well if you cover a consistent area in all directions.</p></div>
+      </div>
+      <div class="ca-modal-panel">
+        <div class="ca-modal-ico" aria-hidden="true"><div class="ca-ico-county"></div></div>
+        <div><strong style="display:block;font-size:13px;margin-bottom:4px;color:#0f1f3d">County-wide</strong><p>Your full county boundary. Best if you genuinely cover the whole area and want to keep it simple for customers to understand.</p></div>
+      </div>
+    </div>
+    <p class="ca-modal-note">Not sure? Choose &lsquo;Something else&rsquo; and describe your patch in your own words — that works just as well.</p>
+  </div>
+</div>
 </div>
 
 <!-- STEP 2 -->
@@ -615,12 +764,200 @@ document.getElementById('bbk').style.display=n>1?'block':'none';
 document.getElementById('bnx').textContent=n===5?'Build my free preview \u2192':'Continue \u2192';
 }
 
+var CA_DISTRICT_RE=/^[A-Z]{1,2}\d{1,2}$/i;
+var CA_FULL_PC_RE=/^[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}$/i;
+
+function caMode(){var r=document.querySelector('input[name="ca_mode"]:checked');return r?r.value:'';}
+
+function clearCaErrors(){
+  document.querySelectorAll('.ca-ferr').forEach(function(e){e.classList.remove('show');});
+  document.querySelectorAll('.ca-wrap .ca-err').forEach(function(el){el.classList.remove('ca-err');});
+  var pcE=document.getElementById('ca_e_pc');if(pcE)pcE.textContent='';
+}
+
+function caShowErr(errId,fieldId,msg){
+  var errEl=document.getElementById(errId);
+  var field=fieldId?document.getElementById(fieldId):null;
+  if(errEl){if(msg)errEl.textContent=msg;errEl.classList.add('show');}
+  if(field)field.classList.add('ca-err');
+}
+
+function caSetPanel(mode){
+  var map={postcode:'ca_panel_pc',radius:'ca_panel_rad',county:'ca_panel_cty',other:'ca_panel_oth'};
+  for(var k in map){
+    var p=document.getElementById(map[k]);
+    if(!p)continue;
+    var open=k===mode;
+    p.classList.toggle('open',open);
+    p.setAttribute('aria-hidden',open?'false':'true');
+  }
+  var wrap=document.getElementById('ca_rad_note_wrap');
+  var dist=document.getElementById('ca_rad_dist');
+  if(wrap)wrap.hidden=!(mode==='radius'&&dist&&dist.value==='further');
+}
+
+function assembleCoverageArea(){
+  var hidden=document.getElementById('f_area');
+  if(!hidden)return '';
+  var mode=caMode(),out='';
+  if(mode==='postcode'){
+    var parts=document.getElementById('ca_pc_input').value.split(',').map(function(s){return s.trim().toUpperCase();}).filter(Boolean);
+    out='Postcode districts: '+parts.join(', ');
+  }else if(mode==='radius'){
+    var base=document.getElementById('ca_rad_base').value.trim();
+    var distEl=document.getElementById('ca_rad_dist');
+    if(distEl.value==='further'){
+      out='Radius: Further from '+base+' \u2014 '+document.getElementById('ca_rad_note').value.trim();
+    }else{
+      out='Radius: '+distEl.options[distEl.selectedIndex].text+' from '+base;
+    }
+  }else if(mode==='county'){
+    out='County-wide: '+document.getElementById('ca_cty_select').value;
+  }else if(mode==='other'){
+    out='Area (described): '+document.getElementById('ca_oth_text').value.trim();
+  }
+  hidden.value=out;
+  return out;
+}
+
+function validatePostcodeDistricts(){
+  var input=document.getElementById('ca_pc_input');
+  var raw=input.value.trim();
+  if(!raw){caShowErr('ca_e_pc','ca_pc_input','Enter at least one postcode district');return false;}
+  var parts=raw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var valid=[],invalid=[],full=[];
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i],norm=p.replace(/\s+/g,' ').trim();
+    var compact=norm.replace(/\s/g,'').toUpperCase();
+    if(CA_FULL_PC_RE.test(compact)||(norm.indexOf(' ')>=0&&!CA_DISTRICT_RE.test(compact))){
+      full.push(p);continue;
+    }
+    if(CA_DISTRICT_RE.test(compact))valid.push(compact);
+    else invalid.push(p);
+  }
+  if(full.length){caShowErr('ca_e_pc','ca_pc_input','Use just the district part (e.g. SN1), not the full postcode');return false;}
+  if(invalid.length){caShowErr('ca_e_pc','ca_pc_input','Check: '+invalid.join(', ')+' \u2014 use format like SN1 or BA14');return false;}
+  if(!valid.length){caShowErr('ca_e_pc','ca_pc_input','Enter at least one valid postcode district');return false;}
+  input.value=valid.join(', ');
+  return true;
+}
+
+function validateCoverageArea(){
+  clearCaErrors();
+  var eArea=document.getElementById('e_area');
+  if(eArea)eArea.classList.remove('show');
+  var mode=caMode();
+  if(!mode){if(eArea)eArea.classList.add('show');document.getElementById('f_area').value='';return false;}
+  var ok=true;
+  if(mode==='postcode')ok=validatePostcodeDistricts();
+  else if(mode==='radius'){
+    if(!document.getElementById('ca_rad_base').value.trim()){caShowErr('ca_e_rad_base','ca_rad_base');ok=false;}
+    if(!document.getElementById('ca_rad_dist').value){caShowErr('ca_e_rad_dist','ca_rad_dist');ok=false;}
+    if(document.getElementById('ca_rad_dist').value==='further'&&!document.getElementById('ca_rad_note').value.trim()){caShowErr('ca_e_rad_note','ca_rad_note');ok=false;}
+  }else if(mode==='county'){
+    if(!document.getElementById('ca_cty_select').value){caShowErr('ca_e_cty','ca_cty_select');ok=false;}
+  }else if(mode==='other'){
+    if(!document.getElementById('ca_oth_text').value.trim()){caShowErr('ca_e_oth','ca_oth_text');ok=false;}
+  }
+  if(ok)assembleCoverageArea();
+  else document.getElementById('f_area').value='';
+  return ok;
+}
+
+var caModalFocusReturn=null,caModalLastFocus=null;
+
+function caModalFocusables(){
+  var m=document.getElementById('ca_modal');
+  if(!m)return [];
+  return Array.prototype.slice.call(m.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'));
+}
+
+function openCaModal(){
+  var overlay=document.getElementById('ca_modal');
+  var btn=document.getElementById('ca_help_btn');
+  if(!overlay)return;
+  caModalFocusReturn=btn;
+  overlay.hidden=false;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  var f=caModalFocusables();
+  if(f.length){caModalLastFocus=document.activeElement;f[0].focus();}
+}
+
+function closeCaModal(){
+  var overlay=document.getElementById('ca_modal');
+  if(!overlay||overlay.hidden)return;
+  overlay.classList.remove('open');
+  overlay.hidden=true;
+  document.body.style.overflow='';
+  if(caModalFocusReturn)caModalFocusReturn.focus();
+  caModalFocusReturn=null;
+}
+
+function initCoverageModal(){
+  var overlay=document.getElementById('ca_modal');
+  var openBtn=document.getElementById('ca_help_btn');
+  var closeBtn=document.getElementById('ca_modal_close');
+  if(openBtn)openBtn.addEventListener('click',openCaModal);
+  if(closeBtn)closeBtn.addEventListener('click',closeCaModal);
+  if(overlay)overlay.addEventListener('click',function(ev){if(ev.target===overlay)closeCaModal();});
+  document.addEventListener('keydown',function(ev){
+    var overlay=document.getElementById('ca_modal');
+    if(!overlay||overlay.hidden)return;
+    if(ev.key==='Escape'){closeCaModal();return;}
+    if(ev.key!=='Tab')return;
+    var f=caModalFocusables();
+    if(!f.length)return;
+    var first=f[0],last=f[f.length-1];
+    if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus();}
+    else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus();}
+  });
+}
+
+function initCoverageArea(){
+  var modes=document.querySelectorAll('input[name="ca_mode"]');
+  for(var i=0;i<modes.length;i++){
+    modes[i].addEventListener('change',function(){
+      clearCaErrors();
+      var eArea=document.getElementById('e_area');
+      if(eArea)eArea.classList.remove('show');
+      caSetPanel(caMode());
+    });
+  }
+  var pcInput=document.getElementById('ca_pc_input');
+  if(pcInput){
+    pcInput.addEventListener('blur',function(){if(caMode()==='postcode')validatePostcodeDistricts();});
+  }
+  var radDist=document.getElementById('ca_rad_dist');
+  if(radDist)radDist.addEventListener('change',function(){caSetPanel('radius');});
+  var wrap=document.querySelector('.ca-wrap');
+  if(wrap){
+    wrap.addEventListener('input',function(ev){
+      var t=ev.target;
+      if(!t.id)return;
+      t.classList.remove('ca-err');
+      if(t.id==='ca_pc_input')document.getElementById('ca_e_pc').classList.remove('show');
+      else if(t.id==='ca_rad_base')document.getElementById('ca_e_rad_base').classList.remove('show');
+      else if(t.id==='ca_rad_note')document.getElementById('ca_e_rad_note').classList.remove('show');
+      else if(t.id==='ca_oth_text')document.getElementById('ca_e_oth').classList.remove('show');
+    });
+    wrap.addEventListener('change',function(ev){
+      var t=ev.target;
+      if(t.id==='ca_rad_dist')document.getElementById('ca_e_rad_dist').classList.remove('show');
+      if(t.id==='ca_cty_select')document.getElementById('ca_e_cty').classList.remove('show');
+    });
+  }
+  initCoverageModal();
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initCoverageArea);}else{initCoverageArea();}
+
 function goNext(){if(!validate(curStep)) return;if(curStep>=5){submitForm();}else{goToStep(curStep+1);}}
 function goBack(){if(curStep>1) goToStep(curStep-1);}
 
 function validate(n){
 var ok=true;
-var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_email','e_email'],['f_area','e_area']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
+var map={1:[['f_name','e_name'],['f_biz','e_biz'],['f_trade','e_trade'],['f_phone','e_phone'],['f_email','e_email']],2:[['f_svcs','e_svcs']],3:[['f_story','e_story']],4:[],5:[]};
 var pairs=map[n]||[];
 for(var i=0;i<pairs.length;i++){
 var el=document.getElementById(pairs[i][0]);
@@ -644,6 +981,7 @@ if(n===1){
       ok=false;
     }
   }
+  if(!validateCoverageArea())ok=false;
 }
 return ok;
 }
@@ -696,6 +1034,7 @@ function submitForm(){
 var btn=document.getElementById('bnx');
 btn.disabled=true;btn.textContent='Sending\u2026';
 document.getElementById('submit-error').style.display='none';
+assembleCoverageArea();
 function v(id){var el=document.getElementById(id);return el?el.value:'';}
 var contact=[];var cc=document.querySelectorAll('#cr_contact .chip.on');for(var i=0;i<cc.length;i++) contact.push(cc[i].textContent.trim());
 
@@ -834,3 +1173,4 @@ if(window.console&&console.warn) console.warn(err);
 <script type="module" src="/cookieconsent-config.js"></script>
 </body>
 </html>
+
