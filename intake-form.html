@@ -575,6 +575,13 @@ select option{background:#fff;color:#1a1a1a}
     var el = document.getElementById('f_email');
     if (el) el.value = params.get('email');
   }
+  if (params.has('trade')) {
+    var tradeEl = document.getElementById('f_trade');
+    if (tradeEl) tradeEl.value = params.get('trade');
+  }
+  if (params.get('step') === '1') {
+    window.__intakeStartStep1 = true;
+  }
 })();
 
 var curStep=0,togVals={},styleVal='',teamVal='',domainVal='';
@@ -593,6 +600,8 @@ document.getElementById('owrap').style.display='none';
 document.getElementById('navbar').style.display='flex';
 goToStep(1);
 }
+
+if (window.__intakeStartStep1) startForm();
 
 function goToStep(n){
 var pages=document.querySelectorAll('.page');
