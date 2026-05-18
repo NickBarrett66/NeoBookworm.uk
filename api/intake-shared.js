@@ -841,15 +841,36 @@ function normalizeMime(m) {
   return (m || '').toString().toLowerCase().split(';')[0].trim();
 }
 
+/** When the browser sends a wrong MIME (e.g. image/x-icon for a .jpg), infer from extension. */
+function inferMimeFromFilename(name) {
+  const n = (name || '').toLowerCase();
+  if (/\.jpe?g$/i.test(n)) return 'image/jpeg';
+  if (/\.png$/i.test(n)) return 'image/png';
+  if (/\.webp$/i.test(n)) return 'image/webp';
+  if (/\.gif$/i.test(n)) return 'image/gif';
+  if (/\.heic$/i.test(n)) return 'image/heic';
+  if (/\.heif$/i.test(n)) return 'image/heif';
+  if (/\.svg$/i.test(n)) return 'image/svg+xml';
+  if (/\.pdf$/i.test(n)) return 'application/pdf';
+  return null;
+}
+
 function validateFileMetaForSession(name, mimeType) {
-  const mime = normalizeMime(mimeType);
+  const declared = normalizeMime(mimeType);
   if (!name || !String(name).trim()) {
     throw new Error('Each file must have a name');
   }
-  if (!ALLOWED_TYPES.includes(mime)) {
-    throw new Error(`File type not allowed: ${mime || '(empty)'}`);
+  let resolved = declared;
+  if (!ALLOWED_TYPES.includes(resolved)) {
+    const inferred = inferMimeFromFilename(name);
+    if (inferred) resolved = inferred;
   }
-  return mime;
+  if (!ALLOWED_TYPES.includes(resolved)) {
+    throw new Error(
+      `File type not allowed: ${declared || '(empty)'}. Use JPG, PNG, WebP, GIF, HEIC, SVG, or PDF.`,
+    );
+  }
+  return resolved;
 }
 
 function publicUrlForKey(key) {
