@@ -3,6 +3,10 @@
 // Orestbida CookieConsent v3.1.0 (self-hosted in /vendor/cookieconsent/)
 
 import '/vendor/cookieconsent/cookieconsent.umd.js';
+import {
+  grantAnalyticsConsent,
+  denyAnalyticsConsent,
+} from '/js/analytics-consent.js';
 
 CookieConsent.run({
   cookie: {
@@ -40,22 +44,16 @@ CookieConsent.run({
 
   onConsent: function () {
     if (CookieConsent.acceptedCategory('analytics')) {
-      if (typeof gtag === 'function') {
-        gtag('consent', 'update', { analytics_storage: 'granted' });
-      }
+      grantAnalyticsConsent();
     }
   },
 
   onChange: function ({ changedCategories }) {
     if (changedCategories.includes('analytics')) {
       if (CookieConsent.acceptedCategory('analytics')) {
-        if (typeof gtag === 'function') {
-          gtag('consent', 'update', { analytics_storage: 'granted' });
-        }
+        grantAnalyticsConsent();
       } else {
-        if (typeof gtag === 'function') {
-          gtag('consent', 'update', { analytics_storage: 'denied' });
-        }
+        denyAnalyticsConsent();
       }
     }
   },

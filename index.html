@@ -22,6 +22,11 @@
   <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" type="image/webp"
+        href="/Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp"
+        imagesrcset="/Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp 640w, /Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp 820w"
+        imagesizes="(max-width: 900px) 100vw, 820px"
+        fetchpriority="high">
   <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/fonts-bebas.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/fonts-bebas.css"></noscript>
@@ -1479,15 +1484,6 @@ margin-top: 2px;
 }
 </style>
 
-<!-- Google Analytics — consent denied by default until visitor accepts -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FM1VG68GKQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('consent', 'default', { analytics_storage: 'denied' });
-  gtag('config', 'G-FM1VG68GKQ');
-</script>
 <link rel="stylesheet" href="/nav-mobile.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/nav-mobile.css" /></noscript>
 <script type="application/ld+json">
@@ -1564,11 +1560,15 @@ margin-top: 2px;
     <p class="price-anchor">From <strong>£299</strong> to build &nbsp;·&nbsp; <strong>You don&rsquo;t pay until you&rsquo;re happy</strong> &nbsp;·&nbsp; Then choose: <strong>£9.99/month</strong> for me to keep it running, or take it over yourself &nbsp;·&nbsp; No hidden costs</p>
     <div class="hero-image-wrap">
       <picture>
-        <source srcset="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp" type="image/webp">
-        <img src="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.png"
+        <source
+          srcset="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp 640w, Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp 820w"
+          sizes="(max-width: 900px) 100vw, 820px"
+          type="image/webp">
+        <img src="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp"
              alt="Professional web designer working at a clean desk"
              width="820" height="548"
              loading="eager"
+             decoding="async"
              fetchpriority="high">
       </picture>
     </div>
