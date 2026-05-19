@@ -821,9 +821,11 @@ const state = {
 
 // ── Status metadata ──────────────────────────────────────────────────────────
 const PIPELINE_STATUSES = [
-  'Researched', 'Researched with website', 'Pending CH Validation',
-  'Brief In Progress', 'Spec Complete', 'Brief Complete',
-  'Demo Built', 'Emailed', 'Closed - No Response',
+  'Pending CH Validation',
+  'Researched',
+  'Researched with website',
+  'In Campaign',
+  'Emailed',
 ];
 
 const STATUS_COLOURS = {
@@ -846,6 +848,7 @@ const STATUS_COLOURS = {
   'Final check Complete':     '#34c97e',
   'Email Ready':              '#34c97e',
   'Email 1':                  '#9b7fe8',
+  'In Campaign':              '#9b7fe8',
   'Emailed':                  '#9b7fe8',
   'Follow-up 1':              '#9b7fe8',
   'Final Follow-up':          '#9b7fe8',
@@ -865,7 +868,7 @@ const ALL_STATUSES = [
   'CH Checked - Ltd', 'CH Checked - Sole Trader', 'Ltd - No Email',
   'Brief In Progress', 'Spec In Progress', 'Spec Complete', 'Brief Complete',
   'Demo in Progress', 'Demo Built', 'Demo Approved', 'Final check Complete',
-  'Email Ready', 'Email 1', 'Emailed', 'Follow-up 1', 'Final Follow-up',
+  'Email Ready', 'Email 1', 'In Campaign', 'Emailed', 'Follow-up 1', 'Final Follow-up',
   'Replied', 'Hot Lead', 'Won', 'Lost', 'Closed - No Response',
   'Disqualified', 'Duplicate', 'Suppressed',
 ];
