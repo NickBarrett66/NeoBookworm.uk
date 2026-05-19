@@ -531,6 +531,7 @@ module.exports = async (req, res) => {
   const {
     action, status, page = '1', q = '', handled = 'all',
     q_business = '', q_contact = '', q_trade = '', q_town = '',
+    q_campaign = '',
     has_website = '', min_rating = '', max_rating = '',
     emailed_filter = '',
     sort1_col = '', sort1_dir = 'asc',
@@ -563,6 +564,16 @@ module.exports = async (req, res) => {
     if (action === 'list') {
       if (!status) return res.status(400).json({ error: 'status parameter required' });
 
+      const inCampaign = status === 'In Campaign';
+      const campaignIdExpr = `COALESCE(
+        NULLIF(TRIM(prospects.email_campaign_id), ''),
+        (SELECT o.campaign_id
+         FROM outbox o
+         WHERE o.notion_id = prospects.notion_id
+         ORDER BY o.created_at ASC, o.campaign_id ASC
+         LIMIT 1)
+      )`;
+
       const conditions = ['status = ?'];
       const filterParams = [status];
 
@@ -582,6 +593,10 @@ module.exports = async (req, res) => {
       }
       if (emailed_filter === 'never')   { conditions.push('last_email_sent IS NULL');     }
       if (emailed_filter === 'emailed') { conditions.push('last_email_sent IS NOT NULL'); }
+      if (q_campaign.trim() && inCampaign) {
+        conditions.push(`(${campaignIdExpr}) LIKE ?`);
+        filterParams.push(`%${q_campaign.trim()}%`);
+      }
       // Legacy global search (q) — kept for backward compatibility
       if (q.trim()) {
         conditions.push('(business_name LIKE ? OR contact_name LIKE ? OR town LIKE ? OR email_address LIKE ?)');
@@ -590,17 +605,6 @@ module.exports = async (req, res) => {
       }
 
       const where = conditions.map((c, i) => (i === 0 ? `WHERE ${c}` : `AND ${c}`)).join(' ');
-
-      // Active campaign: outbox.campaign_id (enrolment). After first send: prospects.email_campaign_id.
-      const inCampaign = status === 'In Campaign';
-      const campaignIdExpr = `COALESCE(
-        NULLIF(TRIM(prospects.email_campaign_id), ''),
-        (SELECT o.campaign_id
-         FROM outbox o
-         WHERE o.notion_id = prospects.notion_id
-         ORDER BY o.created_at ASC, o.campaign_id ASC
-         LIMIT 1)
-      )`;
 
       const sortExpr = (col) => {
         if (col === 'rating') return 'CAST(rating AS REAL)';

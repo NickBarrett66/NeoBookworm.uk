@@ -772,6 +772,7 @@
 // ── State ────────────────────────────────────────────────────────────────────
 const EMPTY_COL_FILTERS = () => ({
   q_business: '', q_contact: '', q_trade: '', q_town: '',
+  q_campaign: '',
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
 });
 
@@ -825,7 +826,7 @@ function prospectFilterCell(col, cf) {
         <input type="number" class="col-filter" data-col="max_rating" placeholder="Max" min="0" max="5" step="0.1" value="${escAttr(cf.max_rating)}">
       </div>`;
     case 'campaign_id':
-      return '';
+      return `<input type="search" class="col-filter" data-col="q_campaign" placeholder="Filter…" value="${escAttr(cf.q_campaign)}">`;
     case 'last_email_sent':
       return `<select class="col-filter" data-col="emailed_filter">
         <option value=""        ${cf.emailed_filter === ''        ? 'selected' : ''}>Any</option>
@@ -1067,29 +1068,62 @@ function updateContactBadge() {
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
+function closeRecordModals() {
+  document.getElementById('modal-overlay')?.classList.remove('open');
+  document.getElementById('email-modal-overlay')?.classList.remove('open');
+}
+
+/** True when the tab is already showing its top-level screen (no drill-down). */
+function isTabAtRoot(tab) {
+  if (tab === 'prospects') return state.view === 'summary';
+  const recordModalOpen = document.getElementById('modal-overlay')?.classList.contains('open');
+  if (tab === 'enquiries') {
+    return !recordModalOpen && state.enqPage === 1 && !state.enqSearch && state.enqHandled === 'all';
+  }
+  if (tab === 'intake') {
+    return !recordModalOpen && state.intakePage === 1 && !state.intakeSearch && state.intakeHandled === 'all';
+  }
+  if (tab === 'contact') {
+    return !recordModalOpen && state.contactPage === 1 && !state.contactSearch && state.contactHandled === 'all';
+  }
+  if (tab === 'campaigns') {
+    const emailModalOpen = document.getElementById('email-modal-overlay')?.classList.contains('open');
+    return !emailModalOpen && state.campView === 'list';
+  }
+  return true;
+}
+
+function goToTabRoot(tab) {
+  closeRecordModals();
+  document.getElementById('btn-back').style.display = 'none';
+  if (tab === 'prospects') {
+    state.view = 'summary';
+    renderSummary(state.summaryData);
+  } else if (tab === 'enquiries') {
+    state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
+    loadEnquiriesList();
+  } else if (tab === 'intake') {
+    state.intakePage = 1; state.intakeSearch = ''; state.intakeHandled = 'all';
+    loadIntakeList();
+  } else if (tab === 'contact') {
+    state.contactPage = 1; state.contactSearch = ''; state.contactHandled = 'all';
+    loadContactList();
+  } else if (tab === 'campaigns') {
+    state.campView = 'list';
+    loadCampaignsList();
+  }
+}
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
-    if (tab === state.tab) return;
+    if (tab === state.tab) {
+      if (!isTabAtRoot(tab)) goToTabRoot(tab);
+      return;
+    }
     state.tab = tab;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.getElementById('btn-back').style.display = 'none';
-    if (tab === 'prospects') {
-      state.view = 'summary';
-      renderSummary(state.summaryData);
-    } else if (tab === 'enquiries') {
-      state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
-      loadEnquiriesList();
-    } else if (tab === 'intake') {
-      state.intakePage = 1; state.intakeSearch = ''; state.intakeHandled = 'all';
-      loadIntakeList();
-    } else if (tab === 'contact') {
-      state.contactPage = 1; state.contactSearch = ''; state.contactHandled = 'all';
-      loadContactList();
-    } else if (tab === 'campaigns') {
-      state.campView = 'list';
-      loadCampaignsList();
-    }
+    goToTabRoot(tab);
   });
 });
 
@@ -1159,6 +1193,7 @@ async function loadList(status, page = 1, { soft = false } = {}) {
     if (cf.q_contact)       params.q_contact      = cf.q_contact;
     if (cf.q_trade)         params.q_trade        = cf.q_trade;
     if (cf.q_town)          params.q_town         = cf.q_town;
+    if (cf.q_campaign)      params.q_campaign     = cf.q_campaign;
     if (cf.has_website !== '') params.has_website  = cf.has_website;
     if (cf.min_rating)      params.min_rating     = cf.min_rating;
     if (cf.max_rating)      params.max_rating     = cf.max_rating;
