@@ -591,26 +591,48 @@ module.exports = async (req, res) => {
 
       const where = conditions.map((c, i) => (i === 0 ? `WHERE ${c}` : `AND ${c}`)).join(' ');
 
-      // Build ORDER BY from up to 3 sort columns
+      // Active campaign: outbox.campaign_id (enrolment). After first send: prospects.email_campaign_id.
+      const inCampaign = status === 'In Campaign';
+      const campaignIdExpr = `COALESCE(
+        NULLIF(TRIM(prospects.email_campaign_id), ''),
+        (SELECT o.campaign_id
+         FROM outbox o
+         WHERE o.notion_id = prospects.notion_id
+         ORDER BY o.created_at ASC, o.campaign_id ASC
+         LIMIT 1)
+      )`;
+
+      const sortExpr = (col) => {
+        if (col === 'rating') return 'CAST(rating AS REAL)';
+        if (col === 'campaign_id') return campaignIdExpr;
+        return col;
+      };
+
       const SORT_COLS_ALLOWED = new Set([
-        'business_name','contact_name','trade_category','town',
-        'has_website','rating','email_campaign_id','last_email_sent',
+        'business_name', 'contact_name', 'trade_category', 'town',
+        'has_website', 'rating', 'last_email_sent',
+        ...(inCampaign ? ['campaign_id'] : []),
       ]);
       const orderClauses = [];
-      for (const [col, dir] of [[sort1_col,sort1_dir],[sort2_col,sort2_dir],[sort3_col,sort3_dir]]) {
+      for (const [col, dir] of [[sort1_col, sort1_dir], [sort2_col, sort2_dir], [sort3_col, sort3_dir]]) {
         if (!col || !SORT_COLS_ALLOWED.has(col)) continue;
-        const d    = dir === 'desc' ? 'DESC' : 'ASC';
-        const expr = col === 'rating' ? 'CAST(rating AS REAL)' : col;
-        orderClauses.push(`${expr} ${d}`);
+        const d = dir === 'desc' ? 'DESC' : 'ASC';
+        orderClauses.push(`${sortExpr(col)} ${d}`);
       }
       const orderBy = orderClauses.length ? orderClauses.join(', ') : 'business_name ASC';
 
-      const [rows, countRows] = await Promise.all([
-        queryD1(prospectsDb(),
-          `SELECT notion_id, business_name, contact_name, trade_category, town,
+      const listSelect = inCampaign
+        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
-                  email_campaign_id
+                  ${campaignIdExpr} AS campaign_id`
+        : `SELECT notion_id, business_name, contact_name, trade_category, town,
+                  email_address, has_website, rating, postcard_score,
+                  last_email_sent, date_first_contacted, demo_url, prospect_segment`;
+
+      const [rows, countRows] = await Promise.all([
+        queryD1(prospectsDb(),
+          `${listSelect}
            FROM prospects
            ${where}
            ORDER BY ${orderBy}

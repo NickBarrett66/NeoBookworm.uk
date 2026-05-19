@@ -791,7 +791,7 @@ const PROSPECT_COLS_IN_CAMPAIGN = [
   { label: 'Trade',        col: 'trade_category'      },
   { label: 'Town',         col: 'town'                },
   { label: 'Website',      col: 'has_website'         },
-  { label: 'Campaign Id',  col: 'email_campaign_id'   },
+  { label: 'Campaign Id',  col: 'campaign_id'   },
   { label: 'Last emailed', col: 'last_email_sent'     },
 ];
 
@@ -820,7 +820,7 @@ function prospectFilterCell(col, cf) {
         <input type="number" class="col-filter" data-col="min_rating" placeholder="Min" min="0" max="5" step="0.1" value="${escAttr(cf.min_rating)}">
         <input type="number" class="col-filter" data-col="max_rating" placeholder="Max" min="0" max="5" step="0.1" value="${escAttr(cf.max_rating)}">
       </div>`;
-    case 'email_campaign_id':
+    case 'campaign_id':
       return '';
     case 'last_email_sent':
       return `<select class="col-filter" data-col="emailed_filter">
@@ -847,8 +847,8 @@ function prospectDataCell(col, row) {
       return `<span class="pill ${row.has_website ? 'has-website' : 'no-website'}">${row.has_website ? 'Yes' : 'No'}</span>`;
     case 'rating':
       return `<span class="muted">${row.rating != null ? row.rating : '—'}</span>`;
-    case 'email_campaign_id': {
-      const id = row.email_campaign_id;
+    case 'campaign_id': {
+      const id = row.campaign_id;
       if (!id) return '<span class="muted">—</span>';
       const short = id.length > 35 ? id.slice(0, 35) + '…' : id;
       return `<span class="camp-id-cell" data-id="${escAttr(id)}" title="${escAttr(id)}">${escHtml(short)}</span>`;
@@ -1225,7 +1225,7 @@ function renderList({ data: rows, total, page, pageSize }) {
       const tr = document.createElement('tr');
       tr.innerHTML = cols.map(({ col }) => {
         const inner = prospectDataCell(col, row);
-        if (col === 'business_name' || col === 'has_website' || col === 'email_campaign_id') {
+        if (col === 'business_name' || col === 'has_website' || col === 'campaign_id') {
           return `<td>${inner}</td>`;
         }
         return `<td class="muted">${inner}</td>`;
