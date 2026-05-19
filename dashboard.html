@@ -203,14 +203,29 @@
 
   .list-controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 
-  #enq-search-input, #intake-search-input, #contact-search-input {
+  #submissions-search-input {
     padding: .5rem .9rem; border: 1px solid var(--border);
     border-radius: 8px; background: var(--navy-card);
     color: var(--white); font-size: .9rem;
     width: min(220px, 100%); outline: none;
   }
-  #enq-search-input:focus,
-  #intake-search-input:focus, #contact-search-input:focus { border-color: var(--amber); }
+  #submissions-search-input:focus { border-color: var(--amber); }
+
+  .submissions-overview { margin-bottom: 1.25rem; }
+  .submissions-overview .section-label { margin-top: 0; }
+
+  .src-pill {
+    display: inline-block;
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+    border-radius: 4px; padding: .15rem .45rem;
+    white-space: nowrap;
+  }
+  .src-enquiry { background: rgba(75, 156, 245, .2); color: var(--blue); }
+  .src-intake  { background: rgba(245, 166, 35, .2); color: var(--amber); }
+  .src-contact { background: rgba(46, 196, 182, .2); color: #2ec4b6; }
+
+  .filter-btn.source-active { border-color: var(--amber); color: var(--white); }
 
   .filter-btns { display: flex; gap: .25rem; }
 
@@ -727,8 +742,6 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="prospects">Prospects</button>
       <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
-      <button class="tab-btn" data-tab="intake" id="intake-tab-btn">Intake</button>
-      <button class="tab-btn" data-tab="contact" id="contact-tab-btn">Contact</button>
       <button class="tab-btn" data-tab="campaigns">Campaigns</button>
     </nav>
     <div class="breadcrumb" id="breadcrumb">
@@ -877,22 +890,16 @@ const state = {
   focusFilterCol: null,
   filterTimer:    null,
   summaryData:    null,
-  // enquiries
-  enqPage:        1,
-  enqSearch:      '',
-  enqHandled:     'all',
-  enqTotal:       0,
-  enqUnhandled:   0,
-  intakeUnhandled: 0,
-  contactUnhandled: 0,
-  // intake
-  intakePage:     1,
-  intakeSearch:   '',
-  intakeHandled:  'all',
-  // contact
-  contactPage:    1,
-  contactSearch:  '',
-  contactHandled: 'all',
+  // enquiries (unified landing + intake + contact)
+  submissionsPage:     1,
+  submissionsSearch:   '',
+  submissionsHandled:  'all',
+  submissionsSource:   'all',
+  submissionsFilterTimer: null,
+  enqUnhandled:        0,
+  intakeUnhandled:     0,
+  contactUnhandled:    0,
+  submissionsCounts:   null,
   // campaigns
   campView:        'list',
   campCampaignId:  '',
@@ -1005,15 +1012,26 @@ async function tryLogin() {
 
     state.token       = token;
     state.summaryData = data.data;
-    state.enqTotal     = data.enquiries?.total || 0;
-    state.enqUnhandled = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
+    state.enqUnhandled     = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
     state.intakeUnhandled  = (data.intake?.total  || 0) - (data.intake?.handled  || 0);
     state.contactUnhandled = (data.contact?.total || 0) - (data.contact?.handled || 0);
+    state.submissionsCounts = {
+      enquiry: {
+        total:     data.enquiries?.total || 0,
+        unhandled: state.enqUnhandled,
+      },
+      intake: {
+        total:     data.intake?.total || 0,
+        unhandled: state.intakeUnhandled,
+      },
+      contact: {
+        total:     data.contact?.total || 0,
+        unhandled: state.contactUnhandled,
+      },
+    };
     sessionStorage.setItem('dash_token', token);
 
-    updateEnqBadge();
-    updateIntakeBadge();
-    updateContactBadge();
+    updateSubmissionsBadge();
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderSummary(data.data);
@@ -1031,39 +1049,27 @@ async function tryLogin() {
   tryLogin();
 })();
 
-function updateEnqBadge() {
+function submissionsUnhandledTotal() {
+  return state.enqUnhandled + state.intakeUnhandled + state.contactUnhandled;
+}
+
+function updateSubmissionsBadge() {
   const badge = document.getElementById('enq-badge');
   if (badge) badge.remove();
-  if (state.enqUnhandled > 0) {
+  const total = submissionsUnhandledTotal();
+  if (total > 0) {
     const btn = document.getElementById('enq-tab-btn');
     const b = document.createElement('span');
     b.id = 'enq-badge'; b.className = 'tab-badge';
-    b.textContent = state.enqUnhandled;
+    b.textContent = total;
     btn.appendChild(b);
   }
 }
 
-function updateIntakeBadge() {
-  const badge = document.getElementById('intake-badge');
-  if (badge) badge.remove();
-  if (state.intakeUnhandled > 0) {
-    const btn = document.getElementById('intake-tab-btn');
-    const b = document.createElement('span');
-    b.id = 'intake-badge'; b.className = 'tab-badge';
-    b.textContent = state.intakeUnhandled;
-    btn.appendChild(b);
-  }
-}
-
-function updateContactBadge() {
-  const badge = document.getElementById('contact-badge');
-  if (badge) badge.remove();
-  if (state.contactUnhandled > 0) {
-    const btn = document.getElementById('contact-tab-btn');
-    const b = document.createElement('span');
-    b.id = 'contact-badge'; b.className = 'tab-badge';
-    b.textContent = state.contactUnhandled;
-    btn.appendChild(b);
+function bumpSubmissionsCount(sourceType, handledDelta) {
+  const key = sourceType === 'enquiry' ? 'enquiry' : sourceType;
+  if (state.submissionsCounts?.[key]) {
+    state.submissionsCounts[key].unhandled = Math.max(0, state.submissionsCounts[key].unhandled + handledDelta);
   }
 }
 
@@ -1078,13 +1084,11 @@ function isTabAtRoot(tab) {
   if (tab === 'prospects') return state.view === 'summary';
   const recordModalOpen = document.getElementById('modal-overlay')?.classList.contains('open');
   if (tab === 'enquiries') {
-    return !recordModalOpen && state.enqPage === 1 && !state.enqSearch && state.enqHandled === 'all';
-  }
-  if (tab === 'intake') {
-    return !recordModalOpen && state.intakePage === 1 && !state.intakeSearch && state.intakeHandled === 'all';
-  }
-  if (tab === 'contact') {
-    return !recordModalOpen && state.contactPage === 1 && !state.contactSearch && state.contactHandled === 'all';
+    return !recordModalOpen
+      && state.submissionsPage === 1
+      && !state.submissionsSearch
+      && state.submissionsHandled === 'all'
+      && state.submissionsSource === 'all';
   }
   if (tab === 'campaigns') {
     const emailModalOpen = document.getElementById('email-modal-overlay')?.classList.contains('open');
@@ -1100,14 +1104,11 @@ function goToTabRoot(tab) {
     state.view = 'summary';
     renderSummary(state.summaryData);
   } else if (tab === 'enquiries') {
-    state.enqPage = 1; state.enqSearch = ''; state.enqHandled = 'all';
-    loadEnquiriesList();
-  } else if (tab === 'intake') {
-    state.intakePage = 1; state.intakeSearch = ''; state.intakeHandled = 'all';
-    loadIntakeList();
-  } else if (tab === 'contact') {
-    state.contactPage = 1; state.contactSearch = ''; state.contactHandled = 'all';
-    loadContactList();
+    state.submissionsPage = 1;
+    state.submissionsSearch = '';
+    state.submissionsHandled = 'all';
+    state.submissionsSource = 'all';
+    loadSubmissionsList();
   } else if (tab === 'campaigns') {
     state.campView = 'list';
     loadCampaignsList();
@@ -1497,102 +1498,223 @@ function wireProspectEdit(r) {
   });
 }
 
-// ── Enquiries: list view ──────────────────────────────────────────────────────
-async function loadEnquiriesList(page, q, handled) {
-  if (page    !== undefined) state.enqPage    = page;
-  if (q       !== undefined) state.enqSearch  = q;
-  if (handled !== undefined) state.enqHandled = handled;
+// ── Enquiries: unified list (landing + intake + contact) ─────────────────────
+const SUBMISSIONS_SOURCE_LABELS = { enquiry: 'Enquiry', intake: 'Intake', contact: 'Contact' };
+
+function submissionsOverviewHtml() {
+  const c = state.submissionsCounts;
+  if (!c) return '';
+  const cards = [
+    { key: 'enquiry', label: 'Landing enquiry' },
+    { key: 'intake',  label: 'Intake form' },
+    { key: 'contact', label: 'Contact form' },
+  ];
+  return `<div class="submissions-overview">
+    <div class="section-label">By source</div>
+    <div class="filter-btns" style="flex-wrap:wrap">
+      ${cards.map(({ key, label }) => {
+        const n = c[key];
+        const active = state.submissionsSource === key ? ' source-active' : '';
+        return `<button type="button" class="filter-btn${active}" data-source="${key}">
+          <strong>${n.total.toLocaleString()}</strong> ${escHtml(label)}
+          ${n.unhandled > 0 ? `<span class="tab-badge" style="margin-left:.35rem">${n.unhandled}</span>` : ''}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function submissionStatusCell(row) {
+  if (row.source_type === 'enquiry') {
+    const notionCls = row.notion_status === 'success' ? 'ok' : row.notion_status === 'failed' ? 'fail' : 'pending-pill';
+    const emailCls  = row.email_status  === 'success' ? 'ok' : row.email_status  === 'failed' ? 'fail' : 'pending-pill';
+    return `<span class="pill ${notionCls}">${escHtml(row.notion_status || '—')}</span>
+            <span class="pill ${emailCls}">${escHtml(row.email_status || '—')}</span>`;
+  }
+  if (row.source_type === 'intake') {
+    const statusCls = row.intake_status === 'complete' ? 'ok'
+      : row.intake_status === 'in_progress' ? 'pending-pill'
+      : row.intake_status === 'cancelled' ? 'fail' : 'unhandled';
+    return `<span class="pill ${statusCls}">${escHtml(row.intake_status || '—')}</span>`;
+  }
+  if (row.message_preview) {
+    return `<span class="muted" style="font-size:.8rem">${escHtml(row.message_preview)}${row.message_preview.length >= 80 ? '…' : ''}</span>`;
+  }
+  return '<span class="muted">—</span>';
+}
+
+async function loadSubmissionsList(page, q, handled, source, { soft = false } = {}) {
+  if (page    !== undefined) state.submissionsPage    = page;
+  if (q       !== undefined) state.submissionsSearch  = q;
+  if (handled !== undefined) state.submissionsHandled = handled;
+  if (source  !== undefined) state.submissionsSource  = source;
 
   const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading enquiries…</div>';
+  const canSoft = soft && main.querySelector('#submissions-tbody');
+  if (!canSoft) {
+    main.innerHTML = '<div class="state-msg">Loading enquiries…</div>';
+  } else {
+    main.querySelector('.table-wrap')?.classList.add('is-loading');
+  }
   setBreadcrumb([{ label: 'Enquiries' }]);
   document.getElementById('btn-back').style.display = 'none';
 
   try {
-    const data = await apiFetch({
-      action:  'enquiries_list',
-      page:    state.enqPage,
-      q:       state.enqSearch,
-      handled: state.enqHandled,
-    });
-    renderEnquiriesList(data);
+    renderSubmissionsList(await apiFetch({
+      action:  'submissions_list',
+      page:    state.submissionsPage,
+      q:       state.submissionsSearch,
+      handled: state.submissionsHandled,
+      source:  state.submissionsSource,
+    }), { soft: canSoft });
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  } finally {
+    main.querySelector('.table-wrap.is-loading')?.classList.remove('is-loading');
   }
 }
 
-function renderEnquiriesList({ data: rows, total, page, pageSize }) {
+function renderSubmissionsList({ data: rows, total, page, pageSize }, { soft = false } = {}) {
   const main       = document.getElementById('main-content');
   const totalPages = Math.ceil(total / pageSize);
+  const overview   = submissionsOverviewHtml();
 
-  main.innerHTML = `
+  const listShell = `
+    ${overview}
     <div class="list-header">
       <h2>Enquiries <span class="count-tag">${total.toLocaleString()} records</span></h2>
       <div class="list-controls">
         <div class="filter-btns">
-          <button class="filter-btn${state.enqHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
-          <button class="filter-btn${state.enqHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
-          <button class="filter-btn${state.enqHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
+          <button type="button" class="filter-btn${state.submissionsHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
+          <button type="button" class="filter-btn${state.submissionsHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
+          <button type="button" class="filter-btn${state.submissionsHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
         </div>
-        <input type="search" id="enq-search-input" placeholder="Search name, biz, email…" value="${escAttr(state.enqSearch)}">
+        <div class="filter-btns">
+          <button type="button" class="filter-btn${state.submissionsSource === 'all' ? ' active' : ''}" data-source="all">All sources</button>
+          <button type="button" class="filter-btn${state.submissionsSource === 'enquiry' ? ' active source-active' : ''}" data-source="enquiry">Enquiry</button>
+          <button type="button" class="filter-btn${state.submissionsSource === 'intake' ? ' active source-active' : ''}" data-source="intake">Intake</button>
+          <button type="button" class="filter-btn${state.submissionsSource === 'contact' ? ' active source-active' : ''}" data-source="contact">Contact</button>
+        </div>
+        <input type="search" id="submissions-search-input" placeholder="Search name, business, email, trade…" value="${escAttr(state.submissionsSearch)}">
       </div>
     </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>Date</th><th>Name</th><th>Business</th><th>Source</th>
-          <th>Start option</th><th>Handled</th><th>Notion</th><th>Email</th>
+          <th>Date</th><th>Source</th><th>Name</th><th>Business</th><th>Trade</th>
+          <th>Handled</th><th>Status</th>
         </tr></thead>
-        <tbody id="enq-tbody"></tbody>
+        <tbody id="submissions-tbody"></tbody>
       </table>
     </div>
     <div class="pagination">
-      <button id="enq-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <button id="submissions-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
       <span>Page ${page} of ${Math.max(1, totalPages)}</span>
-      <button id="enq-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+      <button id="submissions-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
     </div>
   `;
 
-  const tbody = document.getElementById('enq-tbody');
+  if (!soft) {
+    main.innerHTML = listShell;
+  } else {
+    const overviewEl = main.querySelector('.submissions-overview');
+    if (overviewEl) overviewEl.outerHTML = overview;
+    else main.insertAdjacentHTML('afterbegin', overview);
+    const countTag = main.querySelector('.count-tag');
+    if (countTag) countTag.textContent = `${total.toLocaleString()} records`;
+    main.querySelectorAll('.list-controls .filter-btn[data-handled]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.handled === state.submissionsHandled);
+    });
+    main.querySelectorAll('.list-controls .filter-btn[data-source]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.source === state.submissionsSource);
+      btn.classList.toggle('source-active', btn.dataset.source === state.submissionsSource && btn.dataset.source !== 'all');
+    });
+    const searchInput = document.getElementById('submissions-search-input');
+    if (searchInput && searchInput.value !== state.submissionsSearch) searchInput.value = state.submissionsSearch;
+    const prevBtn = document.getElementById('submissions-prev');
+    const nextBtn = document.getElementById('submissions-next');
+    if (prevBtn) prevBtn.disabled = page <= 1;
+    if (nextBtn) nextBtn.disabled = page >= totalPages;
+    const pageSpan = main.querySelector('.pagination span');
+    if (pageSpan) pageSpan.textContent = `Page ${page} of ${Math.max(1, totalPages)}`;
+  }
+
+  const tbody = document.getElementById('submissions-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="padding:2rem;text-align:center">No enquiries found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No records found</td></tr>';
   } else {
     rows.forEach(row => {
       const tr = document.createElement('tr');
       const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
-      const startLabel = START_OPTION_LABELS[row.start_option] || row.start_option || '—';
-      const notionCls  = row.notion_status === 'success' ? 'ok' : row.notion_status === 'failed' ? 'fail' : 'pending-pill';
-      const emailCls   = row.email_status  === 'success' ? 'ok' : row.email_status  === 'failed' ? 'fail' : 'pending-pill';
+      const srcLabel = SUBMISSIONS_SOURCE_LABELS[row.source_type] || row.source_type;
       tr.innerHTML = `
         <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
-        <td>${escHtml(row.full_name || '—')}</td>
-        <td>${escHtml(row.biz_name  || '—')}</td>
-        <td class="muted">${escHtml(row.source || '—')}</td>
-        <td class="muted">${escHtml(startLabel)}</td>
+        <td><span class="src-pill src-${escAttr(row.source_type)}">${escHtml(srcLabel)}</span></td>
+        <td>${escHtml(row.display_name || '—')}</td>
+        <td>${escHtml(row.business_name || '—')}</td>
+        <td class="muted">${escHtml(row.trade || '—')}</td>
         <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
-        <td><span class="pill ${notionCls}">${escHtml(row.notion_status || '—')}</span></td>
-        <td><span class="pill ${emailCls}">${escHtml(row.email_status  || '—')}</span></td>
+        <td>${submissionStatusCell(row)}</td>
       `;
-      tr.addEventListener('click', () => loadEnquiryRecord(row.id));
+      tr.addEventListener('click', () => loadSubmissionRecord(row.source_type, row.source_id));
       tbody.appendChild(tr);
     });
   }
 
-  // Filter buttons
-  main.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => loadEnquiriesList(1, state.enqSearch, btn.dataset.handled));
-  });
-
-  // Search
-  let searchTimer;
-  document.getElementById('enq-search-input').addEventListener('input', e => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => loadEnquiriesList(1, e.target.value), 350);
-  });
-
-  document.getElementById('enq-prev').addEventListener('click', () => loadEnquiriesList(page - 1));
-  document.getElementById('enq-next').addEventListener('click', () => loadEnquiriesList(page + 1));
+  wireSubmissionsOverviewControls();
+  if (!soft) wireSubmissionsListControls(page, totalPages);
 }
+
+function wireSubmissionsOverviewControls() {
+  document.querySelectorAll('.submissions-overview .filter-btn[data-source]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loadSubmissionsList(1, state.submissionsSearch, state.submissionsHandled, btn.dataset.source);
+    });
+  });
+}
+
+function wireSubmissionsListControls(page, totalPages) {
+  const main = document.getElementById('main-content');
+
+  main.querySelectorAll('.list-controls .filter-btn[data-handled]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loadSubmissionsList(1, state.submissionsSearch, btn.dataset.handled, state.submissionsSource);
+    });
+  });
+
+  main.querySelectorAll('.list-controls .filter-btn[data-source]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loadSubmissionsList(1, state.submissionsSearch, state.submissionsHandled, btn.dataset.source);
+    });
+  });
+
+  const searchInput = document.getElementById('submissions-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', e => {
+      clearTimeout(state.submissionsFilterTimer);
+      state.submissionsFilterTimer = setTimeout(
+        () => loadSubmissionsList(1, e.target.value, state.submissionsHandled, state.submissionsSource, { soft: true }),
+        FILTER_DEBOUNCE_MS
+      );
+    });
+  }
+
+  document.getElementById('submissions-prev')?.addEventListener('click', () => {
+    loadSubmissionsList(page - 1, state.submissionsSearch, state.submissionsHandled, state.submissionsSource, { soft: true });
+  });
+  document.getElementById('submissions-next')?.addEventListener('click', () => {
+    loadSubmissionsList(page + 1, state.submissionsSearch, state.submissionsHandled, state.submissionsSource, { soft: true });
+  });
+}
+
+function loadSubmissionRecord(sourceType, id) {
+  if (sourceType === 'enquiry') return loadEnquiryRecord(id);
+  if (sourceType === 'intake')  return loadIntakeRecord(id);
+  if (sourceType === 'contact') return loadContactRecord(id);
+}
+
 
 // ── Enquiries: record modal ───────────────────────────────────────────────────
 async function loadEnquiryRecord(id) {
@@ -1689,8 +1811,8 @@ function wireEnquiryEdit(r) {
     recordId:         r.id,
     isUnhandled:      !r.handled,
     unhandledStateKey:'enqUnhandled',
-    badgeFn:          updateEnqBadge,
-    onDeleted:        () => loadEnquiriesList(state.enqPage, state.enqSearch, state.enqHandled),
+    badgeFn:          updateSubmissionsBadge,
+    onDeleted:        () => loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource),
   });
 
   const origHandled = r.handled ? true : false;
@@ -1720,7 +1842,8 @@ function wireEnquiryEdit(r) {
 
       if (fields.handled !== undefined) {
         state.enqUnhandled = Math.max(0, state.enqUnhandled + (fields.handled ? -1 : 1));
-        updateEnqBadge();
+        bumpSubmissionsCount('enquiry', fields.handled ? -1 : 1);
+        updateSubmissionsBadge();
       }
 
       saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
@@ -1728,105 +1851,13 @@ function wireEnquiryEdit(r) {
       wireEnquiryEdit(r);
 
       if (state.tab === 'enquiries') {
-        loadEnquiriesList(state.enqPage, state.enqSearch, state.enqHandled);
+        loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource, { soft: true });
       }
     } catch (err) {
       saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
       saveBtn.disabled = false;
     }
   });
-}
-
-// ── Intake: list view ─────────────────────────────────────────────────────────
-const INTAKE_STATUSES = ['pending_review', 'in_progress', 'complete', 'cancelled'];
-
-async function loadIntakeList(page, q, handled) {
-  if (page    !== undefined) state.intakePage    = page;
-  if (q       !== undefined) state.intakeSearch  = q;
-  if (handled !== undefined) state.intakeHandled = handled;
-
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading intake submissions…</div>';
-  setBreadcrumb([{ label: 'Intake' }]);
-  document.getElementById('btn-back').style.display = 'none';
-
-  try {
-    const data = await apiFetch({
-      action:  'intake_list',
-      page:    state.intakePage,
-      q:       state.intakeSearch,
-      handled: state.intakeHandled,
-    });
-    renderIntakeList(data);
-  } catch (err) {
-    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
-  }
-}
-
-function renderIntakeList({ data: rows, total, page, pageSize }) {
-  const main       = document.getElementById('main-content');
-  const totalPages = Math.ceil(total / pageSize);
-
-  main.innerHTML = `
-    <div class="list-header">
-      <h2>Intake <span class="count-tag">${total.toLocaleString()} records</span></h2>
-      <div class="list-controls">
-        <div class="filter-btns">
-          <button class="filter-btn${state.intakeHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
-          <button class="filter-btn${state.intakeHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
-          <button class="filter-btn${state.intakeHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
-        </div>
-        <input type="search" id="intake-search-input" placeholder="Search name, trade, email…" value="${escAttr(state.intakeSearch)}">
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Date</th><th>Business</th><th>Trade</th><th>Email</th><th>Status</th><th>Handled</th>
-        </tr></thead>
-        <tbody id="intake-tbody"></tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button id="intake-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
-      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
-      <button id="intake-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
-    </div>
-  `;
-
-  const tbody = document.getElementById('intake-tbody');
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No intake submissions found</td></tr>';
-  } else {
-    rows.forEach(row => {
-      const tr = document.createElement('tr');
-      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
-      const statusCls = row.status === 'complete' ? 'ok' : row.status === 'in_progress' ? 'pending-pill' : row.status === 'cancelled' ? 'fail' : 'unhandled';
-      tr.innerHTML = `
-        <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
-        <td>${escHtml(row.business_name || '—')}</td>
-        <td class="muted">${escHtml(row.trade_category || '—')}</td>
-        <td class="muted">${escHtml(row.email || '—')}</td>
-        <td><span class="pill ${statusCls}">${escHtml(row.status || '—')}</span></td>
-        <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
-      `;
-      tr.addEventListener('click', () => loadIntakeRecord(row.id));
-      tbody.appendChild(tr);
-    });
-  }
-
-  main.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => loadIntakeList(1, state.intakeSearch, btn.dataset.handled));
-  });
-
-  let searchTimer;
-  document.getElementById('intake-search-input').addEventListener('input', e => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => loadIntakeList(1, e.target.value), 350);
-  });
-
-  document.getElementById('intake-prev').addEventListener('click', () => loadIntakeList(page - 1));
-  document.getElementById('intake-next').addEventListener('click', () => loadIntakeList(page + 1));
 }
 
 // ── Intake: record modal ──────────────────────────────────────────────────────
@@ -1944,8 +1975,8 @@ function wireIntakeEdit(r) {
     recordId:         r.id,
     isUnhandled:      !r.handled,
     unhandledStateKey:'intakeUnhandled',
-    badgeFn:          updateIntakeBadge,
-    onDeleted:        () => loadIntakeList(state.intakePage, state.intakeSearch, state.intakeHandled),
+    badgeFn:          updateSubmissionsBadge,
+    onDeleted:        () => loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource),
   });
 
   const origStatus  = r.status || '';
@@ -1978,107 +2009,20 @@ function wireIntakeEdit(r) {
 
       if (fields.handled !== undefined) {
         state.intakeUnhandled = Math.max(0, state.intakeUnhandled + (fields.handled ? -1 : 1));
-        updateIntakeBadge();
+        bumpSubmissionsCount('intake', fields.handled ? -1 : 1);
+        updateSubmissionsBadge();
       }
 
       saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
       setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
       wireIntakeEdit(r);
 
-      if (state.tab === 'intake') loadIntakeList(state.intakePage, state.intakeSearch, state.intakeHandled);
+      if (state.tab === 'enquiries') loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource, { soft: true });
     } catch (err) {
       saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
       saveBtn.disabled = false;
     }
   });
-}
-
-// ── Contact: list view ────────────────────────────────────────────────────────
-async function loadContactList(page, q, handled) {
-  if (page    !== undefined) state.contactPage    = page;
-  if (q       !== undefined) state.contactSearch  = q;
-  if (handled !== undefined) state.contactHandled = handled;
-
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading contact enquiries…</div>';
-  setBreadcrumb([{ label: 'Contact' }]);
-  document.getElementById('btn-back').style.display = 'none';
-
-  try {
-    const data = await apiFetch({
-      action:  'contact_list',
-      page:    state.contactPage,
-      q:       state.contactSearch,
-      handled: state.contactHandled,
-    });
-    renderContactList(data);
-  } catch (err) {
-    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
-  }
-}
-
-function renderContactList({ data: rows, total, page, pageSize }) {
-  const main       = document.getElementById('main-content');
-  const totalPages = Math.ceil(total / pageSize);
-
-  main.innerHTML = `
-    <div class="list-header">
-      <h2>Contact <span class="count-tag">${total.toLocaleString()} records</span></h2>
-      <div class="list-controls">
-        <div class="filter-btns">
-          <button class="filter-btn${state.contactHandled === 'all' ? ' active' : ''}" data-handled="all">All</button>
-          <button class="filter-btn${state.contactHandled === '0'   ? ' active' : ''}" data-handled="0">Unhandled</button>
-          <button class="filter-btn${state.contactHandled === '1'   ? ' active' : ''}" data-handled="1">Handled</button>
-        </div>
-        <input type="search" id="contact-search-input" placeholder="Search name, trade, email…" value="${escAttr(state.contactSearch)}">
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Date</th><th>Name</th><th>Trade</th><th>Email</th><th>Handled</th>
-        </tr></thead>
-        <tbody id="contact-tbody"></tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button id="contact-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
-      <span>Page ${page} of ${Math.max(1, totalPages)}</span>
-      <button id="contact-next" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
-    </div>
-  `;
-
-  const tbody = document.getElementById('contact-tbody');
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:2rem;text-align:center">No contact enquiries found</td></tr>';
-  } else {
-    rows.forEach(row => {
-      const tr = document.createElement('tr');
-      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
-      tr.innerHTML = `
-        <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
-        <td>${escHtml(row.name || '—')}</td>
-        <td class="muted">${escHtml(row.trade || '—')}</td>
-        <td class="muted">${escHtml(row.email || '—')}</td>
-        <td><span class="pill ${row.handled ? 'handled' : 'unhandled'}">${row.handled ? 'Yes' : 'No'}</span></td>
-      `;
-      tr.addEventListener('click', () => loadContactRecord(row.id));
-      tbody.appendChild(tr);
-    });
-  }
-
-  main.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => loadContactList(1, state.contactSearch, btn.dataset.handled));
-  });
-
-  let searchTimer;
-  document.getElementById('contact-search-input').addEventListener('input', e => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => loadContactList(1, e.target.value), 350);
-  });
-
-  document.getElementById('contact-prev').addEventListener('click', () => loadContactList(page - 1));
-  document.getElementById('contact-next').addEventListener('click', () => loadContactList(page + 1));
 }
 
 // ── Contact: record modal ─────────────────────────────────────────────────────
@@ -2156,8 +2100,8 @@ function wireContactEdit(r) {
     recordId:         r.id,
     isUnhandled:      !r.handled,
     unhandledStateKey:'contactUnhandled',
-    badgeFn:          updateContactBadge,
-    onDeleted:        () => loadContactList(state.contactPage, state.contactSearch, state.contactHandled),
+    badgeFn:          updateSubmissionsBadge,
+    onDeleted:        () => loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource),
   });
 
   const origHandled = r.handled ? true : false;
@@ -2186,14 +2130,15 @@ function wireContactEdit(r) {
 
       if (fields.handled !== undefined) {
         state.contactUnhandled = Math.max(0, state.contactUnhandled + (fields.handled ? -1 : 1));
-        updateContactBadge();
+        bumpSubmissionsCount('contact', fields.handled ? -1 : 1);
+        updateSubmissionsBadge();
       }
 
       saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
       setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
       wireContactEdit(r);
 
-      if (state.tab === 'contact') loadContactList(state.contactPage, state.contactSearch, state.contactHandled);
+      if (state.tab === 'enquiries') loadSubmissionsList(state.submissionsPage, state.submissionsSearch, state.submissionsHandled, state.submissionsSource, { soft: true });
     } catch (err) {
       saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
       saveBtn.disabled = false;

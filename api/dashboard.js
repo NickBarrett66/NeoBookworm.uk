@@ -7,6 +7,8 @@
 // GET  /api/dashboard?action=summary
 // GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
+// GET  /api/dashboard?action=submissions_list&page=N&q=search&handled=0|1|all&source=all|enquiry|intake|contact
+// GET  /api/dashboard?action=submissions_record&source_type=enquiry|intake|contact&id=X
 // GET  /api/dashboard?action=enquiries_list&page=N&q=search&handled=0|1|all
 // GET  /api/dashboard?action=enquiries_record&id=X
 // GET  /api/dashboard?action=campaigns_list
@@ -67,6 +69,63 @@ function parseBody(req) {
   if (!b) return {};
   if (typeof b === 'object' && !Buffer.isBuffer(b)) return b;
   try { return JSON.parse(Buffer.isBuffer(b) ? b.toString('utf8') : b); } catch { return null; }
+}
+
+const SUBMISSIONS_SOURCE_TYPES = new Set(['enquiry', 'intake', 'contact']);
+
+/** Build UNION ALL branches for unified inbound list (no table merge). */
+function buildSubmissionsUnion(handled, q, sourceFilter) {
+  const hasSearch   = q && q.trim().length > 0;
+  const searchPct   = hasSearch ? `%${q.trim()}%` : null;
+  const includeAll  = !sourceFilter || sourceFilter === 'all';
+  const branches    = [];
+
+  function pushBranch(sourceType, selectSql, searchCols) {
+    if (!includeAll && sourceFilter !== sourceType) return;
+    const conditions = [];
+    const params     = [];
+    if (handled === '0') { conditions.push('handled = 0'); }
+    if (handled === '1') { conditions.push('handled = 1'); }
+    if (hasSearch) {
+      conditions.push(`(${searchCols.map(c => `${c} LIKE ?`).join(' OR ')})`);
+      searchCols.forEach(() => params.push(searchPct));
+    }
+    const where = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+    branches.push({ sql: `${selectSql}${where}`, params });
+  }
+
+  pushBranch('enquiry',
+    `SELECT 'enquiry' AS source_type, id AS source_id, created_at,
+            full_name AS display_name, biz_name AS business_name,
+            email, NULL AS trade, handled,
+            start_option, NULL AS intake_status, NULL AS message_preview,
+            notion_status, email_status
+     FROM landing_enquiries`,
+    ['full_name', 'biz_name', 'email']
+  );
+
+  pushBranch('intake',
+    `SELECT 'intake' AS source_type, id AS source_id, created_at,
+            full_name AS display_name, business_name, email,
+            trade_category AS trade, handled,
+            NULL AS start_option, status AS intake_status, NULL AS message_preview,
+            NULL AS notion_status, NULL AS email_status
+     FROM intake_submissions`,
+    ['full_name', 'business_name', 'email', 'trade_category']
+  );
+
+  pushBranch('contact',
+    `SELECT 'contact' AS source_type, id AS source_id, created_at,
+            name AS display_name, NULL AS business_name, email,
+            trade, handled,
+            NULL AS start_option, NULL AS intake_status,
+            substr(message, 1, 80) AS message_preview,
+            NULL AS notion_status, NULL AS email_status
+     FROM contact_enquiries`,
+    ['name', 'email', 'trade']
+  );
+
+  return branches;
 }
 
 module.exports = async (req, res) => {
@@ -529,7 +588,7 @@ module.exports = async (req, res) => {
 
   // ── GET ──────────────────────────────────────────────────────────────────
   const {
-    action, status, page = '1', q = '', handled = 'all',
+    action, status, page = '1', q = '', handled = 'all', source = 'all',
     q_business = '', q_contact = '', q_trade = '', q_town = '',
     q_campaign = '',
     has_website = '', min_rating = '', max_rating = '',
@@ -662,6 +721,55 @@ module.exports = async (req, res) => {
       const rows = await queryD1(prospectsDb(), `SELECT * FROM prospects WHERE notion_id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
       return res.status(200).json({ ok: true, data: rows[0] });
+    }
+
+    // ── Unified submissions list (landing + intake + contact) ───────────────
+    if (action === 'submissions_list') {
+      const sourceFilter = SUBMISSIONS_SOURCE_TYPES.has(source) ? source : 'all';
+      const branches     = buildSubmissionsUnion(handled, q, sourceFilter);
+
+      if (!branches.length) {
+        return res.status(200).json({
+          ok: true, data: [], total: 0, page: pageNum, pageSize,
+        });
+      }
+
+      const unionSql   = branches.map(b => b.sql).join(' UNION ALL ');
+      const unionParams = branches.flatMap(b => b.params);
+      const wrapped    = `SELECT * FROM (${unionSql}) AS submissions ORDER BY created_at DESC`;
+
+      const [rows, countRows] = await Promise.all([
+        queryD1(enquiriesDb(),
+          `${wrapped} LIMIT ? OFFSET ?`,
+          [...unionParams, pageSize, offset]
+        ),
+        queryD1(enquiriesDb(),
+          `SELECT COUNT(*) AS total FROM (${unionSql}) AS submissions`,
+          unionParams
+        ),
+      ]);
+
+      return res.status(200).json({
+        ok: true, data: rows,
+        total: countRows[0]?.total || 0, page: pageNum, pageSize,
+      });
+    }
+
+    // ── Unified submission record ───────────────────────────────────────────
+    if (action === 'submissions_record') {
+      const { source_type, id } = req.query;
+      if (!source_type || !id) {
+        return res.status(400).json({ error: 'source_type and id parameters required' });
+      }
+      if (!SUBMISSIONS_SOURCE_TYPES.has(source_type)) {
+        return res.status(400).json({ error: `Invalid source_type: ${source_type}` });
+      }
+      const table = source_type === 'enquiry' ? 'landing_enquiries'
+        : source_type === 'intake' ? 'intake_submissions'
+        : 'contact_enquiries';
+      const rows = await queryD1(enquiriesDb(), `SELECT * FROM ${table} WHERE id = ?`, [id]);
+      if (!rows.length) return res.status(404).json({ error: 'Record not found' });
+      return res.status(200).json({ ok: true, data: rows[0], source_type });
     }
 
     // ── Enquiries list ───────────────────────────────────────────────────────
