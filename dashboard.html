@@ -467,7 +467,7 @@
     cursor: pointer; user-select: none;
     border-bottom: 1px dashed var(--border);
     white-space: nowrap;
-    min-width: 18rem;
+    min-width: 35ch;
     display: inline-block;
   }
   .camp-id-cell:hover { color: var(--amber); border-color: var(--amber); }
@@ -785,6 +785,81 @@ const PROSPECT_COLS = [
   { label: 'Last emailed', col: 'last_email_sent' },
 ];
 
+const PROSPECT_COLS_IN_CAMPAIGN = [
+  { label: 'Business',     col: 'business_name'       },
+  { label: 'Contact',      col: 'contact_name'        },
+  { label: 'Trade',        col: 'trade_category'      },
+  { label: 'Town',         col: 'town'                },
+  { label: 'Website',      col: 'has_website'         },
+  { label: 'Campaign Id',  col: 'email_campaign_id'   },
+  { label: 'Last emailed', col: 'last_email_sent'     },
+];
+
+function getProspectCols(status) {
+  return status === 'In Campaign' ? PROSPECT_COLS_IN_CAMPAIGN : PROSPECT_COLS;
+}
+
+function prospectFilterCell(col, cf) {
+  switch (col) {
+    case 'business_name':
+      return `<input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}">`;
+    case 'contact_name':
+      return `<input type="search" class="col-filter" data-col="q_contact" placeholder="Filter…" value="${escAttr(cf.q_contact)}">`;
+    case 'trade_category':
+      return `<input type="search" class="col-filter" data-col="q_trade" placeholder="Filter…" value="${escAttr(cf.q_trade)}">`;
+    case 'town':
+      return `<input type="search" class="col-filter" data-col="q_town" placeholder="Filter…" value="${escAttr(cf.q_town)}">`;
+    case 'has_website':
+      return `<select class="col-filter" data-col="has_website">
+        <option value=""  ${cf.has_website === ''  ? 'selected' : ''}>All</option>
+        <option value="1" ${cf.has_website === '1' ? 'selected' : ''}>Yes</option>
+        <option value="0" ${cf.has_website === '0' ? 'selected' : ''}>No</option>
+      </select>`;
+    case 'rating':
+      return `<div class="rating-filter-wrap">
+        <input type="number" class="col-filter" data-col="min_rating" placeholder="Min" min="0" max="5" step="0.1" value="${escAttr(cf.min_rating)}">
+        <input type="number" class="col-filter" data-col="max_rating" placeholder="Max" min="0" max="5" step="0.1" value="${escAttr(cf.max_rating)}">
+      </div>`;
+    case 'email_campaign_id':
+      return '';
+    case 'last_email_sent':
+      return `<select class="col-filter" data-col="emailed_filter">
+        <option value=""        ${cf.emailed_filter === ''        ? 'selected' : ''}>Any</option>
+        <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
+        <option value="never"   ${cf.emailed_filter === 'never'   ? 'selected' : ''}>Never</option>
+      </select>`;
+    default:
+      return '';
+  }
+}
+
+function prospectDataCell(col, row) {
+  switch (col) {
+    case 'business_name':
+      return escHtml(row.business_name || '—');
+    case 'contact_name':
+      return `<span class="muted">${escHtml(row.contact_name || '—')}</span>`;
+    case 'trade_category':
+      return `<span class="muted">${escHtml(row.trade_category || '—')}</span>`;
+    case 'town':
+      return `<span class="muted">${escHtml(row.town || '—')}</span>`;
+    case 'has_website':
+      return `<span class="pill ${row.has_website ? 'has-website' : 'no-website'}">${row.has_website ? 'Yes' : 'No'}</span>`;
+    case 'rating':
+      return `<span class="muted">${row.rating != null ? row.rating : '—'}</span>`;
+    case 'email_campaign_id': {
+      const id = row.email_campaign_id;
+      if (!id) return '<span class="muted">—</span>';
+      const short = id.length > 35 ? id.slice(0, 35) + '…' : id;
+      return `<span class="camp-id-cell" data-id="${escAttr(id)}" title="${escAttr(id)}">${escHtml(short)}</span>`;
+    }
+    case 'last_email_sent':
+      return `<span class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</span>`;
+    default:
+      return '—';
+  }
+}
+
 const state = {
   token:          '',
   tab:            'prospects',
@@ -1091,13 +1166,14 @@ function renderList({ data: rows, total, page, pageSize }) {
   const main       = document.getElementById('main-content');
   const totalPages = Math.ceil(total / pageSize);
   const status     = state.currentStatus;
+  const cols       = getProspectCols(status);
+  const colCount   = cols.length;
   const cf         = state.colFilters;
   const cs         = state.colSorts;
   const hasFilter  = Object.values(cf).some(v => v !== '');
   const hasSorts   = cs.length > 0;
 
-  // Build sortable column header cells
-  const headerCells = PROSPECT_COLS.map(({ label, col }) => {
+  const headerCells = cols.map(({ label, col }) => {
     const sortIdx = cs.findIndex(s => s.col === col);
     const sorted  = sortIdx !== -1;
     const dir     = sorted ? cs[sortIdx].dir : '';
@@ -1108,11 +1184,12 @@ function renderList({ data: rows, total, page, pageSize }) {
     return `<th class="${cls}" data-sort-col="${col}">${escHtml(label)}${ind}</th>`;
   }).join('');
 
-  // Active bar (filters + sorts info)
+  const filterCells = cols.map(({ col }) => `<th>${prospectFilterCell(col, cf)}</th>`).join('');
+
   const barParts = [];
   if (hasFilter) barParts.push(`Filters active <button class="btn-clear-filters" id="btn-clear-filters">Clear filters</button>`);
   if (hasSorts) {
-    const sortDesc = cs.map(s => `${PROSPECT_COLS.find(c => c.col === s.col)?.label ?? s.col} ${s.dir === 'asc' ? '↑' : '↓'}`).join(' → ');
+    const sortDesc = cs.map(s => `${cols.find(c => c.col === s.col)?.label ?? s.col} ${s.dir === 'asc' ? '↑' : '↓'}`).join(' → ');
     barParts.push(`Sorted: ${escHtml(sortDesc)} <button class="btn-clear-sorts" id="btn-clear-sorts">Clear sorts</button>`);
   }
   const activeBar = barParts.length
@@ -1128,32 +1205,7 @@ function renderList({ data: rows, total, page, pageSize }) {
       <table>
         <thead>
           <tr>${headerCells}</tr>
-          <tr class="filter-row">
-            <th><input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}"></th>
-            <th><input type="search" class="col-filter" data-col="q_contact"  placeholder="Filter…" value="${escAttr(cf.q_contact)}"></th>
-            <th><input type="search" class="col-filter" data-col="q_trade"    placeholder="Filter…" value="${escAttr(cf.q_trade)}"></th>
-            <th><input type="search" class="col-filter" data-col="q_town"     placeholder="Filter…" value="${escAttr(cf.q_town)}"></th>
-            <th>
-              <select class="col-filter" data-col="has_website">
-                <option value=""  ${cf.has_website === ''  ? 'selected' : ''}>All</option>
-                <option value="1" ${cf.has_website === '1' ? 'selected' : ''}>Yes</option>
-                <option value="0" ${cf.has_website === '0' ? 'selected' : ''}>No</option>
-              </select>
-            </th>
-            <th>
-              <div class="rating-filter-wrap">
-                <input type="number" class="col-filter" data-col="min_rating" placeholder="Min" min="0" max="5" step="0.1" value="${escAttr(cf.min_rating)}">
-                <input type="number" class="col-filter" data-col="max_rating" placeholder="Max" min="0" max="5" step="0.1" value="${escAttr(cf.max_rating)}">
-              </div>
-            </th>
-            <th>
-              <select class="col-filter" data-col="emailed_filter">
-                <option value=""        ${cf.emailed_filter === ''        ? 'selected' : ''}>Any</option>
-                <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
-                <option value="never"   ${cf.emailed_filter === 'never'   ? 'selected' : ''}>Never</option>
-              </select>
-            </th>
-          </tr>
+          <tr class="filter-row">${filterCells}</tr>
         </thead>
         <tbody id="records-tbody"></tbody>
       </table>
@@ -1167,20 +1219,33 @@ function renderList({ data: rows, total, page, pageSize }) {
 
   const tbody = document.getElementById('records-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="muted" style="padding:2rem;text-align:center">No records found</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="${colCount}" class="muted" style="padding:2rem;text-align:center">No records found</td></tr>`;
   } else {
     rows.forEach(row => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${escHtml(row.business_name || '—')}</td>
-        <td class="muted">${escHtml(row.contact_name || '—')}</td>
-        <td class="muted">${escHtml(row.trade_category || '—')}</td>
-        <td class="muted">${escHtml(row.town || '—')}</td>
-        <td><span class="pill ${row.has_website ? 'has-website' : 'no-website'}">${row.has_website ? 'Yes' : 'No'}</span></td>
-        <td class="muted">${row.rating != null ? row.rating : '—'}</td>
-        <td class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</td>
-      `;
-      tr.addEventListener('click', () => loadRecord(row.notion_id));
+      tr.innerHTML = cols.map(({ col }) => {
+        const inner = prospectDataCell(col, row);
+        if (col === 'business_name' || col === 'has_website' || col === 'email_campaign_id') {
+          return `<td>${inner}</td>`;
+        }
+        return `<td class="muted">${inner}</td>`;
+      }).join('');
+      tr.addEventListener('click', e => {
+        if (e.target.closest('.camp-id-cell')) return;
+        loadRecord(row.notion_id);
+      });
+      const campCell = tr.querySelector('.camp-id-cell');
+      if (campCell) {
+        campCell.addEventListener('click', async e => {
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(campCell.dataset.id);
+            const prev = campCell.textContent;
+            campCell.textContent = 'Copied!';
+            setTimeout(() => { campCell.textContent = prev; }, 1200);
+          } catch { /* clipboard not available */ }
+        });
+      }
       tbody.appendChild(tr);
     });
   }

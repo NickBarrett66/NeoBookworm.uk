@@ -594,7 +594,7 @@ module.exports = async (req, res) => {
       // Build ORDER BY from up to 3 sort columns
       const SORT_COLS_ALLOWED = new Set([
         'business_name','contact_name','trade_category','town',
-        'has_website','rating','last_email_sent',
+        'has_website','rating','email_campaign_id','last_email_sent',
       ]);
       const orderClauses = [];
       for (const [col, dir] of [[sort1_col,sort1_dir],[sort2_col,sort2_dir],[sort3_col,sort3_dir]]) {
@@ -609,7 +609,8 @@ module.exports = async (req, res) => {
         queryD1(prospectsDb(),
           `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment
+                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+                  email_campaign_id
            FROM prospects
            ${where}
            ORDER BY ${orderBy}
