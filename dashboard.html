@@ -256,6 +256,7 @@
   .col-filter option { background: var(--navy-card); }
   .rating-filter-wrap { display: flex; gap: 3px; }
   .rating-filter-wrap .col-filter { min-width: 0; }
+  .table-wrap.is-loading tbody { opacity: .45; pointer-events: none; }
   .filter-active-bar {
     display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
     margin-bottom: .75rem; font-size: .83rem; color: var(--muted);
@@ -774,6 +775,9 @@ const EMPTY_COL_FILTERS = () => ({
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
 });
 
+/** Wait for a full word before column-filter API refresh (ms). */
+const FILTER_DEBOUNCE_MS = 700;
+
 // Column config for the Prospects list — order matches table column order
 const PROSPECT_COLS = [
   { label: 'Business',     col: 'business_name'   },
@@ -869,6 +873,8 @@ const state = {
   currentPage:    1,
   colFilters:     EMPTY_COL_FILTERS(),
   colSorts:       [],
+  focusFilterCol: null,
+  filterTimer:    null,
   summaryData:    null,
   // enquiries
   enqPage:        1,
