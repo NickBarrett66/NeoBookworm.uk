@@ -1135,12 +1135,17 @@ function renderCards(containerId, rows) {
 }
 
 // ── Prospects: list view ──────────────────────────────────────────────────────
-async function loadList(status, page = 1) {
+async function loadList(status, page = 1, { soft = false } = {}) {
   state.view = 'list'; state.currentStatus = status;
   state.currentPage = page;
 
   const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading records…</div>';
+  const canSoft = soft && main.querySelector('#records-tbody');
+  if (!canSoft) {
+    main.innerHTML = '<div class="state-msg">Loading records…</div>';
+  } else {
+    main.querySelector('.table-wrap')?.classList.add('is-loading');
+  }
   setBreadcrumb([
     { label: 'Prospects', action: () => renderSummary(state.summaryData) },
     { label: status },
@@ -1165,7 +1170,21 @@ async function loadList(status, page = 1) {
     renderList(await apiFetch(params));
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  } finally {
+    main.querySelector('.table-wrap.is-loading')?.classList.remove('is-loading');
   }
+}
+
+function restoreProspectFilterFocus(main) {
+  const col = state.focusFilterCol;
+  if (!col) return;
+  requestAnimationFrame(() => {
+    const el = main.querySelector(`.col-filter[data-col="${col}"]`);
+    if (!el || el.tagName === 'SELECT') return;
+    el.focus();
+    const n = el.value.length;
+    if (el.setSelectionRange) el.setSelectionRange(n, n);
+  });
 }
 
 function renderList({ data: rows, total, page, pageSize }) {
@@ -1270,20 +1289,25 @@ function renderList({ data: rows, total, page, pageSize }) {
       } else if (state.colSorts.length < 3) {
         state.colSorts.push({ col, dir: 'asc' });
       }
-      loadList(status, 1);
+      loadList(status, 1, { soft: true });
     });
   });
 
   // Filter inputs: debounced for text, immediate for selects
-  let filterTimer;
   main.querySelectorAll('.col-filter').forEach(input => {
+    input.addEventListener('focus', () => { state.focusFilterCol = input.dataset.col; });
     const evt = input.tagName === 'SELECT' ? 'change' : 'input';
     input.addEventListener(evt, () => {
       state.colFilters[input.dataset.col] = input.value;
-      clearTimeout(filterTimer);
-      filterTimer = setTimeout(() => loadList(status, 1), input.tagName === 'SELECT' ? 0 : 350);
+      clearTimeout(state.filterTimer);
+      if (input.tagName === 'SELECT') {
+        loadList(status, 1, { soft: true });
+        return;
+      }
+      state.filterTimer = setTimeout(() => loadList(status, 1, { soft: true }), FILTER_DEBOUNCE_MS);
     });
   });
+  restoreProspectFilterFocus(main);
 
   const clearFiltersBtn = document.getElementById('btn-clear-filters');
   if (clearFiltersBtn) {
@@ -1301,8 +1325,8 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   }
 
-  document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1));
-  document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1));
+  document.getElementById('pg-prev').addEventListener('click', () => loadList(status, page - 1, { soft: true }));
+  document.getElementById('pg-next').addEventListener('click', () => loadList(status, page + 1, { soft: true }));
 }
 
 // ── Prospects: record modal ───────────────────────────────────────────────────
