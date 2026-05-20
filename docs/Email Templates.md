@@ -260,7 +260,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 > 
 > 
 
-> If you like it, a full 5-page site is £299 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
+> If you like it, a full 5-page site is £299 fixed — currently £199 while I have availability. £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
 > 
 
 > 
@@ -429,7 +429,7 @@ Do not frame this as "you need a new website" — frame it as "you need your old
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until it's better than what you had. Full 5-page site is £299 fixed, £9.99/month after that.
+> You don't pay until it's better than what you had. Full 5-page site is £299 fixed — currently £199 while I have availability. £9.99/month after that.
 >
 > Worth a look, or not — no pressure either way.
 >
@@ -523,7 +523,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 
 > Hi [Name],
 >
-> I had a look at your site — it's on Wix, which means you're paying their monthly fee for a site that carries their branding. That's fine, but there's an alternative: for £299 I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
+> I had a look at your site — it's on Wix, which means you're paying their monthly fee for a site that carries their branding. That's fine, but there's an alternative: for £299 — currently £199 while I have availability — I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
 >
 > Examples of what I build for plumbers:
 >
@@ -557,7 +557,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 >
 > neobookworm.uk/plumbers-switch
 >
-> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £299 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
+> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £299 once (currently £199 while I have availability), then £120/year hosting — and after year one you're saving money every year on a site you actually own.
 >
 > Won't chase after this — just wanted the numbers to be visible.
 >
@@ -725,7 +725,7 @@ The risk reversal is the strongest it has been since the prospect has a working 
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until it's better than what you've got. A full 5-page site is £299 fixed, £9.99/month after that.
+> You don't pay until it's better than what you've got. A full 5-page site is £299 fixed — currently £199 while I have availability. £9.99/month after that.
 >
 > Worth a look, or not — up to you.
 >
@@ -841,7 +841,7 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 > 
 > 
 
-> It's £299 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
+> It's £299 for a full 5-page site — currently £199 while I have availability. £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
 > 
 
 > 
@@ -886,7 +886,7 @@ The **cost framing** is important for this segment. £299 should be anchored aga
 > 
 > 
 
-> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £299, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
+> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £299 (currently £199 while I have availability), it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
 > 
 
 > 
@@ -958,7 +958,7 @@ const segmentAngles = {
     PRIMARY OBJECTION: Haven't got round to it / too busy.
     APPROACH: Open with a SPECIFIC observation from their research (a niche they mention, a service they emphasise, their coverage area — drawn from whatever source Agent 2 used). Direct and energetic. Show the trade landing page as examples of what can be built. Remove risk with the satisfaction-first payment model.
     NEVER say: 'you need a website', generic digital statistics, anything about SEO. Never frame the landing page as a demo built for them — it is examples of what I build.
-    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build for [Business Name]'. 'You only pay once you're happy with it.'
+    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build for [Business Name]'. Pricing stated as "£299 fixed — currently £199 while I have availability. £9.99/month after that." Both figures always together — never £199 alone. 'You only pay once you're happy with it.'
     TONE: Direct, warm, opportunity-framing. Slightly energetic.
     LENGTH: 90–110 words.`,
 
@@ -967,7 +967,7 @@ const segmentAngles = {
     PRIMARY OBJECTION: 'Had one, wasn't worth the hassle' — or simply haven't noticed.
     APPROACH: State the parking page fact plainly — one sentence, no judgement. Acknowledge they've done this before (they built the first one). Frame the fix as getting it back, not starting fresh.
     NEVER say: 'you need a website', imply negligence, or list multiple problems.
-    ALWAYS include: The specific domain and what it shows. Risk reversal as 'don't pay until it's better than what you had.' Landing page URL (not a demo URL).
+    ALWAYS include: The specific domain and what it shows. Pricing stated as "£299 fixed — currently £199 while I have availability. £9.99/month after that." Both figures always together. Risk reversal as 'don't pay until it's better than what you had.' Landing page URL (not a demo URL).
     TONE: Matter-of-fact. Informational. No alarm.
     LENGTH: 85–105 words.`,
 
@@ -976,7 +976,7 @@ const segmentAngles = {
     PRIMARY OBJECTION: 'I've already got one and it works fine.'
     APPROACH: Lead with cost and control — not quality. Make it a purely economic and ownership argument. They are renting a platform indefinitely for something they built. £299 once, own it, no platform branding. Do NOT mention design quality or appearance.
     NEVER say: 'your Wix site looks basic', anything about SEO or rankings, 'you need a proper website'.
-    ALWAYS include: The specific platform identified in the audit. Long-term cost comparison. Risk reversal as 'don't pay until it's better than what you've got.' Landing page URL.
+    ALWAYS include: The specific platform identified in the audit. Long-term cost comparison. Pricing stated as "£299 fixed — currently £199 while I have availability. £9.99/month after that." Both figures always together. Risk reversal as 'don't pay until it's better than what you've got.' Landing page URL.
     TONE: Economic, factual, peer-to-peer.
     LENGTH: 90–110 words.`,
 
@@ -994,7 +994,7 @@ const segmentAngles = {
     PRIMARY OBJECTION: 'It works fine for me.'
     APPROACH: Lead with the ONE audit Problem: line, stated as a customer experience observation — not a technical critique. Frame in terms of a lost job or missed call. Do not editorialize. Use the exact Problem: wording from research_summary.
     NEVER say: 'your site looks outdated/unprofessional', list multiple problems, invent a PageSpeed score.
-    ALWAYS include: The specific audit finding, verbatim or very close. Risk reversal as 'don't pay until it's better than what you've got.' Content migration angle (switching doesn't mean starting over). Landing page URL.
+    ALWAYS include: The specific audit finding, verbatim or very close. Pricing stated as "£299 fixed — currently £199 while I have availability. £9.99/month after that." Both figures always together. Risk reversal as 'don't pay until it's better than what you've got.' Content migration angle (switching doesn't mean starting over). Landing page URL.
     TONE: Technical but accessible. Specific and factual.
     LENGTH: 90–110 words.`,
 
@@ -1003,7 +1003,7 @@ const segmentAngles = {
     PRIMARY OBJECTION: 'Too early / can't afford it yet.'
     APPROACH: Open with a warm acknowledgement that they're new and building something (positive, not sympathetic). Do not name the platform they were found on in the opener. Frame the website as CREDIBILITY infrastructure — it makes them look established when a potential customer searches their name. Show the trade landing page as examples of what can be built. Cost anchor: compare £299 to something trade-relevant (a week's materials, a month's van insurance).
     NEVER say: 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings. Never frame the landing page as a demo built for them.
-    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build'. The no-risk model ('only pay once you're happy') in Email 1. A trade-relevant cost anchor.
+    ALWAYS include: The trade landing page URL (neobookworm.uk/[trade]) framed as 'here's an example of the kind of site I'd build'. The no-risk model ('only pay once you're happy') in Email 1. Pricing stated as "£299 fixed — currently £199 while I have availability. £9.99/month after that." Both figures always together — never £199 alone. A trade-relevant cost anchor (compare to materials or van insurance).
     TONE: Warm, encouraging, peer-to-peer. Not corporate.
     LENGTH: 100–120 words.`
 };
@@ -1019,7 +1019,7 @@ const segmentFollowUpAngles = {
   },
 
   "B - Growth Phase": {
-    followUp1: `Switch to PLATFORM COST COMPARISON angle. This site is £299 once + £9.99/month, and they own it — unlike any lead generation platform. If the prospect is on Checkatrade, use the Checkatrade-specific figure: most tradespeople in Wiltshire pay £800–£1,500/year for Checkatrade. If not on Checkatrade, use the generic angle: they're paying indefinitely for visibility on someone else's platform. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the trade landing page URL (neobookworm.uk/[trade]). 80–100 words.`,
+    followUp1: `Switch to PLATFORM COST COMPARISON angle. This site is £299 once (currently £199 while I have availability) + £9.99/month, and they own it — unlike any lead generation platform. If the prospect is on Checkatrade, use the Checkatrade-specific figure: most tradespeople in Wiltshire pay £800–£1,500/year for Checkatrade. If not on Checkatrade, use the generic angle: they're paying indefinitely for visibility on someone else's platform. Optionally include local search volume figure if it's a compelling number for their trade. End with natural final-contact language for sole traders. Include the trade landing page URL (neobookworm.uk/[trade]). 80–100 words.`,
     followUp2_ltdOnly: `Simple BREAKUP email. No new arguments. Reference the examples page. Leave the door open. Include the trade landing page URL. 40–60 words.`
   },
 
@@ -1029,7 +1029,7 @@ const segmentFollowUpAngles = {
   },
 
   "C2 - DIY Template": {
-    followUp1: `Switch to LONG-TERM COST COMPARISON angle. Make the maths concrete: Wix/GoDaddy/Squarespace annual cost × 3 years vs NeoBookworm £299 once + £120/year. After year one they're saving money on a site they own. Adjust the platform cost figure to match the platform identified in the audit. End with natural final-contact language for sole traders. Include the landing page URL. 75–95 words.`,
+    followUp1: `Switch to LONG-TERM COST COMPARISON angle. Make the maths concrete: Wix/GoDaddy/Squarespace annual cost × 3 years vs NeoBookworm £299 once (currently £199 while I have availability) + £120/year. After year one they're saving money on a site they own. Adjust the platform cost figure to match the platform identified in the audit. End with natural final-contact language for sole traders. Include the landing page URL. 75–95 words.`,
     followUp2_ltdOnly: `Simple breakup. One sentence referencing ownership. Leave the door open. Include the landing page URL. 25–40 words.`
   },
 
@@ -1061,7 +1061,7 @@ These apply regardless of segment. Claude must follow all of them:
 3. **One URL appears once, prominently** — the landing page URL (or `-switch` variant for has-website segments) appears once per email, not buried and not repeated. Never frame it as "the demo I built for you" in Segments A, B, and D — it is a page showing examples of what can be built.
 4. **No jargon** — no 'SEO', 'digital presence', 'online visibility', 'responsive design', 'CMS', 'conversion rate'. Plain English throughout.
 5. **No calls to action other than 'look at the examples page'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
-6. **Pricing mentioned clearly** — £299 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide.
+6. **Pricing mentioned clearly** — The standard price is £299 fixed, £9.99/month. The current launch offer is **£199 while availability lasts** — always state both figures together so the full value is visible: "£299 fixed — currently £199 while I have availability. £9.99/month after that." Never 'starting from' or 'typically around'. Never state £199 alone without the £299 anchor — the fixed price is a feature, not something to hide. This framing appears in Email 1 only.
 7. **Autonomy-preserving close** — every email needs a low-pressure way to say no. The closer the email is to the contact cap, the more prominent this must be.
 8. **Compliance footer** — appended in code, not written by Claude. Two variants: short (PECR/Ltd) and extended (LI/sole trader). Never write the footer as part of the email body.
 9. **Sign-off** — always 'Nick | [NeoBookworm.uk](http://NeoBookworm.uk)'. Nothing else.
@@ -1099,4 +1099,4 @@ const localSearchVolumes = {
 
 ---
 
-*Templates updated: 18 May 2026. Source-agnostic model adopted: all Checkatrade assumptions removed from Segments A, B, and D. Prospects may be discovered via any platform; the source is a variable inserted at personalisation time. Bespoke per-prospect demo model replaced with trade-specific landing pages (`neobookworm.uk/[trade]` for no-website segments; `neobookworm.uk/[trade]-switch` for has-website segments, which Segment C already used). All email examples, subject lines, structure notes, `segmentAngles`, and `segmentFollowUpAngles` updated accordingly. Checkatrade cost comparison retained as a conditional variant for Checkatrade-member prospects only. Previous update: 17 May 2026.*
+*Templates updated: 20 May 2026. Pricing updated throughout: the standard price is £299 fixed; the current launch offer is £199 while availability lasts. Universal rule 6, all Email 1 structure notes, all example pricing lines, and all segmentAngles/segmentFollowUpAngles prompt guidance updated to reflect the "£299 fixed — currently £199 while I have availability" framing. Both figures must always appear together in Email 1 — never £199 alone. Previous update: 18 May 2026.*
