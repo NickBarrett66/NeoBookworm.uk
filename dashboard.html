@@ -813,8 +813,20 @@ const PROSPECT_COLS_IN_CAMPAIGN = [
   { label: 'Last emailed', col: 'last_email_sent'     },
 ];
 
+const PROSPECT_COLS_SALVAGE_WEBSITE = [
+  { label: 'Business',          col: 'business_name'    },
+  { label: 'Trade',             col: 'trade_category'   },
+  { label: 'Town',              col: 'town'             },
+  { label: 'Website',           col: 'has_website'      },
+  { label: 'Website platform',  col: 'website_platform' },
+  { label: 'Website agency',    col: 'website_agency'   },
+  { label: 'Website URL',       col: 'website_url'      },
+];
+
 function getProspectCols(status) {
-  return status === 'In Campaign' ? PROSPECT_COLS_IN_CAMPAIGN : PROSPECT_COLS;
+  if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
+  if (status === 'Salvage - Website') return PROSPECT_COLS_SALVAGE_WEBSITE;
+  return PROSPECT_COLS;
 }
 
 function prospectFilterCell(col, cf) {
@@ -846,6 +858,10 @@ function prospectFilterCell(col, cf) {
         <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
         <option value="never"   ${cf.emailed_filter === 'never'   ? 'selected' : ''}>Never</option>
       </select>`;
+    case 'website_platform':
+    case 'website_agency':
+    case 'website_url':
+      return '';
     default:
       return '';
   }
@@ -873,6 +889,15 @@ function prospectDataCell(col, row) {
     }
     case 'last_email_sent':
       return `<span class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</span>`;
+    case 'website_platform':
+      return `<span class="muted">${escHtml(row.website_platform || '—')}</span>`;
+    case 'website_agency':
+      return `<span class="muted">${escHtml(row.website_agency || '—')}</span>`;
+    case 'website_url': {
+      const u = row.website_url;
+      if (!u) return '<span class="muted">—</span>';
+      return `<a href="${escAttr(u)}" target="_blank" rel="noopener" class="muted" style="color:var(--amber)">${escHtml(u.replace(/^https?:\/\//, ''))}</a>`;
+    }
     default:
       return '—';
   }
@@ -927,7 +952,7 @@ const STATUS_COLOURS = {
   'Pending CH Validation':    '#f5813a',
   'CH Checked - Ltd':         '#34c97e',
   'CH Checked - Sole Trader': '#607090',
-  'Ltd - No Email':           '#607090',
+  'No Email':                 '#607090',
   'Brief In Progress':        '#f5a623',
   'Spec In Progress':         '#f5a623',
   'Spec Complete':            '#34c97e',
@@ -950,17 +975,19 @@ const STATUS_COLOURS = {
   'Disqualified':             '#e05050',
   'Duplicate':                '#e05050',
   'Suppressed':               '#607090',
+  'Salvage - Website':        '#4b9cf5',
 };
 
 const ALL_STATUSES = [
   'Discovered', 'Qualified', 'Dedup Passed',
   'Researched', 'Researched with website', 'Pending CH Validation',
-  'CH Checked - Ltd', 'CH Checked - Sole Trader', 'Ltd - No Email',
+  'CH Checked - Ltd', 'CH Checked - Sole Trader', 'No Email',
   'Brief In Progress', 'Spec In Progress', 'Spec Complete', 'Brief Complete',
   'Demo in Progress', 'Demo Built', 'Demo Approved', 'Final check Complete',
   'Email Ready', 'Email 1', 'In Campaign', 'Emailed', 'Follow-up 1', 'Final Follow-up',
   'Replied', 'Hot Lead', 'Won', 'Lost', 'Closed - No Response',
   'Disqualified', 'Duplicate', 'Suppressed',
+  'Salvage - Website',
 ];
 
 const INTAKE_STATUSES = ['new', 'in_progress', 'complete', 'cancelled'];
