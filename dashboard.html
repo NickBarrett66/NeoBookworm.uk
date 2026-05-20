@@ -354,8 +354,43 @@
     font-size: 1.4rem; cursor: pointer; line-height: 1;
   }
   .modal-close:hover { color: var(--white); }
-  .modal h2 { font-size: 1.3rem; margin-bottom: .3rem; }
-  .modal .modal-status { font-size: .8rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .modal h2 { font-size: 1.3rem; margin-bottom: .3rem; padding-right: 2rem; }
+  .modal .modal-status { font-size: .8rem; color: var(--muted); margin-bottom: .75rem; }
+
+  .modal-actions {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .btn-edit {
+    padding: .5rem 1.1rem; background: transparent; color: var(--amber);
+    border: 1px solid var(--amber); border-radius: 7px; font-size: .85rem;
+    font-weight: 600; cursor: pointer; transition: background .15s, color .15s;
+  }
+  .btn-edit:hover { background: var(--amber); color: var(--navy); }
+  .btn-cancel-edit {
+    padding: .5rem 1.1rem; background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 7px; font-size: .85rem;
+    font-weight: 600; cursor: pointer;
+  }
+  .btn-cancel-edit:hover { color: var(--white); border-color: var(--muted); }
+
+  .record-edit-grid input[type="text"],
+  .record-edit-grid input[type="email"],
+  .record-edit-grid input[type="url"],
+  .record-edit-grid input[type="number"],
+  .record-edit-grid select,
+  .record-edit-grid textarea {
+    width: 100%; padding: .55rem .8rem;
+    border: 1px solid var(--border); border-radius: 7px;
+    background: var(--navy-light); color: var(--white);
+    font-size: .9rem; font-family: inherit; outline: none;
+    transition: border-color .15s;
+  }
+  .record-edit-grid input:focus,
+  .record-edit-grid select:focus,
+  .record-edit-grid textarea:focus { border-color: var(--amber); }
+  .record-edit-grid textarea { resize: vertical; min-height: 80px; }
+  .record-edit-grid select option { background: var(--navy-light); }
 
   .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem 1.5rem; }
   @media (max-width: 500px) { .field-grid { grid-template-columns: 1fr; } }
@@ -418,8 +453,8 @@
     margin: 0; cursor: pointer;
   }
 
-  .disqualify-row { display: none; }
-  .disqualify-row.visible { display: block; }
+  .field-group.disqualify-row { display: none; }
+  .field-group.disqualify-row.visible { display: flex; }
 
   .edit-actions { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; }
 
@@ -1416,6 +1451,134 @@ function renderList({ data: rows, total, page, pageSize }) {
 }
 
 // ── Prospects: record modal ───────────────────────────────────────────────────
+const PROSPECT_DETAIL_SECTIONS = [
+  {
+    fields: [
+      { key: 'business_name', label: 'Business name' },
+      { key: 'contact_name', label: 'Contact name' },
+      { key: 'email_address', label: 'Email', input: 'email' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'trade_category', label: 'Trade' },
+      { key: 'town', label: 'Town' },
+      { key: 'address', label: 'Address' },
+      { key: 'postcode', label: 'Postcode' },
+    ],
+  },
+  {
+    fields: [
+      { key: 'has_website', label: 'Has website', input: 'has_website' },
+      { key: 'website_url', label: 'Website URL', input: 'url' },
+      { key: 'website_platform', label: 'Website platform' },
+      { key: 'website_agency', label: 'Website agency' },
+      { key: 'rating', label: 'Rating', input: 'number' },
+      { key: 'review_count', label: 'Review count', input: 'number' },
+      { key: 'postcard_score', label: 'Postcard score', input: 'number' },
+      { key: 'prospect_segment', label: 'Prospect segment' },
+    ],
+  },
+  {
+    fields: [
+      { key: 'company_type', label: 'Company type' },
+      { key: 'ch_number', label: 'CH number' },
+      { key: 'ch_status', label: 'CH status' },
+      { key: 'ch_incorporation_date', label: 'Incorporation date' },
+      { key: 'date_first_contacted', label: 'Date first contacted' },
+      { key: 'last_email_sent', label: 'Last email sent' },
+      { key: 'contact_count', label: 'Contact count', input: 'number' },
+      { key: 'demo_url', label: 'Demo URL', input: 'url' },
+    ],
+  },
+  {
+    fields: [
+      { key: 'status', label: 'Status', input: 'status' },
+      { key: 'disqualify_reason', label: 'Disqualify reason', disqualifyOnly: true },
+      { key: 'notes', label: 'Notes', input: 'textarea', full: true },
+    ],
+  },
+  {
+    fields: [
+      { key: 'research_summary', label: 'Research summary', input: 'textarea', full: true },
+    ],
+  },
+];
+
+function prospectRecordValue(r, key) {
+  if (key === 'notes') return r.notes ?? r.note ?? '';
+  if (key === 'has_website') return r.has_website ? 'Yes' : 'No';
+  const v = r[key];
+  if (v === null || v === undefined || v === '') return null;
+  return v;
+}
+
+function prospectFieldView(f, r) {
+  const v = prospectRecordValue(r, f.key);
+  if (v === null) return '<span class="field-value empty">—</span>';
+  const safe = escHtml(String(v));
+  if (f.input === 'email' && r.email_address) {
+    return `<span class="field-value"><a href="mailto:${escAttr(r.email_address)}" target="_blank" rel="noopener">${safe}</a></span>`;
+  }
+  if (f.input === 'url' && r[f.key]) {
+    return `<span class="field-value"><a href="${escAttr(r[f.key])}" target="_blank" rel="noopener">${safe}</a></span>`;
+  }
+  if (f.input === 'textarea') {
+    return `<span class="field-value text-multiline">${safe}</span>`;
+  }
+  return `<span class="field-value">${safe}</span>`;
+}
+
+function prospectFieldEdit(f, r) {
+  const id = `edit-${f.key}`;
+  const raw = prospectRecordValue(r, f.key);
+  const strVal = raw === null ? '' : String(raw);
+
+  if (f.input === 'status') {
+    const opts = ALL_STATUSES.map(s =>
+      `<option value="${escAttr(s)}"${s === r.status ? ' selected' : ''}>${escHtml(s)}</option>`
+    ).join('');
+    return `<select id="${id}" data-key="${f.key}">${opts}</select>`;
+  }
+  if (f.input === 'has_website') {
+    const hw = r.has_website ? '1' : '0';
+    return `<select id="${id}" data-key="${f.key}">
+      <option value="1"${hw === '1' ? ' selected' : ''}>Yes</option>
+      <option value="0"${hw === '0' ? ' selected' : ''}>No</option>
+    </select>`;
+  }
+  if (f.input === 'textarea') {
+    return `<textarea id="${id}" data-key="${f.key}" class="text-multiline" placeholder="${escAttr(f.label)}…">${escHtml(strVal)}</textarea>`;
+  }
+  const type = f.input === 'email' ? 'email' : f.input === 'url' ? 'url' : f.input === 'number' ? 'number' : 'text';
+  const step = f.input === 'number' ? ' step="any"' : '';
+  return `<input type="${type}" id="${id}" data-key="${f.key}" value="${escAttr(strVal)}"${step}>`;
+}
+
+function prospectSectionsHtml(r, editing) {
+  return PROSPECT_DETAIL_SECTIONS.map((section, si) => {
+    const visibleFields = section.fields.filter(f => {
+      if (!editing && f.key === 'research_summary' && !r.research_summary) return false;
+      if (!editing && f.disqualifyOnly && r.status !== 'Disqualified' && !r.disqualify_reason) return false;
+      return true;
+    });
+    if (!visibleFields.length) return '';
+
+    const grid = editing ? 'field-grid record-edit-grid' : 'field-grid';
+    const cells = visibleFields.map(f => {
+      const full = f.full ? ' style="grid-column:1/-1"' : '';
+      if (editing) {
+        const disqCls = f.disqualifyOnly
+          ? ' disqualify-row' + (r.status === 'Disqualified' ? ' visible' : '')
+          : '';
+        const disqId = f.disqualifyOnly ? ' id="disqualify-row"' : '';
+        return `<div class="field-group${disqCls}"${disqId}${full}><label class="field-label" for="edit-${f.key}">${escHtml(f.label)}</label>${prospectFieldEdit(f, r)}</div>`;
+      }
+      return `<div class="field-group"${full}><span class="field-label">${escHtml(f.label)}</span>${prospectFieldView(f, r)}</div>`;
+    }).join('');
+
+    const divider = si > 0 ? '<hr class="section-divider">' : '';
+    return `${divider}<div class="${grid}">${cells}</div>`;
+  }).join('');
+}
+
 async function loadRecord(id) {
   const overlay = document.getElementById('modal-overlay');
   const body    = document.getElementById('modal-body');
@@ -1424,125 +1587,126 @@ async function loadRecord(id) {
 
   try {
     const { data: r } = await apiFetch({ action: 'record', id });
-    body.innerHTML = renderRecordHtml(r);
-    wireProspectEdit(r);
+    body.innerHTML = renderRecordHtml(r, false);
+    wireProspectEdit(r, false);
   } catch (err) {
     body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
   }
 }
 
-function renderRecordHtml(r) {
-  const val = (v, link) => {
-    if (!v && v !== 0) return '<span class="field-value empty">—</span>';
-    const safe = escHtml(String(v));
-    if (link) return `<span class="field-value"><a href="${escAttr(link)}" target="_blank" rel="noopener">${safe}</a></span>`;
-    return `<span class="field-value">${safe}</span>`;
-  };
+function renderRecordHtml(r, editing) {
+  const title = editing ? 'Edit record' : escHtml(r.business_name || 'Unknown');
+  const subtitle = editing
+    ? escHtml(r.status || '') + (r.trade_category ? ' · ' + escHtml(r.trade_category) : '')
+    : escHtml(r.status || '') + (r.trade_category ? ' · ' + escHtml(r.trade_category) : '');
 
-  const statusOptions = ALL_STATUSES.map(s =>
-    `<option value="${escAttr(s)}"${s === r.status ? ' selected' : ''}>${escHtml(s)}</option>`
-  ).join('');
+  const actions = editing
+    ? `<button type="button" class="btn-save" id="btn-save">Save changes</button>
+       <button type="button" class="btn-cancel-edit" id="btn-cancel-edit">Cancel</button>
+       <span class="save-status" id="save-status"></span>`
+    : `<button type="button" class="btn-edit" id="btn-prospect-edit">Edit record</button>`;
 
   return `
-    <h2>${escHtml(r.business_name || 'Unknown')}</h2>
-    <div class="modal-status">${escHtml(r.status || '')}${r.trade_category ? ' · ' + escHtml(r.trade_category) : ''}</div>
-    <div class="field-grid">
-      <div class="field-group"><span class="field-label">Contact name</span>${val(r.contact_name)}</div>
-      <div class="field-group"><span class="field-label">Email</span>${val(r.email_address, r.email_address ? 'mailto:' + r.email_address : null)}</div>
-      <div class="field-group"><span class="field-label">Phone</span>${val(r.phone)}</div>
-      <div class="field-group"><span class="field-label">Town</span>${val(r.town)}</div>
-      <div class="field-group"><span class="field-label">Address</span>${val(r.address)}</div>
-      <div class="field-group"><span class="field-label">Postcode</span>${val(r.postcode)}</div>
-    </div>
-    <hr class="section-divider">
-    <div class="field-grid">
-      <div class="field-group"><span class="field-label">Has website</span>${val(r.has_website ? 'Yes' : 'No')}</div>
-      <div class="field-group"><span class="field-label">Website URL</span>${val(r.website_url, r.website_url)}</div>
-      <div class="field-group"><span class="field-label">Website platform</span>${val(r.website_platform)}</div>
-      <div class="field-group"><span class="field-label">Website agency</span>${val(r.website_agency)}</div>
-      <div class="field-group"><span class="field-label">Rating</span>${val(r.rating)}</div>
-      <div class="field-group"><span class="field-label">Review count</span>${val(r.review_count)}</div>
-      <div class="field-group"><span class="field-label">Postcard score</span>${val(r.postcard_score)}</div>
-      <div class="field-group"><span class="field-label">Prospect segment</span>${val(r.prospect_segment)}</div>
-    </div>
-    <hr class="section-divider">
-    <div class="field-grid">
-      <div class="field-group"><span class="field-label">Company type</span>${val(r.company_type)}</div>
-      <div class="field-group"><span class="field-label">CH number</span>${val(r.ch_number)}</div>
-      <div class="field-group"><span class="field-label">CH status</span>${val(r.ch_status)}</div>
-      <div class="field-group"><span class="field-label">Incorporation date</span>${val(r.ch_incorporation_date)}</div>
-      <div class="field-group"><span class="field-label">Date first contacted</span>${val(r.date_first_contacted)}</div>
-      <div class="field-group"><span class="field-label">Last email sent</span>${val(r.last_email_sent)}</div>
-      <div class="field-group"><span class="field-label">Contact count</span>${val(r.contact_count)}</div>
-      <div class="field-group"><span class="field-label">Demo URL</span>${val(r.demo_url, r.demo_url)}</div>
-    </div>
-    ${r.research_summary ? `<hr class="section-divider"><div class="field-group" style="grid-column:1/-1"><span class="field-label">Research summary</span><span class="field-value text-multiline">${escHtml(r.research_summary)}</span></div>` : ''}
-    <div class="edit-section">
-      <h3>Edit record</h3>
-      <div class="edit-row"><label for="edit-status">Status</label><select id="edit-status">${statusOptions}</select></div>
-      <div class="edit-row disqualify-row" id="disqualify-row">
-        <label for="edit-disqualify">Disqualify reason</label>
-        <input type="text" id="edit-disqualify" value="${escAttr(r.disqualify_reason || '')}" placeholder="Reason for disqualifying…">
-      </div>
-      <div class="edit-row"><label for="edit-notes">Notes</label><textarea id="edit-notes" class="text-multiline" placeholder="Internal notes…">${escHtml(r.notes || r.note || '')}</textarea></div>
-      <div class="edit-actions">
-        <button class="btn-save" id="btn-save" disabled>Save changes</button>
-        <span class="save-status" id="save-status"></span>
-      </div>
-    </div>
+    <h2 id="record-title">${title}</h2>
+    <div class="modal-status" id="record-subtitle">${subtitle}</div>
+    <div class="modal-actions">${actions}</div>
+    ${prospectSectionsHtml(r, editing)}
   `;
 }
 
-function wireProspectEdit(r) {
-  const statusEl      = document.getElementById('edit-status');
-  const disqualifyEl  = document.getElementById('edit-disqualify');
+function readProspectEditValue(r, key, el) {
+  if (key === 'has_website') return Number(el.value);
+  if (key === 'rating' || key === 'review_count' || key === 'postcard_score' || key === 'contact_count') {
+    const t = el.value.trim();
+    return t === '' ? '' : Number(t);
+  }
+  return el.value;
+}
+
+function prospectFieldChanged(key, orig, next) {
+  if (key === 'has_website') return Number(orig ? 1 : 0) !== Number(next);
+  if (key === 'notes') return String(orig ?? '') !== String(next ?? '');
+  if (orig === null || orig === undefined) orig = '';
+  if (next === null || next === undefined) next = '';
+  return String(orig) !== String(next);
+}
+
+function collectProspectFieldChanges(r) {
+  const fields = {};
+  document.querySelectorAll('#modal-body [data-key]').forEach(el => {
+    const key = el.dataset.key;
+    const next = readProspectEditValue(r, key, el);
+    let orig = prospectRecordValue(r, key);
+    if (key === 'has_website') orig = r.has_website ? 1 : 0;
+    if (prospectFieldChanged(key, orig, next)) fields[key] = next;
+  });
+  return fields;
+}
+
+function applyProspectFieldUpdates(r, fields) {
+  for (const [key, val] of Object.entries(fields)) {
+    if (key === 'notes') { r.notes = val; r.note = val; }
+    else if (key === 'has_website') r.has_website = val ? 1 : 0;
+    else r[key] = val;
+  }
+}
+
+function wireProspectEdit(r, editing) {
+  if (!editing) {
+    document.getElementById('btn-prospect-edit')?.addEventListener('click', () => {
+      const body = document.getElementById('modal-body');
+      body.innerHTML = renderRecordHtml(r, true);
+      wireProspectEdit(r, true);
+    });
+    return;
+  }
+
+  const saveBtn    = document.getElementById('btn-save');
+  const cancelBtn  = document.getElementById('btn-cancel-edit');
+  const saveStatus = document.getElementById('save-status');
+  const statusEl   = document.getElementById('edit-status');
   const disqualifyRow = document.getElementById('disqualify-row');
-  const notesEl       = document.getElementById('edit-notes');
-  const saveBtn       = document.getElementById('btn-save');
-  const saveStatus    = document.getElementById('save-status');
 
-  const origStatus     = r.status || '';
-  const origDisqualify = r.disqualify_reason || '';
-  const origNotes      = r.notes || r.note || '';
-
-  const toggleDisqualify = () => disqualifyRow.classList.toggle('visible', statusEl.value === 'Disqualified');
-  const checkDirty = () => {
-    const dirty = statusEl.value !== origStatus || disqualifyEl.value !== origDisqualify || notesEl.value !== origNotes;
-    saveBtn.disabled = !dirty;
-    if (!dirty) { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }
+  const toggleDisqualify = () => {
+    if (disqualifyRow && statusEl) {
+      disqualifyRow.classList.toggle('visible', statusEl.value === 'Disqualified');
+    }
   };
-
   toggleDisqualify();
-  statusEl.addEventListener('change',    () => { toggleDisqualify(); checkDirty(); });
-  disqualifyEl.addEventListener('input', checkDirty);
-  notesEl.addEventListener('input',      checkDirty);
+  statusEl?.addEventListener('change', toggleDisqualify);
 
-  saveBtn.addEventListener('click', async () => {
+  cancelBtn?.addEventListener('click', () => {
+    const body = document.getElementById('modal-body');
+    body.innerHTML = renderRecordHtml(r, false);
+    wireProspectEdit(r, false);
+  });
+
+  saveBtn?.addEventListener('click', async () => {
+    const fields = collectProspectFieldChanges(r);
+    if (!Object.keys(fields).length) {
+      saveStatus.textContent = 'No changes to save';
+      saveStatus.className = 'save-status';
+      return;
+    }
+
     saveBtn.disabled = true;
-    saveStatus.textContent = 'Saving…'; saveStatus.className = 'save-status';
-    const fields = {};
-    if (statusEl.value     !== origStatus)     fields.status            = statusEl.value;
-    if (disqualifyEl.value !== origDisqualify) fields.disqualify_reason = disqualifyEl.value;
-    if (notesEl.value      !== origNotes)      fields.notes             = notesEl.value;
+    saveStatus.textContent = 'Saving…';
+    saveStatus.className = 'save-status';
 
     try {
       await apiPost({ action: 'update', id: r.notion_id, fields });
-      if (fields.status !== undefined)            r.status            = fields.status;
-      if (fields.disqualify_reason !== undefined) r.disqualify_reason = fields.disqualify_reason;
-      if (fields.notes !== undefined)             r.notes             = fields.notes;
+      applyProspectFieldUpdates(r, fields);
 
-      const sub = document.querySelector('.modal-status');
-      if (sub) sub.textContent = r.status + (r.trade_category ? ' · ' + r.trade_category : '');
+      const body = document.getElementById('modal-body');
+      body.innerHTML = renderRecordHtml(r, false);
+      wireProspectEdit(r, false);
 
-      saveStatus.textContent = 'Saved'; saveStatus.className = 'save-status ok';
-      setTimeout(() => { saveStatus.textContent = ''; saveStatus.className = 'save-status'; }, 2500);
-      wireProspectEdit(r);
-
-      if (state.view === 'list' && state.currentStatus !== r.status) {
+      if (state.view === 'list' && fields.status !== undefined && state.currentStatus !== r.status) {
         loadList(state.currentStatus, state.currentPage);
       }
     } catch (err) {
-      saveStatus.textContent = err.message; saveStatus.className = 'save-status err';
+      saveStatus.textContent = err.message;
+      saveStatus.className = 'save-status err';
       saveBtn.disabled = false;
     }
   });

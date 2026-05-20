@@ -56,7 +56,13 @@ async function queryD1(dbId, sql, params = []) {
 }
 
 const PROSPECTS_EDITABLE = [
-  'status', 'notes', 'note', 'disqualify_reason', 'postcard_score',
+  'business_name', 'status', 'trade_category', 'contact_name', 'email_address', 'phone',
+  'town', 'address', 'postcode',
+  'has_website', 'website_url', 'website_platform', 'website_agency',
+  'rating', 'review_count', 'postcard_score', 'prospect_segment',
+  'company_type', 'ch_number', 'ch_status', 'ch_incorporation_date',
+  'date_first_contacted', 'last_email_sent', 'contact_count',
+  'research_summary', 'notes', 'note', 'disqualify_reason',
   'do_not_contact', 'response_classification', 'demo_url', 'demo_site_name',
 ];
 
