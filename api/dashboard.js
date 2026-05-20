@@ -624,6 +624,8 @@ module.exports = async (req, res) => {
       if (!status) return res.status(400).json({ error: 'status parameter required' });
 
       const inCampaign = status === 'In Campaign';
+      const disqualified = status === 'Disqualified';
+      const salvageWebsite = status === 'Salvage - Website';
       const campaignIdExpr = `COALESCE(
         NULLIF(TRIM(prospects.email_campaign_id), ''),
         (SELECT o.campaign_id
@@ -675,6 +677,8 @@ module.exports = async (req, res) => {
         'business_name', 'contact_name', 'trade_category', 'town',
         'has_website', 'rating', 'last_email_sent',
         ...(inCampaign ? ['campaign_id'] : []),
+        ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
+        ...(salvageWebsite ? ['website_platform', 'website_agency', 'website_url'] : []),
       ]);
       const orderClauses = [];
       for (const [col, dir] of [[sort1_col, sort1_dir], [sort2_col, sort2_dir], [sort3_col, sort3_dir]]) {
@@ -689,6 +693,16 @@ module.exports = async (req, res) => {
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
                   ${campaignIdExpr} AS campaign_id`
+        : disqualified
+        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
+                  email_address, has_website, rating, postcard_score,
+                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+                  ch_number, ch_status, company_type`
+        : salvageWebsite
+        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
+                  email_address, has_website, rating, postcard_score,
+                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+                  website_platform, website_agency, website_url`
         : `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment`;

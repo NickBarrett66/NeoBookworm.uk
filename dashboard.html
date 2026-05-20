@@ -823,9 +823,20 @@ const PROSPECT_COLS_SALVAGE_WEBSITE = [
   { label: 'Website URL',       col: 'website_url'      },
 ];
 
+const PROSPECT_COLS_DISQUALIFIED = [
+  { label: 'Business',     col: 'business_name'   },
+  { label: 'Trade',        col: 'trade_category'  },
+  { label: 'Town',         col: 'town'            },
+  { label: 'Website',      col: 'has_website'     },
+  { label: 'CH number',    col: 'ch_number'       },
+  { label: 'CH status',    col: 'ch_status'       },
+  { label: 'Company type', col: 'company_type'    },
+];
+
 function getProspectCols(status) {
   if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
   if (status === 'Salvage - Website') return PROSPECT_COLS_SALVAGE_WEBSITE;
+  if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
   return PROSPECT_COLS;
 }
 
@@ -861,6 +872,9 @@ function prospectFilterCell(col, cf) {
     case 'website_platform':
     case 'website_agency':
     case 'website_url':
+    case 'ch_number':
+    case 'ch_status':
+    case 'company_type':
       return '';
     default:
       return '';
@@ -898,6 +912,12 @@ function prospectDataCell(col, row) {
       if (!u) return '<span class="muted">—</span>';
       return `<a href="${escAttr(u)}" target="_blank" rel="noopener" class="muted" style="color:var(--amber)">${escHtml(u.replace(/^https?:\/\//, ''))}</a>`;
     }
+    case 'ch_number':
+      return `<span class="muted">${escHtml(row.ch_number || '—')}</span>`;
+    case 'ch_status':
+      return `<span class="muted">${escHtml(row.ch_status || '—')}</span>`;
+    case 'company_type':
+      return `<span class="muted">${escHtml(row.company_type || '—')}</span>`;
     default:
       return '—';
   }
