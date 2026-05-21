@@ -1962,7 +1962,7 @@
         <div class="feat-card featured" id="photosCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="photosModal" aria-label="Open details: photos of real work">
           <h3>Photos of real work</h3>
-          <p>Before-and-afters or a job-by-job gallery &mdash; whichever shows your work best. Real photos do more selling than any amount of words.</p>
+          <p>A job-by-job gallery with captions &mdash; the work you do and where you did it. Real photos sell better than any amount of copy.</p>
         </div>
         <!-- Interactive: opens mobile contact demo modal -->
         <div class="feat-card featured" id="callCard" role="button" tabindex="0"
@@ -2503,78 +2503,48 @@
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
 
       <div class="custom-modal-text">
-        <h2 id="modal-photos-heading">Your gallery, <em>your way.</em></h2>
-        <p>Real photos build more trust than anything you can write. Here are two ways I can present your work &mdash; pick whichever suits your jobs best, or we can mix and match.</p>
+        <h2 id="modal-photos-heading">A job gallery that <em>sells the work.</em></h2>
+        <p>Each tile names the job, the area, and what you did &mdash; so someone comparing electricians for an EV charger, a landlord certificate, or outdoor electrics can see you&rsquo;ve handled their kind of work before they call.</p>
       </div>
 
-      <div class="gallery-tabs" role="tablist" aria-label="Gallery layout options">
-        <button class="gallery-tab active" id="tabBA" role="tab" aria-selected="true" aria-controls="panelBA">Before &amp; After</button>
-        <button class="gallery-tab" id="tabGrid" role="tab" aria-selected="false" aria-controls="panelGrid">Job Gallery</button>
-      </div>
-
-      <!-- Panel A: Before/After slider -->
-      <div id="panelBA" role="tabpanel" aria-labelledby="tabBA">
-        <div class="ba-slider" id="baSlider">
-          <div class="ba-after">
-            <div class="ba-ph-after" style="background:url('/Images/gallery/bathroom-after.webp') center/cover no-repeat;"></div>
-          </div>
-          <div class="ba-before-wrap" id="baBeforeWrap">
-            <div class="ba-ph-before" style="background:url('/Images/gallery/bathroom-before.webp') center/cover no-repeat;"></div>
-          </div>
-          <span class="ba-label ba-label-before" aria-hidden="true">Before</span>
-          <span class="ba-label ba-label-after" aria-hidden="true">After</span>
-          <div class="ba-handle" id="baHandleEl" aria-hidden="true">
-            <div class="ba-handle-line"></div>
-            <div class="ba-handle-circle">
-              <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M6 7H1M1 7L4 4M1 7L4 10" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 7H19M19 7L16 4M19 7L16 10" stroke="#0f1f3d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="ba-handle-line"></div>
-          </div>
-        </div>
-        <p class="ba-caption">Drag the handle to compare &mdash; works the same way on a phone with a swipe.</p>
-      </div>
-
-      <!-- Panel B: Job grid -->
-      <div id="panelGrid" role="tabpanel" aria-labelledby="tabGrid" hidden>
-        <div class="job-grid">
-          <div class="job-tile">
-            <div class="job-tile-ph" style="background:url('/Images/gallery/boiler-replacement.webp') center/cover no-repeat;">
-              <div class="job-tile-caption">
-                <strong>Boiler replacement</strong>
-                <span>Swindon &middot; Worcester Bosch combi</span>
-              </div>
-            </div>
-          </div>
-          <div class="job-tile">
-            <div class="job-tile-ph" style="background:url('/Images/gallery/bathroom-refit.webp') center/cover no-repeat;">
-              <div class="job-tile-caption">
-                <strong>Full bathroom refit</strong>
-                <span>Chippenham &middot; 4-day install</span>
-              </div>
-            </div>
-          </div>
-          <div class="job-tile">
-            <div class="job-tile-ph" style="background:url('/Images/gallery/leak-repair.webp') center/cover no-repeat;">
-              <div class="job-tile-caption">
-                <strong>Emergency leak repair</strong>
-                <span>Royal Wootton Bassett &middot; Same-day callout</span>
-              </div>
-            </div>
-          </div>
-          <div class="job-tile">
-            <div class="job-tile-ph" style="background:url('/Images/gallery/outdoor-pipework.webp') center/cover no-repeat;">
-              <div class="job-tile-caption">
-                <strong>Outdoor pipework</strong>
-                <span>Marlborough &middot; Garden office supply</span>
-              </div>
+      <div class="job-grid" id="photosJobGrid">
+        <div class="job-tile">
+          <div class="job-tile-ph" style="background:url('/Images/gallery/service-03-ev-charger.webp') center/cover no-repeat;" role="img" aria-label="Home EV charger mounted on a garage wall">
+            <div class="job-tile-caption">
+              <strong>Home EV charger installation</strong>
+              <span>Chippenham &middot; Wall-mounted 7kW charge point</span>
             </div>
           </div>
         </div>
-        <p class="ba-caption" style="margin-top:12px;">Each photo shows the job type and where it was done. Customers can see you&rsquo;ve handled their exact job, in their area &mdash; before they pick up the phone.</p>
+        <div class="job-tile">
+          <div class="job-tile-ph" style="background:url('/Images/gallery/service-05-lighting.webp') center/cover no-repeat;" role="img" aria-label="Modern kitchen with recessed ceiling and LED accent lighting">
+            <div class="job-tile-caption">
+              <strong>Kitchen lighting installation</strong>
+              <span>Swindon &middot; Recessed downlights and LED strips</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-tile">
+          <div class="job-tile-ph" style="background:url('/Images/gallery/service-07-eicr.webp') center/cover no-repeat;" role="img" aria-label="Electrical installation condition report paperwork on a kitchen table">
+            <div class="job-tile-caption">
+              <strong>Landlord EICR inspection</strong>
+              <span>Royal Wootton Bassett &middot; Safety certificate issued same visit</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-tile">
+          <div class="job-tile-ph" style="background:url('/Images/gallery/service-08-outdoor.webp') center/cover no-repeat;" role="img" aria-label="Weatherproof outdoor double socket on a brick wall">
+            <div class="job-tile-caption">
+              <strong>Weatherproof outdoor socket</strong>
+              <span>Marlborough &middot; Sealed double outlet for garden use</span>
+            </div>
+          </div>
+        </div>
       </div>
+      <p class="ba-caption" style="margin-top:12px;">Customers scan the grid for the job they need &mdash; then they know you&rsquo;ve done it in their area before they pick up the phone.</p>
 
       <div class="modal-cta" style="border-top:1px solid rgba(15,31,61,0.12); padding-top:24px; margin-top:4px;">
-        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Send me your best photos</strong> in the form below &mdash; before/afters if you have them, finished jobs otherwise. Phone photos are fine.</p>
+        <p style="font-size:0.92rem; color:rgba(15,31,61,0.78);"><strong>Send me your best photos</strong> in the form below &mdash; finished jobs are ideal. Phone photos are fine.</p>
       </div>
 
     </div>
@@ -3368,39 +3338,17 @@
     });
   })();
 
-  /* ── Photos modal (#photosCard) — tabs + before/after slider ── */
+  /* ── Photos modal (#photosCard) — job gallery ── */
   (function(){
     var card     = document.getElementById('photosCard');
     var modal    = document.getElementById('photosModal');
     var closeBtn = document.getElementById('photosCloseBtn');
     if (!card || !modal || !closeBtn) return;
 
-    var tabBA    = document.getElementById('tabBA');
-    var tabGrid  = document.getElementById('tabGrid');
-    var panelBA  = document.getElementById('panelBA');
-    var panelGrid = document.getElementById('panelGrid');
-
-    function switchTab(toBA) {
-      if (toBA) {
-        tabBA.classList.add('active');    tabBA.setAttribute('aria-selected', 'true');
-        tabGrid.classList.remove('active'); tabGrid.setAttribute('aria-selected', 'false');
-        panelBA.removeAttribute('hidden');
-        panelGrid.setAttribute('hidden', '');
-      } else {
-        tabGrid.classList.add('active');  tabGrid.setAttribute('aria-selected', 'true');
-        tabBA.classList.remove('active'); tabBA.setAttribute('aria-selected', 'false');
-        panelGrid.removeAttribute('hidden');
-        panelBA.setAttribute('hidden', '');
-      }
-    }
-    if (tabBA)   tabBA.addEventListener('click',   function(){ switchTab(true); });
-    if (tabGrid) tabGrid.addEventListener('click', function(){ switchTab(false); });
-
     function open() {
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      switchTab(true);
       requestAnimationFrame(function(){ closeBtn.focus(); });
     }
     function close() {
@@ -3420,31 +3368,6 @@
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && modal.classList.contains('active')) close();
     });
-
-    /* Before/After slider */
-    var slider     = document.getElementById('baSlider');
-    var beforeWrap = document.getElementById('baBeforeWrap');
-    var handleEl   = document.getElementById('baHandleEl');
-    if (!slider || !beforeWrap || !handleEl) return;
-    var dragging = false;
-
-    function setPos(p) {
-      p = Math.max(5, Math.min(95, p));
-      beforeWrap.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)';
-      handleEl.style.left = p + '%';
-    }
-    function relX(e) {
-      var rect = slider.getBoundingClientRect();
-      var cx = e.touches ? e.touches[0].clientX : e.clientX;
-      return ((cx - rect.left) / rect.width) * 100;
-    }
-    slider.addEventListener('mousedown', function(e){ dragging = true; setPos(relX(e)); e.preventDefault(); });
-    slider.addEventListener('touchstart', function(e){ dragging = true; setPos(relX(e)); }, { passive: true });
-    document.addEventListener('mousemove', function(e){ if (dragging) setPos(relX(e)); });
-    document.addEventListener('touchmove', function(e){ if (dragging) setPos(relX(e)); }, { passive: true });
-    document.addEventListener('mouseup',   function(){ dragging = false; });
-    document.addEventListener('touchend',  function(){ dragging = false; });
-    setPos(50);
   })();
 
   /* ── Gas Safe modal (#gasSafeCard) ── */
