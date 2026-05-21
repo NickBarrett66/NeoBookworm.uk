@@ -6,6 +6,14 @@
 
 \---
 
+> **⚠️ READ FIRST — THE DELIVERY MODEL IN THIS DOCUMENT IS RETIRED**
+>
+> This research was written for the original **demo-first** model, where a bespoke demo site was built for each prospect and the email said *"I've built one for you — here's yours: [link]."* **That model no longer exists.** Emails now link to a **trade-specific landing page** (`neobookworm.uk/[trade]` for no-website prospects, `neobookworm.uk/[trade]-switch` for has-website prospects) that shows examples of what I build. There is no bespoke demo.
+>
+> **How to use this document:** the *psychology* of every objection is still completely valid — read it for that. But **ignore all of the example copy**, every line of which says "I've mocked one up for you," "here's yours," or "the demo I built." If your draft starts to sound like that, it has drifted back to the dead model — rewrite it. The current copy rules live in the **`neobookworm-email-templates` skill**, which is the single source of truth. In particular: never use the word "demo," and for has-website prospects never imply their site needs rebuilding — affirm first, mention any gap softly.
+
+\---
+
 > \*\*⚠️ IMPORTANT — UK LEGISLATIVE CONSTRAINT ON EMAIL SEQUENCE LENGTH\*\*
 >
 > Some sections of this document reference 3–4 email sequences drawn from general B2B cold outreach research. Those recommendations apply to US and broader European markets and \*\*must not be applied wholesale to NeoBookworm's pipeline\*\*.

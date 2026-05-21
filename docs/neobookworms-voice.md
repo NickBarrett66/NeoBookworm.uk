@@ -29,10 +29,10 @@ The tone should feel like one professional talking to another. Nick has 25 years
 
 | Segment | Tone shift |
 | --- | --- |
-| A — Established (150+ reviews, 20+ yrs) | Maximum respect for their success. The pitch is referral-enablement, not "you need this." |
-| B — Growth Phase (0–80 reviews, under 7 yrs) | Warm encouragement. They know they should. Make it feel exciting and frictionless. |
-| C — Bad/Outdated Website | Peer recognition of standards. "Your work clearly has standards — here's a site that matches them." |
-| D — New Entrant | Congratulatory. "You're starting strong. A website from day one sets the tone." |
+| A — Established (15+ reviews, 7+ yrs) | Maximum respect for their success. The pitch is referral-enablement, not "you need this." |
+| B — Growth Phase (5–15 reviews, 2–7 yrs) | Warm encouragement. They know they should. Make it feel exciting and frictionless. |
+| C — Has a website (splits into C1–C4 — see the email-templates skill) | Affirm first ("You've already taken the website step"), then mention any gap softly. Never imply it needs rebuilding. |
+| D — New Entrant (0–5 reviews, under 2 yrs) | Congratulatory. "You're starting strong. A website from day one sets the tone." |
 
 ---
 
@@ -42,4 +42,4 @@ The tone should feel like one professional talking to another. Nick has 25 years
 - Bullet-point selling (list after list of features) — use prose for persuasion
 - "We" or "our team"
 - Implying the tradesperson is behind, wrong, or missing out
-- Demanding calls or long commitments as the CTA — the demo link is the CTA
+- Demanding calls or long commitments as the CTA — the trade landing-page link is the only CTA (there is no bespoke demo; never use the word "demo")
