@@ -168,6 +168,26 @@ Draft Email 1, Email 2, and Email 3 for every viable prospect. Each email has a 
 
 If no embargo date is set, E1 has `scheduled_not_before = NULL` (send as soon as approved), E2 = today + 5 days, E3 = today + 12 days. Calculate these dates at the time of writing to D1.
 
+### Local search volume lookup (do this before drafting Email 1)
+
+For each prospect, query D1 for a pre-computed local monthly estimate:
+
+```sql
+SELECT monthly_estimate
+FROM area_trade_volume
+WHERE trade_category = '[trade_category]'
+  AND town = '[town]';
+```
+
+Only use the figure if `monthly_estimate >= 80`. If no row returns, or the figure is below the threshold, skip — use a different hook from `research_summary` instead. Store each result against the prospect in your working notes before drafting.
+
+Framing rule: always prefix with "around". One sentence, demand-they're-invisible-to framing:
+> "Around 510 people a month search for a plumber in Swindon — right now your business isn't what they find."
+
+These figures are conservative — actual volume may be higher. Full methodology: `docs/search-volume-methodology.md`.
+
+---
+
 ### Email 1 — Personalised intro
 
 **Job:** Make them curious enough to click the landing page. One hook, one link, one risk-reversal.

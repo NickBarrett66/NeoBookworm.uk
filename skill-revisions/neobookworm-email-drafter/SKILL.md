@@ -252,14 +252,41 @@ This is my final email to you on this — I won't be in touch again after this.
 
 ---
 
-## Step 6: Local Search Volume (follow-ups only)
+## Step 6: Local Search Volume
 
-Use local search volume data in follow-ups only (not Email 1), once, when it strengthens the argument. Check the Search Volume Reference Notion database first (nested under the Pipeline master doc). Only use a figure if it's verified — never invent one.
+Look up a pre-computed monthly estimate for this prospect's trade and town from D1:
 
-Verified Swindon figures (2026-05-13):
-Plumber: 170 / Electrician: 140 / Gas Engineer: 50 / Loft Conversion: 170 / Roofer: 65 / Painter & Decorator: 75 / Driveway Contractor: 50 / Landscaper: 35 / Plasterer: 40 / Carpenter: 40 / Bathroom Fitter: 30 / Kitchen Fitter: 20
+```sql
+SELECT monthly_estimate
+FROM area_trade_volume
+WHERE trade_category = '[trade_category]'
+  AND town = '[town]';
+```
 
-For non-Swindon towns, check the database first. If not available, use a different angle rather than inventing a figure.
+- database_id: `0ae32598-1680-4995-a010-96b647eacabd`
+
+**Threshold:** only use the figure if `monthly_estimate >= 80`. Below that (Kitchen Fitter, Bathroom Fitter, Gas Engineer, Tiler, Commercial Cleaner in smaller towns), skip the line — "around 30 a month" is not a convincing hook.
+
+**If no row returns** (town not in `location_catchment`, or trade not in `trade_search_volume`): skip the line silently and use a different argument instead.
+
+**When to use it:**
+- **Email 1, no-website prospects (Segments A, B, D):** works as the primary argument — demand exists locally and they're invisible to it.
+- **Email 2, has-website prospects:** works as a follow-up hook after Email 1 established the site gap.
+- Never force it in if a stronger personalised hook exists from `research_summary`.
+
+**Framing rules:**
+- Always prefix with "around" — never a bare number
+- One sentence only — the argument, not a paragraph
+- Frame as demand they're invisible to, not as a promise of leads
+
+**Example lines:**
+> "Around 510 people a month search for a plumber in Swindon — right now your business isn't what they find."
+
+> "There are around 200 searches a month for a roofer in Salisbury, and without a website none of them can find you."
+
+> "Around 360 people a month search for an electrician in Swindon — that's real demand going elsewhere."
+
+**These figures are conservative** — actual volume may be higher, particularly in towns with a large rural catchment. If challenged: *"If anything, the real number is likely higher — these are calculated from Google's national data and tend to understate for market towns."* Full methodology and challenge-response text: `docs/search-volume-methodology.md`.
 
 ---
 
