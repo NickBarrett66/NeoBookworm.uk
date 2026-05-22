@@ -690,7 +690,7 @@ module.exports = async (req, res) => {
     if (action === 'list') {
       if (!status) return res.status(400).json({ error: 'status parameter required' });
 
-      const inCampaign = status === 'In Campaign';
+      const withCampaignId = status === 'In Campaign' || status === 'Emailed';
       const disqualified = status === 'Disqualified';
       const salvageWebsite = status === 'Salvage - Website';
       const campaignIdExpr = `COALESCE(
@@ -721,7 +721,7 @@ module.exports = async (req, res) => {
       }
       if (emailed_filter === 'never')   { conditions.push('last_email_sent IS NULL');     }
       if (emailed_filter === 'emailed') { conditions.push('last_email_sent IS NOT NULL'); }
-      if (q_campaign.trim() && inCampaign) {
+      if (q_campaign.trim() && withCampaignId) {
         conditions.push(`(${campaignIdExpr}) LIKE ?`);
         filterParams.push(`%${q_campaign.trim()}%`);
       }
@@ -743,7 +743,7 @@ module.exports = async (req, res) => {
       const SORT_COLS_ALLOWED = new Set([
         'business_name', 'contact_name', 'trade_category', 'town',
         'has_website', 'rating', 'last_email_sent',
-        ...(inCampaign ? ['campaign_id'] : []),
+        ...(withCampaignId ? ['campaign_id'] : []),
         ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
         ...(salvageWebsite ? ['website_platform', 'website_agency', 'website_url'] : []),
       ]);
@@ -755,7 +755,7 @@ module.exports = async (req, res) => {
       }
       const orderBy = orderClauses.length ? orderClauses.join(', ') : 'business_name ASC';
 
-      const listSelect = inCampaign
+      const listSelect = withCampaignId
         ? `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
