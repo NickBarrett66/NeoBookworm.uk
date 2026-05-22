@@ -511,6 +511,8 @@
   .camp-badge.active   { color: #22c55e; border-color: #22c55e; }
   .camp-badge.paused   { color: #f5a623; border-color: #f5a623; }
   .camp-badge.complete { color: #3b82f6; border-color: #3b82f6; }
+  tbody tr.camp-row-complete { opacity: .78; }
+  tbody tr.camp-row-complete:hover { opacity: 1; }
 
   .camp-id-cell {
     font-family: 'Courier New', monospace;
@@ -824,6 +826,47 @@ const EMPTY_COL_FILTERS = () => ({
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
 });
 
+const EMPTY_CAMP_COL_FILTERS = () => ({
+  q_trade: '', q_status: '', q_campaign_id: '',
+  min_priority: '', max_priority: '', progress_filter: '',
+});
+
+const EMPTY_CAMP_DETAIL_PROSPECT_FILTERS = () => ({
+  q_business: '', q_contact: '', q_town: '', q_status: '', emailed_filter: '',
+});
+
+const EMPTY_OUTBOX_COL_FILTERS = () => ({
+  q_business: '', q_email: '', q_subject: '',
+  approval_filter: '', sent_filter: '',
+});
+
+const CAMPAIGN_COLS = [
+  { label: 'Trade',        col: 'trade'         },
+  { label: 'Status',       col: 'status'        },
+  { label: 'Progress',     col: 'count_sent'    },
+  { label: 'Priority',     col: 'priority'      },
+  { label: 'Replied',      col: 'count_replied' },
+  { label: 'Created',      col: 'created_at'    },
+  { label: 'Campaign ID',  col: 'id'            },
+];
+
+const CAMP_DETAIL_PROSPECT_COLS = [
+  { label: 'Business',     col: 'business_name'   },
+  { label: 'Contact',      col: 'email_address'   },
+  { label: 'Town',         col: 'town'            },
+  { label: 'Status',       col: 'status'          },
+  { label: 'Last emailed', col: 'last_email_sent' },
+  { label: 'Contacts',     col: 'contact_count'   },
+];
+
+const OUTBOX_COLS = [
+  { label: 'Business', col: 'business_name' },
+  { label: 'Email',    col: 'email'         },
+  { label: 'Subject',  col: 'subject'       },
+  { label: 'Approval', col: 'approved'      },
+  { label: 'Status',   col: 'sent'          },
+];
+
 /** Wait for a full word before column-filter API refresh (ms). */
 const FILTER_DEBOUNCE_MS = 700;
 
@@ -916,6 +959,208 @@ function prospectFilterCell(col, cf) {
   }
 }
 
+function campaignFilterCell(col, cf) {
+  switch (col) {
+    case 'trade':
+      return `<input type="search" class="col-filter" data-col="q_trade" placeholder="Filter…" value="${escAttr(cf.q_trade)}">`;
+    case 'status':
+      return `<select class="col-filter" data-col="q_status">
+        <option value="" ${cf.q_status === '' ? 'selected' : ''}>All</option>
+        <option value="draft" ${cf.q_status === 'draft' ? 'selected' : ''}>draft</option>
+        <option value="active" ${cf.q_status === 'active' ? 'selected' : ''}>active</option>
+        <option value="paused" ${cf.q_status === 'paused' ? 'selected' : ''}>paused</option>
+        <option value="complete" ${cf.q_status === 'complete' ? 'selected' : ''}>complete</option>
+      </select>`;
+    case 'count_sent':
+      return `<select class="col-filter" data-col="progress_filter">
+        <option value="" ${cf.progress_filter === '' ? 'selected' : ''}>All</option>
+        <option value="not_started" ${cf.progress_filter === 'not_started' ? 'selected' : ''}>Not started</option>
+        <option value="in_progress" ${cf.progress_filter === 'in_progress' ? 'selected' : ''}>In progress</option>
+        <option value="complete" ${cf.progress_filter === 'complete' ? 'selected' : ''}>All sent</option>
+      </select>`;
+    case 'priority':
+      return `<div class="rating-filter-wrap">
+        <input type="number" class="col-filter" data-col="min_priority" placeholder="Min" min="-10" max="10" step="1" value="${escAttr(cf.min_priority)}">
+        <input type="number" class="col-filter" data-col="max_priority" placeholder="Max" min="-10" max="10" step="1" value="${escAttr(cf.max_priority)}">
+      </div>`;
+    case 'count_replied':
+      return '';
+    case 'created_at':
+      return '';
+    case 'id':
+      return `<input type="search" class="col-filter" data-col="q_campaign_id" placeholder="Filter…" value="${escAttr(cf.q_campaign_id)}">`;
+    default:
+      return '';
+  }
+}
+
+function campDetailProspectFilterCell(col, cf) {
+  switch (col) {
+    case 'business_name':
+      return `<input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}">`;
+    case 'email_address':
+      return `<input type="search" class="col-filter" data-col="q_contact" placeholder="Filter…" value="${escAttr(cf.q_contact)}">`;
+    case 'town':
+      return `<input type="search" class="col-filter" data-col="q_town" placeholder="Filter…" value="${escAttr(cf.q_town)}">`;
+    case 'status':
+      return `<input type="search" class="col-filter" data-col="q_status" placeholder="Filter…" value="${escAttr(cf.q_status)}">`;
+    case 'last_email_sent':
+      return `<select class="col-filter" data-col="emailed_filter">
+        <option value="" ${cf.emailed_filter === '' ? 'selected' : ''}>Any</option>
+        <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
+        <option value="never" ${cf.emailed_filter === 'never' ? 'selected' : ''}>Never</option>
+      </select>`;
+    default:
+      return '';
+  }
+}
+
+function outboxFilterCell(col, cf) {
+  switch (col) {
+    case 'business_name':
+      return `<input type="search" class="col-filter" data-col="q_business" placeholder="Filter…" value="${escAttr(cf.q_business)}">`;
+    case 'email':
+      return `<input type="search" class="col-filter" data-col="q_email" placeholder="Filter…" value="${escAttr(cf.q_email)}">`;
+    case 'subject':
+      return `<input type="search" class="col-filter" data-col="q_subject" placeholder="Filter…" value="${escAttr(cf.q_subject)}">`;
+    case 'approved':
+      return `<select class="col-filter" data-col="approval_filter">
+        <option value="" ${cf.approval_filter === '' ? 'selected' : ''}>All</option>
+        <option value="approved" ${cf.approval_filter === 'approved' ? 'selected' : ''}>Approved</option>
+        <option value="pending" ${cf.approval_filter === 'pending' ? 'selected' : ''}>Awaiting approval</option>
+      </select>`;
+    case 'sent':
+      return `<select class="col-filter" data-col="sent_filter">
+        <option value="" ${cf.sent_filter === '' ? 'selected' : ''}>All</option>
+        <option value="sent" ${cf.sent_filter === 'sent' ? 'selected' : ''}>Sent</option>
+        <option value="unsent" ${cf.sent_filter === 'unsent' ? 'selected' : ''}>Unsent</option>
+        <option value="skipped" ${cf.sent_filter === 'skipped' ? 'selected' : ''}>Skipped</option>
+      </select>`;
+    default:
+      return '';
+  }
+}
+
+function buildSortHeaderCells(cols, sorts) {
+  return cols.map(({ label, col }) => {
+    const sortIdx = sorts.findIndex(s => s.col === col);
+    const sorted  = sortIdx !== -1;
+    const dir     = sorted ? sorts[sortIdx].dir : '';
+    const arrow   = dir === 'asc' ? '↑' : dir === 'desc' ? '↓' : '';
+    const badge   = sorted ? `<span class="sort-badge">${sortIdx + 1}</span>` : '';
+    const ind     = sorted ? `<span class="sort-indicator">${arrow}${badge}</span>` : '';
+    const cls     = `sortable-th${sorted ? ' is-sorted' : ''}`;
+    return `<th class="${cls}" data-sort-col="${col}">${escHtml(label)}${ind}</th>`;
+  }).join('');
+}
+
+function buildFilterActiveBar(cols, filters, sorts, clearFilterId, clearSortId) {
+  const hasFilter = Object.values(filters).some(v => v !== '');
+  const hasSorts  = sorts.length > 0;
+  const barParts  = [];
+  if (hasFilter) {
+    barParts.push(`Filters active <button class="btn-clear-filters" id="${clearFilterId}">Clear filters</button>`);
+  }
+  if (hasSorts) {
+    const sortDesc = sorts.map(s => `${cols.find(c => c.col === s.col)?.label ?? s.col} ${s.dir === 'asc' ? '↑' : '↓'}`).join(' → ');
+    barParts.push(`Sorted: ${escHtml(sortDesc)} <button class="btn-clear-sorts" id="${clearSortId}">Clear sorts</button>`);
+  }
+  return barParts.length
+    ? `<div class="filter-active-bar">${barParts.join('<span class="sep"> · </span>')}</div>`
+    : '';
+}
+
+function appendSortParams(params, sorts) {
+  sorts.forEach((s, i) => {
+    params[`sort${i + 1}_col`] = s.col;
+    params[`sort${i + 1}_dir`] = s.dir;
+  });
+}
+
+function appendCampaignListParams(params) {
+  const cf = state.campColFilters;
+  if (cf.q_trade)         params.q_trade         = cf.q_trade;
+  if (cf.q_status)        params.q_status        = cf.q_status;
+  if (cf.q_campaign_id)   params.q_campaign_id   = cf.q_campaign_id;
+  if (cf.min_priority)    params.min_priority    = cf.min_priority;
+  if (cf.max_priority)    params.max_priority    = cf.max_priority;
+  if (cf.progress_filter) params.progress_filter = cf.progress_filter;
+  appendSortParams(params, state.campColSorts);
+}
+
+function appendCampDetailProspectParams(params) {
+  const cf = state.campDetailProspectFilters;
+  if (cf.q_business)     params.q_business     = cf.q_business;
+  if (cf.q_contact)      params.q_contact      = cf.q_contact;
+  if (cf.q_town)         params.q_town         = cf.q_town;
+  if (cf.q_status)       params.q_status       = cf.q_status;
+  if (cf.emailed_filter) params.emailed_filter = cf.emailed_filter;
+  appendSortParams(params, state.campDetailProspectSorts);
+}
+
+function appendOutboxListParams(params) {
+  const cf = state.outboxColFilters;
+  if (cf.q_business)      params.q_business      = cf.q_business;
+  if (cf.q_email)         params.q_email         = cf.q_email;
+  if (cf.q_subject)       params.q_subject       = cf.q_subject;
+  if (cf.approval_filter) params.approval_filter = cf.approval_filter;
+  if (cf.sent_filter)     params.sent_filter     = cf.sent_filter;
+  appendSortParams(params, state.outboxColSorts);
+}
+
+function wireColFilterSort(main, {
+  cols, filters, sorts, focusKey, timerKey, onReload, filterCellFn,
+  clearFilterId, clearSortId,
+}) {
+  main.querySelectorAll('.sortable-th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col      = th.dataset.sortCol;
+      const existing = sorts.find(s => s.col === col);
+      if (existing) {
+        if (existing.dir === 'asc') existing.dir = 'desc';
+        else sorts.splice(sorts.findIndex(s => s.col === col), 1);
+      } else if (sorts.length < 3) {
+        sorts.push({ col, dir: 'asc' });
+      }
+      onReload({ soft: true });
+    });
+  });
+
+  main.querySelectorAll('.col-filter').forEach(input => {
+    input.addEventListener('focus', () => { state[focusKey] = input.dataset.col; });
+    const evt = input.tagName === 'SELECT' ? 'change' : 'input';
+    input.addEventListener(evt, () => {
+      filters[input.dataset.col] = input.value;
+      clearTimeout(state[timerKey]);
+      if (input.tagName === 'SELECT') {
+        onReload({ soft: true });
+        return;
+      }
+      state[timerKey] = setTimeout(() => onReload({ soft: true }), FILTER_DEBOUNCE_MS);
+    });
+  });
+
+  const focusCol = state[focusKey];
+  if (focusCol) {
+    requestAnimationFrame(() => {
+      const el = main.querySelector(`.col-filter[data-col="${focusCol}"]`);
+      if (!el || el.tagName === 'SELECT') return;
+      el.focus();
+      const n = el.value.length;
+      if (el.setSelectionRange) el.setSelectionRange(n, n);
+    });
+  }
+
+  document.getElementById(clearFilterId)?.addEventListener('click', () => {
+    Object.keys(filters).forEach(k => { filters[k] = ''; });
+    onReload();
+  });
+  document.getElementById(clearSortId)?.addEventListener('click', () => {
+    sorts.length = 0;
+    onReload();
+  });
+}
+
 function prospectDataCell(col, row) {
   switch (col) {
     case 'business_name':
@@ -983,6 +1228,18 @@ const state = {
   // campaigns
   campView:        'list',
   campCampaignId:  '',
+  campColFilters:     EMPTY_CAMP_COL_FILTERS(),
+  campColSorts:       [],
+  campFocusFilterCol: null,
+  campFilterTimer:    null,
+  campDetailProspectFilters: EMPTY_CAMP_DETAIL_PROSPECT_FILTERS(),
+  campDetailProspectSorts:   [],
+  campDetailProspectFocusCol: null,
+  campDetailProspectFilterTimer: null,
+  outboxColFilters: EMPTY_OUTBOX_COL_FILTERS(),
+  outboxColSorts:   [],
+  outboxFocusFilterCol: null,
+  outboxFilterTimer: null,
   outboxRows:      [],
   outboxCampaignId:'',
   outboxCollapsed: new Set(),
@@ -2361,41 +2618,64 @@ function wireContactEdit(r) {
 }
 
 // ── Campaigns: list view ──────────────────────────────────────────────────────
-async function loadCampaignsList() {
+async function loadCampaignsList({ soft = false } = {}) {
   state.campView = 'list';
   const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading campaigns…</div>';
+  const canSoft = soft && main.querySelector('#camp-tbody');
+  if (!canSoft) {
+    main.innerHTML = '<div class="state-msg">Loading campaigns…</div>';
+  } else {
+    main.querySelector('.table-wrap')?.classList.add('is-loading');
+  }
   setBreadcrumb([{ label: 'Campaigns' }]);
   document.getElementById('btn-back').style.display = 'none';
 
   try {
-    const { data } = await apiFetch({ action: 'campaigns_list' });
+    const params = { action: 'campaigns_list' };
+    appendCampaignListParams(params);
+    const { data } = await apiFetch(params);
     renderCampaignsList(data);
   } catch (err) {
     main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+  } finally {
+    main.querySelector('.table-wrap.is-loading')?.classList.remove('is-loading');
   }
 }
 
 function renderCampaignsList(rows) {
-  const main = document.getElementById('main-content');
-  const n = rows.length;
+  const main   = document.getElementById('main-content');
+  const n      = rows.length;
+  const cols   = CAMPAIGN_COLS;
+  const cf     = state.campColFilters;
+  const cs     = state.campColSorts;
+  const colN   = cols.length + 1;
+
   main.innerHTML = `
     <div class="list-header">
       <h2>Campaigns <span class="count-tag">${n} campaign${n !== 1 ? 's' : ''}</span></h2>
     </div>
+    ${buildFilterActiveBar(cols, cf, cs, 'btn-camp-clear-filters', 'btn-camp-clear-sorts')}
     <div class="table-wrap">
       <table>
-        <thead><tr>
-          <th>Trade</th><th>Status</th><th>Progress</th><th>Priority</th>
-          <th>Replied</th><th>Created</th><th>Campaign ID</th><th>Action</th>
-        </tr></thead>
+        <thead>
+          <tr>${buildSortHeaderCells(cols, cs)}<th>Action</th></tr>
+          <tr class="filter-row">${cols.map(({ col }) => `<th>${campaignFilterCell(col, cf)}</th>`).join('')}<th></th></tr>
+        </thead>
         <tbody id="camp-tbody"></tbody>
       </table>
     </div>
   `;
+
+  wireColFilterSort(main, {
+    cols, filters: cf, sorts: cs,
+    focusKey: 'campFocusFilterCol', timerKey: 'campFilterTimer',
+    onReload: loadCampaignsList, filterCellFn: campaignFilterCell,
+    clearFilterId: 'btn-camp-clear-filters', clearSortId: 'btn-camp-clear-sorts',
+  });
+
   const tbody = document.getElementById('camp-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="${colN}" class="muted" style="padding:2rem;text-align:center">No campaigns found</td></tr>`;
     return;
   }
   rows.forEach(row => {
@@ -2412,6 +2692,7 @@ function renderCampaignsList(rows) {
     const sentLine = `<div style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.3rem">${sent} / ${total} sent<span class="prog-wrap"><span class="prog-fill" style="width:${sentPct}%"></span></span></div>`;
     const priority = row.priority != null ? 'P' + row.priority : '—';
     const rowId = String(row.id);
+    if (status === 'complete') tr.classList.add('camp-row-complete');
 
     tr.innerHTML = `
       <td>${escHtml(row.trade || '—')}</td>
@@ -2478,9 +2759,11 @@ function renderCampaignsList(rows) {
 }
 
 function campActionBtnHtml(status) {
-  if (status === 'draft')  return `<button class="btn-camp-action activate" data-action="campaign_activate">Activate</button>`;
-  if (status === 'active') return `<button class="btn-camp-action pause"    data-action="campaign_pause">Pause</button>`;
-  if (status === 'paused') return `<button class="btn-camp-action resume"   data-action="campaign_resume">Resume</button>`;
+  const st = (status || 'draft').toLowerCase();
+  if (st === 'complete') return '';
+  if (st === 'draft')  return `<button class="btn-camp-action activate" data-action="campaign_activate">Activate</button>`;
+  if (st === 'active') return `<button class="btn-camp-action pause"    data-action="campaign_pause">Pause</button>`;
+  if (st === 'paused') return `<button class="btn-camp-action resume"   data-action="campaign_resume">Resume</button>`;
   return '';
 }
 
@@ -2512,28 +2795,55 @@ function wireCampActionBtn(cell, row, tr) {
 }
 
 // ── Campaigns: detail view ────────────────────────────────────────────────────
-async function loadCampaignDetail(id, rowHint) {
+async function loadCampaignDetail(id, rowHint, { soft = false, reloadOutboxOnly = false } = {}) {
   state.campView = 'detail';
   state.campCampaignId = id;
   const main = document.getElementById('main-content');
-  main.innerHTML = '<div class="state-msg">Loading campaign…</div>';
+  const canSoft = soft && (reloadOutboxOnly
+    ? document.getElementById('outbox-section')
+    : document.getElementById('camp-detail-tbody'));
+  if (!canSoft) {
+    main.innerHTML = '<div class="state-msg">Loading campaign…</div>';
+  } else {
+    (reloadOutboxOnly
+      ? document.getElementById('outbox-section')?.closest('.table-wrap')
+      : document.getElementById('camp-detail-tbody')?.closest('.table-wrap')
+    )?.classList.add('is-loading');
+  }
   const label = rowHint?.trade ? `${rowHint.trade} — ${String(id)}` : String(id);
   setBreadcrumb([
-    { label: 'Campaigns', action: loadCampaignsList },
+    { label: 'Campaigns', action: () => loadCampaignsList() },
     { label: label },
   ]);
   document.getElementById('btn-back').style.display = '';
 
   try {
-    const [{ campaign, prospects }, { data: outboxRows }] = await Promise.all([
-      apiFetch({ action: 'campaigns_detail', id }),
-      apiFetch({ action: 'outbox_list', campaign_id: id }),
-    ]);
+    const detailParams = { action: 'campaigns_detail', id };
+    if (!reloadOutboxOnly) appendCampDetailProspectParams(detailParams);
+    const outboxParams = { action: 'outbox_list', campaign_id: id };
+    appendOutboxListParams(outboxParams);
+
+    const fetches = reloadOutboxOnly
+      ? [apiFetch(outboxParams)]
+      : [apiFetch(detailParams), apiFetch(outboxParams)];
+
+    const results = await Promise.all(fetches);
+    const outboxRows = reloadOutboxOnly ? results[0].data : results[1].data;
     state.outboxRows       = outboxRows;
     state.outboxCampaignId = id;
-    renderCampaignDetail(campaign, prospects, outboxRows);
+
+    if (reloadOutboxOnly) {
+      renderOutboxSection(outboxRows, id);
+    } else {
+      const { campaign, prospects } = results[0];
+      renderCampaignDetail(campaign, prospects, outboxRows);
+    }
   } catch (err) {
-    main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+    if (!canSoft) {
+      main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+    }
+  } finally {
+    document.querySelectorAll('.table-wrap.is-loading').forEach(el => el.classList.remove('is-loading'));
   }
 }
 
@@ -2541,6 +2851,11 @@ function renderCampaignDetail(c, prospects, outboxRows) {
   const main      = document.getElementById('main-content');
   const sentTotal = `${c.count_sent ?? 0} / ${c.count_total ?? 0}`;
   const campSt    = (c.status || 'draft').toLowerCase();
+  const pCols     = CAMP_DETAIL_PROSPECT_COLS;
+  const pCf       = state.campDetailProspectFilters;
+  const pCs       = state.campDetailProspectSorts;
+  const pColN     = pCols.length;
+
   main.innerHTML = `
     <div class="list-header">
       <div>
@@ -2556,11 +2871,13 @@ function renderCampaignDetail(c, prospects, outboxRows) {
     <div class="section-label">Outbox</div>
     <div id="outbox-section"></div>
     <div class="section-label" style="margin-top:1.5rem">${prospects.length.toLocaleString()} prospect${prospects.length !== 1 ? 's' : ''} in this campaign</div>
-    <div class="table-wrap">
+    ${buildFilterActiveBar(pCols, pCf, pCs, 'btn-camp-pros-clear-filters', 'btn-camp-pros-clear-sorts')}
+    <div class="table-wrap" id="camp-prospects-table-wrap">
       <table>
-        <thead><tr>
-          <th>Business</th><th>Email</th><th>Town</th><th>Status</th><th>Last emailed</th><th>Contacts</th>
-        </tr></thead>
+        <thead>
+          <tr>${buildSortHeaderCells(pCols, pCs)}</tr>
+          <tr class="filter-row">${pCols.map(({ col }) => `<th>${campDetailProspectFilterCell(col, pCf)}</th>`).join('')}</tr>
+        </thead>
         <tbody id="camp-detail-tbody"></tbody>
       </table>
     </div>
@@ -2568,9 +2885,16 @@ function renderCampaignDetail(c, prospects, outboxRows) {
 
   renderOutboxSection(outboxRows, c.id);
 
+  wireColFilterSort(main, {
+    cols: pCols, filters: pCf, sorts: pCs,
+    focusKey: 'campDetailProspectFocusCol', timerKey: 'campDetailProspectFilterTimer',
+    onReload: ({ soft }) => loadCampaignDetail(c.id, c, { soft }),
+    clearFilterId: 'btn-camp-pros-clear-filters', clearSortId: 'btn-camp-pros-clear-sorts',
+  });
+
   const tbody = document.getElementById('camp-detail-tbody');
   if (!prospects.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:2rem;text-align:center">No prospects in this campaign</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="${pColN}" class="muted" style="padding:2rem;text-align:center">No prospects in this campaign</td></tr>`;
   } else {
     prospects.forEach(p => {
       const tr     = document.createElement('tr');
@@ -2578,7 +2902,7 @@ function renderCampaignDetail(c, prospects, outboxRows) {
       const colour = STATUS_COLOURS[p.status] || '#607090';
       tr.innerHTML = `
         <td>${escHtml(p.business_name || '—')}</td>
-        <td class="muted">${escHtml(p.email_address || '—')}</td>
+        <td class="muted">${escHtml(p.contact_name || p.email_address || '—')}</td>
         <td class="muted">${escHtml(p.town || '—')}</td>
         <td><span class="pill" style="color:${colour};border-color:${colour}">${escHtml(p.status || '—')}</span></td>
         <td class="muted">${escHtml(dt)}</td>
@@ -2656,9 +2980,21 @@ function getProspectGroupBadge(group) {
   return { text: '○ Pending', color: 'var(--muted)', border: 'var(--border)' };
 }
 
+function updateCampaignDetailBadgeIfComplete(rows) {
+  if (!rows.length) return;
+  const pending = rows.some(r => !r.sent && !r.skipped);
+  if (pending) return;
+  const badge = document.querySelector('#main-content .list-header .camp-badge');
+  if (badge) {
+    badge.className = 'camp-badge complete';
+    badge.textContent = 'complete';
+  }
+}
+
 function rerenderOutboxPreserveScroll(rows, campaignId) {
   const y = window.scrollY;
   renderOutboxSection(rows, campaignId);
+  updateCampaignDetailBadgeIfComplete(rows);
   requestAnimationFrame(() => window.scrollTo(0, y));
 }
 
@@ -2670,6 +3006,25 @@ function renderOutboxSection(rows, campaignId) {
   const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
   const groups = groupOutboxByProspect(rows);
   const isGrouped = groups.some(g => g.rows.length > 1);
+  const oCols   = OUTBOX_COLS;
+  const oCf     = state.outboxColFilters;
+  const oCs     = state.outboxColSorts;
+  const dataColSpan = isGrouped ? 6 : 7;
+  const outboxHeadCols = isGrouped
+    ? [
+        { label: 'Sequence', col: 'seq_num' },
+        { label: 'Subject', col: 'subject' },
+        { label: 'Scheduled', col: 'scheduled_not_before' },
+        { label: 'Approval', col: 'approved' },
+        { label: 'Status', col: 'sent' },
+      ]
+    : [
+        { label: 'Business name', col: 'business_name' },
+        { label: 'Email', col: 'email' },
+        { label: 'Approval', col: 'approved' },
+        { label: 'Status', col: 'sent' },
+        { label: 'Scheduled', col: 'scheduled_not_before' },
+      ];
 
   section.innerHTML = `
     <div class="outbox-summary-bar" id="outbox-summary-bar">
@@ -2682,21 +3037,43 @@ function renderOutboxSection(rows, campaignId) {
         <button class="btn-outbox-hdr approve-all" id="btn-approve-all" ${!hasPending ? 'disabled' : ''}>Approve All Emails</button>
       </div>
     </div>
-    <div class="table-wrap">
+    ${buildFilterActiveBar(oCols, oCf, oCs, 'btn-outbox-clear-filters', 'btn-outbox-clear-sorts')}
+    <div class="table-wrap" id="outbox-table-wrap">
       <table>
-        <thead><tr>
-          ${isGrouped
-            ? '<th>Sequence</th><th>Subject</th><th>Scheduled</th><th>Approval</th><th>Status</th><th>Actions</th>'
-            : '<th>#</th><th>Business name</th><th>Email</th><th>Approval</th><th>Status</th><th>Scheduled</th><th>Actions</th>'}
-        </tr></thead>
+        <thead>
+          <tr>${isGrouped ? '' : '<th>#</th>'}${buildSortHeaderCells(outboxHeadCols, oCs)}<th>Actions</th></tr>
+          <tr class="filter-row">
+            ${isGrouped
+              ? `<th></th>
+                 <th>${outboxFilterCell('business_name', oCf)}</th>
+                 <th>${outboxFilterCell('subject', oCf)}</th>
+                 <th>${outboxFilterCell('approved', oCf)}</th>
+                 <th>${outboxFilterCell('sent', oCf)}</th>
+                 <th></th>`
+              : `<th></th>
+                 <th>${outboxFilterCell('business_name', oCf)}</th>
+                 <th>${outboxFilterCell('email', oCf)}</th>
+                 <th>${outboxFilterCell('approved', oCf)}</th>
+                 <th>${outboxFilterCell('sent', oCf)}</th>
+                 <th>${outboxFilterCell('subject', oCf)}</th>
+                 <th></th>`}
+          </tr>
+        </thead>
         <tbody id="outbox-tbody"></tbody>
       </table>
     </div>
   `;
 
+  wireColFilterSort(section, {
+    cols: outboxHeadCols, filters: oCf, sorts: oCs,
+    focusKey: 'outboxFocusFilterCol', timerKey: 'outboxFilterTimer',
+    onReload: ({ soft }) => loadCampaignDetail(campaignId, null, { soft, reloadOutboxOnly: true }),
+    clearFilterId: 'btn-outbox-clear-filters', clearSortId: 'btn-outbox-clear-sorts',
+  });
+
   if (!rows.length) {
     document.getElementById('outbox-tbody').innerHTML =
-      `<tr><td colspan="${isGrouped ? 6 : 7}" class="muted" style="padding:1.5rem;text-align:center">No emails in outbox</td></tr>`;
+      `<tr><td colspan="${dataColSpan}" class="muted" style="padding:1.5rem;text-align:center">No emails in outbox</td></tr>`;
   } else {
     renderOutboxRows(rows, campaignId, groups, isGrouped);
   }

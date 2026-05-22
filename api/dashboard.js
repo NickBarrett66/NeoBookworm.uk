@@ -11,8 +11,9 @@
 // GET  /api/dashboard?action=submissions_record&source_type=enquiry|intake|contact&id=X
 // GET  /api/dashboard?action=enquiries_list&page=N&q=search&handled=0|1|all
 // GET  /api/dashboard?action=enquiries_record&id=X
-// GET  /api/dashboard?action=campaigns_list
-// GET  /api/dashboard?action=campaigns_detail&id=<campaign_id>
+// GET  /api/dashboard?action=campaigns_list&q_trade=&q_status=&q_campaign_id=&min_priority=&max_priority=&progress_filter=not_started|in_progress|complete&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
+// GET  /api/dashboard?action=campaigns_detail&id=<campaign_id>&q_business=&q_contact=&q_town=&q_status=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
+// GET  /api/dashboard?action=outbox_list&campaign_id=<id>&q_business=&q_email=&q_subject=&approval_filter=approved|pending&sent_filter=sent|unsent|skipped&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // POST /api/dashboard  body: { action:"update",            id, fields:{...} }
 // POST /api/dashboard  body: { action:"enquiries_update",  id, fields:{...} }
 // POST /api/dashboard  body: { action:"outreach_sent",     notion_id, campaign_id }
@@ -75,6 +76,59 @@ function parseBody(req) {
   if (!b) return {};
   if (typeof b === 'object' && !Buffer.isBuffer(b)) return b;
   try { return JSON.parse(Buffer.isBuffer(b) ? b.toString('utf8') : b); } catch { return null; }
+}
+
+/** Mark campaign complete when every outbox row is sent or skipped. */
+async function syncCampaignCompleteStatus(campaignId) {
+  const rows = await queryD1(prospectsDb(),
+    `SELECT
+       (SELECT COUNT(*) FROM outbox WHERE campaign_id = ?) AS total,
+       (SELECT COUNT(*) FROM outbox WHERE campaign_id = ? AND sent = 0 AND skipped = 0) AS pending`,
+    [campaignId, campaignId]
+  );
+  const { total, pending } = rows[0] || {};
+  if (total > 0 && pending === 0) {
+    await queryD1(prospectsDb(),
+      `UPDATE campaigns SET status = 'complete' WHERE id = ? AND status != 'complete'`,
+      [campaignId]
+    );
+    return true;
+  }
+  return false;
+}
+
+async function syncAllCompleteCampaigns() {
+  await queryD1(prospectsDb(),
+    `UPDATE campaigns SET status = 'complete'
+     WHERE status IN ('draft', 'active', 'paused')
+       AND id IN (
+         SELECT campaign_id FROM outbox
+         GROUP BY campaign_id
+         HAVING COUNT(*) > 0
+            AND SUM(CASE WHEN sent = 0 AND skipped = 0 THEN 1 ELSE 0 END) = 0
+       )`
+  );
+}
+
+function buildSortOrder(sortPairs, allowedCols, colExpr, { pinCompleteLast = false, completeExpr = null } = {}) {
+  const orderClauses = [];
+  for (const [col, dir] of sortPairs) {
+    if (!col || !allowedCols.has(col)) continue;
+    const d = dir === 'desc' ? 'DESC' : 'ASC';
+    orderClauses.push(`${colExpr(col)} ${d}`);
+  }
+  if (pinCompleteLast && completeExpr) {
+    orderClauses.push(`${completeExpr} ASC`);
+  }
+  return orderClauses.length ? orderClauses.join(', ') : null;
+}
+
+function parseSortParams(query, prefix = 'sort') {
+  return [
+    [query[`${prefix}1_col`], query[`${prefix}1_dir`]],
+    [query[`${prefix}2_col`], query[`${prefix}2_dir`]],
+    [query[`${prefix}3_col`], query[`${prefix}3_dir`]],
+  ];
 }
 
 const SUBMISSIONS_SOURCE_TYPES = new Set(['enquiry', 'intake', 'contact']);
@@ -186,6 +240,7 @@ module.exports = async (req, res) => {
             [campaign_id]
           ),
         ]);
+        await syncCampaignCompleteStatus(campaign_id);
         return res.status(200).json({ ok: true, notion_id, campaign_id });
       } catch (err) {
         console.error('[dashboard outreach_sent]', err.message);
@@ -362,6 +417,8 @@ module.exports = async (req, res) => {
              WHERE id = (SELECT campaign_id FROM outbox WHERE id = ?)`,
             [id]),
         ]);
+        const cid = outboxRows[0].campaign_id;
+        if (cid) await syncCampaignCompleteStatus(cid);
         return res.status(200).json({ ok: true });
       } catch (err) {
         console.error('[dashboard outbox_confirm]', err.message);
@@ -403,9 +460,13 @@ module.exports = async (req, res) => {
     if (action === 'outbox_skip') {
       if (!id) return res.status(400).json({ ok: false, error: 'id required' });
       try {
+        const skipRows = await queryD1(prospectsDb(),
+          `SELECT campaign_id FROM outbox WHERE id = ?`, [id]);
         await queryD1(prospectsDb(),
           `UPDATE outbox SET skipped = 1, skip_reason = ? WHERE id = ?`,
           [body.reason || null, id]);
+        const cid = skipRows[0]?.campaign_id;
+        if (cid) await syncCampaignCompleteStatus(cid);
         return res.status(200).json({ ok: true });
       } catch (err) {
         console.error('[dashboard outbox_skip]', err.message);
@@ -917,11 +978,77 @@ module.exports = async (req, res) => {
 
     // ── Campaigns list ────────────────────────────────────────────────────────
     if (action === 'campaigns_list') {
+      const {
+        q_trade = '', q_status = '', q_campaign_id = '',
+        min_priority = '', max_priority = '', progress_filter = '',
+      } = req.query;
+
+      await syncAllCompleteCampaigns();
+
+      const conditions = [];
+      const filterParams = [];
+      if (q_trade.trim()) {
+        conditions.push('c.trade LIKE ?');
+        filterParams.push(`%${q_trade.trim()}%`);
+      }
+      if (q_status.trim()) {
+        conditions.push('c.status = ?');
+        filterParams.push(q_status.trim().toLowerCase());
+      }
+      if (q_campaign_id.trim()) {
+        conditions.push('c.id LIKE ?');
+        filterParams.push(`%${q_campaign_id.trim()}%`);
+      }
+      if (min_priority !== '' && !isNaN(Number(min_priority))) {
+        conditions.push('c.priority >= ?');
+        filterParams.push(Number(min_priority));
+      }
+      if (max_priority !== '' && !isNaN(Number(max_priority))) {
+        conditions.push('c.priority <= ?');
+        filterParams.push(Number(max_priority));
+      }
+      if (progress_filter === 'complete') {
+        conditions.push(`(
+          SELECT COUNT(*) FROM outbox o WHERE o.campaign_id = c.id
+        ) > 0 AND (
+          SELECT COUNT(*) FROM outbox o WHERE o.campaign_id = c.id AND o.sent = 0 AND o.skipped = 0
+        ) = 0`);
+      } else if (progress_filter === 'in_progress') {
+        conditions.push(`COALESCE(c.count_sent, 0) > 0 AND c.status != 'complete'`);
+      } else if (progress_filter === 'not_started') {
+        conditions.push(`COALESCE(c.count_sent, 0) = 0`);
+      }
+
+      const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+      const CAMP_SORT_COLS = new Set([
+        'trade', 'status', 'priority', 'count_replied', 'created_at',
+        'count_sent', 'count_total', 'count_approved', 'id',
+      ]);
+      const campColExpr = (col) => {
+        if (col === 'count_approved') {
+          return `(SELECT COUNT(*) FROM outbox o WHERE o.campaign_id = c.id AND o.approved = 1)`;
+        }
+        if (col === 'id') return 'c.id';
+        return `c.${col}`;
+      };
+      const sortOrder = buildSortOrder(
+        parseSortParams(req.query),
+        CAMP_SORT_COLS,
+        campColExpr,
+        { pinCompleteLast: true, completeExpr: `CASE WHEN c.status = 'complete' THEN 1 ELSE 0 END` }
+      );
+      const orderBy = sortOrder
+        || `CASE WHEN c.status = 'complete' THEN 1 ELSE 0 END ASC, c.priority DESC, c.created_at DESC`;
+
       const rows = await queryD1(prospectsDb(),
-        `SELECT id, trade, landing_page, created_at, scheduled_at, count_total,
-                count_sent, count_replied, status, notes
-         FROM campaigns
-         ORDER BY created_at DESC`
+        `SELECT c.id, c.trade, c.landing_page, c.created_at, c.scheduled_at, c.count_total,
+                c.count_sent, c.count_replied, c.status, c.notes, c.priority,
+                (SELECT COUNT(*) FROM outbox o WHERE o.campaign_id = c.id AND o.approved = 1) AS count_approved
+         FROM campaigns c
+         ${where}
+         ORDER BY ${orderBy}`,
+        filterParams
       );
       return res.status(200).json({ ok: true, data: rows });
     }
@@ -930,15 +1057,57 @@ module.exports = async (req, res) => {
     if (action === 'campaigns_detail') {
       const { id } = req.query;
       if (!id) return res.status(400).json({ error: 'id parameter required' });
+
+      const {
+        q_business = '', q_contact = '', q_town = '', q_status = '',
+        emailed_filter = '',
+      } = req.query;
+
+      await syncCampaignCompleteStatus(id);
+
+      const prospectConditions = ['email_campaign_id = ?'];
+      const prospectParams = [id];
+      if (q_business.trim()) {
+        prospectConditions.push('business_name LIKE ?');
+        prospectParams.push(`%${q_business.trim()}%`);
+      }
+      if (q_contact.trim()) {
+        prospectConditions.push('(contact_name LIKE ? OR email_address LIKE ?)');
+        const pct = `%${q_contact.trim()}%`;
+        prospectParams.push(pct, pct);
+      }
+      if (q_town.trim()) {
+        prospectConditions.push('town LIKE ?');
+        prospectParams.push(`%${q_town.trim()}%`);
+      }
+      if (q_status.trim()) {
+        prospectConditions.push('status = ?');
+        prospectParams.push(q_status.trim());
+      }
+      if (emailed_filter === 'never')   { prospectConditions.push('last_email_sent IS NULL'); }
+      if (emailed_filter === 'emailed') { prospectConditions.push('last_email_sent IS NOT NULL'); }
+
+      const prospectWhere = `WHERE ${prospectConditions.join(' AND ')}`;
+
+      const CAMP_PROSPECT_SORT_COLS = new Set([
+        'business_name', 'email_address', 'town', 'status', 'last_email_sent', 'contact_count',
+      ]);
+      const prospectSortOrder = buildSortOrder(
+        parseSortParams(req.query),
+        CAMP_PROSPECT_SORT_COLS,
+        (col) => col === 'email_address' ? 'email_address' : col
+      );
+      const prospectOrderBy = prospectSortOrder || 'last_email_sent DESC NULLS LAST, business_name ASC';
+
       const [campaignRows, prospectRows, outboxSummary] = await Promise.all([
         queryD1(prospectsDb(), `SELECT * FROM campaigns WHERE id = ?`, [id]),
         queryD1(prospectsDb(),
-          `SELECT notion_id, business_name, email_address, town, status,
+          `SELECT notion_id, business_name, contact_name, email_address, town, status,
                   last_email_sent, contact_count
            FROM prospects
-           WHERE email_campaign_id = ?
-           ORDER BY last_email_sent DESC NULLS LAST, business_name`,
-          [id]
+           ${prospectWhere}
+           ORDER BY ${prospectOrderBy}`,
+          prospectParams
         ),
         queryD1(prospectsDb(),
           `SELECT o.notion_id, o.business_name, o.email,
@@ -959,8 +1128,52 @@ module.exports = async (req, res) => {
 
     // ── Outbox list ───────────────────────────────────────────────────────────
     if (action === 'outbox_list') {
-      const { campaign_id: cid } = req.query;
+      const {
+        campaign_id: cid,
+        q_business = '', q_email = '', q_subject = '',
+        approval_filter = '', sent_filter = '',
+      } = req.query;
       if (!cid) return res.status(400).json({ error: 'campaign_id parameter required' });
+
+      const conditions = ['campaign_id = ?'];
+      const filterParams = [cid];
+      if (q_business.trim()) {
+        conditions.push('business_name LIKE ?');
+        filterParams.push(`%${q_business.trim()}%`);
+      }
+      if (q_email.trim()) {
+        conditions.push('email LIKE ?');
+        filterParams.push(`%${q_email.trim()}%`);
+      }
+      if (q_subject.trim()) {
+        conditions.push('subject LIKE ?');
+        filterParams.push(`%${q_subject.trim()}%`);
+      }
+      if (approval_filter === 'approved') {
+        conditions.push('approved = 1');
+      } else if (approval_filter === 'pending') {
+        conditions.push('approved = 0 AND sent = 0 AND skipped = 0');
+      }
+      if (sent_filter === 'sent') {
+        conditions.push('sent = 1');
+      } else if (sent_filter === 'unsent') {
+        conditions.push('sent = 0 AND skipped = 0');
+      } else if (sent_filter === 'skipped') {
+        conditions.push('skipped = 1');
+      }
+
+      const where = `WHERE ${conditions.join(' AND ')}`;
+
+      const OUTBOX_SORT_COLS = new Set([
+        'business_name', 'email', 'subject', 'seq_num', 'scheduled_not_before', 'approved', 'sent',
+      ]);
+      const outboxSortOrder = buildSortOrder(
+        parseSortParams(req.query),
+        OUTBOX_SORT_COLS,
+        (col) => col
+      );
+      const orderBy = outboxSortOrder || 'notion_id ASC, seq_num ASC';
+
       const rows = await queryD1(prospectsDb(),
         `SELECT id, notion_id, business_name, email, subject,
                 substr(body, 1, 120) AS body_preview,
@@ -970,9 +1183,10 @@ module.exports = async (req, res) => {
                 send_error, send_attempts,
                 seq_num, suppressed
          FROM outbox
-         WHERE campaign_id = ?
-         ORDER BY notion_id ASC, seq_num ASC`,
-        [cid]);
+         ${where}
+         ORDER BY ${orderBy}`,
+        filterParams
+      );
       return res.status(200).json({ ok: true, data: rows });
     }
 
