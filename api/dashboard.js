@@ -753,7 +753,11 @@ module.exports = async (req, res) => {
         const d = dir === 'desc' ? 'DESC' : 'ASC';
         orderClauses.push(`${sortExpr(col)} ${d}`);
       }
-      const orderBy = orderClauses.length ? orderClauses.join(', ') : 'business_name ASC';
+      const orderBy = orderClauses.length
+        ? orderClauses.join(', ')
+        : (status === 'Emailed'
+          ? 'last_email_sent DESC NULLS LAST, business_name ASC'
+          : 'business_name ASC');
 
       const listSelect = withCampaignId
         ? `SELECT notion_id, business_name, contact_name, trade_category, town,

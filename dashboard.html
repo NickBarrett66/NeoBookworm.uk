@@ -918,6 +918,12 @@ function getProspectCols(status) {
   return PROSPECT_COLS;
 }
 
+/** Default column sorts when opening a status list (cleared when switching status). */
+function defaultProspectSorts(status) {
+  if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
+  return [];
+}
+
 function prospectFilterCell(col, cf) {
   switch (col) {
     case 'business_name':
@@ -1506,7 +1512,11 @@ function renderCards(containerId, rows) {
     card.className = 'card';
     card.style.setProperty('--card-color', colour);
     card.innerHTML = `<div class="card-count">${count.toLocaleString()}</div><div class="card-label">${escHtml(status)}</div>`;
-    card.addEventListener('click', () => { state.colFilters = EMPTY_COL_FILTERS(); state.colSorts = []; loadList(status); });
+    card.addEventListener('click', () => {
+      state.colFilters = EMPTY_COL_FILTERS();
+      state.colSorts   = defaultProspectSorts(status);
+      loadList(status);
+    });
     container.appendChild(card);
   });
 }
@@ -1698,7 +1708,7 @@ function renderList({ data: rows, total, page, pageSize }) {
   const clearSortsBtn = document.getElementById('btn-clear-sorts');
   if (clearSortsBtn) {
     clearSortsBtn.addEventListener('click', () => {
-      state.colSorts = [];
+      state.colSorts = defaultProspectSorts(status);
       loadList(status, 1);
     });
   }
