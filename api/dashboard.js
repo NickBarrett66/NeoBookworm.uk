@@ -118,7 +118,7 @@ function buildSortOrder(sortPairs, allowedCols, colExpr, { pinCompleteLast = fal
     orderClauses.push(`${colExpr(col)} ${d}`);
   }
   if (pinCompleteLast && completeExpr) {
-    orderClauses.push(`${completeExpr} ASC`);
+    orderClauses.unshift(`${completeExpr} ASC`);
   }
   return orderClauses.length ? orderClauses.join(', ') : null;
 }

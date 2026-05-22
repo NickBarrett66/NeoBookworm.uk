@@ -1095,6 +1095,11 @@ function appendSortParams(params, sorts) {
   });
 }
 
+/** Default sorts when opening the Campaigns list (non-complete first, then priority). */
+function defaultCampSorts() {
+  return [{ col: 'priority', dir: 'desc' }];
+}
+
 function appendCampaignListParams(params) {
   const cf = state.campColFilters;
   if (cf.q_trade)         params.q_trade         = cf.q_trade;
@@ -1127,8 +1132,8 @@ function appendOutboxListParams(params) {
 }
 
 function wireColFilterSort(main, {
-  cols, filters, sorts, focusKey, timerKey, onReload, filterCellFn,
-  clearFilterId, clearSortId,
+  cols, filters, sorts, focusKey, timerKey, onReload,
+  clearFilterId, clearSortId, getDefaultSorts = null,
 }) {
   main.querySelectorAll('.sortable-th').forEach(th => {
     th.addEventListener('click', () => {
@@ -1175,6 +1180,7 @@ function wireColFilterSort(main, {
   });
   document.getElementById(clearSortId)?.addEventListener('click', () => {
     sorts.length = 0;
+    if (getDefaultSorts) getDefaultSorts().forEach(s => sorts.push(s));
     onReload();
   });
 }
@@ -1475,6 +1481,8 @@ function goToTabRoot(tab) {
     loadSubmissionsList();
   } else if (tab === 'campaigns') {
     state.campView = 'list';
+    state.campColFilters = EMPTY_CAMP_COL_FILTERS();
+    state.campColSorts   = defaultCampSorts();
     loadCampaignsList();
   }
 }
@@ -2695,8 +2703,9 @@ function renderCampaignsList(rows) {
   wireColFilterSort(main, {
     cols, filters: cf, sorts: cs,
     focusKey: 'campFocusFilterCol', timerKey: 'campFilterTimer',
-    onReload: loadCampaignsList, filterCellFn: campaignFilterCell,
+    onReload: loadCampaignsList,
     clearFilterId: 'btn-camp-clear-filters', clearSortId: 'btn-camp-clear-sorts',
+    getDefaultSorts: defaultCampSorts,
   });
 
   const tbody = document.getElementById('camp-tbody');
