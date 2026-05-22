@@ -887,8 +887,18 @@ const PROSPECT_COLS_IN_CAMPAIGN = [
   { label: 'Trade',        col: 'trade_category'      },
   { label: 'Town',         col: 'town'                },
   { label: 'Website',      col: 'has_website'         },
-  { label: 'Campaign Id',  col: 'campaign_id'   },
-  { label: 'Last emailed', col: 'last_email_sent'     },
+  { label: 'Campaign Id',  col: 'campaign_id'         },
+  { label: 'Pri',          col: 'campaign_priority'   },
+];
+
+const PROSPECT_COLS_EMAILED = [
+  { label: 'Business',     col: 'business_name'   },
+  { label: 'Contact',      col: 'contact_name'    },
+  { label: 'Trade',        col: 'trade_category'  },
+  { label: 'Town',         col: 'town'            },
+  { label: 'Website',      col: 'has_website'     },
+  { label: 'Campaign Id',  col: 'campaign_id'     },
+  { label: 'Last emailed', col: 'last_email_sent' },
 ];
 
 const PROSPECT_COLS_SALVAGE_WEBSITE = [
@@ -912,7 +922,8 @@ const PROSPECT_COLS_DISQUALIFIED = [
 ];
 
 function getProspectCols(status) {
-  if (status === 'In Campaign' || status === 'Emailed') return PROSPECT_COLS_IN_CAMPAIGN;
+  if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
+  if (status === 'Emailed') return PROSPECT_COLS_EMAILED;
   if (status === 'Salvage - Website') return PROSPECT_COLS_SALVAGE_WEBSITE;
   if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
   return PROSPECT_COLS;
@@ -920,6 +931,7 @@ function getProspectCols(status) {
 
 /** Default column sorts when opening a status list (cleared when switching status). */
 function defaultProspectSorts(status) {
+  if (status === 'In Campaign') return [{ col: 'campaign_priority', dir: 'desc' }];
   if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
   return [];
 }
@@ -1187,6 +1199,10 @@ function prospectDataCell(col, row) {
       const short = id.length > 35 ? id.slice(0, 35) + '…' : id;
       return `<span class="camp-id-cell" data-id="${escAttr(id)}" title="${escAttr(id)}">${escHtml(short)}</span>`;
     }
+    case 'campaign_priority':
+      return row.campaign_priority != null
+        ? `<span style="font-weight:700">${escHtml(String(row.campaign_priority))}</span>`
+        : '<span class="muted">—</span>';
     case 'last_email_sent':
       return `<span class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</span>`;
     case 'website_platform':
@@ -1638,7 +1654,7 @@ function renderList({ data: rows, total, page, pageSize }) {
       const tr = document.createElement('tr');
       tr.innerHTML = cols.map(({ col }) => {
         const inner = prospectDataCell(col, row);
-        if (col === 'business_name' || col === 'has_website' || col === 'campaign_id') {
+        if (col === 'business_name' || col === 'has_website' || col === 'campaign_id' || col === 'campaign_priority') {
           return `<td>${inner}</td>`;
         }
         return `<td class="muted">${inner}</td>`;

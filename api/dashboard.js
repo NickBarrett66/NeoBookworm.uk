@@ -690,7 +690,8 @@ module.exports = async (req, res) => {
     if (action === 'list') {
       if (!status) return res.status(400).json({ error: 'status parameter required' });
 
-      const withCampaignId = status === 'In Campaign' || status === 'Emailed';
+      const inCampaign = status === 'In Campaign';
+      const withCampaignId = inCampaign || status === 'Emailed';
       const disqualified = status === 'Disqualified';
       const salvageWebsite = status === 'Salvage - Website';
       const campaignIdExpr = `COALESCE(
@@ -701,6 +702,7 @@ module.exports = async (req, res) => {
          ORDER BY o.created_at ASC, o.campaign_id ASC
          LIMIT 1)
       )`;
+      const campaignPriorityExpr = `(SELECT c.priority FROM campaigns c WHERE c.id = (${campaignIdExpr}))`;
 
       const conditions = ['status = ?'];
       const filterParams = [status];
@@ -737,6 +739,7 @@ module.exports = async (req, res) => {
       const sortExpr = (col) => {
         if (col === 'rating') return 'CAST(rating AS REAL)';
         if (col === 'campaign_id') return campaignIdExpr;
+        if (col === 'campaign_priority') return campaignPriorityExpr;
         return col;
       };
 
@@ -744,6 +747,7 @@ module.exports = async (req, res) => {
         'business_name', 'contact_name', 'trade_category', 'town',
         'has_website', 'rating', 'last_email_sent',
         ...(withCampaignId ? ['campaign_id'] : []),
+        ...(inCampaign ? ['campaign_priority'] : []),
         ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
         ...(salvageWebsite ? ['website_platform', 'website_agency', 'website_url'] : []),
       ]);
@@ -757,9 +761,17 @@ module.exports = async (req, res) => {
         ? orderClauses.join(', ')
         : (status === 'Emailed'
           ? 'last_email_sent DESC NULLS LAST, business_name ASC'
+          : inCampaign
+          ? `${campaignPriorityExpr} DESC NULLS LAST, business_name ASC`
           : 'business_name ASC');
 
-      const listSelect = withCampaignId
+      const listSelect = inCampaign
+        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
+                  email_address, has_website, rating, postcard_score,
+                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+                  ${campaignIdExpr} AS campaign_id,
+                  ${campaignPriorityExpr} AS campaign_priority`
+        : withCampaignId
         ? `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
