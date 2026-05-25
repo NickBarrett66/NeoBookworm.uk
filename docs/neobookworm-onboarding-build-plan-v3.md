@@ -361,7 +361,7 @@ The "Depends on" line is the real DAG. In practice: S2 and S4 both depend only o
 
 ### Manual prerequisites
 
-- [ ] `wrangler` authenticated; confirm `neobookworm-enquiries` has a `d1_migrations` table (it does — use the wrangler migrations workflow).
+- [x] `wrangler` authenticated; confirm `neobookworm-enquiries` has a `d1_migrations` table (it does — use the wrangler migrations workflow).
 
 ### Decisions to confirm
 
@@ -443,7 +443,7 @@ Plus:
 
 ### Definition of done
 
-- [ ] `wrangler d1 migrations apply neobookworm-enquiries` applies cleanly; `clients`, `email_log`, `feedback` exist with the constraints above.
+- [x] `wrangler d1 migrations apply neobookworm-enquiries` applies cleanly; `clients`, `email_log`, `feedback` exist with the constraints above.
 - [ ] `generateSlug('Hart Plumbing','Tom', q)` → e.g. `hart-plumbing-3f9k2`; empty business → name fallback; both empty → `client-…`.
 - [ ] `promoteToClient` creates exactly one row from a real `landing_enquiries` id, no-op on a second call.
 - [ ] A `<script>` business name stores raw/safe (escaping is the portal's job — confirm storage doesn't execute anything).
