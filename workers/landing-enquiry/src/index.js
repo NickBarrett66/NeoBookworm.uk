@@ -1,14 +1,16 @@
 /**
  * Cloudflare Worker: landing-enquiry
  *
- * Phase 2 — validates the payload, inserts a row into D1, returns { ok: true, id }
- * immediately, then runs Notion + email sync in the background via ctx.waitUntil().
+ * Validates the payload, inserts a row into D1, returns { ok: true, id }
+ * immediately, then runs the email notification in the background via
+ * ctx.waitUntil(). Notion is retired (Session 0): the Worker no longer
+ * writes to Notion. The `landing_enquiries.notion_*` columns remain in the
+ * schema as vestigial history; new rows leave them NULL.
  *
  * Bindings required:
- *   DB             — D1 database (neobookworm-enquiries)
+ *   DB            — D1 database (neobookworm-enquiries)
  * Secrets (set via `wrangler secret put`):
- *   NOTION_API_KEY — Notion internal integration secret
- *   NOTIFY_SECRET  — shared secret for /api/notify-landing-enquiry on Vercel
+ *   NOTIFY_SECRET — shared secret for /api/notify-landing-enquiry on Vercel
  */
 
 import { corsHeaders, handleOptions, isAllowedOrigin } from './cors.js';
@@ -19,7 +21,7 @@ import { handleScheduled } from './scheduled.js';
 export default {
   /**
    * @param {Request} request
-   * @param {{ DB: D1Database, NOTION_API_KEY?: string, NOTIFY_SECRET?: string }} env
+   * @param {{ DB: D1Database, NOTIFY_SECRET?: string }} env
    * @param {ExecutionContext} ctx
    */
   async fetch(request, env, ctx) {
@@ -86,7 +88,7 @@ export default {
 
     console.log(`[landing-enquiry] D1 saved: ${id}`);
 
-    // ── Background sync (Notion + email) — must not delay the HTTP response ──
+    // ── Background sync (email only) — must not delay the HTTP response ──
     ctx.waitUntil(syncEnquiry(env, id));
 
     return jsonResponse(200, { ok: true, id }, origin);

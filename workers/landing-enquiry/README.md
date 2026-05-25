@@ -1,12 +1,19 @@
-# landing-enquiry Worker (Phase 3)
+# landing-enquiry Worker
 
-Cloudflare Worker that receives landing page enquiries from `plumbers.html` and
-`plumbers-switch.html`, validates them, saves them to D1, and then — in the
-background — creates a Notion row and sends a notification email via Vercel.
+Cloudflare Worker that receives landing page enquiries from `plumbers.html`,
+`plumbers-switch.html`, and the electrician landing pages, validates them,
+saves them to D1, and then — in the background — sends a notification email
+to Nick via the Vercel `/api/notify-landing-enquiry` endpoint.
 
-**Phase 3 scope:** retry cron (`*/15 * * * *`) + daily failed-sync digest (`0 8 * * *`).  
-The existing Vercel `/api/landing-enquiry` is **unchanged** and still handles live traffic.  
-Switch-over happens in Phase 4.
+**Notion is retired (Session 0, 25 May 2026).** D1 is the single source of
+truth. The Worker no longer writes to the Notion Client Sites database. The
+`landing_enquiries.notion_id` / `notion_status` / `notion_error` /
+`notion_attempts` / `notion_page_id` / `notion_synced_at` columns remain in
+the schema as vestigial history; new rows leave them NULL. They will be
+dropped in a later housekeeping migration, not now.
+
+Scheduled jobs: retry cron (`*/15 * * * *`) for the email leg + daily
+failed-sync digest (`0 8 * * *`).
 
 ---
 
@@ -23,7 +30,8 @@ Switch-over happens in Phase 4.
 | **Current version ID** | Phase 4 deployed — see Cloudflare dashboard for current version ID |
 | **Migration applied** | `0001_landing_enquiries.sql` ✅ |
 | **Phase 4 deployed** | 14 May 2026 — `plumbers.html` + `plumbers-switch.html` live on Worker ✅ |
-| **Secrets set** | `NOTION_API_KEY` ✅, `NOTIFY_SECRET` ✅ |
+| **Notion retired** | 25 May 2026 — Session 0. `NOTION_API_KEY` secret may be removed from the Worker; it is no longer read by any code path. |
+| **Secrets set** | `NOTIFY_SECRET` ✅ |
 | **Vercel notify endpoint** | `api/notify-landing-enquiry.js` deployed ✅ |
 | **Vercel landing-enquiry** | Deprecated — returns `410 Gone` as of Phase 4 cutover |
 
@@ -207,14 +215,16 @@ npx wrangler d1 execute neobookworm-enquiries --remote \
 ### Worker secrets (set via `wrangler secret put` from `workers/landing-enquiry/`)
 
 ```bash
-wrangler secret put NOTION_API_KEY   # Notion internal integration secret
 wrangler secret put NOTIFY_SECRET    # shared secret — must match Vercel NOTIFY_SECRET
 ```
 
 | Secret | Purpose |
 |---|---|
-| `NOTION_API_KEY` | Creates row in Client Sites Notion database. If not set, `notion_status` is set to `skipped` and a warning is logged. |
 | `NOTIFY_SECRET` | Authenticates POST to `/api/notify-landing-enquiry` on Vercel. If not set, `email_status` is set to `skipped`. |
+
+`NOTION_API_KEY` was previously used to write rows to Notion. Notion is retired
+(Session 0, 25 May 2026) — the Worker no longer reads this secret. It can be
+removed with `wrangler secret delete NOTION_API_KEY` at your convenience.
 
 SMTP credentials stay on Vercel — Workers cannot open TCP connections to ports 587/465.
 
@@ -229,18 +239,17 @@ Existing `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `TO_EMAIL` are unch
 
 ---
 
-## Background sync behaviour (Phase 2)
+## Background sync behaviour
 
 After D1 insert succeeds, `ctx.waitUntil(syncEnquiry(env, id))` runs in the background:
 
-1. **Load row** — `SELECT * FROM landing_enquiries WHERE id = ?`; parse `payload_json` for field data
-2. **Notion** — create Client Sites row; on success set `notion_status='ok'`, `notion_page_id=<id>`; on failure set `notion_status='failed'`, `notion_error=<message>`. Always increment `notion_attempts`.
-3. **Email** — POST to `https://neobookworm.uk/api/notify-landing-enquiry` with `X-Notify-Secret`; on success set `email_status='ok'`; on failure set `email_status='failed'`, `email_error=<message>`. Always increment `email_attempts`.
-4. **Secrets not set** — `NOTION_API_KEY` missing → `notion_status='skipped'`; `NOTIFY_SECRET` missing → `email_status='skipped'`.
+1. **Load row** — `SELECT * FROM landing_enquiries WHERE id = ?`; parse `payload_json` for field data.
+2. **Email** — POST to `https://neobookworm.uk/api/notify-landing-enquiry` with `X-Notify-Secret`; on success set `email_status='ok'`; on failure set `email_status='failed'`, `email_error=<message>`. Always increment `email_attempts`.
+3. **Secret not set** — `NOTIFY_SECRET` missing → `email_status='skipped'`.
 
-The HTTP response (`200 { ok: true, id }`) is always returned before background tasks finish. Notion/email failures **never** affect the HTTP response.
+The HTTP response (`200 { ok: true, id }`) is always returned before the background task finishes. An email failure **never** affects the HTTP response.
 
-Email includes the Notion page URL when `notionPageId` is set (Notion ran first).
+Notion is retired (Session 0): no Notion row is created and no Notion link is included in the email body.
 
 ---
 
@@ -298,32 +307,31 @@ $body = '{"fullName":"Perf Test","bizName":"Perf Co","email":"perf@example.com",
 
 ---
 
-## Scheduled crons (Phase 3)
+## Scheduled crons
 
 Two cron triggers are configured in `wrangler.toml` under `[triggers]`.
 
 ### Retry cron — `*/15 * * * *`
 
-Runs every 15 minutes. Queries D1 for rows where either sync leg failed and the
+Runs every 15 minutes. Queries D1 for rows where the email leg failed and the
 attempt counter is under 5, within the last 7 days:
 
 ```sql
 SELECT * FROM landing_enquiries
-WHERE (
-    (notion_status = 'failed' AND notion_attempts < 5)
-    OR (email_status = 'failed' AND email_attempts < 5)
-  )
+WHERE email_status = 'failed'
+  AND email_attempts < 5
   AND created_at > datetime('now', '-7 days')
 ORDER BY created_at ASC
 LIMIT 20
 ```
 
 For each row it calls `syncEnquiry(env, id)` — the same function used by the HTTP
-handler. `syncEnquiry` skips any leg that is already `ok` or `skipped`, so a row
-where Notion succeeded but email failed will only retry the email leg.
+handler. `syncEnquiry` skips the email leg if it is already `ok` or `skipped`.
 
-After 5 attempts on a given leg the row is left as `failed` and is no longer picked
-up by the retry cron (attempt counter is at the cap).
+After 5 attempts the row is left as `failed` and is no longer picked up by the
+retry cron (attempt counter is at the cap). Pre-Session-0 rows with
+`notion_status='failed'` are inert: nothing reads or writes that column from this
+Worker any more.
 
 ### Daily digest — `0 8 * * *`
 
@@ -333,8 +341,8 @@ Runs at 08:00 UTC each day. Cloudflare crons are UTC-only — no automatic DST a
 |---|---|---|
 | `0 8 * * *` | 08:00 | 09:00 |
 
-Queries **all** rows (no age limit) where `notion_status='failed'` OR
-`email_status='failed'` — old failures must never be silently dropped.
+Queries **all** rows (no age limit) where `email_status='failed'` — old failures
+must never be silently dropped.
 
 If any rows are found, POSTs to `https://neobookworm.uk/api/notify-landing-enquiry`
 with `{ type: "digest", rows: [...] }`. Vercel sends one summary email to `TO_EMAIL`
@@ -432,7 +440,7 @@ Expected: 0. Any non-zero count means the retry cron isn't clearing rows — inv
 
 ```bash
 npx wrangler d1 execute neobookworm-enquiries --remote \
-  --command "SELECT id, email, source, notion_status, email_status, notion_attempts, email_attempts, created_at FROM landing_enquiries WHERE notion_status='failed' OR email_status='failed' ORDER BY created_at DESC"
+  --command "SELECT id, email, source, email_status, email_attempts, created_at FROM landing_enquiries WHERE email_status='failed' ORDER BY created_at DESC"
 ```
 
 ### Cron execution logs
@@ -445,16 +453,16 @@ npx wrangler tail neobookworm-landing-enquiry
 
 Check that the `*/15` retry cron fires every 15 minutes and the `0 8` digest fires each morning.
 
-### D1 row count vs Notion new rows
+### Daily inbound row count
 
-Compare the count of new rows in D1 for landing sources against new rows in the Notion Client Sites database each day:
+Quick sanity check that landing pages are still reaching the Worker:
 
 ```bash
 npx wrangler d1 execute neobookworm-enquiries --remote \
   --command "SELECT source, COUNT(*) AS total FROM landing_enquiries WHERE created_at > datetime('now','-1 day') GROUP BY source"
 ```
 
-Expected: each row has a matching Notion record (`notion_status='ok'`).
+(Notion comparison is retired — D1 is the single source of truth.)
 
 ### Vercel 410 log check
 
@@ -476,8 +484,8 @@ If zero rows are failing, no email is sent — silence is healthy.
 Phase 3 complete when:
 - [x] npx wrangler deploy run from workers/landing-enquiry/ after Phase 3 code changes — 14 May 2026
 - [x] Cron triggers visible in Cloudflare dashboard → Workers → neobookworm-landing-enquiry → Triggers — 14 May 2026
-- [ ] Retry tested on at least one artificial failed row (notion_attempts incremented or row moves to 'ok')
-- [ ] Row with notion_attempts >= 5 confirmed not picked up again
+- [ ] Retry tested on at least one artificial failed row (email_attempts incremented or row moves to 'ok')
+- [ ] Row with email_attempts >= 5 confirmed not picked up again
 - [ ] Daily digest tested OR explicitly disabled with reason documented here
 - [ ] Worker URL stable: https://neobookworm-landing-enquiry.nickbarrett.workers.dev (or custom route)
 - [ ] Nick confirms ready to switch live form traffic (plumbers.html / plumbers-switch.html)

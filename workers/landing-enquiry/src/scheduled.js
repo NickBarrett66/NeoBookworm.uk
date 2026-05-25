@@ -1,23 +1,25 @@
-// Scheduled handler for landing-enquiry Worker (Phase 3).
+// Scheduled handler for landing-enquiry Worker.
 //
 // Two cron expressions are configured in wrangler.toml [triggers]:
-//   every 15 min  — retry cron: pick up rows where a sync leg failed and attempt again
+//   every 15 min  — retry cron: pick up rows where the email leg failed and try again
 //   0 8 * * *     — daily digest (08:00 UTC = 08:00 GMT / 09:00 BST):
 //                   email Nick a list of all rows still failing after retries
 //
-// Both crons call syncEnquiry() from sync.js — no duplicated Notion/email logic.
+// Notion is retired (Session 0). The retry and digest queries no longer
+// consider `notion_status` — only `email_status`. Older rows that have
+// `notion_status='failed'` are inert: nothing reads or writes that column
+// from this Worker any more.
+//
+// Both crons call syncEnquiry() from sync.js — no duplicated email logic.
 
 import { syncEnquiry } from './sync.js';
 
-// Rows to retry: either leg failed and under the attempt cap, within the last 7 days.
+// Rows to retry: email leg failed and under the attempt cap, within the last 7 days.
 const RETRY_SQL = `
-  SELECT id, notion_status, notion_attempts, email_status, email_attempts
+  SELECT id, email_status, email_attempts
   FROM   landing_enquiries
-  WHERE  (
-           (notion_status = 'failed' AND notion_attempts < 5)
-           OR
-           (email_status  = 'failed' AND email_attempts  < 5)
-         )
+  WHERE  email_status = 'failed'
+    AND  email_attempts < 5
     AND  created_at > datetime('now', '-7 days')
   ORDER  BY created_at ASC
   LIMIT  20
@@ -26,10 +28,9 @@ const RETRY_SQL = `
 // All rows still in a failed state (no age limit — we must not silently drop old failures).
 const DIGEST_SQL = `
   SELECT id, created_at, email, biz_name, source,
-         notion_status, email_status, notion_error, email_error
+         email_status, email_error
   FROM   landing_enquiries
-  WHERE  notion_status = 'failed'
-    OR   email_status  = 'failed'
+  WHERE  email_status = 'failed'
   ORDER  BY created_at ASC
 `;
 
@@ -47,7 +48,6 @@ export async function handleScheduled(event, env) {
   } else if (cron === '0 8 * * *') {
     await runDigest(env);
   } else {
-    // Unknown schedule — log and exit cleanly.
     console.warn(`[scheduled] Unknown cron expression: "${cron}" — no action taken`);
   }
 }
@@ -70,9 +70,9 @@ async function runRetry(env) {
 
   for (const row of rows) {
     console.log(
-      `[retry] id=${row.id}  notion=${row.notion_status}(${row.notion_attempts})  email=${row.email_status}(${row.email_attempts})`,
+      `[retry] id=${row.id}  email=${row.email_status}(${row.email_attempts})`,
     );
-    // syncEnquiry loads the full row from D1 and skips any leg that is already ok/skipped.
+    // syncEnquiry loads the full row from D1 and skips the email leg if already ok/skipped.
     await syncEnquiry(env, row.id);
   }
 
@@ -99,7 +99,6 @@ async function runDigest(env) {
   }
 
   if (!rows.length) {
-    // No failures — stay silent (do not send an email).
     console.log('[digest] No failed rows — no email sent');
     return;
   }
@@ -112,10 +111,8 @@ async function runDigest(env) {
     email:         r.email,
     biz_name:      r.biz_name,
     source:        r.source,
-    notion_status: r.notion_status,
     email_status:  r.email_status,
-    notion_error:  r.notion_error  ?? null,
-    email_error:   r.email_error   ?? null,
+    email_error:   r.email_error ?? null,
   }));
 
   try {

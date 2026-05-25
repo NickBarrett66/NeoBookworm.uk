@@ -112,7 +112,11 @@ async function sendDigest(rows) {
     lines.push(`   Created:    ${r.created_at}`);
     lines.push(`   Email:      ${r.email || '(none)'}`);
     lines.push(`   Source:     ${r.source || '(none)'}`);
-    lines.push(`   Notion:     ${r.notion_status}${r.notion_error ? ` — ${r.notion_error}` : ''}`);
+    // Notion is retired (Session 0). Older payloads may still include notion_status
+    // — render that line only if the field is present.
+    if (r.notion_status) {
+      lines.push(`   Notion:     ${r.notion_status}${r.notion_error ? ` — ${r.notion_error}` : ''}`);
+    }
     lines.push(`   Email leg:  ${r.email_status}${r.email_error  ? ` — ${r.email_error}`  : ''}`);
     lines.push('');
   });

@@ -313,9 +313,9 @@ The "Depends on" line is the real DAG. In practice: S2 and S4 both depend only o
 ### Manual prerequisites (do before opening Cursor)
 
 - [x] 2FA on for `nick@neobookworm.uk`; generate a Google **app password**.
-- [ ] Set `GW_SMTP_USER` + `GW_SMTP_PASS` in Vercel (see [registry](#env-registry)).
+- [x] Set `GW_SMTP_USER` + `GW_SMTP_PASS` in Vercel (see [registry](#env-registry)).
 - [x] `wrangler whoami` and `vercel whoami` both succeed.
-- [ ] mail-tester.com open in a tab.
+- [x] mail-tester.com open in a tab.
 
 ### Decisions to confirm
 
@@ -338,10 +338,10 @@ The "Depends on" line is the real DAG. In practice: S2 and S4 both depend only o
 ### Definition of done
 
 - [ ] A test email through the Vercel Google-Workspace SMTP path arrives From `nick@neobookworm.uk`, aligned SPF/DKIM, mail-tester ≥ 8/10.
-- [ ] `api/dashboard.js` works exactly as before after importing from `_lib/d1.js` (all three tabs load).
+- [x] `api/dashboard.js` works exactly as before after importing from `_lib/d1.js` (all three tabs load).
 - [ ] A new landing-page submission creates a `landing_enquiries` row with **no** Notion call (check Worker logs).
 - [ ] No scheduled job still writes to Notion.
-- [ ] `docs/onboarding-architecture-decisions.md` exists.
+- [x] `docs/onboarding-architecture-decisions.md` exists.
 
 ### Recovery / rollback
 

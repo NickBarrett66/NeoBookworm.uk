@@ -1,20 +1,22 @@
 /**
- * Background sync for landing-enquiry Worker (Phase 2).
+ * Background sync for landing-enquiry Worker.
  *
  * Called via ctx.waitUntil() after D1 insert succeeds — runs in background,
  * never changes the HTTP response.
  *
+ * Notion is retired (Session 0). The only background leg is the email
+ * notification to Nick via the Vercel /api/notify-landing-enquiry endpoint.
+ *
  * Steps:
  *   1. Load the full D1 row by id (parse payload_json for field data)
- *   2. Create Notion row → update D1 notion_status/notion_page_id/notion_error/notion_attempts
- *   3. POST to Vercel /api/notify-landing-enquiry → update D1 email_status/email_error/email_attempts
+ *   2. POST to Vercel /api/notify-landing-enquiry → update D1
+ *      email_status / email_error / email_attempts
  *
  * Exported:
  *   syncEnquiry(env, id) → Promise<void>   (never throws — all errors caught internally)
  */
 
-import { createLandingEnquiryRecord } from './notion.js';
-import { sendNotifyEmail }            from './email.js';
+import { sendNotifyEmail } from './email.js';
 
 // ── D1 helpers ────────────────────────────────────────────────────────────────
 
@@ -32,7 +34,7 @@ async function updateD1(db, id, cols) {
 // ── Main export ───────────────────────────────────────────────────────────────
 
 /**
- * @param {{ DB: D1Database, NOTION_API_KEY?: string, NOTIFY_SECRET?: string }} env
+ * @param {{ DB: D1Database, NOTIFY_SECRET?: string }} env
  * @param {string} id  — UUID of the landing_enquiries row
  */
 export async function syncEnquiry(env, id) {
@@ -53,7 +55,6 @@ export async function syncEnquiry(env, id) {
     return;
   }
 
-  // Parse payload_json to get field data (same source used by Phase 3 retry cron).
   let payload;
   try {
     payload = JSON.parse(row.payload_json || '{}');
@@ -71,41 +72,7 @@ export async function syncEnquiry(env, id) {
     details:     row.details     || payload.details     || '',
   };
 
-  // ── 2. Notion ──────────────────────────────────────────────────────────────
-  // Skip if this leg already succeeded (safe on both first-run and retry).
-  let notionPageId = row.notion_page_id || null;
-
-  if (row.notion_status === 'ok' || row.notion_status === 'skipped') {
-    console.log(`[sync] Notion already ${row.notion_status} for ${id} — skipping`);
-  } else if (!env.NOTION_API_KEY) {
-    console.warn('[sync] NOTION_API_KEY not set — skipping Notion');
-    await updateD1(env.DB, id, {
-      notion_status: 'skipped',
-      notion_attempts: (row.notion_attempts || 0) + 1,
-    }).catch((e) => console.error('[sync] D1 update (notion skipped) failed:', e.message));
-  } else {
-    try {
-      const page = await createLandingEnquiryRecord(fields, env.NOTION_API_KEY);
-      notionPageId = page && page.id;
-      await updateD1(env.DB, id, {
-        notion_status:   'ok',
-        notion_page_id:  notionPageId || null,
-        notion_error:    null,
-        notion_attempts: (row.notion_attempts || 0) + 1,
-      });
-      console.log(`[sync] Notion ok for ${id}, page ${notionPageId}`);
-    } catch (err) {
-      const errMsg = (err.message || String(err)).slice(0, 500);
-      console.error(`[sync] Notion failed for ${id}:`, errMsg);
-      await updateD1(env.DB, id, {
-        notion_status:   'failed',
-        notion_error:    errMsg,
-        notion_attempts: (row.notion_attempts || 0) + 1,
-      }).catch((e) => console.error('[sync] D1 update (notion failed) failed:', e.message));
-    }
-  }
-
-  // ── 3. Email (via Vercel notify endpoint) ──────────────────────────────────
+  // ── 2. Email (via Vercel notify endpoint) ──────────────────────────────────
   // Skip if this leg already succeeded or was intentionally skipped.
   if (row.email_status === 'ok' || row.email_status === 'skipped') {
     console.log(`[sync] Email already ${row.email_status} for ${id} — skipping`);
@@ -121,7 +88,7 @@ export async function syncEnquiry(env, id) {
   }
 
   try {
-    await sendNotifyEmail(fields, notionPageId, env);
+    await sendNotifyEmail(fields, env);
     await updateD1(env.DB, id, {
       email_status:   'ok',
       email_error:    null,
