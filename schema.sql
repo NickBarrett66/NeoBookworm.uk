@@ -1,9 +1,51 @@
 -- NeoBookworm D1 live schemas
 -- Extracted from sqlite_master on 2026-05-25
 -- Database: neobookworm-enquiries (771b3047-f977-485e-9cfb-736815931998)
---   Tables: contact_enquiries, intake_submissions, landing_enquiries
+--   Tables: clients, contact_enquiries, email_log, feedback, intake_submissions, landing_enquiries
 -- Database: neobookworm-prospects (0ae32598-1680-4995-a010-96b647eacabd)
 --   Tables: prospects
+
+CREATE TABLE clients (
+  slug                TEXT PRIMARY KEY,
+  source_type         TEXT NOT NULL CHECK (source_type IN
+                        ('landing_enquiry','intake','contact','prospect')),
+  source_id           TEXT NOT NULL,
+
+  business_name       TEXT,
+  contact_name        TEXT,
+  email               TEXT NOT NULL,
+
+  journey             TEXT CHECK (journey IN ('J1','J2','J3','J4','J5')),
+  stage               TEXT NOT NULL DEFAULT 'acknowledged' CHECK (stage IN (
+                        'acknowledged','researching','building','reviewing','review_delivered',
+                        'preview_ready','revisions','awaiting_payment','preparing_live',
+                        'live','care_active','self_managed','dropped_out')),
+  stage_changed_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at          TEXT NOT NULL DEFAULT (datetime('now')),
+  next_action_by      TEXT,
+
+  current_url         TEXT,
+  preview_url         TEXT,
+  live_url            TEXT,
+
+  domain              TEXT,
+  domain_status       TEXT CHECK (domain_status IN ('confirmed','suggested','unresolved')),
+
+  plan                TEXT CHECK (plan IN ('care','self_managed')),
+  payment_status      TEXT NOT NULL DEFAULT 'none',
+  stripe_customer_id  TEXT,
+  last_payment_at     TEXT,
+
+  revision_count      INTEGER NOT NULL DEFAULT 0,
+  review_content      TEXT,
+  hosting_provider    TEXT,
+  hosting_url         TEXT,
+  client_email        TEXT,
+
+  last_nudge_sent_at  TEXT,
+  opt_out             INTEGER NOT NULL DEFAULT 0,
+  notes               TEXT
+);
 
 CREATE TABLE contact_enquiries (
   id          TEXT PRIMARY KEY,
@@ -74,6 +116,25 @@ CREATE TABLE landing_enquiries (
   payload_json     TEXT    NOT NULL,
   admin_notes      TEXT,
   handled          INTEGER DEFAULT 0
+);
+
+CREATE TABLE email_log (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug       TEXT NOT NULL,
+  template   TEXT NOT NULL,
+  sent_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  subject    TEXT NOT NULL,
+  recipient  TEXT NOT NULL,
+  status     TEXT NOT NULL DEFAULT 'sent',
+  error      TEXT
+);
+
+CREATE TABLE feedback (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug        TEXT NOT NULL,
+  categories  TEXT,
+  note        TEXT,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE prospects (
