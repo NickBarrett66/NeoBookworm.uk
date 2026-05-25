@@ -91,17 +91,17 @@ Gather all of this **once**, before Session 0. Every session assumes these are i
 
 Every secret the build introduces, in one place. **"Where" = Vercel env var** unless stated. Set Vercel vars for *all* environments (Production + Preview) unless you have a reason not to.
 
-| Var                        | Added in | Where to set                                         | Example / notes                                                                    |
-|--                         -|---       |---                                                   |---                                                                                 |
-| `GW_SMTP_USER`             | S0       | Vercel                                               | `nick@neobookworm.uk`                                                              |
-| `GW_SMTP_PASS`             | S0       | Vercel                                               | 'jlsumlrakhmutkir'Google app password (, no spaces).                               |
-| `GW_SMTP_HOST`             | S3       | code constant (or Vercel)                            | `smtp.gmail.com`                                                                   |
-| `GW_SMTP_PORT`             | S3       | code constant (or Vercel)                            | `587` (STARTTLS)                                                                   |
-| `ONBOARDING_INTAKE_SECRET` | S6       | Vercel **and** Worker secret (`wrangler secret put`) | '1776' Shared secret so only the landing-enquiry Worker can call `api/onboarding-intake`. |
-| `STRIPE_SECRET_KEY`        | S10      | Vercel                                               | `sk_test_…` first, swap to `sk_live_…` at go-live.                                 |
-| `STRIPE_WEBHOOK_SECRET`    | S10      | Vercel                                               | `whsec_…` from the Stripe webhook endpoint config.                                 |
-| `CRON_SECRET`              | S11      | Vercel                                               | '1664' Random string; the cron endpoint rejects requests without the matching header.     |
-| `NUDGE_DRY_RUN`            | S11      | Vercel                                               | Set to `1` to compute + email a digest instead of sending. Run dry for ~2 weeks.   |
+| Var | Added in | Where to set | Example / notes | Nick |
+| --- | --- | --- | --- | --- |
+| `GW_SMTP_USER` | S0 | Vercel | Google Workspace sender for onboarding mail. | `nick@neobookworm.uk` |
+| `GW_SMTP_PASS` | S0 | Vercel | Google app password (no spaces). | `jlsumlrakhmutkir` |
+| `GW_SMTP_HOST` | S3 | Code constant (or Vercel) | Gmail SMTP host. | `smtp.gmail.com` |
+| `GW_SMTP_PORT` | S3 | Code constant (or Vercel) | `587` (STARTTLS). | `587` |
+| `ONBOARDING_INTAKE_SECRET` | S6 | Vercel **and** Worker secret (`wrangler secret put`) | Shared secret so only the landing-enquiry Worker can call `api/onboarding-intake`. | `1776` |
+| `STRIPE_SECRET_KEY` | S10 | Vercel | `sk_test_…` first; swap to `sk_live_…` at go-live. | — |
+| `STRIPE_WEBHOOK_SECRET` | S10 | Vercel | `whsec_…` from the Stripe webhook endpoint config. | — |
+| `CRON_SECRET` | S11 | Vercel | Random string; the cron endpoint rejects requests without the matching header. | `1664` |
+| `NUDGE_DRY_RUN` | S11 | Vercel | Set to `1` to compute + email a digest instead of sending. Run dry for ~2 weeks. | `1` |
 
 **Do not touch (existing, confirmed working):** `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` (iCloud, contact form), `TO_EMAIL`, `R2_*`, `INTAKE_UPLOAD_SECRET`, `DASHBOARD_SECRET`. The onboarding transport (`GW_*`) is **separate** from the contact form's iCloud transport — see [memory: email send paths]. Never merge the two.
 
@@ -312,9 +312,9 @@ The "Depends on" line is the real DAG. In practice: S2 and S4 both depend only o
 
 ### Manual prerequisites (do before opening Cursor)
 
-- [ ] 2FA on for `nick@neobookworm.uk`; generate a Google **app password**.
+- [x] 2FA on for `nick@neobookworm.uk`; generate a Google **app password**.
 - [ ] Set `GW_SMTP_USER` + `GW_SMTP_PASS` in Vercel (see [registry](#env-registry)).
-- [ ] `wrangler whoami` and `vercel whoami` both succeed.
+- [x] `wrangler whoami` and `vercel whoami` both succeed.
 - [ ] mail-tester.com open in a tab.
 
 ### Decisions to confirm
