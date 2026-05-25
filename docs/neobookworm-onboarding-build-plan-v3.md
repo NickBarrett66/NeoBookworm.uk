@@ -75,7 +75,7 @@ Gather all of this **once**, before Session 0. Every session assumes these are i
 
 ## Test fixtures
 
-- [ ] **5 Gmail test aliases** you control — e.g. `youraddress+test1@gmail.com` … `+test5@gmail.com`. Gmail treats `+tag` as the same inbox, so one Gmail account gives you all five. Used from S3 onward and throughout QA.
+- [x] **5 Gmail test aliases** you control — e.g. `youraddress+test1@gmail.com` … `+test5@gmail.com`. Gmail treats `+tag` as the same inbox, so one Gmail account gives you all five. Used from S3 onward and throughout QA.
 - [x] **A real phone** for portal checks (the playbook's whole premise is mobile-first tradespeople).
 
 ## One-time credential tasks (do these in Session 0, listed here so they're not a surprise)
@@ -91,17 +91,17 @@ Gather all of this **once**, before Session 0. Every session assumes these are i
 
 Every secret the build introduces, in one place. **"Where" = Vercel env var** unless stated. Set Vercel vars for *all* environments (Production + Preview) unless you have a reason not to.
 
-| Var | Added in | Where to set | Example / notes |
-|---|---|---|---|
-| `GW_SMTP_USER` | S0 | Vercel | `nick@neobookworm.uk` |
-| `GW_SMTP_PASS` | S0 | Vercel | Google app password (16 chars, no spaces). **2FA must be on to generate it.** |
-| `GW_SMTP_HOST` | S3 | code constant (or Vercel) | `smtp.gmail.com` |
-| `GW_SMTP_PORT` | S3 | code constant (or Vercel) | `587` (STARTTLS) |
-| `ONBOARDING_INTAKE_SECRET` | S6 | Vercel **and** Worker secret (`wrangler secret put`) | Shared secret so only the landing-enquiry Worker can call `api/onboarding-intake`. |
-| `STRIPE_SECRET_KEY` | S10 | Vercel | `sk_test_…` first, swap to `sk_live_…` at go-live. |
-| `STRIPE_WEBHOOK_SECRET` | S10 | Vercel | `whsec_…` from the Stripe webhook endpoint config. |
-| `CRON_SECRET` | S11 | Vercel | Random string; the cron endpoint rejects requests without the matching header. |
-| `NUDGE_DRY_RUN` | S11 | Vercel | Set to `1` to compute + email a digest instead of sending. Run dry for ~2 weeks. |
+| Var                        | Added in | Where to set                                         | Example / notes                                                                    |
+|--                         -|---       |---                                                   |---                                                                                 |
+| `GW_SMTP_USER`             | S0       | Vercel                                               | `nick@neobookworm.uk`                                                              |
+| `GW_SMTP_PASS`             | S0       | Vercel                                               | 'jlsumlrakhmutkir'Google app password (, no spaces).                               |
+| `GW_SMTP_HOST`             | S3       | code constant (or Vercel)                            | `smtp.gmail.com`                                                                   |
+| `GW_SMTP_PORT`             | S3       | code constant (or Vercel)                            | `587` (STARTTLS)                                                                   |
+| `ONBOARDING_INTAKE_SECRET` | S6       | Vercel **and** Worker secret (`wrangler secret put`) | '1776' Shared secret so only the landing-enquiry Worker can call `api/onboarding-intake`. |
+| `STRIPE_SECRET_KEY`        | S10      | Vercel                                               | `sk_test_…` first, swap to `sk_live_…` at go-live.                                 |
+| `STRIPE_WEBHOOK_SECRET`    | S10      | Vercel                                               | `whsec_…` from the Stripe webhook endpoint config.                                 |
+| `CRON_SECRET`              | S11      | Vercel                                               | '1664' Random string; the cron endpoint rejects requests without the matching header.     |
+| `NUDGE_DRY_RUN`            | S11      | Vercel                                               | Set to `1` to compute + email a digest instead of sending. Run dry for ~2 weeks.   |
 
 **Do not touch (existing, confirmed working):** `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` (iCloud, contact form), `TO_EMAIL`, `R2_*`, `INTAKE_UPLOAD_SECRET`, `DASHBOARD_SECRET`. The onboarding transport (`GW_*`) is **separate** from the contact form's iCloud transport — see [memory: email send paths]. Never merge the two.
 
@@ -127,14 +127,14 @@ These were floating in v2 with no home. Decisions:
 
 The schema has 13 internal stages; the playbook's progress strip shows 6. Use this mapping in S4 (`displayStage(stage)` helper). Tune labels to taste — the implementer owns it, but ship *a* mapping rather than inventing one ad hoc:
 
-| Display strip | Internal stage(s) |
-|---|---|
-| Acknowledged | `acknowledged` |
-| Researching | `researching` |
-| Building | `building`, `reviewing`, `revisions` |
-| Preview ready | `preview_ready`, `review_delivered` |
-| Your decision | `awaiting_payment`, `preparing_live` |
-| Live | `live`, `care_active`, `self_managed` |
+| Display strip | Internal stage(s)                                         |
+|---            |---                                                        |
+| Acknowledged  | `acknowledged`                                            |
+| Researching   | `researching`                                             |
+| Building      | `building`, `reviewing`, `revisions`                      |
+| Preview ready | `preview_ready`, `review_delivered`                       |
+| Your decision | `awaiting_payment`, `preparing_live`                      |
+| Live          | `live`, `care_active`, `self_managed`                     |
 | *(off-strip)* | `dropped_out` → renders its own panel, no strip highlight |
 
 -----
@@ -149,11 +149,11 @@ Most of "Phase A" already exists and is live. This plan builds the **missing ~30
 
 | The naive plan says "build" | Reality on the ground |
 |---|---|
-| Create 2 D1 databases | `neobookworm-prospects` (~5.5 MB, real data) and `neobookworm-enquiries` already exist. |
+| Create 2 D1 databases                           | `neobookworm-prospects` (~5.5 MB, real data) and `neobookworm-enquiries` already exist. |
 | Set up MailChannels / SPF/DKIM for Worker email | **Not needed.** Email works via SMTP through Vercel. The entire MailChannels strand is deleted. |
-| Build an intake Worker | `neobookworm-landing-enquiry` is deployed, writing `landing_enquiries`, with retry cron + daily digest. |
-| Wire the landing pages | `plumbers.html`, `plumbers-switch.html`, `electricians*.html` already POST to that Worker. |
-| Build a new `/admin/` view | `dashboard.html` (~3,900 lines) **is** the admin view — Prospects / Enquiries / Campaigns tabs, gated by `DASHBOARD_SECRET`, served by `api/dashboard.js`. |
+| Build an intake Worker                          | `neobookworm-landing-enquiry` is deployed, writing `landing_enquiries`, with retry cron + daily digest. |
+| Wire the landing pages                          | `plumbers.html`, `plumbers-switch.html`, `electricians*.html` already POST to that Worker. |
+| Build a new `/admin/` view                      | `dashboard.html` (~3,900 lines) **is** the admin view — Prospects / Enquiries / Campaigns tabs, gated by `DASHBOARD_SECRET`, served by `api/dashboard.js`. |
 
 ### Decisions locked (do not relitigate without reason)
 
