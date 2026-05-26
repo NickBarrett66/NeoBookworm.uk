@@ -237,6 +237,13 @@
   .filter-btn:hover { color: var(--white); }
   .filter-btn.active { background: var(--navy-card); color: var(--white); border-color: var(--muted); }
 
+  /* Primary save actions in client detail (match Save stage) */
+  .btn-dash-save {
+    border-color: var(--amber) !important;
+    color: var(--amber) !important;
+  }
+  .btn-dash-save:hover { color: var(--white) !important; border-color: var(--amber) !important; }
+
   .table-wrap { overflow-x: auto; }
 
   table { width: 100%; border-collapse: collapse; font-size: .875rem; }
@@ -4235,6 +4242,35 @@ function clientHumanTime(isoStr) {
   return d === 1 ? '1d ago' : `${d}d ago`;
 }
 
+/** Long UK date for stage timestamps, e.g. "26 May 2026". */
+function formatUkDate(isoStr) {
+  if (!isoStr) return '—';
+  try {
+    const norm = isoStr.includes('T') ? isoStr : isoStr.replace(' ', 'T') + 'Z';
+    return new Date(norm).toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London',
+    });
+  } catch {
+    return isoStr;
+  }
+}
+
+/** Value for &lt;input type="date"&gt; — only when next_action_by is stored as YYYY-MM-DD. */
+function parseIsoDateForInput(val) {
+  if (!val) return '';
+  const m = String(val).match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : '';
+}
+
+function syncStageDateUi(stage) {
+  const sinceWrap  = document.getElementById('stage-since-wrap');
+  const actionWrap = document.getElementById('next-action-wrap');
+  if (!sinceWrap || !actionWrap) return;
+  const isAck = stage === 'acknowledged';
+  sinceWrap.style.display  = isAck ? '' : 'none';
+  actionWrap.style.display = isAck ? 'none' : 'inline-flex';
+}
+
 // ── Clients: list view ────────────────────────────────────────────────────────
 
 async function loadClientsList({ soft = false } = {}) {
@@ -4442,6 +4478,13 @@ function renderClientDetail(c, emailLog) {
       </div>
     </div>`;
 
+  const ackDate      = formatUkDate(c.stage_changed_at || c.created_at);
+  const isAckStage   = c.stage === 'acknowledged';
+  const deliverByIso = parseIsoDateForInput(c.next_action_by);
+  const deliverByHint = !isAckStage && c.next_action_by && !deliverByIso
+    ? `<p id="deliver-by-hint" style="margin:.5rem 0 0;font-size:.78rem;color:var(--muted)">Portal deliver-by: ${escHtml(c.next_action_by)}</p>`
+    : '';
+
   main.innerHTML = `
     <div style="margin-bottom:1.5rem">
       <h2 style="font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem">
@@ -4488,13 +4531,22 @@ function renderClientDetail(c, emailLog) {
                   style="padding:.43rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none;flex:1;min-width:160px">
             ${stageSelectOpts}
           </select>
-          <input type="date" id="next-action-input"
-                 value="${escAttr(c.next_action_by ? c.next_action_by.substring(0, 10) : '')}"
-                 title="Next action by (deliver-by)"
-                 style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
-          <button id="btn-save-stage" class="filter-btn" style="border-color:var(--amber);color:var(--amber)">Save stage</button>
+          <span id="stage-since-wrap" class="stage-since"
+                style="color:var(--muted);font-size:.875rem;white-space:nowrap${isAckStage ? '' : ';display:none'}">
+            Acknowledged on ${escHtml(ackDate)}
+          </span>
+          <span id="next-action-wrap"
+                style="display:${isAckStage ? 'none' : 'inline-flex'};align-items:center;gap:.35rem;flex-wrap:wrap">
+            <label for="next-action-input" style="color:var(--muted);font-size:.78rem;white-space:nowrap">Deliver by</label>
+            <input type="date" id="next-action-input"
+                   value="${escAttr(deliverByIso)}"
+                   title="Deliver-by date (shown on portal and in emails)"
+                   style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
+          </span>
+          <button id="btn-save-stage" class="filter-btn btn-dash-save">Save stage</button>
           <span id="stage-save-status" class="save-status"></span>
         </div>
+        ${deliverByHint}
       </div>
 
       <!-- Site URLs -->
@@ -4505,7 +4557,7 @@ function renderClientDetail(c, emailLog) {
         ${fieldRow('current_url', 'Current URL',  c.current_url)}
         ${fieldRow('domain',      'Domain',       c.domain)}
         <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
-          <button id="btn-save-urls" class="filter-btn">Save URLs</button>
+          <button id="btn-save-urls" class="filter-btn btn-dash-save">Save URLs</button>
           <span id="urls-save-status" class="save-status"></span>
         </div>
       </div>
@@ -4528,7 +4580,7 @@ function renderClientDetail(c, emailLog) {
                     style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none;resize:vertical">${escHtml(c.notes || '')}</textarea>
         </div>
         <div style="display:flex;gap:.5rem;align-items:center">
-          <button id="btn-save-plan" class="filter-btn">Save</button>
+          <button id="btn-save-plan" class="filter-btn btn-dash-save">Save</button>
           <span id="plan-save-status" class="save-status"></span>
         </div>
       </div>
@@ -4585,17 +4637,28 @@ function renderClientDetail(c, emailLog) {
     }
   });
 
+  // ── Stage date UI: acknowledged → since-date; other stages → deliver-by picker ──
+  const stageSelectEl = document.getElementById('stage-select');
+  syncStageDateUi(c.stage);
+  stageSelectEl?.addEventListener('change', () => syncStageDateUi(stageSelectEl.value));
+
   // ── Wire stage save ──
   document.getElementById('btn-save-stage').addEventListener('click', async function () {
-    const stage        = document.getElementById('stage-select').value;
-    const nextActionBy = document.getElementById('next-action-input').value || null;
-    const status       = document.getElementById('stage-save-status');
+    const stage  = stageSelectEl.value;
+    const status = document.getElementById('stage-save-status');
+    const body   = { action: 'client_set_stage', slug: c.slug, stage };
+
+    // Only send deliver-by when not acknowledged — avoids wiping the portal date with an empty input.
+    if (stage !== 'acknowledged') {
+      const dateVal = document.getElementById('next-action-input')?.value;
+      if (dateVal) body.next_action_by = dateVal;
+    }
+
     this.disabled = true; status.textContent = 'Saving…'; status.className = 'save-status';
     try {
-      await apiPost({ action: 'client_set_stage', slug: c.slug, stage, next_action_by: nextActionBy });
+      await apiPost(body);
       status.textContent = 'Saved ✓'; status.className = 'save-status ok';
-      c.stage = stage; c.next_action_by = nextActionBy;
-      setTimeout(() => { status.textContent = ''; }, 2500);
+      setTimeout(() => loadClientDetail(c.slug), 600);
     } catch (err) {
       status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
     } finally { this.disabled = false; }
