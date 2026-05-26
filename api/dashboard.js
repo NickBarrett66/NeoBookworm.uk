@@ -38,6 +38,7 @@
 const { queryD1, prospectsDb, enquiriesDb } = require('./_lib/d1');
 const { promoteToClient }                  = require('./_lib/promote');
 const { sendTemplated }                    = require('./_lib/email');
+const { sendAcknowledgement }              = require('./_lib/acknowledge');
 
 const PROSPECTS_EDITABLE = [
   'business_name', 'status', 'trade_category', 'contact_name', 'email_address', 'phone',
@@ -560,7 +561,34 @@ module.exports = async (req, res) => {
       }
       try {
         const result = await promoteToClient({ source_type, source_id, journey });
-        return res.status(200).json({ ok: true, ...result });
+
+        // Send first-contact acknowledgement on first promotion.
+        // Dedup is inside sendAcknowledgement (checks email_log).
+        // Never let an acknowledgement failure surface as a 500 — the
+        // promotion itself succeeded and the client row is in D1.
+        let acknowledged = false;
+        let ackReason    = null;
+        let ackError     = null;
+
+        if (result.created) {
+          try {
+            const ack = await sendAcknowledgement(result.slug);
+            acknowledged = ack.acknowledged || false;
+            ackReason    = ack.reason       || null;
+            ackError     = ack.error        || null;
+          } catch (ackErr) {
+            console.error('[dashboard client_promote] sendAcknowledgement threw:', ackErr.message);
+            ackError = ackErr.message;
+          }
+        }
+
+        return res.status(200).json({
+          ok: true,
+          ...result,
+          acknowledged,
+          ack_reason: ackReason,
+          ack_error:  ackError,
+        });
       } catch (err) {
         console.error('[dashboard client_promote]', err.message);
         return res.status(400).json({ ok: false, error: err.message });

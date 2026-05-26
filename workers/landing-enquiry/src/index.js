@@ -10,13 +10,15 @@
  * Bindings required:
  *   DB            — D1 database (neobookworm-enquiries)
  * Secrets (set via `wrangler secret put`):
- *   NOTIFY_SECRET — shared secret for /api/notify-landing-enquiry on Vercel
+ *   NOTIFY_SECRET             — shared secret for /api/notify-landing-enquiry on Vercel
+ *   ONBOARDING_INTAKE_SECRET  — shared secret for /api/onboarding-intake on Vercel (S6)
  */
 
 import { corsHeaders, handleOptions, isAllowedOrigin } from './cors.js';
-import { validateBody }    from './validate.js';
-import { syncEnquiry }     from './sync.js';
-import { handleScheduled } from './scheduled.js';
+import { validateBody }            from './validate.js';
+import { syncEnquiry }             from './sync.js';
+import { handleScheduled }         from './scheduled.js';
+import { notifyOnboardingIntake }  from './intake.js';
 
 export default {
   /**
@@ -90,6 +92,10 @@ export default {
 
     // ── Background sync (email only) — must not delay the HTTP response ──
     ctx.waitUntil(syncEnquiry(env, id));
+
+    // ── Auto-promote to client + send acknowledgement via Vercel ──────────
+    // Fire-and-forget: the enquiry is already in D1 regardless of outcome.
+    ctx.waitUntil(notifyOnboardingIntake(env, id));
 
     return jsonResponse(200, { ok: true, id }, origin);
   },

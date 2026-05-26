@@ -648,7 +648,7 @@ Playbook "The portal" + stage copy for `acknowledged`/`researching`/`reviewing`/
 
 ### Manual prerequisites
 
-- [ ] Generate `ONBOARDING_INTAKE_SECRET`; set it in **both** Vercel and the Worker (`wrangler secret put ONBOARDING_INTAKE_SECRET`).
+- [x] Generate `ONBOARDING_INTAKE_SECRET`; set it in **both** Vercel and the Worker (`wrangler secret put ONBOARDING_INTAKE_SECRET`).
 - [ ] Have a way to test the Worker→Vercel call **before** redeploying the live Worker — e.g. call `api/onboarding-intake` directly with a curl/test payload first, since this session modifies a **production** Worker.
 
 ### Decisions to confirm
