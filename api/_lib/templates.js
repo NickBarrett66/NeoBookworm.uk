@@ -67,11 +67,11 @@ const ALLOWED_VARS = new Set([
 // Subject helpers
 // ---------------------------------------------------------------------------
 
-const DEFAULT_SUBJECT = '{business} — your NeoBookworm website';
+const DEFAULT_SUBJECT = `{business} — NeoBookworm.uk — Websites, done properly`;
 const CREDENTIALS_SUBJECT = '{business} — credentials to keep safe';
 
 // Sign-off appended to every body (one blank line above, per Conventions).
-const SIGN_OFF = '\nNick — NeoBookworm.uk\nnick@neobookworm.uk';
+const SIGN_OFF = '\nWebsites, done properly\nnick@neobookworm.uk';
 
 // ---------------------------------------------------------------------------
 // Internal helpers

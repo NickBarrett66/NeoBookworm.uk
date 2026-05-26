@@ -50,7 +50,7 @@ Designed for: one-person operation, busy tradesperson prospects, zero additional
 
 **Sign-off:** Every email ends:
 ```
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -125,7 +125,7 @@ Bookmark it on your phone — it's the easiest way to stay in the loop.
 
 If anything urgent comes up before then, just reply to this email.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -158,7 +158,7 @@ postcodes."]
 
 No reply needed — just wanted you to know I've started.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -181,7 +181,7 @@ portal: {portal_url}
 
 Otherwise, no action needed.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -217,7 +217,7 @@ you might want to do:
 
 Have a look when you've got ten minutes.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -255,7 +255,7 @@ No sales pitch. If your site's fine as it is, I'll tell you that.
 I've also set up a page for you so you can track this and anything that
 follows: {portal_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -293,7 +293,7 @@ If anything in there isn't clear, just reply. I'm not going to chase
 you on this — but if you want to talk through what a rebuild would look
 like, the form on your portal will tell me.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -333,7 +333,7 @@ Same deal as always — you see it before you pay a penny.
 
 Either way, the review's yours to keep.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -356,7 +356,7 @@ your current site person if any of it lands.
 If you ever change your mind, you know where I am. Otherwise, all the
 best with {business}.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -396,7 +396,7 @@ Important: I won't touch your current site or your domain until you've
 seen the new one and said yes. Nothing changes for you until you decide
 it should.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -423,7 +423,7 @@ rebuild the services page properly — yours is a bit hidden right now."]
 
 No reply needed — just wanted you to know I've started.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -446,7 +446,7 @@ your portal: {portal_url}
 
 Otherwise, no action needed.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -483,7 +483,7 @@ When you're ready, your portal has three options:
   → "A few changes please"
   → "Stick with what I've got"
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -523,7 +523,7 @@ The more time you put in, the closer I'll get on the first version.
 You've already put in more than most — good chance we'll need few or
 no revisions.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -548,7 +548,7 @@ the boiler/heating stuff, or balance them equally?"]
 No rush — answer when you get a chance. I'll start the build now and
 can adjust as I go once you reply.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -596,7 +596,7 @@ you might want to do:
 
 Have a look when you've got ten minutes.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -626,7 +626,7 @@ While you're here, your prospect page is at {portal_url} — bookmark
 it on your phone. Anything we agree, anything you send me, anything
 that's owed back to you, all lives there.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -646,7 +646,7 @@ Quick question before we talk — what's the one thing about your
 business you'd most like the website to do? No long answer needed
 — a sentence is fine. I'll come to the call having thought about it.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -660,7 +660,7 @@ When someone emails you directly, reply personally. After your first reply, manu
 P.S. Once we've got a sense of what you're after, I'll set you up with
 a page where you can track everything — saves digging through email.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -697,7 +697,7 @@ I'll have the updated version back to you by {deliver_by} (usually
 Your portal's been updated so you can see what stage we're at:
 {portal_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -726,7 +726,7 @@ Changes I made this round:
 Same three options on your portal whenever you've had a look:
 {portal_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -778,7 +778,7 @@ Here's what happens next:
 4. Going live. Once payment's through and we've sorted the domain,
    I'll have you live within 2 working days.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -802,7 +802,7 @@ If anyone you know is in the market for a website, you know where I am.
 
 All the best with {business}.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -845,7 +845,7 @@ email once the site's up. No rush.
 
 Your portal's updated with where things stand: {portal_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -891,7 +891,7 @@ Couple of quick things:
 
 Welcome aboard.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -913,7 +913,7 @@ forms, all links, all numbers. All good.
 
 Anything funny in the next few days, drop me a line.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -946,7 +946,7 @@ Care plan it is. Couple of things:
 
 You're all set.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -993,7 +993,7 @@ what to do if you need help — is on your portal:
 If you ever change your mind about going self-managed and want me to
 take it back on, just email — no awkwardness.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1018,7 +1018,7 @@ Three quick questions, only if any of them apply:
 
 If everything's fine, no need to reply. Just wanted to be sure.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1049,7 +1049,7 @@ Don't put it off — a profile that's been live for six months ranks
 better than one that's a week old, so the sooner you get it set up,
 the better.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1072,7 +1072,7 @@ Here's the link: {google_review_url}
 No pressure. If the site hasn't done what you hoped, tell me that
 instead and I'll see what I can fix.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1098,7 +1098,7 @@ services updated, a new photo gallery, a price tweak?
 
 If nothing, no need to reply.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1122,7 +1122,7 @@ Separate point: if you've recently changed the card that your
 in Stripe — link's on your portal at {portal_url}. Nothing to do
 if the card's the same.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1145,7 +1145,7 @@ brought back — but it's a hassle. Worth setting a reminder now.
 If you'd like me to take it back over (i.e. move to the care plan
 at £9.99/month), just say — no awkwardness, takes 5 minutes.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1167,7 +1167,7 @@ not landing and I'll fix it.
 
 Either way, thanks for the trust.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1398,7 +1398,7 @@ come back with questions. Easier than typing a list.
 Your preview's still here: {preview_url}
 Portal: {portal_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1418,7 +1418,7 @@ book in here: koalendar.com/e/meet-with-nick-barrett
 
 Otherwise the preview stays put: {preview_url}
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1437,7 +1437,7 @@ If you've decided it's not for you, just let me know (one word's
 fine) and I'll close it off. If you'd like more time, also fine —
 the preview will stay up for another two weeks.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1459,7 +1459,7 @@ in case you want to come back to it.
 If anything changes, you've got my email. No hard feelings, and
 all the best with {business}.
 
-Nick — NeoBookworm.uk
+NWebsites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1479,7 +1479,7 @@ whenever you're ready: {stripe_link}
 
 No rush, just letting you know it's not going to expire.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 
@@ -1498,7 +1498,7 @@ help unblock?
 If you'd rather pay by bank transfer or want to talk it through
 on a quick call, just say.
 
-Nick — NeoBookworm.uk
+Websites, done properly
 nick@neobookworm.uk
 ```
 

@@ -148,7 +148,7 @@ test('J1-E1 body ends with correct sign-off', () => {
     deliver_by: 'Tuesday 4 June',
     portal_url: 'https://neobookworm.uk/c/hart-plumbing-3f9k2/',
   });
-  assert.ok(body.includes('Nick — NeoBookworm.uk'), 'sign-off line 1 missing');
+  assert.ok(body.includes('Websites, done properly'), 'sign-off line 1 missing');
   assert.ok(body.includes('nick@neobookworm.uk'),   'sign-off line 2 missing');
   assert.ok(body.endsWith('nick@neobookworm.uk'),   'body should end with sign-off');
 });

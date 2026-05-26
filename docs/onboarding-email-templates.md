@@ -18,8 +18,8 @@ The canonical *build* source is [`neobookworm-onboarding-build-plan-v3.md`](./ne
 | Missing required variable | `renderTemplate` throws |
 | Unknown template ID | `renderTemplate` throws |
 | Subject threading | One subject per client for the lifetime of the relationship (Gmail threads automatically) |
-| Default subject | `{business} — your NeoBookworm website` |
-| Sign-off | `Nick — NeoBookworm.uk` / `nick@neobookworm.uk` (one blank line above; no P.S.) |
+| Default subject | `{business} — NeoBookworm.uk — Websites, done properly` |
+| Sign-off | `Websites, done properly` / `nick@neobookworm.uk` (one blank line above; no P.S.) |
 | Format | Plain text only |
 | Stub templates | Body is `[STUB: <id> — template body not yet implemented]`; `TEMPLATES[id].stub === true` |
 
