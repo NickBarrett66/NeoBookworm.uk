@@ -129,6 +129,19 @@ function parseSortParams(query, prefix = 'sort') {
 
 const SUBMISSIONS_SOURCE_TYPES = new Set(['enquiry', 'intake', 'contact']);
 
+/** Linked client row for a dashboard submission / prospect (if promoted). */
+async function findLinkedClient(source_type, source_id) {
+  const rows = await queryD1(
+    enquiriesDb(),
+    `SELECT slug, journey, stage, email, business_name, contact_name
+       FROM clients
+      WHERE source_type = ? AND source_id = ?
+      LIMIT 1`,
+    [source_type, source_id]
+  );
+  return rows.length ? rows[0] : null;
+}
+
 /** Build UNION ALL branches for unified inbound list (no table merge). */
 function buildSubmissionsUnion(handled, q, sourceFilter) {
   const hasSearch   = q && q.trim().length > 0;
@@ -937,7 +950,8 @@ module.exports = async (req, res) => {
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(prospectsDb(), `SELECT * FROM prospects WHERE notion_id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
-      return res.status(200).json({ ok: true, data: rows[0] });
+      const client = await findLinkedClient('prospect', id);
+      return res.status(200).json({ ok: true, data: rows[0], client });
     }
 
     // ── Unified submissions list (landing + intake + contact) ───────────────
@@ -1033,7 +1047,8 @@ module.exports = async (req, res) => {
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(enquiriesDb(), `SELECT * FROM landing_enquiries WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
-      return res.status(200).json({ ok: true, data: rows[0] });
+      const client = await findLinkedClient('landing_enquiry', id);
+      return res.status(200).json({ ok: true, data: rows[0], client });
     }
 
     // ── Intake list ───────────────────────────────────────────────────────────
@@ -1071,7 +1086,8 @@ module.exports = async (req, res) => {
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(enquiriesDb(), `SELECT * FROM intake_submissions WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
-      return res.status(200).json({ ok: true, data: rows[0] });
+      const client = await findLinkedClient('intake', id);
+      return res.status(200).json({ ok: true, data: rows[0], client });
     }
 
     // ── Contact list ──────────────────────────────────────────────────────────
@@ -1109,7 +1125,8 @@ module.exports = async (req, res) => {
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(enquiriesDb(), `SELECT * FROM contact_enquiries WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
-      return res.status(200).json({ ok: true, data: rows[0] });
+      const client = await findLinkedClient('contact', id);
+      return res.status(200).json({ ok: true, data: rows[0], client });
     }
 
     // ── Campaigns list ────────────────────────────────────────────────────────
