@@ -1,9 +1,13 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/c/:slug/review",           "destination": "/api/portal?slug=:slug&section=review" },
-    { "source": "/c/:slug/handover",         "destination": "/api/portal?slug=:slug&section=handover" },
+    { "source": "/c/:slug/google-business/", "destination": "/api/portal?slug=:slug&section=google-business" },
     { "source": "/c/:slug/google-business",  "destination": "/api/portal?slug=:slug&section=google-business" },
-    { "source": "/c/:slug",                  "destination": "/api/portal?slug=:slug" }
+    { "source": "/c/:slug/handover/",         "destination": "/api/portal?slug=:slug&section=handover" },
+    { "source": "/c/:slug/handover",          "destination": "/api/portal?slug=:slug&section=handover" },
+    { "source": "/c/:slug/review/",           "destination": "/api/portal?slug=:slug&section=review" },
+    { "source": "/c/:slug/review",            "destination": "/api/portal?slug=:slug&section=review" },
+    { "source": "/c/:slug/",                  "destination": "/api/portal?slug=:slug" },
+    { "source": "/c/:slug",                   "destination": "/api/portal?slug=:slug" }
   ]
 }
