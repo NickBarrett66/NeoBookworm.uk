@@ -757,6 +757,13 @@
     background: none; border: 1px solid var(--border); color: var(--muted);
   }
   .btn-ed-cancel:hover { color: var(--white); }
+
+  /* ── Clients tab ────────────────────────────────────────────────────────── */
+  tr.stuck-row td { background: rgba(224, 80, 80, .07); }
+  tr.stuck-row:hover td { background: rgba(224, 80, 80, .14) !important; }
+  .save-status      { font-size: .82rem; color: var(--muted); }
+  .save-status.ok   { color: var(--green); }
+  .save-status.err  { color: var(--red); }
 </style>
 </head>
 <body>
@@ -780,6 +787,7 @@
       <button class="tab-btn active" data-tab="prospects">Prospects</button>
       <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
       <button class="tab-btn" data-tab="campaigns">Campaigns</button>
+      <button class="tab-btn" data-tab="clients">Clients</button>
     </nav>
     <div class="breadcrumb" id="breadcrumb">
       <span class="active">Overview</span>
@@ -1271,6 +1279,13 @@ const state = {
   outboxRows:      [],
   outboxCampaignId:'',
   outboxCollapsed: new Set(),
+  // clients
+  clientsView:         'list',   // 'list' | 'detail'
+  clientsPage:         1,
+  clientsSearch:       '',
+  clientsStageFilter:  'active',
+  clientsSlug:         null,
+  clientsFilterTimer:  null,
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
@@ -1464,6 +1479,9 @@ function isTabAtRoot(tab) {
     const emailModalOpen = document.getElementById('email-modal-overlay')?.classList.contains('open');
     return !emailModalOpen && state.campView === 'list';
   }
+  if (tab === 'clients') {
+    return state.clientsView === 'list';
+  }
   return true;
 }
 
@@ -1484,6 +1502,12 @@ function goToTabRoot(tab) {
     state.campColFilters = EMPTY_CAMP_COL_FILTERS();
     state.campColSorts   = defaultCampSorts();
     loadCampaignsList();
+  } else if (tab === 'clients') {
+    state.clientsView        = 'list';
+    state.clientsSearch      = '';
+    state.clientsStageFilter = 'active';
+    state.clientsPage        = 1;
+    loadClientsList();
   }
 }
 
@@ -3861,6 +3885,10 @@ function closeModal() {
 document.getElementById('btn-back').addEventListener('click', () => {
   if (state.tab === 'prospects' && state.view === 'list') renderSummary(state.summaryData);
   if (state.tab === 'campaigns' && state.campView === 'detail') loadCampaignsList();
+  if (state.tab === 'clients'   && state.clientsView === 'detail') {
+    state.clientsView = 'list';
+    loadClientsList({ soft: true });
+  }
 });
 
 // ── Breadcrumb ────────────────────────────────────────────────────────────────
@@ -3884,6 +3912,505 @@ function escHtml(str) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 function escAttr(str) { return String(str || '').replace(/"/g, '&quot;'); }
+
+// ── Clients tab ───────────────────────────────────────────────────────────────
+
+const STAGE_LABELS = {
+  acknowledged:     'Acknowledged',
+  researching:      'Researching',
+  building:         'Building',
+  reviewing:        'Reviewing',
+  review_delivered: 'Review delivered',
+  preview_ready:    'Preview ready',
+  revisions:        'Revisions',
+  awaiting_payment: 'Awaiting payment',
+  preparing_live:   'Preparing live',
+  live:             'Live',
+  care_active:      'Care active',
+  self_managed:     'Self-managed',
+  dropped_out:      'Dropped out',
+};
+
+const STAGE_COLORS = {
+  acknowledged:     'var(--amber)',
+  researching:      'var(--blue)',
+  building:         'var(--blue)',
+  reviewing:        'var(--blue)',
+  review_delivered: 'var(--blue)',
+  preview_ready:    'var(--green)',
+  revisions:        'var(--orange)',
+  awaiting_payment: 'var(--red)',
+  preparing_live:   'var(--green)',
+  live:             'var(--green)',
+  care_active:      'var(--green)',
+  self_managed:     'var(--grey)',
+  dropped_out:      'var(--grey)',
+};
+
+const ALL_CLIENT_STAGES = Object.keys(STAGE_LABELS);
+
+// Stages where being stuck >14 days is noteworthy.
+const STUCK_STAGES = new Set([
+  'acknowledged', 'researching', 'building', 'reviewing',
+  'review_delivered', 'preview_ready', 'revisions', 'awaiting_payment', 'preparing_live',
+]);
+
+const CLIENT_TEMPLATE_GROUPS = [
+  { label: 'J1 — Free preview',  ids: ['J1-E1','J1-E2','J1-E3','J1-E4'] },
+  { label: 'J2 — Site review',   ids: ['J2-E1','J2-E2','J2-Branch-A','J2-Branch-B'] },
+  { label: 'J3 — Switch',        ids: ['J3-E1','J3-E2','J3-E3','J3-E4'] },
+  { label: 'J4 — Intake form',   ids: ['J4-E1','J4-E2','J4-E3','J4-E4'] },
+  { label: 'J5 — Discovery',     ids: ['J5-E1-quick','J5-E1-booking'] },
+  { label: 'Convergence',        ids: ['C1','C2','C3','C4','C5'] },
+  { label: 'Post-launch',        ids: ['Post-1','Post-2','Post-3-care','Post-3-self','Post-4','Post-5','Post-6'] },
+  { label: 'Ongoing',            ids: ['Ongoing-1','Ongoing-2-care','Ongoing-2-self','Ongoing-3'] },
+];
+
+function clientHumanTime(isoStr) {
+  if (!isoStr) return '—';
+  const norm  = isoStr.includes('T') ? isoStr : isoStr.replace(' ', 'T') + 'Z';
+  const diffMs = Date.now() - new Date(norm).getTime();
+  const s = Math.floor(diffMs / 1000);
+  if (s < 90)    return 'just now';
+  if (s < 3600)  return `${Math.floor(s / 60)}m ago`;
+  if (s < 7200)  return '1h ago';
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  const d = Math.floor(s / 86400);
+  return d === 1 ? '1d ago' : `${d}d ago`;
+}
+
+// ── Clients: list view ────────────────────────────────────────────────────────
+
+async function loadClientsList({ soft = false } = {}) {
+  state.clientsView = 'list';
+  setBreadcrumb([{ label: 'Clients' }]);
+  document.getElementById('btn-back').style.display = 'none';
+  const main = document.getElementById('main-content');
+  if (!soft) main.innerHTML = '<div class="state-msg">Loading…</div>';
+  try {
+    const data = await apiFetch({
+      action:       'client_list',
+      stage_filter: state.clientsStageFilter,
+      q_search:     state.clientsSearch,
+      page:         state.clientsPage,
+    });
+    renderClientsList(data);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg">Error loading clients: ${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderClientsList({ data: rows, total, page, pageSize }) {
+  const main  = document.getElementById('main-content');
+  const start = (page - 1) * pageSize + 1;
+  const end   = Math.min(page * pageSize, total);
+
+  const stageOpts = [
+    { val: 'active', label: 'Active (all except dropped out)' },
+    { val: 'all',    label: 'All stages' },
+    ...ALL_CLIENT_STAGES.map(s => ({ val: s, label: STAGE_LABELS[s] })),
+  ].map(o =>
+    `<option value="${escAttr(o.val)}"${state.clientsStageFilter === o.val ? ' selected' : ''}>${escHtml(o.label)}</option>`
+  ).join('');
+
+  const tableRows = rows.length === 0
+    ? `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">No clients yet.</td></tr>`
+    : rows.map(row => {
+        const stuck      = STUCK_STAGES.has(row.stage) && (row.days_in_stage || 0) > 14;
+        const stageColor = STAGE_COLORS[row.stage]  || 'var(--grey)';
+        const stageLabel = STAGE_LABELS[row.stage]  || row.stage;
+        const biz        = row.business_name || row.contact_name || row.email;
+        const sub        = row.contact_name && row.contact_name !== biz ? row.contact_name : null;
+        const portalUrl  = `/c/${encodeURIComponent(row.slug)}/`;
+        const nextAction = row.next_action_by ? row.next_action_by.substring(0, 10) : '—';
+        const days       = row.days_in_stage != null ? row.days_in_stage : '—';
+        return `<tr class="${stuck ? 'stuck-row' : ''}" data-slug="${escAttr(row.slug)}" style="cursor:pointer">
+          <td>
+            <strong>${escHtml(biz)}</strong>
+            ${sub ? `<br><span style="font-size:.78rem;color:var(--muted)">${escHtml(sub)}</span>` : ''}
+            <br><span style="font-size:.75rem;color:var(--muted)">${escHtml(row.email)}</span>
+          </td>
+          <td><span style="display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.72rem;font-weight:700;background:rgba(75,156,245,.18);color:var(--blue)">${escHtml(row.journey || '—')}</span></td>
+          <td><span style="display:inline-block;padding:.12rem .5rem;border-radius:20px;font-size:.72rem;font-weight:600;border:1px solid ${stageColor};color:${stageColor};white-space:nowrap">${escHtml(stageLabel)}</span></td>
+          <td${stuck ? ' style="color:var(--red);font-weight:600"' : ' class="muted"'}>${escHtml(String(days))}${stuck ? ' ⚠' : ''}</td>
+          <td class="muted">${escHtml(clientHumanTime(row.last_email_at))}</td>
+          <td class="muted" style="font-size:.82rem">${escHtml(nextAction)}</td>
+          <td><a href="${escAttr(portalUrl)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.9rem;text-decoration:none" onclick="event.stopPropagation()">↗</a></td>
+          <td>
+            <button class="filter-btn" style="font-size:.78rem;padding:.28rem .7rem;border-color:var(--amber);color:var(--amber)"
+                    data-slug="${escAttr(row.slug)}" onclick="event.stopPropagation();loadClientDetail(this.dataset.slug)">View</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Clients <span class="count-tag">${total.toLocaleString()} total</span></h2>
+      <div class="list-controls">
+        <input type="text" id="clients-search" placeholder="Search business / email…"
+               style="padding:.5rem .9rem;border:1px solid var(--border);border-radius:8px;background:var(--navy-card);color:var(--white);font-size:.9rem;width:min(220px,100%);outline:none"
+               value="${escAttr(state.clientsSearch)}">
+        <select id="clients-stage-filter"
+                style="padding:.43rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.83rem;outline:none;cursor:pointer">
+          ${stageOpts}
+        </select>
+        ${state.clientsSearch || state.clientsStageFilter !== 'active'
+          ? `<button class="btn-clear-filters" id="clients-clear-filters">Clear filters</button>` : ''}
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Business / Contact</th>
+            <th>Journey</th>
+            <th>Stage</th>
+            <th>Days</th>
+            <th>Last email</th>
+            <th>Next action by</th>
+            <th>Portal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="clients-tbody">${tableRows}</tbody>
+      </table>
+    </div>
+    ${total > pageSize ? `
+    <div class="pagination">
+      <button id="clients-prev" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span>${start}–${end} of ${total}</span>
+      <button id="clients-next" ${end >= total ? 'disabled' : ''}>Next →</button>
+    </div>` : ''}
+  `;
+
+  // Wire search input
+  const searchEl = document.getElementById('clients-search');
+  searchEl?.addEventListener('input', () => {
+    clearTimeout(state.clientsFilterTimer);
+    state.clientsFilterTimer = setTimeout(() => {
+      state.clientsSearch = searchEl.value;
+      state.clientsPage   = 1;
+      loadClientsList({ soft: true });
+    }, 350);
+  });
+
+  // Wire stage filter select
+  document.getElementById('clients-stage-filter')?.addEventListener('change', e => {
+    state.clientsStageFilter = e.target.value;
+    state.clientsPage        = 1;
+    loadClientsList({ soft: true });
+  });
+
+  // Wire clear filters
+  document.getElementById('clients-clear-filters')?.addEventListener('click', () => {
+    state.clientsSearch      = '';
+    state.clientsStageFilter = 'active';
+    state.clientsPage        = 1;
+    loadClientsList({ soft: true });
+  });
+
+  // Wire row click → detail
+  document.querySelectorAll('#clients-tbody tr[data-slug]').forEach(tr => {
+    tr.addEventListener('click', () => loadClientDetail(tr.dataset.slug));
+  });
+
+  // Wire pagination
+  document.getElementById('clients-prev')?.addEventListener('click', () => {
+    state.clientsPage = Math.max(1, state.clientsPage - 1);
+    loadClientsList();
+  });
+  document.getElementById('clients-next')?.addEventListener('click', () => {
+    state.clientsPage++;
+    loadClientsList();
+  });
+}
+
+// ── Clients: detail view ──────────────────────────────────────────────────────
+
+async function loadClientDetail(slug) {
+  state.clientsView = 'detail';
+  state.clientsSlug = slug;
+  setBreadcrumb([
+    { label: 'Clients', action: () => { state.clientsView = 'list'; loadClientsList({ soft: true }); } },
+    { label: slug },
+  ]);
+  document.getElementById('btn-back').style.display = '';
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading…</div>';
+  try {
+    const data = await apiFetch({ action: 'client_detail', slug });
+    renderClientDetail(data.data, data.email_log);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg">Error: ${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderClientDetail(c, emailLog) {
+  const main        = document.getElementById('main-content');
+  const portalUrl   = `/c/${encodeURIComponent(c.slug)}/`;
+  const stageColor  = STAGE_COLORS[c.stage]  || 'var(--grey)';
+  const stageLabel  = STAGE_LABELS[c.stage]  || c.stage;
+  const biz         = c.business_name || c.contact_name || c.email;
+  const gmailSub    = encodeURIComponent(`${c.business_name || c.contact_name || ''} — your NeoBookworm website`);
+  const gmailUrl    = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(c.email)}&su=${gmailSub}`;
+
+  const stageSelectOpts = ALL_CLIENT_STAGES.map(s =>
+    `<option value="${escAttr(s)}"${c.stage === s ? ' selected' : ''}>${escHtml(STAGE_LABELS[s])}</option>`
+  ).join('');
+
+  const templateOpts = CLIENT_TEMPLATE_GROUPS.map(g =>
+    `<optgroup label="${escHtml(g.label)}">${
+      g.ids.map(id => `<option value="${escAttr(id)}">${escHtml(id)}</option>`).join('')
+    }</optgroup>`
+  ).join('');
+
+  const emailRows = emailLog.length === 0
+    ? `<li style="padding:.65rem 0;color:var(--muted);font-size:.875rem">No emails sent yet.</li>`
+    : emailLog.map(row => {
+        const failed = row.status === 'failed'
+          ? `<span style="color:var(--red);font-size:.72rem;margin-left:.3rem">(failed)</span>` : '';
+        return `<li style="padding:.65rem 0;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap">
+          <span style="color:var(--amber);font-size:.72rem;flex-shrink:0;font-weight:600">${escHtml(row.template || '')}</span>
+          <span style="flex:1;min-width:0;font-size:.85rem">${escHtml(row.subject || '')}</span>
+          <span style="color:var(--muted);font-size:.78rem;white-space:nowrap">${escHtml(clientHumanTime(row.sent_at))}${failed}</span>
+        </li>`;
+      }).join('');
+
+  const fieldRow = (field, label, val) => `
+    <div style="margin-bottom:.5rem">
+      <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">${label}</label>
+      <div style="display:flex;gap:.35rem;align-items:center">
+        <input type="text" id="field-${field}" value="${escAttr(val || '')}"
+               style="flex:1;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none;min-width:0">
+        ${val ? `<a href="${escAttr(val)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.82rem;padding:.38rem .35rem;flex-shrink:0;text-decoration:none">↗</a>` : ''}
+      </div>
+    </div>`;
+
+  main.innerHTML = `
+    <div style="margin-bottom:1.5rem">
+      <h2 style="font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem">
+        ${escHtml(biz)}
+        <span style="display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.72rem;font-weight:700;background:rgba(75,156,245,.18);color:var(--blue)">${escHtml(c.journey || '—')}</span>
+        <span style="display:inline-block;padding:.12rem .5rem;border-radius:20px;font-size:.72rem;font-weight:600;border:1px solid ${stageColor};color:${stageColor}">${escHtml(stageLabel)}</span>
+      </h2>
+      <p style="color:var(--muted);font-size:.85rem">
+        ${c.contact_name ? escHtml(c.contact_name) + ' · ' : ''}${escHtml(c.email)} · Created ${escHtml(clientHumanTime(c.created_at))}
+      </p>
+    </div>
+
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
+      <a href="${escAttr(portalUrl)}" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;background:var(--navy-card);border:1px solid var(--amber);border-radius:7px;color:var(--amber);font-size:.875rem;font-weight:600;text-decoration:none">
+        Open portal ↗
+      </a>
+      <a href="${escAttr(gmailUrl)}" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;background:var(--navy-card);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:.875rem;text-decoration:none">
+        Send personal note (Gmail) ↗
+      </a>
+    </div>
+
+    <!-- Portal preview (collapsible iframe) -->
+    <div style="margin-bottom:1.5rem">
+      <button id="toggle-portal-iframe"
+              style="background:none;border:none;color:var(--amber);font-size:.82rem;cursor:pointer;padding:0;text-decoration:underline">
+        Show portal preview ↓
+      </button>
+      <div id="portal-iframe-wrap" style="display:none;margin-top:.75rem;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+        <iframe id="portal-iframe" src="" style="width:100%;height:520px;border:none;display:block"
+                loading="lazy" title="Client portal preview"></iframe>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;margin-bottom:1.5rem">
+
+      <!-- Stage management -->
+      <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;grid-column:1/-1">
+        <div class="section-label" style="margin:0 0 .75rem">Stage</div>
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <select id="stage-select"
+                  style="padding:.43rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none;flex:1;min-width:160px">
+            ${stageSelectOpts}
+          </select>
+          <input type="date" id="next-action-input"
+                 value="${escAttr(c.next_action_by ? c.next_action_by.substring(0, 10) : '')}"
+                 title="Next action by (deliver-by)"
+                 style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
+          <button id="btn-save-stage" class="filter-btn" style="border-color:var(--amber);color:var(--amber)">Save stage</button>
+          <span id="stage-save-status" class="save-status"></span>
+        </div>
+      </div>
+
+      <!-- Site URLs -->
+      <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem">
+        <div class="section-label" style="margin:0 0 .75rem">Site URLs</div>
+        ${fieldRow('preview_url', 'Preview URL',  c.preview_url)}
+        ${fieldRow('live_url',    'Live URL',     c.live_url)}
+        ${fieldRow('current_url', 'Current URL',  c.current_url)}
+        ${fieldRow('domain',      'Domain',       c.domain)}
+        <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
+          <button id="btn-save-urls" class="filter-btn">Save URLs</button>
+          <span id="urls-save-status" class="save-status"></span>
+        </div>
+      </div>
+
+      <!-- Plan & notes -->
+      <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem">
+        <div class="section-label" style="margin:0 0 .75rem">Plan &amp; Notes</div>
+        <div style="margin-bottom:.5rem">
+          <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">Care plan</label>
+          <select id="field-plan"
+                  style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none">
+            <option value=""${!c.plan ? ' selected' : ''}>Undecided</option>
+            <option value="care"${c.plan === 'care' ? ' selected' : ''}>Care (£9.99/mo)</option>
+            <option value="self_managed"${c.plan === 'self_managed' ? ' selected' : ''}>Self-managed</option>
+          </select>
+        </div>
+        <div style="margin-bottom:.5rem">
+          <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">Notes (operator only)</label>
+          <textarea id="field-notes" rows="4"
+                    style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none;resize:vertical">${escHtml(c.notes || '')}</textarea>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <button id="btn-save-plan" class="filter-btn">Save</button>
+          <span id="plan-save-status" class="save-status"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Send template -->
+    <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+      <div class="section-label" style="margin:0 0 .75rem">Send Email</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.6rem">
+        <select id="template-select"
+                style="padding:.43rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none;flex:1;min-width:200px">
+          <option value="">— Select template —</option>
+          ${templateOpts}
+        </select>
+        <input type="date" id="deliver-by-override"
+               value="${escAttr(c.next_action_by ? c.next_action_by.substring(0, 10) : '')}"
+               title="deliver_by override — leave blank to use Next action by"
+               style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
+        <button id="btn-send-template"
+                style="padding:.5rem 1.1rem;background:var(--amber);color:var(--navy);border:none;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer">
+          Send →
+        </button>
+        <span id="send-status" class="save-status"></span>
+      </div>
+      <div>
+        <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">
+          Extra vars &mdash; <code style="font-size:.75rem">key=value</code>, one per line
+          (e.g. <code style="font-size:.75rem">revisions_count=2</code>)
+        </label>
+        <textarea id="extra-vars-input" rows="3"
+                  style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.82rem;outline:none;resize:vertical;font-family:monospace"></textarea>
+      </div>
+    </div>
+
+    <!-- Email history -->
+    <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+      <div class="section-label" style="margin:0 0 .75rem">Email history</div>
+      <ul style="list-style:none">${emailRows}</ul>
+    </div>
+  `;
+
+  // ── Wire iframe toggle ──
+  document.getElementById('toggle-portal-iframe').addEventListener('click', function () {
+    const wrap   = document.getElementById('portal-iframe-wrap');
+    const iframe = document.getElementById('portal-iframe');
+    const hidden = wrap.style.display === 'none';
+    wrap.style.display  = hidden ? '' : 'none';
+    this.textContent    = hidden ? 'Hide portal preview ↑' : 'Show portal preview ↓';
+    if (hidden && !iframe.src) iframe.src = portalUrl;
+  });
+
+  // ── Wire stage save ──
+  document.getElementById('btn-save-stage').addEventListener('click', async function () {
+    const stage        = document.getElementById('stage-select').value;
+    const nextActionBy = document.getElementById('next-action-input').value || null;
+    const status       = document.getElementById('stage-save-status');
+    this.disabled = true; status.textContent = 'Saving…'; status.className = 'save-status';
+    try {
+      await apiPost({ action: 'client_set_stage', slug: c.slug, stage, next_action_by: nextActionBy });
+      status.textContent = 'Saved ✓'; status.className = 'save-status ok';
+      c.stage = stage; c.next_action_by = nextActionBy;
+      setTimeout(() => { status.textContent = ''; }, 2500);
+    } catch (err) {
+      status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
+    } finally { this.disabled = false; }
+  });
+
+  // ── Wire URLs save ──
+  document.getElementById('btn-save-urls').addEventListener('click', async function () {
+    const fields = {};
+    ['preview_url', 'live_url', 'current_url', 'domain'].forEach(f => {
+      fields[f] = document.getElementById(`field-${f}`)?.value.trim() || null;
+    });
+    const status = document.getElementById('urls-save-status');
+    this.disabled = true; status.textContent = 'Saving…'; status.className = 'save-status';
+    try {
+      await apiPost({ action: 'client_set_fields', slug: c.slug, fields });
+      status.textContent = 'Saved ✓'; status.className = 'save-status ok';
+      setTimeout(() => { status.textContent = ''; }, 2500);
+    } catch (err) {
+      status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
+    } finally { this.disabled = false; }
+  });
+
+  // ── Wire plan + notes save ──
+  document.getElementById('btn-save-plan').addEventListener('click', async function () {
+    const fields = {
+      plan:  document.getElementById('field-plan')?.value  || null,
+      notes: document.getElementById('field-notes')?.value || null,
+    };
+    const status = document.getElementById('plan-save-status');
+    this.disabled = true; status.textContent = 'Saving…'; status.className = 'save-status';
+    try {
+      await apiPost({ action: 'client_set_fields', slug: c.slug, fields });
+      status.textContent = 'Saved ✓'; status.className = 'save-status ok';
+      setTimeout(() => { status.textContent = ''; }, 2500);
+    } catch (err) {
+      status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
+    } finally { this.disabled = false; }
+  });
+
+  // ── Wire send template ──
+  document.getElementById('btn-send-template').addEventListener('click', async function () {
+    const templateId = document.getElementById('template-select').value;
+    if (!templateId) { alert('Please select a template first.'); return; }
+
+    const deliverByOverride = document.getElementById('deliver-by-override').value;
+    const extraVarsRaw      = document.getElementById('extra-vars-input').value;
+
+    // Parse key=value lines into an object.
+    const extra_vars = {};
+    extraVarsRaw.split('\n').forEach(line => {
+      const eq = line.indexOf('=');
+      if (eq > 0) {
+        const k = line.slice(0, eq).trim();
+        const v = line.slice(eq + 1).trim();
+        if (k) extra_vars[k] = v;
+      }
+    });
+    if (deliverByOverride) extra_vars.deliver_by = deliverByOverride;
+
+    const status = document.getElementById('send-status');
+    if (!confirm(`Send "${templateId}" to ${c.email}?`)) return;
+
+    this.disabled = true; status.textContent = 'Sending…'; status.className = 'save-status';
+    try {
+      const result = await apiPost({ action: 'client_send', slug: c.slug, templateId, extra_vars });
+      if (result.ok) {
+        status.textContent = 'Sent ✓'; status.className = 'save-status ok';
+        setTimeout(() => loadClientDetail(c.slug), 1200);
+      } else {
+        status.textContent = 'Send failed: ' + (result.error || 'unknown'); status.className = 'save-status err';
+      }
+    } catch (err) {
+      status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
+    } finally { this.disabled = false; }
+  });
+}
 </script>
 </body>
 </html>

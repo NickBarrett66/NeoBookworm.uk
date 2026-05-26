@@ -14,9 +14,15 @@
 // GET  /api/dashboard?action=campaigns_list&q_trade=&q_status=&q_campaign_id=&min_priority=&max_priority=&progress_filter=not_started|in_progress|complete&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=campaigns_detail&id=<campaign_id>&q_business=&q_contact=&q_town=&q_status=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=outbox_list&campaign_id=<id>&q_business=&q_email=&q_subject=&approval_filter=approved|pending&sent_filter=sent|unsent|skipped&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
+// GET  /api/dashboard?action=client_list&stage_filter=active|all|<stage>&q_search=&page=N&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc
+// GET  /api/dashboard?action=client_detail&slug=<slug>
 // POST /api/dashboard  body: { action:"update",            id, fields:{...} }
 // POST /api/dashboard  body: { action:"enquiries_update",  id, fields:{...} }
 // POST /api/dashboard  body: { action:"outreach_sent",     notion_id, campaign_id }
+// POST /api/dashboard  body: { action:"client_promote",    source_type, source_id, journey? }
+// POST /api/dashboard  body: { action:"client_set_stage",  slug, stage, next_action_by? }
+// POST /api/dashboard  body: { action:"client_send",       slug, templateId, extra_vars:{...} }
+// POST /api/dashboard  body: { action:"client_set_fields", slug, fields:{...} }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
 // Proxies queries to D1 via the Cloudflare REST API.
@@ -30,6 +36,8 @@
 //   D1_ENQUIRIES_ID     — defaults to neobookworm-enquiries DB id
 
 const { queryD1, prospectsDb, enquiriesDb } = require('./_lib/d1');
+const { promoteToClient }                  = require('./_lib/promote');
+const { sendTemplated }                    = require('./_lib/email');
 
 const PROSPECTS_EDITABLE = [
   'business_name', 'status', 'trade_category', 'contact_name', 'email_address', 'phone',
@@ -45,6 +53,18 @@ const PROSPECTS_EDITABLE = [
 const ENQUIRIES_EDITABLE = ['handled', 'admin_notes'];
 const INTAKE_EDITABLE    = ['status', 'handled', 'admin_notes'];
 const CONTACT_EDITABLE   = ['handled', 'admin_notes'];
+
+const CLIENTS_EDITABLE = [
+  'preview_url', 'live_url', 'current_url', 'domain', 'domain_status',
+  'plan', 'next_action_by', 'notes', 'revision_count',
+  'hosting_provider', 'hosting_url', 'client_email', 'stripe_customer_id',
+];
+
+const CLIENT_VALID_STAGES = [
+  'acknowledged', 'researching', 'building', 'reviewing', 'review_delivered',
+  'preview_ready', 'revisions', 'awaiting_payment', 'preparing_live',
+  'live', 'care_active', 'self_managed', 'dropped_out',
+];
 
 function parseBody(req) {
   const b = req.body;
@@ -528,6 +548,103 @@ module.exports = async (req, res) => {
         return res.status(200).json({ ok: true, inserted: body.rows.length });
       } catch (err) {
         console.error('[dashboard outbox_populate]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_promote ─────────────────────────────────────────────────────
+    if (action === 'client_promote') {
+      const { source_type, source_id, journey } = body;
+      if (!source_type || !source_id) {
+        return res.status(400).json({ ok: false, error: 'source_type and source_id required' });
+      }
+      try {
+        const result = await promoteToClient({ source_type, source_id, journey });
+        return res.status(200).json({ ok: true, ...result });
+      } catch (err) {
+        console.error('[dashboard client_promote]', err.message);
+        return res.status(400).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_set_stage ────────────────────────────────────────────────────
+    if (action === 'client_set_stage') {
+      const { slug, stage, next_action_by } = body;
+      if (!slug || !stage) {
+        return res.status(400).json({ ok: false, error: 'slug and stage required' });
+      }
+      if (!CLIENT_VALID_STAGES.includes(stage)) {
+        return res.status(400).json({ ok: false, error: `Invalid stage: ${stage}` });
+      }
+      try {
+        const setClause = next_action_by !== undefined
+          ? `stage = ?, stage_changed_at = datetime('now'), next_action_by = ?`
+          : `stage = ?, stage_changed_at = datetime('now')`;
+        const params = next_action_by !== undefined
+          ? [stage, next_action_by || null, slug]
+          : [stage, slug];
+        await queryD1(enquiriesDb(), `UPDATE clients SET ${setClause} WHERE slug = ?`, params);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard client_set_stage]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_send ─────────────────────────────────────────────────────────
+    if (action === 'client_send') {
+      const { slug, templateId, extra_vars = {} } = body;
+      if (!slug || !templateId) {
+        return res.status(400).json({ ok: false, error: 'slug and templateId required' });
+      }
+      try {
+        const clientRows = await queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]);
+        if (!clientRows.length) return res.status(404).json({ ok: false, error: 'Client not found' });
+        const client = clientRows[0];
+
+        // Auto-fill common vars from client record; caller's extra_vars take precedence.
+        const autoVars = {};
+        const name     = client.contact_name  || client.business_name || 'there';
+        const business = client.business_name || client.contact_name  || 'your business';
+        autoVars.name        = name;
+        autoVars.business    = business;
+        autoVars.portal_url  = `https://neobookworm.uk/c/${client.slug}/`;
+        if (client.preview_url)    autoVars.preview_url    = client.preview_url;
+        if (client.live_url)       autoVars.live_url       = client.live_url;
+        if (client.current_url)    autoVars.current_url    = client.current_url;
+        if (client.next_action_by) autoVars.deliver_by     = client.next_action_by;
+        if (client.domain)         autoVars.domain         = client.domain;
+        if (client.hosting_provider) autoVars.hosting_provider = client.hosting_provider;
+        if (client.hosting_url)    autoVars.hosting_url    = client.hosting_url;
+        if (client.client_email)   autoVars.client_email   = client.client_email;
+
+        const vars = { ...autoVars, ...extra_vars };
+
+        const result = await sendTemplated({ slug, templateId, vars, to: client.email });
+        return res.status(200).json({ ok: result.ok, error: result.error || null });
+      } catch (err) {
+        console.error('[dashboard client_send]', err.message);
+        return res.status(400).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_set_fields ───────────────────────────────────────────────────
+    if (action === 'client_set_fields') {
+      const { slug, fields } = body;
+      if (!slug || !fields || typeof fields !== 'object') {
+        return res.status(400).json({ ok: false, error: 'slug and fields object required' });
+      }
+      const allowed = Object.keys(fields).filter(k => CLIENTS_EDITABLE.includes(k));
+      if (!allowed.length) {
+        return res.status(400).json({ ok: false, error: 'No editable fields provided' });
+      }
+      const set    = allowed.map(k => `${k} = ?`).join(', ');
+      const params = [...allowed.map(k => fields[k] || null), slug];
+      try {
+        await queryD1(enquiriesDb(), `UPDATE clients SET ${set} WHERE slug = ?`, params);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard client_set_fields]', err.message);
         return res.status(500).json({ ok: false, error: err.message });
       }
     }
@@ -1188,6 +1305,92 @@ module.exports = async (req, res) => {
       const rows = await queryD1(prospectsDb(), `SELECT * FROM outbox WHERE id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
       return res.status(200).json({ ok: true, data: rows[0] });
+    }
+
+    // ── Clients list ──────────────────────────────────────────────────────────
+    if (action === 'client_list') {
+      const {
+        stage_filter = 'active',
+        q_search = '',
+        sort1_col = '', sort1_dir = 'asc',
+        sort2_col = '', sort2_dir = 'asc',
+      } = req.query;
+
+      const conditions = [];
+      const filterParams = [];
+
+      if (stage_filter === 'active') {
+        conditions.push(`c.stage != 'dropped_out'`);
+      } else if (stage_filter !== 'all') {
+        if (CLIENT_VALID_STAGES.includes(stage_filter)) {
+          conditions.push(`c.stage = ?`);
+          filterParams.push(stage_filter);
+        }
+      }
+
+      if (q_search.trim()) {
+        conditions.push(`(c.business_name LIKE ? OR c.contact_name LIKE ? OR c.email LIKE ?)`);
+        const pct = `%${q_search.trim()}%`;
+        filterParams.push(pct, pct, pct);
+      }
+
+      const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+      const CLIENT_SORT_COLS = new Set([
+        'business_name', 'stage', 'days_in_stage', 'last_email_at',
+        'created_at', 'next_action_by', 'journey',
+      ]);
+      const orderClauses = [];
+      for (const [col, dir] of [[sort1_col, sort1_dir], [sort2_col, sort2_dir]]) {
+        if (!col || !CLIENT_SORT_COLS.has(col)) continue;
+        const d = dir === 'desc' ? 'DESC' : 'ASC';
+        const expr =
+          col === 'days_in_stage' ? `CAST((julianday('now') - julianday(c.stage_changed_at)) AS INTEGER)` :
+          col === 'last_email_at' ? `(SELECT MAX(e.sent_at) FROM email_log e WHERE e.slug = c.slug)` :
+          `c.${col}`;
+        orderClauses.push(`${expr} ${d}`);
+      }
+      const orderBy = orderClauses.length ? orderClauses.join(', ') : `c.stage_changed_at ASC`;
+
+      const [rows, countRows] = await Promise.all([
+        queryD1(enquiriesDb(),
+          `SELECT c.slug, c.business_name, c.contact_name, c.email,
+                  c.journey, c.stage, c.stage_changed_at, c.created_at,
+                  c.next_action_by, c.preview_url, c.live_url,
+                  CAST((julianday('now') - julianday(c.stage_changed_at)) AS INTEGER) AS days_in_stage,
+                  (SELECT MAX(e.sent_at) FROM email_log e WHERE e.slug = c.slug) AS last_email_at
+           FROM clients c
+           ${where}
+           ORDER BY ${orderBy}
+           LIMIT ? OFFSET ?`,
+          [...filterParams, pageSize, offset]
+        ),
+        queryD1(enquiriesDb(),
+          `SELECT COUNT(*) AS total FROM clients c ${where}`,
+          filterParams
+        ),
+      ]);
+
+      return res.status(200).json({
+        ok: true, data: rows,
+        total: countRows[0]?.total || 0, page: pageNum, pageSize,
+      });
+    }
+
+    // ── Client detail ─────────────────────────────────────────────────────────
+    if (action === 'client_detail') {
+      const { slug } = req.query;
+      if (!slug) return res.status(400).json({ error: 'slug required' });
+      const [clientRows, emailLogRows] = await Promise.all([
+        queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]),
+        queryD1(enquiriesDb(),
+          `SELECT id, template, subject, sent_at, status, error, recipient
+           FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 30`,
+          [slug]
+        ),
+      ]);
+      if (!clientRows.length) return res.status(404).json({ error: 'Client not found' });
+      return res.status(200).json({ ok: true, data: clientRows[0], email_log: emailLogRows });
     }
 
     return res.status(400).json({ error: `Unknown action: ${action}` });
