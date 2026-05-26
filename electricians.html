@@ -115,6 +115,44 @@
     }
     .logo-wordmark span { color: var(--amber); }
 
+    .logo-tagline {
+      display: block;
+      font-family: var(--sans);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.38);
+      line-height: 1;
+    }
+
+    .logo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lp-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-left: auto;
+    }
+
+    .lp-trade-context {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.35);
+      padding-right: 1.25rem;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      white-space: nowrap;
+    }
+
+    .lp-trade-context em {
+      color: rgba(245,166,35,0.65);
+      font-style: normal;
+    }
+
     /* ─── Shared section helpers ─── */
     section { padding: 4.5rem 2rem; position: relative; }
     .section-inner { max-width: 1100px; margin: 0 auto; }
@@ -127,6 +165,29 @@
       text-transform: uppercase;
       color: var(--amber);
       margin-bottom: 1rem;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--amber-pale);
+      border: 1px solid rgba(245,166,35,0.3);
+      border-radius: 100px;
+      padding: 0.38rem 1.1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--amber);
+      font-family: var(--sans);
+    }
+
+    .hero-pill-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--amber);
+      border-radius: 50%;
+      flex-shrink: 0;
     }
     .section-title {
       font-family: var(--serif);
@@ -1439,6 +1500,8 @@
     }
     @media (max-width: 640px) {
       .lp-header { padding: 1rem 1.25rem; }
+      .logo-tagline { display: none; }
+      .lp-trade-context { display: none; }
       section { padding: 3rem 1.25rem; }
       .hero { padding: 6rem 1.25rem 2.75rem; }
       .cards-grid { grid-template-columns: 1fr; }
@@ -1792,8 +1855,14 @@
          class="nav-logo-img"
          width="1024" height="1024"
          loading="eager">
-    <span class="logo-wordmark">Neo<span>Bookworm.uk</span></span>
+    <span class="logo-stack">
+      <span class="logo-wordmark">Neo<span>Bookworm.uk</span></span>
+      <span class="logo-tagline">websites, done properly</span>
+    </span>
   </a>
+  <div class="lp-header-right">
+    <span class="lp-trade-context">For <em>electricians</em></span>
+  </div>
 </header>
 
 <main id="main">
@@ -1804,8 +1873,10 @@
     <div class="hero-dots" aria-hidden="true"></div>
     <div class="hero-grid">
       <div class="hero-copy">
-        <!-- TRADE-SPECIFIC: Hero eyebrow -->
-        <span class="eyebrow">For electricians without a website</span>
+        <div class="hero-pill">
+          <span class="hero-pill-dot" aria-hidden="true"></span>
+          websites, done properly
+        </div>
         <h1>Word of mouth brings you the customers who know you.<br><em>A website brings you the ones who don&rsquo;t.</em></h1>
         <div class="gold-line"></div>
         <p class="hero-sub">Most electrical work comes through referrals &mdash; and that&rsquo;s a great place to be. But the bigger jobs &mdash; a rewire, a new consumer unit, an EV charger, a landlord&rsquo;s safety certificate &mdash; usually start with someone searching online and weighing up who looks credible. I build sites that put you in front of them. You see yours before you pay anything &mdash; if it&rsquo;s not right, walk away owing nothing.</p>
