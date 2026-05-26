@@ -92,6 +92,22 @@ letter-spacing: -0.01em;
 
 .logo-wordmark span { color: var(--amber); }
 
+.logo-tagline {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.38);
+  line-height: 1;
+}
+
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .nav-logo-img {
 width: 40px; height: 40px;
 object-fit: contain;
@@ -169,24 +185,29 @@ z-index: 1;
 max-width: 860px;
 }
 
-.badge {
-display: inline-flex;
-align-items: center;
-gap: 0.45rem;
-background: var(--amber-pale);
-border: 1px solid rgba(245,166,35,0.3);
-border-radius: 100px;
-padding: 0.38rem 1rem;
-margin-bottom: 2rem;
-font-size: 0.75rem;
-font-weight: 600;
-color: var(--amber);
-letter-spacing: 0.09em;
-text-transform: uppercase;
-animation: fadeDown 0.6s ease both;
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--amber-pale);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 100px;
+  padding: 0.38rem 1.1rem;
+  margin-bottom: 2rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--amber);
+  font-family: var(--sans);
+  animation: fadeDown 0.6s ease both;
 }
 
-.badge svg { width: 11px; height: 11px; fill: var(--amber); flex-shrink: 0; }
+.hero-pill-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--amber);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 
 h1 {
 font-family: var(--serif);
@@ -1295,6 +1316,10 @@ to   { opacity: 1; transform: translateY(0); }
 50%       { opacity: 1;   transform: scaleY(1.25); }
 }
 
+@media (max-width: 768px) {
+.logo-tagline { display: none; }
+}
+
 @media (max-width: 900px) {
 .reasons-grid { grid-template-columns: 1fr; }
 .how-layout   { grid-template-columns: 1fr; }
@@ -1521,7 +1546,10 @@ margin-top: 2px;
        alt="NeoBookworm.uk logo"
        class="nav-logo-img"
        width="1024" height="1024">
-  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+  <span class="logo-stack">
+    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+    <span class="logo-tagline">websites, done properly</span>
+  </span>
 </a>
   <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
     <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -1544,9 +1572,9 @@ margin-top: 2px;
   <div class="hero-bg"></div>
   <div class="hero-dots"></div>
   <div class="hero-inner">
-    <div class="badge">
-      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-      Proudly based in Swindon
+    <div class="hero-pill">
+      <span class="hero-pill-dot" aria-hidden="true"></span>
+      websites, done properly
     </div>
     <h1>Your business deserves a website that works as <em>hard as you do</em></h1>
     <p class="hero-sub">I build websites for local tradespeople — fast, affordable, and in plain English. Fixed price. You don&rsquo;t pay until you&rsquo;re happy. Yours could be live within a week.</p>
