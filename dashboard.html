@@ -2149,12 +2149,18 @@ function submissionsOverviewHtml() {
   </div>`;
 }
 
+/** Pill class for landing-enquiry email leg (Worker uses ok/failed/skipped/pending). */
+function emailSyncPillClass(status) {
+  const s = (status || '').toLowerCase();
+  if (s === 'ok' || s === 'success') return 'ok';
+  if (s === 'failed') return 'fail';
+  return 'pending-pill';
+}
+
 function submissionStatusCell(row) {
   if (row.source_type === 'enquiry') {
-    const notionCls = row.notion_status === 'success' ? 'ok' : row.notion_status === 'failed' ? 'fail' : 'pending-pill';
-    const emailCls  = row.email_status  === 'success' ? 'ok' : row.email_status  === 'failed' ? 'fail' : 'pending-pill';
-    return `<span class="pill ${notionCls}">${escHtml(row.notion_status || '—')}</span>
-            <span class="pill ${emailCls}">${escHtml(row.email_status || '—')}</span>`;
+    const emailCls = emailSyncPillClass(row.email_status);
+    return `<span class="pill ${emailCls}">${escHtml(row.email_status || '—')}</span>`;
   }
   if (row.source_type === 'intake') {
     const statusCls = row.intake_status === 'complete' ? 'ok'
@@ -2377,8 +2383,7 @@ function renderEnquiryHtml(r, client = null) {
 
   const dt         = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
   const startLabel = START_OPTION_LABELS[r.start_option] || r.start_option || '—';
-  const notionCls  = r.notion_status === 'success' ? 'ok' : r.notion_status === 'failed' ? 'fail' : 'pending-pill';
-  const emailCls   = r.email_status  === 'success' ? 'ok' : r.email_status  === 'failed' ? 'fail' : 'pending-pill';
+  const emailCls   = emailSyncPillClass(r.email_status);
 
   return `
     <h2>${escHtml(r.biz_name || 'Unknown')}</h2>
@@ -2391,10 +2396,9 @@ function renderEnquiryHtml(r, client = null) {
       <div class="field-group"><span class="field-label">Start option</span>${val(startLabel)}</div>
       <div class="field-group"><span class="field-label">Current URL</span>${val(r.current_url, r.current_url)}</div>
       <div class="field-group">
-        <span class="field-label">Delivery</span>
+        <span class="field-label">Email notify</span>
         <span class="field-value">
-          Notion <span class="pill ${notionCls}">${escHtml(r.notion_status || '—')}</span>
-          &nbsp; Email <span class="pill ${emailCls}">${escHtml(r.email_status || '—')}</span>
+          <span class="pill ${emailCls}">${escHtml(r.email_status || '—')}</span>
         </span>
       </div>
     </div>
@@ -2407,10 +2411,9 @@ function renderEnquiryHtml(r, client = null) {
       </div>
     ` : ''}
 
-    ${r.notion_error || r.email_error ? `
+    ${r.email_error ? `
       <hr class="section-divider">
-      ${r.notion_error ? `<div class="field-group" style="margin-bottom:.5rem"><span class="field-label">Notion error</span><span class="field-value" style="color:var(--red)">${escHtml(r.notion_error)}</span></div>` : ''}
-      ${r.email_error  ? `<div class="field-group"><span class="field-label">Email error</span><span class="field-value" style="color:var(--red)">${escHtml(r.email_error)}</span></div>` : ''}
+      <div class="field-group"><span class="field-label">Email error</span><span class="field-value" style="color:var(--red)">${escHtml(r.email_error)}</span></div>
     ` : ''}
 
     ${renderPromoteSection({
