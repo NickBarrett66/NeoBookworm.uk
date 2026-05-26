@@ -509,7 +509,7 @@ Playbook Conventions (placeholders, sign-off), playbook J1-E1 (implement first),
 
 ### Manual prerequisites
 
-- [ ] `GW_SMTP_USER` / `GW_SMTP_PASS` set in Vercel (from S0).
+- [x] `GW_SMTP_USER` / `GW_SMTP_PASS` set in Vercel (from S0).
 - [ ] A `+test` Gmail alias ready to receive.
 
 ### Decisions to confirm
