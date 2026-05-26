@@ -4472,8 +4472,9 @@ function renderClientDetail(c, emailLog) {
         Show portal preview ↓
       </button>
       <div id="portal-iframe-wrap" style="display:none;margin-top:.75rem;border:1px solid var(--border);border-radius:8px;overflow:hidden">
-        <iframe id="portal-iframe" src="" style="width:100%;height:520px;border:none;display:block"
-                loading="lazy" title="Client portal preview"></iframe>
+        <iframe id="portal-iframe" data-portal-src="${escAttr(portalUrl)}"
+                style="width:100%;height:520px;border:none;display:block;background:var(--navy)"
+                title="Client portal preview"></iframe>
       </div>
     </div>
 
@@ -4571,13 +4572,17 @@ function renderClientDetail(c, emailLog) {
   `;
 
   // ── Wire iframe toggle ──
+  // Do not use src="" — browsers resolve that to the dashboard URL, so the portal never loads.
   document.getElementById('toggle-portal-iframe').addEventListener('click', function () {
     const wrap   = document.getElementById('portal-iframe-wrap');
     const iframe = document.getElementById('portal-iframe');
     const hidden = wrap.style.display === 'none';
-    wrap.style.display  = hidden ? '' : 'none';
-    this.textContent    = hidden ? 'Hide portal preview ↑' : 'Show portal preview ↓';
-    if (hidden && !iframe.src) iframe.src = portalUrl;
+    wrap.style.display = hidden ? '' : 'none';
+    this.textContent   = hidden ? 'Hide portal preview ↑' : 'Show portal preview ↓';
+    if (hidden) {
+      const target = iframe.dataset.portalSrc || portalUrl;
+      if (iframe.getAttribute('src') !== target) iframe.setAttribute('src', target);
+    }
   });
 
   // ── Wire stage save ──
