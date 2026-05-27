@@ -1540,8 +1540,8 @@ ${head}
   var slug = root.dataset.slug;
 
   function el(id) { return document.getElementById(id); }
-  function show(id) { el(id).removeAttribute('hidden'); }
-  function hide(id) { el(id).setAttribute('hidden', ''); }
+  function show(id) { var n = el(id); if (n) n.removeAttribute('hidden'); }
+  function hide(id) { var n = el(id); if (n) n.setAttribute('hidden', ''); }
 
   function hideAll() {
     ['pa-options','pa-changes-form','pa-confirm-approve','pa-confirm-decline','pa-busy','pa-error']
@@ -1595,22 +1595,30 @@ ${head}
   }
 
   // ── Approve ──
-  el('pa-approve').addEventListener('click', function () {
+  var approveBtn = el('pa-approve');
+  if (approveBtn) approveBtn.addEventListener('click', function () {
     hideAll();
     show('pa-confirm-approve');
   });
-  el('pa-confirm-approve-yes').addEventListener('click', function () { post('approve'); });
-  el('pa-confirm-approve-no').addEventListener('click', showOptions);
+  var approveYes = el('pa-confirm-approve-yes');
+  if (approveYes) approveYes.addEventListener('click', function () { post('approve'); });
+  var approveNo = el('pa-confirm-approve-no');
+  if (approveNo) approveNo.addEventListener('click', showOptions);
 
   // ── Changes ──
-  el('pa-changes').addEventListener('click', function () {
+  var changesBtn = el('pa-changes');
+  if (changesBtn) changesBtn.addEventListener('click', function () {
     hideAll();
     show('pa-changes-form');
-    el('pa-changes-text').focus();
+    var t = el('pa-changes-text');
+    if (t) t.focus();
   });
-  el('pa-changes-cancel').addEventListener('click', showOptions);
-  el('pa-changes-send').addEventListener('click', function () {
-    var msg = el('pa-changes-text').value.trim();
+  var changesCancel = el('pa-changes-cancel');
+  if (changesCancel) changesCancel.addEventListener('click', showOptions);
+  var changesSend = el('pa-changes-send');
+  if (changesSend) changesSend.addEventListener('click', function () {
+    var t = el('pa-changes-text');
+    var msg = t ? t.value.trim() : '';
     if (!msg) {
       showError('Please describe the changes you\'d like before sending.');
       return;
@@ -1624,12 +1632,15 @@ ${head}
   });
 
   // ── Decline ──
-  el('pa-decline').addEventListener('click', function () {
+  var declineBtn = el('pa-decline');
+  if (declineBtn) declineBtn.addEventListener('click', function () {
     hideAll();
     show('pa-confirm-decline');
   });
-  el('pa-confirm-decline-yes').addEventListener('click', function () { post('decline'); });
-  el('pa-confirm-decline-no').addEventListener('click', showOptions);
+  var declineYes = el('pa-confirm-decline-yes');
+  if (declineYes) declineYes.addEventListener('click', function () { post('decline'); });
+  var declineNo = el('pa-confirm-decline-no');
+  if (declineNo) declineNo.addEventListener('click', showOptions);
 }());
 </script>` : ''}
 </body>
