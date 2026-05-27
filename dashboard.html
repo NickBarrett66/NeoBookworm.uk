@@ -4648,29 +4648,68 @@ function renderClientDetail(c, emailLog) {
     <!-- Send template -->
     <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
       <div class="section-label" style="margin:0 0 .75rem">Send Email</div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.6rem">
+
+      <!-- Template selector row -->
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem">
         <select id="template-select"
                 style="padding:.43rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none;flex:1;min-width:200px">
-          <option value="">— Select template —</option>
+          <option value="">— Select template to preview —</option>
           ${templateOpts}
         </select>
         <input type="date" id="deliver-by-override"
                value="${escAttr(c.next_action_by ? c.next_action_by.substring(0, 10) : '')}"
-               title="deliver_by override — leave blank to use Next action by"
+               title="deliver_by — defaults to Next action by"
                style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
-        <button id="btn-send-template"
-                style="padding:.5rem 1.1rem;background:var(--amber);color:var(--navy);border:none;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer">
-          Send →
-        </button>
-        <span id="send-status" class="save-status"></span>
       </div>
-      <div>
-        <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">
-          Extra vars &mdash; <code style="font-size:.75rem">key=value</code>, one per line
-          (e.g. <code style="font-size:.75rem">revisions_count=2</code>)
-        </label>
-        <textarea id="extra-vars-input" rows="3"
-                  style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.82rem;outline:none;resize:vertical;font-family:monospace"></textarea>
+
+      <!-- Advanced toggle -->
+      <div style="margin-bottom:.5rem">
+        <button id="btn-adv-toggle" type="button"
+                style="background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;padding:0">
+          ▸ Advanced (extra vars)
+        </button>
+        <div id="adv-panel" style="display:none;margin-top:.4rem">
+          <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">
+            <code style="font-size:.75rem">key=value</code> per line, e.g. <code style="font-size:.75rem">revisions_count=2</code>
+          </label>
+          <textarea id="extra-vars-input" rows="3"
+                    style="width:100%;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.82rem;outline:none;resize:vertical;font-family:monospace"></textarea>
+        </div>
+      </div>
+
+      <!-- Preview pane — shown once a template is selected -->
+      <div id="email-preview-pane" style="display:none;margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem">
+
+        <div id="preview-loading" style="display:none;color:var(--muted);font-size:.85rem;padding:.5rem 0">Rendering preview…</div>
+        <div id="preview-error"   style="display:none;color:#f87171;font-size:.85rem;padding:.5rem 0"></div>
+
+        <div id="preview-content" style="display:none">
+          <!-- Subject -->
+          <div style="margin-bottom:.6rem">
+            <label style="display:block;color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.25rem">Subject</label>
+            <input id="preview-subject" type="text"
+                   style="width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
+          </div>
+          <!-- Body -->
+          <div style="margin-bottom:.85rem">
+            <label style="display:block;color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.25rem">Body</label>
+            <textarea id="preview-body" rows="14"
+                      style="width:100%;padding:.5rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.82rem;line-height:1.6;outline:none;resize:vertical;font-family:monospace;white-space:pre"></textarea>
+          </div>
+          <!-- Send row -->
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button id="btn-send-template"
+                    style="padding:.5rem 1.3rem;background:var(--amber);color:var(--navy);border:none;border-radius:7px;font-size:.875rem;font-weight:700;cursor:pointer">
+              Send →
+            </button>
+            <button id="btn-preview-refresh" type="button"
+                    style="padding:.5rem .9rem;background:none;border:1px solid var(--border);border-radius:7px;font-size:.8rem;color:var(--muted);cursor:pointer">
+              Re-render
+            </button>
+            <span id="send-status" class="save-status"></span>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -4775,6 +4814,76 @@ function renderClientDetail(c, emailLog) {
     } finally { this.disabled = false; }
   });
 
+  // ── Advanced toggle ──
+  document.getElementById('btn-adv-toggle').addEventListener('click', function () {
+    const panel = document.getElementById('adv-panel');
+    const open  = panel.style.display !== 'none';
+    panel.style.display  = open ? 'none' : 'block';
+    this.textContent     = open ? '▸ Advanced (extra vars)' : '▾ Advanced (extra vars)';
+  });
+
+  // ── Preview helpers ──
+  function parseExtraVars() {
+    const raw = document.getElementById('extra-vars-input')?.value || '';
+    const out = {};
+    raw.split('\n').forEach(line => {
+      const eq = line.indexOf('=');
+      if (eq > 0) {
+        const k = line.slice(0, eq).trim();
+        const v = line.slice(eq + 1).trim();
+        if (k) out[k] = v;
+      }
+    });
+    return out;
+  }
+
+  async function renderPreview() {
+    const templateId = document.getElementById('template-select').value;
+    const pane    = document.getElementById('email-preview-pane');
+    const loading = document.getElementById('preview-loading');
+    const errEl   = document.getElementById('preview-error');
+    const content = document.getElementById('preview-content');
+
+    if (!templateId) {
+      pane.style.display = 'none';
+      return;
+    }
+
+    pane.style.display    = 'block';
+    loading.style.display = 'block';
+    errEl.style.display   = 'none';
+    content.style.display = 'none';
+
+    const extra_vars = parseExtraVars();
+    const deliverBy  = document.getElementById('deliver-by-override').value;
+    if (deliverBy) extra_vars.deliver_by = deliverBy;
+
+    try {
+      const result = await apiPost({ action: 'client_preview', slug: c.slug, templateId, extra_vars });
+      loading.style.display = 'none';
+      if (!result.ok) {
+        errEl.textContent   = 'Preview error: ' + (result.error || 'unknown');
+        errEl.style.display = 'block';
+        return;
+      }
+      document.getElementById('preview-subject').value = result.subject || '';
+      document.getElementById('preview-body').value    = result.body    || '';
+      content.style.display = 'block';
+    } catch (err) {
+      loading.style.display = 'none';
+      errEl.textContent     = 'Preview error: ' + err.message;
+      errEl.style.display   = 'block';
+    }
+  }
+
+  // Trigger preview when template or date changes
+  document.getElementById('template-select').addEventListener('change', renderPreview);
+  document.getElementById('deliver-by-override').addEventListener('change', renderPreview);
+  document.getElementById('extra-vars-input').addEventListener('blur', () => {
+    if (document.getElementById('template-select').value) renderPreview();
+  });
+  document.getElementById('btn-preview-refresh').addEventListener('click', renderPreview);
+
   // ── Wire send template ──
   document.getElementById('btn-send-template').addEventListener('click', async function () {
     const templateId = document.getElementById('template-select').value;
@@ -4785,28 +4894,17 @@ function renderClientDetail(c, emailLog) {
       return;
     }
 
-    const deliverByOverride = document.getElementById('deliver-by-override').value;
-    const extraVarsRaw      = document.getElementById('extra-vars-input').value;
+    const subject = document.getElementById('preview-subject')?.value.trim();
+    const body    = document.getElementById('preview-body')?.value.trim();
+    if (!subject || !body) { alert('Preview hasn\'t loaded yet — wait a moment and try again.'); return; }
 
-    // Parse key=value lines into an object.
-    const extra_vars = {};
-    extraVarsRaw.split('\n').forEach(line => {
-      const eq = line.indexOf('=');
-      if (eq > 0) {
-        const k = line.slice(0, eq).trim();
-        const v = line.slice(eq + 1).trim();
-        if (k) extra_vars[k] = v;
-      }
-    });
-    if (deliverByOverride) extra_vars.deliver_by = deliverByOverride;
+    const templateLabel = CLIENT_TEMPLATE_LABELS[templateId] || templateId;
+    if (!confirm(`Send "${templateLabel}" to ${c.email}?\n\nThis will send the email exactly as shown in the preview.`)) return;
 
     const status = document.getElementById('send-status');
-    const templateLabel = CLIENT_TEMPLATE_LABELS[templateId] || templateId;
-    if (!confirm(`Send "${templateLabel}" to ${c.email}?\n\nThis will send immediately.`)) return;
-
     this.disabled = true; status.textContent = 'Sending…'; status.className = 'save-status';
     try {
-      const result = await apiPost({ action: 'client_send', slug: c.slug, templateId, extra_vars });
+      const result = await apiPost({ action: 'client_send', slug: c.slug, templateId, subject, body });
       if (result.ok) {
         status.textContent = 'Sent ✓'; status.className = 'save-status ok';
         setTimeout(() => loadClientDetail(c.slug), 1200);

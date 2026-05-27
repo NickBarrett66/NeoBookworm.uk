@@ -21,7 +21,8 @@
 // POST /api/dashboard  body: { action:"outreach_sent",     notion_id, campaign_id }
 // POST /api/dashboard  body: { action:"client_promote",    source_type, source_id, journey? }
 // POST /api/dashboard  body: { action:"client_set_stage",  slug, stage, next_action_by? }
-// POST /api/dashboard  body: { action:"client_send",       slug, templateId, extra_vars:{...} }
+// POST /api/dashboard  body: { action:"client_preview",    slug, templateId, extra_vars:{...} }
+// POST /api/dashboard  body: { action:"client_send",       slug, templateId, extra_vars:{...}, subject?, body? }
 // POST /api/dashboard  body: { action:"client_set_fields", slug, fields:{...} }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
@@ -37,7 +38,8 @@
 
 const { queryD1, prospectsDb, enquiriesDb } = require('./_lib/d1');
 const { promoteToClient }                  = require('./_lib/promote');
-const { sendTemplated }                    = require('./_lib/email');
+const { sendTemplated, sendRendered }      = require('./_lib/email');
+const { renderTemplate }                   = require('./_lib/templates');
 const { sendAcknowledgement }              = require('./_lib/acknowledge');
 
 const PROSPECTS_EDITABLE = [
@@ -566,6 +568,23 @@ module.exports = async (req, res) => {
       }
     }
 
+    // ── buildClientVars — shared var-fill for preview + send ────────────────
+    function buildClientVars(client) {
+      const vars = {};
+      vars.name       = client.contact_name  || client.business_name || 'there';
+      vars.business   = client.business_name || client.contact_name  || 'your business';
+      vars.portal_url = `https://neobookworm.uk/c/${client.slug}/`;
+      if (client.preview_url)      vars.preview_url      = client.preview_url;
+      if (client.live_url)         vars.live_url          = client.live_url;
+      if (client.current_url)      vars.current_url       = client.current_url;
+      if (client.next_action_by)   vars.deliver_by        = client.next_action_by;
+      if (client.domain)           vars.domain            = client.domain;
+      if (client.hosting_provider) vars.hosting_provider  = client.hosting_provider;
+      if (client.hosting_url)      vars.hosting_url       = client.hosting_url;
+      if (client.client_email)     vars.client_email      = client.client_email;
+      return vars;
+    }
+
     // ── client_promote ─────────────────────────────────────────────────────
     if (action === 'client_promote') {
       const { source_type, source_id, journey } = body;
@@ -632,8 +651,8 @@ module.exports = async (req, res) => {
       }
     }
 
-    // ── client_send ─────────────────────────────────────────────────────────
-    if (action === 'client_send') {
+    // ── client_preview ───────────────────────────────────────────────────────
+    if (action === 'client_preview') {
       const { slug, templateId, extra_vars = {} } = body;
       if (!slug || !templateId) {
         return res.status(400).json({ ok: false, error: 'slug and templateId required' });
@@ -642,26 +661,33 @@ module.exports = async (req, res) => {
         const clientRows = await queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]);
         if (!clientRows.length) return res.status(404).json({ ok: false, error: 'Client not found' });
         const client = clientRows[0];
+        const vars = { ...buildClientVars(client), ...extra_vars };
+        const { subject, body: emailBody } = renderTemplate(templateId, vars);
+        return res.status(200).json({ ok: true, subject, body: emailBody });
+      } catch (err) {
+        return res.status(400).json({ ok: false, error: err.message });
+      }
+    }
 
-        // Auto-fill common vars from client record; caller's extra_vars take precedence.
-        const autoVars = {};
-        const name     = client.contact_name  || client.business_name || 'there';
-        const business = client.business_name || client.contact_name  || 'your business';
-        autoVars.name        = name;
-        autoVars.business    = business;
-        autoVars.portal_url  = `https://neobookworm.uk/c/${client.slug}/`;
-        if (client.preview_url)    autoVars.preview_url    = client.preview_url;
-        if (client.live_url)       autoVars.live_url       = client.live_url;
-        if (client.current_url)    autoVars.current_url    = client.current_url;
-        if (client.next_action_by) autoVars.deliver_by     = client.next_action_by;
-        if (client.domain)         autoVars.domain         = client.domain;
-        if (client.hosting_provider) autoVars.hosting_provider = client.hosting_provider;
-        if (client.hosting_url)    autoVars.hosting_url    = client.hosting_url;
-        if (client.client_email)   autoVars.client_email   = client.client_email;
+    // ── client_send ─────────────────────────────────────────────────────────
+    if (action === 'client_send') {
+      const { slug, templateId, extra_vars = {}, subject: subjectOverride, body: bodyOverride } = body;
+      if (!slug || !templateId) {
+        return res.status(400).json({ ok: false, error: 'slug and templateId required' });
+      }
+      try {
+        const clientRows = await queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]);
+        if (!clientRows.length) return res.status(404).json({ ok: false, error: 'Client not found' });
+        const client = clientRows[0];
 
-        const vars = { ...autoVars, ...extra_vars };
-
-        const result = await sendTemplated({ slug, templateId, vars, to: client.email });
+        let result;
+        if (subjectOverride && bodyOverride) {
+          // Caller has already rendered (and possibly edited) — send as-is.
+          result = await sendRendered({ slug, templateId, subject: subjectOverride, body: bodyOverride, to: client.email });
+        } else {
+          const vars = { ...buildClientVars(client), ...extra_vars };
+          result = await sendTemplated({ slug, templateId, vars, to: client.email });
+        }
         return res.status(200).json({ ok: result.ok, error: result.error || null });
       } catch (err) {
         console.error('[dashboard client_send]', err.message);

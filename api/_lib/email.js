@@ -59,6 +59,31 @@ async function _logEmail({ slug, templateId, subject, body = null, to, status, e
 }
 
 /**
+ * Send a pre-rendered email via Google Workspace SMTP and write an email_log row.
+ * Use this when the caller has already rendered (and possibly edited) subject/body.
+ */
+async function sendRendered({ slug, templateId, subject, body, to }) {
+  const from = process.env.GW_SMTP_USER || 'nick@neobookworm.uk';
+  try {
+    const transporter = _getTransport();
+    await transporter.sendMail({
+      from: `"Nick at NeoBookworm" <${from}>`,
+      replyTo: from,
+      to,
+      subject,
+      text: body,
+    });
+    await _logEmail({ slug, templateId, subject, body, to, status: 'sent' });
+    return { ok: true };
+  } catch (err) {
+    const message = err.message || String(err);
+    console.error(`[email.js] sendRendered failed (${templateId} → ${to}):`, message);
+    await _logEmail({ slug, templateId, subject, body, to, status: 'failed', error: message });
+    return { ok: false, error: message };
+  }
+}
+
+/**
  * Render a template and send it via Google Workspace SMTP, then write an
  * email_log row.
  *
@@ -102,4 +127,4 @@ async function sendTemplated({ slug, templateId, vars, to }) {
   }
 }
 
-module.exports = { sendTemplated };
+module.exports = { sendTemplated, sendRendered };
