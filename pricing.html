@@ -61,6 +61,22 @@ border-bottom: 1px solid rgba(255,255,255,0.06);
 
 .logo-wordmark { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--white); }
 .logo-wordmark span { color: var(--amber); }
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logo-tagline {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.38);
+  line-height: 1;
+}
+
 .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
 .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: var(--white); }
@@ -422,8 +438,16 @@ vertical-align: middle;
 <!-- NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-logo">
-  <img src="logo.webp" alt="NeoBookworm.uk logo" class="nav-logo-img">
-  <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+  <img src="logo-160.webp"
+       srcset="logo-80.webp 80w, logo-160.webp 160w"
+       sizes="80px"
+       alt="NeoBookworm.uk logo"
+       class="nav-logo-img"
+       width="1024" height="1024">
+  <span class="logo-stack">
+    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+    <span class="logo-tagline">websites, done properly</span>
+  </span>
 </a>
   <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
     <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
