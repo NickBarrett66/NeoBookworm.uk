@@ -582,6 +582,7 @@ module.exports = async (req, res) => {
       if (client.hosting_provider) vars.hosting_provider  = client.hosting_provider;
       if (client.hosting_url)      vars.hosting_url       = client.hosting_url;
       if (client.client_email)     vars.client_email      = client.client_email;
+      if (client.revision_count != null) vars.revisions_count = String(client.revision_count);
       return vars;
     }
 
