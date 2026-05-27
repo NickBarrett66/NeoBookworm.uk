@@ -4718,22 +4718,6 @@ function renderClientDetail(c, emailLog, changeRequests) {
       <div class="section-label" style="margin:0 0 .75rem">Email history</div>
       <ul style="list-style:none">${emailRows}</ul>
     </div>
-
-    <!-- Change requests -->
-    ${changeRequests.length > 0 ? `
-    <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
-      <div class="section-label" style="margin:0 0 .75rem">Change requests (${changeRequests.length})</div>
-      <div style="display:flex;flex-direction:column;gap:.75rem">
-        ${changeRequests.map((cr, i) => `
-        <div style="border:1px solid var(--border-sub);border-radius:8px;padding:.85rem 1rem">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber)">Round ${changeRequests.length - i}</span>
-            <span style="font-size:.75rem;color:var(--muted)">${escHtml(cr.created_at ? cr.created_at.slice(0, 16).replace('T', ' ') : '')}</span>
-          </div>
-          <pre style="font-family:var(--sans);font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.85);white-space:pre-wrap;word-break:break-word;margin:0">${escHtml(cr.body)}</pre>
-        </div>`).join('')}
-      </div>
-    </div>` : ''}
   `;
 
   // ── Wire iframe toggle ──

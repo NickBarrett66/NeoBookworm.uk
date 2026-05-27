@@ -1467,16 +1467,21 @@ module.exports = async (req, res) => {
     if (action === 'client_detail') {
       const { slug } = req.query;
       if (!slug) return res.status(400).json({ error: 'slug required' });
-      const [clientRows, emailLogRows] = await Promise.all([
+      const [clientRows, emailLogRows, changeRequestRows] = await Promise.all([
         queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]),
         queryD1(enquiriesDb(),
           `SELECT id, template, subject, body, sent_at, status, error, recipient
            FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 30`,
           [slug]
         ),
+        queryD1(enquiriesDb(),
+          `SELECT id, body, stage_at, created_at
+           FROM change_requests WHERE slug = ? ORDER BY created_at DESC`,
+          [slug]
+        ),
       ]);
       if (!clientRows.length) return res.status(404).json({ error: 'Client not found' });
-      return res.status(200).json({ ok: true, data: clientRows[0], email_log: emailLogRows });
+      return res.status(200).json({ ok: true, data: clientRows[0], email_log: emailLogRows, change_requests: changeRequestRows });
     }
 
     return res.status(400).json({ error: `Unknown action: ${action}` });

@@ -822,6 +822,123 @@ details[open] .email-expand-hint { display: none; }
   font-style: italic;
 }
 
+/* ── Action buttons (preview stage) ── */
+.action-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.action-btn {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--navy-mid);
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  min-height: 44px;
+}
+.action-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+}
+.action-btn:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.action-btn--primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--navy);
+}
+.action-btn--primary:hover:not(:disabled) {
+  background: var(--amber-dark);
+  border-color: var(--amber-dark);
+  color: var(--navy);
+}
+.action-btn--muted {
+  background: transparent;
+  border-color: rgba(255,255,255,0.12);
+  color: var(--muted);
+  font-weight: 400;
+}
+.action-btn--muted:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.25);
+  color: var(--white);
+  background: rgba(255,255,255,0.04);
+}
+.action-form { margin-top: 0.75rem; }
+.action-form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.action-textarea {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  margin-bottom: 0.6rem;
+}
+.action-textarea:focus {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-color: var(--amber);
+}
+.action-textarea::placeholder { color: rgba(255,255,255,0.28); }
+.action-form-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.action-confirm {
+  background: rgba(245,166,35,0.06);
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  margin-top: 0.5rem;
+}
+.action-confirm-text {
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  color: var(--white);
+  line-height: 1.5;
+}
+.action-confirm-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.action-error {
+  margin-top: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.25);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #fca5a5;
+}
+.action-busy {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* ── Footer ── */
 .portal-footer {
   text-align: center;
@@ -924,7 +1041,7 @@ function renderProgressStrip(stage) {
 </nav>`;
 }
 
-function renderActivePanel(client) {
+function renderActivePanel(client, slug) {
   const contactNameRaw = (client.contact_name || '').trim();
   const firstNameRaw = contactNameRaw ? contactNameRaw.split(/\s+/)[0] : 'there';
   const name = esc(firstNameRaw);
@@ -1067,6 +1184,7 @@ function renderActivePanel(client) {
         `<p class="panel-deliver-sub">If you need it urgently, email me and I’ll resend it.</p>` +
         `</div>`;
 
+    const safeSlug = esc(slug || ‘’);
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--you">` +
       `<span class="turn-dot turn-dot--you" aria-hidden="true"></span>` +
@@ -1075,11 +1193,37 @@ function renderActivePanel(client) {
       `</div>` +
       `<div class="panel-actions">` +
       `<p class="panel-actions-lead">What would you like to do?</p>` +
-      `<ul>` +
-      `<li><a href="#" aria-disabled="true" onclick="return false">Looks good — go live (coming soon)</a></li>` +
-      `<li><a href="#" aria-disabled="true" onclick="return false">I’d like a few changes (coming soon)</a></li>` +
-      `<li><a href="#" aria-disabled="true" onclick="return false">Not for me — close it down (coming soon)</a></li>` +
-      `</ul>` +
+      `<div id="pa-root" data-slug="${safeSlug}">` +
+      `<div id="pa-options" class="action-options">` +
+      `<button class="action-btn action-btn--primary" id="pa-approve">Looks good — go live</button>` +
+      `<button class="action-btn" id="pa-changes">I’d like a few changes</button>` +
+      `<button class="action-btn action-btn--muted" id="pa-decline">Not for me — close it down</button>` +
+      `</div>` +
+      `<div id="pa-changes-form" class="action-form" hidden>` +
+      `<label class="action-form-label" for="pa-changes-text">What would you like changed?</label>` +
+      `<textarea class="action-textarea" id="pa-changes-text" rows="5" placeholder="Describe the changes you’d like — be as specific as you like. You can always send another round if needed."></textarea>` +
+      `<div class="action-form-row">` +
+      `<button class="action-btn action-btn--primary" id="pa-changes-send">Send changes</button>` +
+      `<button class="action-btn action-btn--muted" id="pa-changes-cancel">Back</button>` +
+      `</div>` +
+      `</div>` +
+      `<div id="pa-confirm-approve" class="action-confirm" hidden>` +
+      `<p class="action-confirm-text">Ready to go ahead? I’ll send you payment details next — it’s £299 for the build. You don’t pay until you’re happy with the site.</p>` +
+      `<div class="action-confirm-row">` +
+      `<button class="action-btn action-btn--primary" id="pa-confirm-approve-yes">Yes, let’s go</button>` +
+      `<button class="action-btn action-btn--muted" id="pa-confirm-approve-no">Go back</button>` +
+      `</div>` +
+      `</div>` +
+      `<div id="pa-confirm-decline" class="action-confirm" hidden>` +
+      `<p class="action-confirm-text">Are you sure? I’ll close this down and you won’t owe anything. If you change your mind later, just drop me a line.</p>` +
+      `<div class="action-confirm-row">` +
+      `<button class="action-btn" id="pa-confirm-decline-yes">Yes, close it down</button>` +
+      `<button class="action-btn action-btn--muted" id="pa-confirm-decline-no">Go back</button>` +
+      `</div>` +
+      `</div>` +
+      `<p id="pa-busy" class="action-busy" hidden>Sending…</p>` +
+      `<p id="pa-error" class="action-error" hidden></p>` +
+      `</div>` +
       `</div>`;
 
     content = zone1 + zone2 + zone3;
@@ -1352,7 +1496,7 @@ function renderPage({ client, emailLog, section, slug }) {
     ? (section === 'guides'
         ? renderAllGuidesPanel(client, slug)
         : renderSectionPanel(section))
-    : renderActivePanel(client);
+    : renderActivePanel(client, slug);
   const links   = renderUsefulLinks(stage, client.journey || null, client.plan || null, slug);
   const history = renderHistory(emailLog);
 
@@ -1388,6 +1532,106 @@ ${head}
   <footer class="portal-footer">
     Need to reach Nick? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> — replies within one working day.
   </footer>
+
+  ${(stage === 'preview_ready' || stage === 'review_delivered') && !isSection ? `<script>
+(function () {
+  var root = document.getElementById('pa-root');
+  if (!root) return;
+  var slug = root.dataset.slug;
+
+  function el(id) { return document.getElementById(id); }
+  function show(id) { el(id).removeAttribute('hidden'); }
+  function hide(id) { el(id).setAttribute('hidden', ''); }
+
+  function hideAll() {
+    ['pa-options','pa-changes-form','pa-confirm-approve','pa-confirm-decline','pa-busy','pa-error']
+      .forEach(hide);
+  }
+
+  function showOptions() {
+    hideAll();
+    show('pa-options');
+  }
+
+  function showError(msg) {
+    el('pa-error').textContent = msg;
+    show('pa-error');
+  }
+
+  function setAllDisabled(on) {
+    root.querySelectorAll('button, textarea').forEach(function (b) { b.disabled = on; });
+  }
+
+  function post(action, message) {
+    hideAll();
+    show('pa-busy');
+    setAllDisabled(true);
+
+    var payload = { action: action };
+    if (message !== undefined) payload.message = message;
+
+    fetch('/c/' + encodeURIComponent(slug) + '/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .then(function (resp) {
+      return resp.json().then(function (json) { return { ok: resp.ok, json: json }; });
+    })
+    .then(function (result) {
+      if (!result.ok) {
+        setAllDisabled(false);
+        showOptions();
+        showError(result.json.error || 'Something went wrong — please try again or email nick@neobookworm.uk');
+        return;
+      }
+      window.location.reload();
+    })
+    .catch(function () {
+      setAllDisabled(false);
+      showOptions();
+      showError('Connection problem — please try again, or email nick@neobookworm.uk');
+    });
+  }
+
+  // ── Approve ──
+  el('pa-approve').addEventListener('click', function () {
+    hideAll();
+    show('pa-confirm-approve');
+  });
+  el('pa-confirm-approve-yes').addEventListener('click', function () { post('approve'); });
+  el('pa-confirm-approve-no').addEventListener('click', showOptions);
+
+  // ── Changes ──
+  el('pa-changes').addEventListener('click', function () {
+    hideAll();
+    show('pa-changes-form');
+    el('pa-changes-text').focus();
+  });
+  el('pa-changes-cancel').addEventListener('click', showOptions);
+  el('pa-changes-send').addEventListener('click', function () {
+    var msg = el('pa-changes-text').value.trim();
+    if (!msg) {
+      showError('Please describe the changes you\'d like before sending.');
+      return;
+    }
+    if (msg.length > 4000) {
+      showError('Message too long — please keep it under 4000 characters.');
+      return;
+    }
+    hide('pa-error');
+    post('changes', msg);
+  });
+
+  // ── Decline ──
+  el('pa-decline').addEventListener('click', function () {
+    hideAll();
+    show('pa-confirm-decline');
+  });
+  el('pa-confirm-decline-yes').addEventListener('click', function () { post('decline'); });
+  el('pa-confirm-decline-no').addEventListener('click', showOptions);
+}());
+</script>` : ''}
 </body>
 </html>`;
 }
