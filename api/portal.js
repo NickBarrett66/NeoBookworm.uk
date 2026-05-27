@@ -230,15 +230,43 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-r
   flex-wrap: wrap;
 }
 .portal-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.portal-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.portal-logo-wordmark {
   font-family: var(--serif);
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--white);
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
-.portal-logo span { color: var(--amber); }
+.portal-logo-wordmark span {
+  color: var(--amber);
+}
+.portal-logo-tagline {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.38);
+  line-height: 1;
+}
 
 /* ── Progress strip ── */
 .progress-strip {
@@ -984,7 +1012,18 @@ ${head}
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="portal-header">
-    <a href="https://neobookworm.uk" class="portal-logo">Neo<span>Bookworm</span></a>
+    <a href="https://neobookworm.uk" class="portal-logo">
+      <img src="/logo-160.webp"
+           srcset="/logo-80.webp 80w, /logo-160.webp 160w"
+           sizes="80px"
+           alt="NeoBookworm.uk logo"
+           class="portal-logo-img"
+           width="1024" height="1024">
+      <span class="logo-stack">
+        <span class="portal-logo-wordmark">Neo<span>Bookworm.uk</span></span>
+        <span class="portal-logo-tagline">websites, done properly</span>
+      </span>
+    </a>
   </header>
 
   ${strip}
