@@ -1233,9 +1233,14 @@ function renderActivePanel(client, slug) {
     const zone1 = `<p class="panel-lead">${lead}</p>` +
       `<p class="panel-status">You're going ahead — brilliant.</p>`;
 
-    const zone2 = `<div class="panel-preview-link">` +
-      `<a href="#" aria-disabled="true" onclick="return false">Pay invoice (coming soon)</a>` +
-      `</div>`;
+    const stripeLink = client.stripe_link ? String(client.stripe_link).trim() : '';
+    const zone2 = stripeLink
+      ? `<div class="panel-preview-link">` +
+        `<a href="${esc(stripeLink)}" target="_blank" rel="noopener">Pay invoice →</a>` +
+        `</div>`
+      : `<div class="panel-preview-link">` +
+        `<a href="#" aria-disabled="true" onclick="return false">Pay invoice (link coming by email)</a>` +
+        `</div>`;
 
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--you">` +
@@ -1243,12 +1248,21 @@ function renderActivePanel(client, slug) {
       `Over to you — pay when you're ready.` +
       `</p>` +
       `</div>` +
-      `<div class="panel-actions">` +
-      `<p class="panel-actions-lead">Need the payment link?</p>` +
-      `<ul>` +
-      `<li><a href="#" aria-disabled="true" onclick="return false">Open Stripe checkout (coming soon)</a></li>` +
-      `</ul>` +
-      `</div>`;
+      (stripeLink
+        ? `<div class="panel-actions">` +
+          `<p class="panel-actions-lead">Payment details:</p>` +
+          `<ul>` +
+          `<li>£299 fixed price — covers the full build.</li>` +
+          `<li>Secure Stripe checkout. Card or Apple Pay.</li>` +
+          `<li>Receipt arrives by email straight after.</li>` +
+          `</ul>` +
+          `</div>`
+        : `<div class="panel-actions">` +
+          `<p class="panel-actions-lead">Need the payment link?</p>` +
+          `<ul>` +
+          `<li>I'll email it through shortly — keep an eye on your inbox.</li>` +
+          `</ul>` +
+          `</div>`);
 
     content = zone1 + zone2 + zone3;
 
@@ -1695,7 +1709,7 @@ module.exports = async function handler(req, res) {
   try {
     const rows = await queryD1(
       enquiriesDb(),
-      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url FROM clients WHERE slug = ? LIMIT 1',
+      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url, stripe_link FROM clients WHERE slug = ? LIMIT 1',
       [slug]
     );
     client = rows[0] || null;

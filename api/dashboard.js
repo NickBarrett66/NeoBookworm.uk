@@ -61,6 +61,7 @@ const CLIENTS_EDITABLE = [
   'preview_url', 'live_url', 'current_url', 'domain', 'domain_status',
   'plan', 'next_action_by', 'notes', 'revision_count',
   'hosting_provider', 'hosting_url', 'client_email', 'stripe_customer_id',
+  'stripe_link',
 ];
 
 const CLIENT_VALID_STAGES = [
@@ -583,6 +584,7 @@ module.exports = async (req, res) => {
       if (client.hosting_url)      vars.hosting_url       = client.hosting_url;
       if (client.client_email)     vars.client_email      = client.client_email;
       if (client.revision_count != null) vars.revisions_count = String(client.revision_count);
+      vars.stripe_link = client.stripe_link || '[STRIPE LINK — paste into dashboard Site URLs field]';
       return vars;
     }
 

@@ -4657,6 +4657,7 @@ function renderClientDetail(c, emailLog, changeRequests) {
         ${fieldRow('live_url',    'Live URL',     c.live_url)}
         ${fieldRow('current_url', 'Current URL',  c.current_url)}
         ${fieldRow('domain',      'Domain',       c.domain)}
+        ${fieldRow('stripe_link', 'Stripe payment link', c.stripe_link)}
         <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
           <button id="btn-save-urls" class="filter-btn btn-dash-save">Save URLs</button>
           <span id="urls-save-status" class="save-status"></span>
@@ -4847,7 +4848,7 @@ function renderClientDetail(c, emailLog, changeRequests) {
   // ── Wire URLs save ──
   document.getElementById('btn-save-urls').addEventListener('click', async function () {
     const fields = {};
-    ['preview_url', 'live_url', 'current_url', 'domain'].forEach(f => {
+    ['preview_url', 'live_url', 'current_url', 'domain', 'stripe_link'].forEach(f => {
       fields[f] = document.getElementById(`field-${f}`)?.value.trim() || null;
     });
     const status = document.getElementById('urls-save-status');
