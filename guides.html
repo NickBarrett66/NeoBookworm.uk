@@ -275,6 +275,21 @@
     }
     .card:hover .card-cta { gap: 0.5rem; }
 
+    .card-start-here {
+      grid-column: 1 / -1;
+      background: var(--amber-faint);
+      border-left: 3px solid var(--amber);
+      cursor: default;
+    }
+    .card-start-here:hover {
+      background: var(--amber-faint);
+      border-color: var(--border);
+      border-left-color: var(--amber);
+      transform: none;
+    }
+    .card-start-here::after { display: none; }
+    .card-start-here:hover::after { transform: scaleX(0); }
+
     /* ── DIVIDER ── */
     .divider {
       display: flex; align-items: center;
@@ -440,13 +455,23 @@
 <div class="wrap">
 
   <!-- SECTION 1 -->
-  <div class="section-head">
+  <div class="section-head" id="section-decide">
     <div class="section-tag amber"><span class="pip"></span>Thinking about getting a website?</div>
     <h2>Before you decide</h2>
     <p>Five guides covering cost, content, Google, and whether you need one at all.</p>
   </div>
 
   <div class="card-grid">
+
+    <div class="card card-start-here">
+      <span class="card-icon">🧭</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Start here</span>
+      </div>
+      <div class="card-title">New to all this? Start here.</div>
+      <div class="card-tagline">Five guides on whether you need a website, what it should do, and what it should cost — written for people who'd rather be doing the trade than reading about websites.</div>
+      <span class="card-cta">Read in order ↓</span>
+    </div>
 
     <a href="guides/do-i-need-a-website.html" class="card">
       <span class="card-icon card-icon--img">
@@ -478,8 +503,8 @@
         <span class="card-badge amber">Content</span>
         <span class="card-time">5 min read</span>
       </div>
-      <div class="card-title">What Actually Goes on a Trades Website That Gets You Jobs?</div>
-      <div class="card-tagline">Five things customers look for — and exactly what to give them.</div>
+      <div class="card-title">The 5 Things Customers Check Before Calling a Tradesperson</div>
+      <div class="card-tagline">What runs through someone's head in the 30 seconds between Googling you and deciding whether to ring. Get those five things right and the rest looks after itself.</div>
       <span class="card-cta">Read guide →</span>
     </a>
 
@@ -502,6 +527,72 @@
       </div>
       <div class="card-title">How to Take Decent Work Photos on Your Phone</div>
       <div class="card-tagline">Better photos mean more enquiries. Here's all it takes with a modern smartphone.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/why-trade-websites-look-the-same.html" class="card">
+      <span class="card-icon">🎨</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Getting started</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">Why Most Trade Websites Look the Same (And Why It Matters)</div>
+      <div class="card-tagline">Most trade sites come from the same handful of templates. Customers can tell — even if they can't say why.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/checkatrade-vs-google-vs-website.html" class="card">
+      <span class="card-icon">🧩</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Getting found</span>
+        <span class="card-time">5 min read</span>
+      </div>
+      <div class="card-title">Checkatrade, Google, or Your Own Website — What's the Difference?</div>
+      <div class="card-tagline">Three places customers find local trades online — and the very different jobs each one does.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/wix-squarespace-or-custom.html" class="card">
+      <span class="card-icon">🧱</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Getting started</span>
+        <span class="card-time">5 min read</span>
+      </div>
+      <div class="card-title">Wix, Squarespace, or a Built-From-Scratch Site — Which Suits a Trade?</div>
+      <div class="card-tagline">An honest look at when the DIY builders are the right call — and when they quietly let you down.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/how-long-does-it-take.html" class="card">
+      <span class="card-icon">⏱️</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Process</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">How Long Does It Take to Get a Website Built?</div>
+      <div class="card-tagline">About a fortnight from first message to going live, with roughly two hours of your time.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/domain-names-explained.html" class="card">
+      <span class="card-icon">🌐</span>
+      <div class="card-meta">
+        <span class="card-badge amber">Getting started</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">Do I Need a .co.uk or a .com? Web Addresses Explained</div>
+      <div class="card-tagline">A small decision people overthink. Here's what actually matters — and why .uk and .co.uk are both fine.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/cold-calls-prospect.html" class="card">
+      <span class="card-icon">📵</span>
+      <div class="card-meta">
+        <span class="card-badge amber">What to expect</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">Why You'll Get Cold Calls After Launching a Site</div>
+      <div class="card-tagline">A new website triggers a wave of sales calls — unless your builder switches one setting on at registration.</div>
       <span class="card-cta">Read guide →</span>
     </a>
 
@@ -585,12 +676,67 @@
       <span class="card-cta">Read guide →</span>
     </a>
 
+    <a href="guides/first-10-google-reviews.html" class="card">
+      <span class="card-icon">⭐</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Reviews</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">How to Get Your First 10 Google Reviews</div>
+      <div class="card-tagline">Ten reviews is the threshold where "unproven" turns into "established." Here's the simple way to get there.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/bad-reviews.html" class="card">
+      <span class="card-icon">💬</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Reviews</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">What to Do If a Customer Leaves a Bad Review</div>
+      <div class="card-tagline">The calm, public-facing way to respond — and the mistakes to avoid in the first 24 hours.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/van-quotes-invoices.html" class="card">
+      <span class="card-icon">🚐</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Going live</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">Putting Your Website on Your Van, Quotes and Invoices</div>
+      <div class="card-tagline">Most visits to a trade website come from offline. Here's where the web address actually earns its keep.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/yearly-checklist.html" class="card">
+      <span class="card-icon">📅</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Keeping it fresh</span>
+        <span class="card-time">4 min read</span>
+      </div>
+      <div class="card-title">When Should I Update My Website? A Yearly Checklist</div>
+      <div class="card-tagline">A simple monthly, quarterly and yearly rhythm — without spending more than an afternoon a year on it.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/cancelling.html" class="card">
+      <span class="card-icon">🚪</span>
+      <div class="card-meta">
+        <span class="card-badge blue">Transparency</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">What Happens If I Want to Cancel?</div>
+      <div class="card-tagline">A month's notice, no exit fees, your site files and web address come with you. The straight version.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
   </div><!-- /grid -->
 
   <!-- NOTICE BOX -->
   <div class="notice">
     <div class="notice-icon">◎</div>
-    <p><strong>Not sure which guide you need?</strong> Drop me an email and I'll point you in the right direction — no obligation. <a href="mailto:neobookworm@icloud.com">neobookworm@icloud.com</a></p>
+    <p><strong>Not sure which guide you need?</strong> Drop me an email and I'll point you in the right direction — no obligation. <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
   </div>
 
 </div><!-- /wrap -->
