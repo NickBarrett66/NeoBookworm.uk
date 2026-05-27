@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme:only dark;background:#0f1f3d;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Why You'll Get Cold Calls After Launching a Site (And How a Good Builder Prevents It) | NeoBookworm</title>
+  <meta name="description" content="A new trade website triggers a small wave of sales calls — unless your builder switches the right setting on at registration. Here's how it works. Read on.">
+  <link rel="canonical" href="https://neobookworm.uk/guides/cold-calls-prospect.html">
+  <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+  <link rel="stylesheet" href="/nav-mobile.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/nav-mobile.css"></noscript>
+  <style>/* ── SHARED STYLES — NeoBookworm Guide Pages ── */
+:root {
+  --navy:        #0f1f3d;
+  --navy-card:   #162b4a;
+  --navy-card2:  #1a3050;
+  --navy-hover:  #1e3558;
+  --amber:       #f5a623;
+  --amber-dark:  #d4891a;
+  --amber-faint: rgba(245,166,35,0.08);
+  --amber-mid:   rgba(245,166,35,0.18);
+  --text:        #dde5f0;
+  --text-muted:  #7d98b8;
+  --text-dim:    #3d5a7a;
+  --border:      rgba(255,255,255,0.09);
+  --border-gold: rgba(245,166,35,0.25);
+  --blue-tag:    #7fb3cc;
+  --blue-faint:  rgba(127,179,204,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; color-scheme: only dark; background: #0f1f3d; }
+
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: only dark;
+}
+
+/* NAV — matches index.html */
+main { padding-top: 5.25rem; }
+nav.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2.5rem;
+  background: rgba(15,31,61,0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: padding 0.3s;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-wordmark {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.logo-wordmark span { color: var(--amber); }
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logo-tagline {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.38);
+  line-height: 1;
+}
+
+.nav-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: inline-block;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-links a {
+  color: var(--text-muted); text-decoration: none;
+  font-size: 0.875rem; font-weight: 500;
+  transition: color 0.2s; white-space: nowrap;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a.active { color: var(--amber); }
+.nav-cta {
+  background: var(--amber); color: var(--navy);
+  padding: 0.45rem 1.1rem; border-radius: 5px;
+  font-size: 0.875rem; font-weight: 600;
+  text-decoration: none; transition: background 0.2s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-cta:hover { background: var(--amber-dark); }
+
+@media (max-width: 640px) {
+  nav.site-nav { padding: 1rem 1.25rem; }
+}
+
+/* BREADCRUMB */
+.breadcrumb { padding: 1.25rem 5%; border-bottom: 1px solid var(--border); }
+.breadcrumb-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 0.4rem; font-size: 0.775rem; color: var(--text-dim); }
+.breadcrumb a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--text-muted); }
+.breadcrumb-sep { color: var(--text-dim); opacity: 0.5; }
+.breadcrumb-current { color: var(--text-muted); }
+
+/* GUIDE HEADER */
+.guide-header { padding: 3rem 5% 2.5rem; border-bottom: 1px solid var(--border); }
+.guide-header-inner { max-width: 720px; margin: 0 auto; }
+.guide-section-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.guide-section-tag .pip { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+.guide-section-tag.amber { color: var(--amber); }
+.guide-section-tag.amber .pip { background: var(--amber); }
+.guide-section-tag.blue { color: var(--blue-tag); }
+.guide-section-tag.blue .pip { background: var(--blue-tag); }
+.guide-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 0.75rem; }
+.guide-meta { display: flex; align-items: center; gap: 0.75rem; }
+.guide-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; }
+.guide-badge.amber { background: var(--amber-mid); color: var(--amber); }
+.guide-badge.blue { background: var(--blue-faint); color: var(--blue-tag); }
+.guide-read-time { font-size: 0.75rem; color: var(--text-dim); font-weight: 500; }
+
+/* CONTENT BODY */
+.guide-body { padding: 3rem 5% 4rem; }
+.guide-body-inner { max-width: 720px; margin: 0 auto; }
+
+.guide-body h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; font-weight: 700; color: #fff;
+  margin: 2.5rem 0 0.75rem;
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--amber);
+  line-height: 1.3;
+}
+.guide-body h2:first-child { margin-top: 0; }
+
+.guide-body p { font-size: 0.975rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1rem; }
+.guide-body p:last-child { margin-bottom: 0; }
+
+.guide-body ul, .guide-body ol { margin: 0.75rem 0 1rem 1.25rem; }
+.guide-body li { font-size: 0.975rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.3rem; }
+
+.guide-body strong { color: var(--text); font-weight: 600; }
+.guide-body em { color: var(--text); font-style: italic; }
+.guide-body a { color: var(--amber); text-decoration: none; }
+.guide-body a:hover { text-decoration: underline; }
+
+/* CALLOUT BOX */
+.callout {
+  background: var(--navy-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem; margin: 1.25rem 0;
+}
+.callout p { margin-bottom: 0; }
+
+/* TABLE */
+.guide-body table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; }
+.guide-body th { text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
+.guide-body td { padding: 0.6rem 0.75rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+.guide-body tr:last-child td { border-bottom: none; }
+.guide-body td:first-child { color: var(--text); font-weight: 500; }
+
+/* CTA BLOCK */
+.guide-cta {
+  background: var(--amber-faint); border: 1px solid var(--border-gold);
+  border-radius: 10px; padding: 1.75rem 2rem;
+  margin-top: 3rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+}
+.guide-cta-text p { font-size: 0.825rem; color: var(--text-muted); margin-top: 0.25rem; }
+.guide-cta-text strong { font-size: 1rem; color: #fff; font-family: 'Playfair Display', serif; font-weight: 700; }
+.guide-cta-btn { background: var(--amber); color: var(--navy); padding: 0.6rem 1.3rem; border-radius: 5px; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
+.guide-cta-btn:hover { background: var(--amber-dark); }
+
+/* MORE GUIDES */
+.more-guides { padding: 3rem 5% 4rem; border-top: 1px solid var(--border); }
+.more-guides-inner { max-width: 1080px; margin: 0 auto; }
+.more-guides-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1.25rem; }
+.more-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+
+.mini-card {
+  display: flex; flex-direction: column;
+  background: var(--navy-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.25rem 1.3rem; text-decoration: none; color: inherit;
+  transition: background 0.2s, border-color 0.2s, transform 0.18s;
+  position: relative; overflow: hidden;
+}
+.mini-card:hover { background: var(--navy-hover); border-color: var(--border-gold); transform: translateY(-2px); }
+.mini-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform 0.22s; }
+.mini-card:hover::after { transform: scaleX(1); }
+.mini-icon { font-size: 1.3rem; margin-bottom: 0.6rem; }
+.mini-badge { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-bottom: 0.5rem; display: inline-block; }
+.mini-badge.amber { background: var(--amber-mid); color: var(--amber); }
+.mini-badge.blue { background: var(--blue-faint); color: var(--blue-tag); }
+.mini-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 0.5rem; flex: 1; }
+.mini-cta { font-size: 0.75rem; font-weight: 600; color: var(--amber); }
+
+/* FOOTER — matches index.html */
+footer {
+  background: rgba(0,0,0,0.25);
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+}
+.footer-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-copy {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  list-style: none;
+}
+.footer-links a {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--amber); }
+.footer-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+}
+
+@media (max-width: 700px) {
+  .guide-cta { flex-direction: column; align-items: flex-start; }
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+
+/* ── Portal mode (opened via ?from= link) ── */
+.portal-mode .site-nav    { display: none !important; }
+.portal-mode .breadcrumb  { display: none !important; }
+.portal-mode footer       { display: none !important; }
+.portal-mode main         { padding-top: 0 !important; }
+body.portal-mode          { padding-top: 0 !important; }
+
+.portal-return-bar {
+  display: none;
+  background: #0f1f3d;
+  border-bottom: 1px solid rgba(245,166,35,0.18);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+}
+.portal-return-bar a {
+  color: #f5a623;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.portal-return-bar a:hover {
+  color: #d4891a;
+  text-decoration: underline;
+}
+.portal-mode .portal-return-bar { display: block; }
+</style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Why You'll Get Cold Calls After Launching a Site (And How a Good Builder Prevents It)",
+    "description": "A new trade website triggers a small wave of sales calls — unless your builder switches the right setting on at registration. Here's how it works. Read on.",
+    "author": { "@type": "Person", "name": "Nick Barrett" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NeoBookworm",
+      "logo": { "@type": "ImageObject", "url": "https://neobookworm.uk/logo-160.webp" }
+    },
+    "datePublished": "2026-05-27",
+    "dateModified": "2026-05-27",
+    "mainEntityOfPage": "https://neobookworm.uk/guides/cold-calls-prospect.html"
+  }
+  </script>
+
+<!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
+<link rel="stylesheet" href="../vendor/cookieconsent/cookieconsent.css"
+      media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="../vendor/cookieconsent/cookieconsent.css"></noscript>
+
+<!-- CookieConsent colour overrides -->
+<style>
+#cc-main {
+  --cc-bg: #0f1f3d;
+  --cc-primary-color: #f5a623;
+  --cc-secondary-color: #ffffff;
+  --cc-text-color: #ffffff;
+  --cc-text-color-headline: #ffffff;
+  --cc-separator-border-color: rgba(245, 166, 35, 0.2);
+  --cc-btn-primary-bg: #f5a623;
+  --cc-btn-primary-color: #0f1f3d;
+  --cc-btn-primary-hover-bg: #d4891a;
+  --cc-btn-primary-hover-color: #0f1f3d;
+  --cc-btn-secondary-bg: transparent;
+  --cc-btn-secondary-color: #ffffff;
+  --cc-btn-secondary-border-color: rgba(255,255,255,0.3);
+  --cc-btn-secondary-hover-bg: rgba(255,255,255,0.08);
+  --cc-btn-secondary-hover-color: #ffffff;
+  --cc-toggle-on-bg: #f5a623;
+  --cc-toggle-off-bg: rgba(255,255,255,0.2);
+  --cc-toggle-enabled-icon-color: #0f1f3d;
+  --cc-toggle-readonly-bg: rgba(245, 166, 35, 0.35);
+  --cc-cookie-category-block-bg: rgba(255,255,255,0.05);
+  --cc-cookie-category-block-border: rgba(245,166,35,0.15);
+  --cc-overlay-bg: rgba(0,0,0,0.5);
+  --cc-modal-border-radius: 4px;
+  --cc-btn-border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+}
+</style>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="portal-return-bar" id="portal-return-bar" aria-label="Return to portal">
+  <a href="#" id="portal-return-link">← Back to your portal</a>
+</div>
+
+<nav class="site-nav">
+  <a href="../index.html" class="nav-logo">
+  <img src="../logo-160.webp"
+       srcset="../logo-80.webp 80w, ../logo-160.webp 160w"
+       sizes="80px"
+       alt="NeoBookworm.uk logo"
+       class="nav-logo-img"
+       width="1024" height="1024">
+  <span class="logo-stack">
+    <span class="nav-wordmark logo-wordmark">Neo<span>Bookworm.uk</span></span>
+    <span class="logo-tagline">websites, done properly</span>
+  </span>
+</a>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+    <svg class="nav-icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <svg class="nav-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <ul id="primary-nav" class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../how-it-works.html">How It Works</a></li>
+    <li><a href="../pricing.html">Pricing</a></li>
+    <li><a href="../examples.html">Examples</a></li>
+    <li><a href="../guides.html" class="active">Guides</a></li>
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../contact.html" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/index.html">Home</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/guides.html">Guides</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">Cold calls after launch</span>
+  </div>
+</div>
+
+<header class="guide-header">
+  <div class="guide-header-inner">
+    <div class="guide-section-tag amber"><span class="pip"></span>What to expect</div>
+    <h1>Why You'll Get Cold Calls After Launching a Site (And How a Good Builder Prevents It)</h1>
+    <div class="guide-meta">
+      <span class="guide-badge amber">What to expect</span>
+      <span class="guide-read-time">4 min read</span>
+    </div>
+  </div>
+</header>
+
+<article class="guide-body">
+  <div class="guide-body-inner">
+    <p>Worth knowing before you launch your first site. Most trades aren't told this — and they only find out the hard way.</p>
+
+    <h2>What happens</h2>
+    <p>Within a few days of a new trade website going live, a small wave of phone calls starts. Friendly-sounding people from companies you've never heard of: so-called Google specialists, web designers, business directories, accounting software, vehicle tracking, the lot.</p>
+    <p>They all say roughly the same thing: “I noticed your new website and thought I'd give you a quick call about getting it found on Google.”</p>
+    <p>It's not a coincidence. New domain registrations are public information. There are scrapers that watch the register and sell the lists to call centres. The day you go live, your number goes onto a list, and the list gets dialled.</p>
+
+    <h2>Why it bothers most tradespeople</h2>
+    <p>Two reasons. First, you're trying to work. A call from an unknown number while you're up a ladder isn't welcome.</p>
+    <p>Second, the calls are persuasive. The person on the other end sounds like they know what they're talking about. If you've just spent money on a new site and you don't yet know how it's performing, an offer to “get it ranking” can sound reasonable.</p>
+    <p>Most of those offers aren't worth what they cost. Some are outright scams.</p>
+
+    <h2>What a good builder does about it</h2>
+    <p>When I register a web address for you, I use a setting called WHOIS privacy by default. It means the public record shows the contact details of Krystal — the UK domain company I register addresses through — instead of yours. The address is still 100% yours and registered in your name behind the scenes, but the cold-call list scrapers can't see your phone number.</p>
+    <p>It's the difference between getting 15–20 sales calls in the first fortnight and getting roughly zero.</p>
+    <p>I also keep your phone number off the public registration record at all the major directories I submit your site to, where the option exists.</p>
+
+    <h2>What to do if you've already got a site and the calls have started</h2>
+    <p>If WHOIS privacy wasn't switched on when your address was registered, the damage is done — your number's already on lists. Two things help:</p>
+    <ul>
+      <li>Switch WHOIS privacy on now. It costs £5–£10/year and stops new lists picking you up. Doesn't undo the lists you're already on.</li>
+      <li>Use call screening on your phone. iPhone and Android both have settings that send unknown numbers to voicemail. Most cold callers don't leave one. Genuine callers do.</li>
+    </ul>
+
+    <h2>What to say if you get a call</h2>
+    <p>The fastest answer that works: “I'm under contract with my current web builder, thanks.”</p>
+    <p>That's it. They're trained to handle “I'm not interested” with three more rebuttals. “I'm under contract” stops the script.</p>
+
+    <h2>What's actually a real opportunity vs. a cold call</h2>
+    <p>A genuine opportunity will come from someone you've heard of or been referred to, mention something specific about your business, and never need you to decide on the call.</p>
+    <p>A cold call will be from a number you don't recognise, use vague phrases like “get you to the top of Google,” and push you to commit to something in the same conversation.</p>
+    <p>When in doubt: take their company name, hang up, Google them. If they're real, they'll still be there in an hour.</p>
+
+    <p>Last updated: May 2026 · If anything in this guide is out of date or unclear, drop me an email — I'll fix it. nick@neobookworm.uk</p>
+    <!-- READ-NEXT-PLACEHOLDER -->
+
+    <div class="guide-cta">
+      <div class="guide-cta-text">
+        <strong>Want to avoid the wave?</strong>
+        <p>If you&#8217;re about to launch, I&#8217;ll make sure your web address is registered with the right privacy settings.</p>
+      </div>
+      <a href="/contact.html" class="guide-cta-btn">Get in touch &rarr;</a>
+    </div>
+  </div>
+</article>
+
+<section class="more-guides">
+  <div class="more-guides-inner">
+    <div class="more-guides-label">Read next</div>
+    <div class="more-grid">
+      <!-- READ-NEXT-PLACEHOLDER -->
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-copy">&copy; 2026 Nick Barrett, Swindon</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="../how-it-works.html">How It Works</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../pricing.html">Pricing</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../examples.html">Examples</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../guides.html">Guides</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../contact.html">Contact</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../privacy.html">Privacy Policy</a></li>
+      <li class="footer-sep"></li>
+      <li><a href="../terms.html">Terms of service</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var from   = params.get('from');
+  if (!from) return;
+
+  // Validate: only allow relative paths starting with /c/
+  if (!/^\/c\/[a-z0-9_-]+\/?/.test(from)) return;
+
+  // Activate portal mode
+  document.body.classList.add('portal-mode');
+
+  // Wire the return link
+  var link = document.getElementById('portal-return-link');
+  if (link) {
+    link.href = from;
+    link.textContent = '← Back to your portal';
+  }
+})();
+</script>
+
+<script src="/nav-mobile.js" defer></script>
+
+<!-- CookieConsent v3 (self-hosted UMD) -->
+<script type="module" src="../cookieconsent-config.js"></script>
+</body>
+</html>
