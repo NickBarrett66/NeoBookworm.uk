@@ -143,11 +143,31 @@ function stageIndex(stage) {
   return idx >= 0 ? idx : 0;
 }
 
+const STAGE_UNLOCK_LABELS = {
+  acknowledged:     'When you sign up',
+  researching:      'While I\'m researching your business',
+  building:         'While your site is being built',
+  preview_ready:    'When your preview is ready',
+  review_delivered: 'When your review is ready',
+  preparing_live:   'Just before you go live',
+  live:             'Once your site is live',
+  care_active:      'Once you\'re on the care plan',
+  self_managed:     'If you take over hosting',
+};
+
 const GUIDE_CATALOGUE = [
+  // ── Acknowledged stage ──
+  {
+    slug:      'how-long-does-it-take',
+    label:     'How long does it take to get a website built?',
+    hook:      'The timeline, what I need from you, and how much of your time it takes',
+    journeys:  new Set(['J1', 'J4', 'J5']),
+    fromStage: 'acknowledged',
+  },
   {
     slug:      'what-goes-on-a-trades-website',
-    label:     'What goes on a trades website',
-    hook:      'The 5 pages that bring in the most enquiries',
+    label:     'The 5 things customers check before calling',
+    hook:      'What I\'m building for you and why each page matters',
     journeys:  new Set(['J1', 'J4', 'J5']),
     fromStage: 'acknowledged',
   },
@@ -168,10 +188,19 @@ const GUIDE_CATALOGUE = [
   {
     slug:      'seo-guide',
     label:     'How search engines work',
-    hook:      'Plain English — no jargon',
+    hook:      'What I\'ll set up for search — and what you can boost yourself',
     journeys:  new Set(['J2', 'J3']),
     fromStage: 'acknowledged',
   },
+  {
+    slug:      'domain-names-explained',
+    label:     'Web addresses explained',
+    hook:      '.co.uk, .uk, or .com — which to pick and why it doesn\'t matter much',
+    journeys:  new Set(['J1', 'J4', 'J5']),
+    fromStage: 'acknowledged',
+  },
+
+  // ── Preview_ready stage ──
   {
     slug:      'website-running-costs',
     label:     'What it costs to keep a website running',
@@ -180,33 +209,76 @@ const GUIDE_CATALOGUE = [
     fromStage: 'preview_ready',
   },
   {
-    slug:      'requesting-changes',
-    label:     'How to request changes to your site',
-    hook:      'What\'s included and how to ask',
-    journeys:  'all',
-    fromStage: 'live',
-  },
-  {
     slug:      'cold-calls',
-    label:     'Dealing with cold calls after launch',
-    hook:      'What to expect, and how to stay off the lists',
+    label:     'Cold calls after launch — what I do about them',
+    hook:      'What to expect, and how I keep you off the lists',
     journeys:  'all',
-    fromStage: 'live',
+    fromStage: 'preview_ready',
   },
+
+  // ── Preparing_live stage ──
   {
     slug:      'site-is-live',
-    label:     'Your site is live — what next?',
-    hook:      'Google Business, photos, first steps',
+    label:     'Your site is live — what to do next',
+    hook:      'The first-week checklist: Google Business, sharing the link, first reviews',
+    journeys:  'all',
+    fromStage: 'preparing_live',
+  },
+  {
+    slug:      'van-quotes-invoices',
+    label:     'Put your web address on your van, quotes and invoices',
+    hook:      'Where the web address actually earns its keep offline',
+    journeys:  'all',
+    fromStage: 'preparing_live',
+  },
+
+  // ── Live stage ──
+  {
+    slug:      'first-10-google-reviews',
+    label:     'How to get your first 10 Google reviews',
+    hook:      'The single highest-impact thing you can do right now',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'requesting-changes',
+    label:     'How to request changes to your site',
+    hook:      'What\'s included in the monthly plan and how to ask',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'bad-reviews',
+    label:     'What to do if someone leaves a bad review',
+    hook:      'The calm way to respond — and the mistakes to avoid',
     journeys:  'all',
     fromStage: 'live',
   },
   {
     slug:      'how-fast-is-my-website',
     label:     'How fast is my website?',
-    hook:      'How to test it and what the scores mean',
+    hook:      'Run Google\'s free speed test and see how your site compares',
     journeys:  'all',
     fromStage: 'live',
   },
+
+  // ── Care_active stage ──
+  {
+    slug:      'yearly-checklist',
+    label:     'When should I update my website?',
+    hook:      'A simple month-by-month rhythm — less effort than you\'d think',
+    journeys:  'all',
+    fromStage: 'care_active',
+  },
+  {
+    slug:      'cancelling',
+    label:     'What happens if I want to cancel?',
+    hook:      'No exit fees, no lock-in — here\'s exactly how it works',
+    journeys:  'all',
+    fromStage: 'care_active',
+  },
+
+  // ── Self-managed only ──
   {
     slug:      'website-handover',
     label:     'Taking over your own website',
@@ -224,7 +296,11 @@ function guidesForClient(stage, journey, plan, limit = 3) {
     if (g.journeys !== 'all' && journey && !g.journeys.has(journey)) return false;
     if (g.selfManagedOnly && plan !== 'self_managed') return false;
     return true;
-  }).slice(0, limit);
+  })
+  // Sort: guides whose fromStage is closest to (but not after) the current stage come first.
+  // Within the same fromStage, preserve catalogue order.
+  .sort((a, b) => stageIndex(b.fromStage) - stageIndex(a.fromStage))
+  .slice(0, limit);
 }
 
 const EMAIL_DISPLAY_LABELS = {
