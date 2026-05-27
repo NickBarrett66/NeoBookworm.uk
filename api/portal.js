@@ -37,12 +37,12 @@ function esc(val) {
 // Internal stages → display strip entries.
 // Source of truth: V3 scope decisions § display mapping.
 const DISPLAY_STAGES = [
-  { label: 'Acknowledged',  stages: new Set(['acknowledged']) },
-  { label: 'Researching',   stages: new Set(['researching']) },
-  { label: 'Building',      stages: new Set(['building', 'reviewing', 'revisions']) },
-  { label: 'Preview ready', stages: new Set(['preview_ready', 'review_delivered']) },
-  { label: 'Your decision', stages: new Set(['awaiting_payment', 'preparing_live']) },
-  { label: 'Live',          stages: new Set(['live', 'care_active', 'self_managed']) },
+  { label: 'Got it',                     stages: new Set(['acknowledged']) },
+  { label: 'Looking into your business', stages: new Set(['researching']) },
+  { label: 'Building your site',         stages: new Set(['building', 'reviewing', 'revisions']) },
+  { label: 'Ready to view',              stages: new Set(['preview_ready', 'review_delivered']) },
+  { label: 'Over to you',                stages: new Set(['awaiting_payment', 'preparing_live']) },
+  { label: 'You\'re live',               stages: new Set(['live', 'care_active', 'self_managed']) },
 ];
 
 /**
@@ -98,6 +98,72 @@ function formatDeliverBy(isoStr) {
     return isoStr;
   }
 }
+
+function workingDaysFromNow(targetIso) {
+  if (!targetIso) return null;
+  const norm = targetIso.length <= 10
+    ? targetIso + 'T00:00:00Z'
+    : (targetIso.includes('T') ? targetIso : targetIso.replace(' ', 'T') + 'Z');
+  const target = new Date(norm);
+  const now = new Date();
+  let count = 0;
+  const d = new Date(now);
+  while (d < target) {
+    d.setDate(d.getDate() + 1);
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) count++;
+  }
+  return count > 0 ? count : null;
+}
+
+function ensureWorkingDay(isoStr) {
+  if (!isoStr) return isoStr;
+  const norm = isoStr.length <= 10
+    ? isoStr + 'T00:00:00Z'
+    : (isoStr.includes('T') ? isoStr : isoStr.replace(' ', 'T') + 'Z');
+  const d = new Date(norm);
+  const dow = d.getUTCDay();
+  if (dow === 0) d.setUTCDate(d.getUTCDate() + 1); // Sunday → Monday
+  if (dow === 6) d.setUTCDate(d.getUTCDate() + 2); // Saturday → Monday
+  return d.toISOString().slice(0, 10);
+}
+
+const EMAIL_DISPLAY_LABELS = {
+  'J1-E1':          'Confirmation — I\'ve got your details',
+  'J1-E2':          'Personal note from Nick',
+  'J1-E3':          'Halfway update — build in progress',
+  'J1-E4':          'Your preview is ready',
+  'J2-E1':          'Confirmation — reviewing your site',
+  'J2-E2':          'Your site review is ready',
+  'J2-Branch-A':    'Next steps — building a new one',
+  'J2-Branch-B':    'Thanks and all the best',
+  'J3-E1':          'Confirmation — building your replacement',
+  'J3-E2':          'Personal note from Nick',
+  'J3-E3':          'Halfway update — build in progress',
+  'J3-E4':          'Your replacement site is ready',
+  'J4-E1':          'Confirmation — got your full brief',
+  'J4-E2':          'Personal note from Nick',
+  'J4-E3':          'Halfway update — build in progress',
+  'J4-E4':          'Your site is ready',
+  'J5-E1-quick':    'Confirmation — got your message',
+  'J5-E1-booking':  'Confirmation — call booked',
+  'C1':             'Got your changes — working on them',
+  'C2':             'Changes done — have another look',
+  'C3':             'Going live — payment details',
+  'C4':             'All the best',
+  'C5':             'Payment received — going live soon',
+  'Post-1':         'Your site is live!',
+  'Post-2':         'Quick check — everything working',
+  'Post-3-care':    'Care plan confirmed',
+  'Post-3-self':    'Your login credentials',
+  'Post-4':         'Week one check-in',
+  'Post-5':         'Google Business — worth doing now',
+  'Post-6':         'One month in',
+  'Ongoing-1':      'Quarterly check-in',
+  'Ongoing-2-care': 'Domain renewal heads-up',
+  'Ongoing-2-self': 'Domain renewal reminder',
+  'Ongoing-3':      'Happy anniversary',
+};
 
 // ---------------------------------------------------------------------------
 // Shared CSS (inlined — no external stylesheet for the portal itself)
@@ -173,14 +239,6 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-r
   flex-shrink: 0;
 }
 .portal-logo span { color: var(--amber); }
-.portal-greeting {
-  font-size: 0.875rem;
-  color: var(--muted);
-  margin-left: auto;
-  text-align: right;
-  line-height: 1.3;
-}
-.portal-greeting strong { color: var(--white); font-weight: 500; }
 
 /* ── Progress strip ── */
 .progress-strip {
@@ -215,26 +273,49 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-r
   color: rgba(255,255,255,0.2);
   font-size: 1rem;
 }
-.step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--navy);
-  border: 1px solid var(--border);
+.step-tick {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
   flex-shrink: 0;
 }
-.step--done { color: rgba(255,255,255,0.65); }
-.step--done .step-num { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-.step--active { color: var(--amber); font-weight: 600; }
-.step--active .step-num {
+.step-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+.step--active .step-dot {
   background: var(--amber);
-  border-color: var(--amber);
-  color: var(--navy);
+  box-shadow: 0 0 6px rgba(245,166,35,0.4);
+}
+.step--done { color: rgba(255,255,255,0.45); }
+.step--done .step-tick { color: rgba(255,255,255,0.45); }
+.step--active { color: var(--amber); font-weight: 600; }
+.step--future { color: rgba(255,255,255,0.25); }
+
+@media (max-width: 420px) {
+  .progress-strip .steps { display: none; }
+  .progress-strip .mobile-step { display: flex; }
+}
+.mobile-step {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--amber);
+  font-weight: 600;
+}
+.mobile-step .step-dot {
+  background: var(--amber);
+  box-shadow: 0 0 6px rgba(245,166,35,0.4);
+}
+.mobile-step-count {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.78rem;
 }
 
 /* ── Main content ── */
@@ -267,6 +348,12 @@ main {
   margin-bottom: 0.75rem;
   color: var(--white);
 }
+.panel-status {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
 .panel-content p {
   font-size: 0.95rem;
   margin-bottom: 0.55rem;
@@ -274,13 +361,94 @@ main {
 }
 .panel-content p:last-child { margin-bottom: 0; }
 .panel-deliver {
-  margin-top: 0.6rem;
-  padding: 0.55rem 0.9rem;
+  margin: 0.75rem 0;
+  padding: 0.7rem 1rem;
   background: rgba(245,166,35,0.08);
   border-left: 3px solid var(--amber);
   border-radius: 0 6px 6px 0;
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.9);
+}
+.panel-deliver-date {
+  font-size: 1.05rem;
+  color: var(--white);
+}
+.panel-deliver-date strong {
+  color: var(--amber);
+  font-weight: 700;
+}
+.panel-deliver-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+.panel-preview-link {
+  margin: 0.75rem 0;
+}
+.panel-preview-link a {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--amber);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.panel-preview-link a:hover {
+  background: var(--amber-dark);
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.panel-turn {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.panel-turn-indicator {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.turn-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.turn-dot--nick { background: #60a5fa; }
+.turn-dot--you  { background: var(--amber); }
+
+.panel-actions {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-sub);
+}
+.panel-actions-lead {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+.panel-actions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.35rem 0;
+}
+.panel-actions li {
+  font-size: 0.85rem;
+  padding: 0.2rem 0;
+}
+.panel-actions li::before {
+  content: '→ ';
+  color: var(--muted);
+}
+.panel-actions-reassure {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.25rem;
 }
 .panel-placeholder { color: var(--muted); }
 
@@ -309,8 +477,20 @@ main {
   min-height: 44px;
   display: flex;
   align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
 }
 .useful-links li a:hover { background: var(--navy-mid); border-color: var(--border); text-decoration: none; }
+.link-label {
+  font-size: 0.875rem;
+  color: var(--amber);
+}
+.link-hook {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
 
 /* ── Conversation history ── */
 .history { margin-bottom: 2rem; }
@@ -361,7 +541,6 @@ main {
 
 /* ── Responsive ── */
 @media (max-width: 420px) {
-  .portal-greeting { display: none; }
   .panel { padding: 1.25rem 1.1rem; }
 }
 `;
@@ -389,27 +568,62 @@ function renderProgressStrip(stage) {
   const activeIdx = displayStage(stage);
   const items = DISPLAY_STAGES.map((ds, i) => {
     let cls = 'step';
-    if (i === activeIdx)  cls += ' step--active';
+    if (i === activeIdx) cls += ' step--active';
     else if (i < activeIdx) cls += ' step--done';
-    const ariaCurrent = i === activeIdx ? ' aria-current="step"' : '';
+    else cls += ' step--future';
+
+    if (i < activeIdx) {
+      return (
+        `<li class="${cls}" aria-label="${esc(ds.label)} — complete">` +
+        `<span class="step-tick" aria-hidden="true">✓</span>` +
+        `<span class="step-label">${esc(ds.label)}</span>` +
+        `</li>`
+      );
+    }
+
+    if (i === activeIdx) {
+      return (
+        `<li class="${cls}" aria-current="step">` +
+        `<span class="step-dot" aria-hidden="true"></span>` +
+        `<span class="step-label">${esc(ds.label)}</span>` +
+        `</li>`
+      );
+    }
+
     return (
-      `<li class="${cls}"${ariaCurrent}>` +
-      `<span class="step-num" aria-hidden="true">${i + 1}</span>` +
+      `<li class="${cls}">` +
+      `<span class="step-dot" aria-hidden="true"></span>` +
       `<span class="step-label">${esc(ds.label)}</span>` +
       `</li>`
     );
   }).join('');
 
+  const activeLabel = activeIdx >= 0 ? DISPLAY_STAGES[activeIdx].label : '';
+  const mobile = activeIdx >= 0
+    ? `<div class="mobile-step">` +
+      `<span class="step-dot" aria-hidden="true"></span>` +
+      `<span>${esc(activeLabel)}</span>` +
+      `<span class="mobile-step-count">· Step ${activeIdx + 1} of ${DISPLAY_STAGES.length}</span>` +
+      `</div>`
+    : '';
+
   return `<nav class="progress-strip" aria-label="Your progress">
   <ol class="steps">${items}</ol>
+  ${mobile}
 </nav>`;
 }
 
 function renderActivePanel(client) {
-  const name  = esc(client.contact_name  || 'there');
-  const biz   = esc(client.business_name || 'your site');
+  const contactNameRaw = (client.contact_name || '').trim();
+  const firstNameRaw = contactNameRaw ? contactNameRaw.split(/\s+/)[0] : 'there';
+  const name = esc(firstNameRaw);
+
+  const bizRaw = (client.business_name || '').trim();
+  const biz = esc(bizRaw || 'your business');
+
   const stage = client.stage;
-  const deliverBy = client.next_action_by ? formatDeliverBy(client.next_action_by) : null;
+  const deliverByIso = client.next_action_by ? ensureWorkingDay(client.next_action_by) : null;
+  const deliverBy = deliverByIso ? formatDeliverBy(deliverByIso) : null;
 
   const stripIdx  = displayStage(stage);
   const stageLabel = stripIdx >= 0 ? DISPLAY_STAGES[stripIdx].label : '';
@@ -417,22 +631,217 @@ function renderActivePanel(client) {
   let content;
 
   if (stage === 'acknowledged') {
-    content = `
-    <p class="panel-lead">Got your details, ${name} —</p>
-    <p>I'll be in touch within one working day.</p>
-    ${deliverBy
-      ? `<p class="panel-deliver">Your first deliverable will be ready by <strong>${esc(deliverBy)}</strong>.</p>`
-      : ''}`;
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">I've got your details. I'll be in touch within one working day.</p>`;
 
-  } else if (['researching', 'building', 'reviewing', 'revisions'].includes(stage)) {
-    const verb = stage === 'researching' ? 'Researching' : 'Building';
-    content = `
-    <p class="panel-lead">${verb}: ${biz}'s website.</p>
-    ${deliverBy
-      ? `<p>Estimated delivery: <strong>${esc(deliverBy)}</strong>.</p>`
-      : ''}
-    <p>You don't need to do anything right now.</p>
-    <p>If you have work photos or anything else you'd like included, reply to any of my emails with them.</p>`;
+    const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
+    const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const zone2 = deliverBy
+      ? `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Your first deliverable will be ready by <strong>${esc(deliverBy)}</strong>.</p>` +
+        (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--nick">` +
+      `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
+      `Waiting on Nick — I'll be in touch within one working day. Nothing for you to do.` +
+      `</p>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'researching') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">I'm looking into your business — your Google profile, reviews, the kind of work you do. Then I'll build you a first version.</p>`;
+
+    const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
+    const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const zone2 = deliverBy
+      ? `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Your preview will be ready by <strong>${esc(deliverBy)}</strong>.</p>` +
+        (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--nick">` +
+      `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
+      `Waiting on Nick — nothing for you to do.` +
+      `</p>` +
+      `</div>` +
+      `<div class="panel-actions">` +
+      `<p class="panel-actions-lead">While you wait, you can:</p>` +
+      `<ul>` +
+      `<li><a href="mailto:nick@neobookworm.uk?subject=${encodeURIComponent('Photos for ' + (bizRaw || 'your business'))}">Send me work photos</a></li>` +
+      `<li><a href="mailto:nick@neobookworm.uk?subject=${encodeURIComponent('Note about ' + (bizRaw || 'your business'))}">Tell me anything else about your business</a></li>` +
+      `</ul>` +
+      `<p class="panel-actions-reassure">Or do nothing — I've got what I need.</p>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'building' || stage === 'reviewing') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">Your site is being built${deliverBy ? `. On track for ${esc(deliverBy)}.` : '.'}</p>`;
+
+    const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
+    const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const zone2 = deliverBy
+      ? `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Your preview will be ready by <strong>${esc(deliverBy)}</strong>.</p>` +
+        (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--nick">` +
+      `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
+      `Waiting on Nick — your site is in progress.` +
+      `</p>` +
+      `</div>` +
+      `<div class="panel-actions">` +
+      `<p class="panel-actions-lead">While you wait, you can:</p>` +
+      `<ul>` +
+      `<li><a href="mailto:nick@neobookworm.uk?subject=${encodeURIComponent('Photos for ' + (bizRaw || 'your business'))}">Send me work photos</a></li>` +
+      `<li><a href="mailto:nick@neobookworm.uk?subject=${encodeURIComponent('Note about ' + (bizRaw || 'your business'))}">Tell me anything else about your business</a></li>` +
+      `</ul>` +
+      `<p class="panel-actions-reassure">Or do nothing.</p>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'revisions') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const revCount = client.revision_count ? Number(client.revision_count) : null;
+    const safeCount = (revCount && Number.isFinite(revCount) && revCount > 0) ? revCount : null;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">Working on your changes${safeCount ? ` — round ${esc(safeCount)}` : ''}.</p>`;
+
+    const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
+    const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const zone2 = deliverBy
+      ? `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Updated version back to you by <strong>${esc(deliverBy)}</strong>.</p>` +
+        (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--nick">` +
+      `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
+      `Waiting on Nick — I'm making your changes.` +
+      `</p>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'preview_ready' || stage === 'review_delivered') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const status = stage === 'review_delivered' ? 'Your review is ready.' : 'Your site is ready to view.';
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">${esc(status)}</p>`;
+
+    const previewUrl = client.preview_url ? String(client.preview_url).trim() : '';
+    const zone2 = previewUrl
+      ? `<div class="panel-preview-link">` +
+        `<a href="${esc(previewUrl)}" target="_blank" rel="noopener">View your site →</a>` +
+        `</div>`
+      : `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Your preview link is on its way.</p>` +
+        `<p class="panel-deliver-sub">If you need it urgently, email me and I’ll resend it.</p>` +
+        `</div>`;
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--you">` +
+      `<span class="turn-dot turn-dot--you" aria-hidden="true"></span>` +
+      `Over to you — take a look and let me know what you think.` +
+      `</p>` +
+      `</div>` +
+      `<div class="panel-actions">` +
+      `<p class="panel-actions-lead">What would you like to do?</p>` +
+      `<ul>` +
+      `<li><a href="#" aria-disabled="true" onclick="return false">Looks good — go live (coming soon)</a></li>` +
+      `<li><a href="#" aria-disabled="true" onclick="return false">I’d like a few changes (coming soon)</a></li>` +
+      `<li><a href="#" aria-disabled="true" onclick="return false">Not for me — close it down (coming soon)</a></li>` +
+      `</ul>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'awaiting_payment') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">You're going ahead — brilliant.</p>`;
+
+    const zone2 = `<div class="panel-preview-link">` +
+      `<a href="#" aria-disabled="true" onclick="return false">Pay invoice (coming soon)</a>` +
+      `</div>`;
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--you">` +
+      `<span class="turn-dot turn-dot--you" aria-hidden="true"></span>` +
+      `Over to you — pay when you're ready.` +
+      `</p>` +
+      `</div>` +
+      `<div class="panel-actions">` +
+      `<p class="panel-actions-lead">Need the payment link?</p>` +
+      `<ul>` +
+      `<li><a href="#" aria-disabled="true" onclick="return false">Open Stripe checkout (coming soon)</a></li>` +
+      `</ul>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'preparing_live') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">Payment received. Getting the technical bits ready.</p>`;
+
+    const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
+    const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const zone2 = deliverBy
+      ? `<div class="panel-deliver">` +
+        `<p class="panel-deliver-date">Going live by <strong>${esc(deliverBy)}</strong>.</p>` +
+        (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-turn">` +
+      `<p class="panel-turn-indicator panel-turn--nick">` +
+      `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
+      `Waiting on Nick — domain, SSL, final checks.` +
+      `</p>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
+
+  } else if (stage === 'live' || stage === 'care_active' || stage === 'self_managed') {
+    const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const liveUrl = client.live_url ? String(client.live_url).trim() : '';
+    const zone1 = `<p class="panel-lead">${lead}</p>` +
+      `<p class="panel-status">${biz} is live.</p>`;
+
+    const zone2 = liveUrl
+      ? `<div class="panel-preview-link">` +
+        `<a href="${esc(liveUrl)}" target="_blank" rel="noopener">Visit your website →</a>` +
+        `</div>`
+      : '';
+
+    const zone3 = `<div class="panel-actions">` +
+      `<p class="panel-actions-lead">Good to know:</p>` +
+      `<ul>` +
+      `<li><a href="https://neobookworm.uk/guides/website-handover.html" target="_blank" rel="noopener">Handover guide</a></li>` +
+      `<li><a href="https://neobookworm.uk/guides/local-search-guide.html" target="_blank" rel="noopener">Google Business guide</a></li>` +
+      `<li><a href="https://neobookworm.uk/guides/requesting-changes.html" target="_blank" rel="noopener">Request a change</a></li>` +
+      `</ul>` +
+      `</div>`;
+
+    content = zone1 + zone2 + zone3;
 
   } else if (stage === 'dropped_out') {
     const previewUrl = client.preview_url ? esc(client.preview_url) : null;
@@ -446,8 +855,20 @@ function renderActivePanel(client) {
   } else {
     // All other stages: S7 placeholder
     content = `
-    <p>We're working on this part of your portal — check back soon.</p>
-    <p>If you have any questions in the meantime, <a href="mailto:nick@neobookworm.uk">drop me a line</a>.</p>`;
+    <p class="panel-lead">Hi ${name} — here's where things stand with ${biz}.</p>
+    <p class="panel-status">We're working on this part of your portal — check back soon.</p>
+    <div class="panel-turn">
+      <p class="panel-turn-indicator panel-turn--nick">
+        <span class="turn-dot turn-dot--nick" aria-hidden="true"></span>
+        Waiting on Nick — nothing for you to do.
+      </p>
+    </div>
+    <div class="panel-actions">
+      <p class="panel-actions-lead">Need anything?</p>
+      <ul>
+        <li><a href="mailto:nick@neobookworm.uk">Email me</a></li>
+      </ul>
+    </div>`;
   }
 
   return `<section class="panel" aria-labelledby="panel-heading">
@@ -474,57 +895,62 @@ function renderSectionPanel(section) {
 }
 
 function renderUsefulLinks(stage) {
-  let links;
-  if (['acknowledged', 'researching'].includes(stage)) {
-    links = [
-      { href: 'https://neobookworm.uk/guides/what-goes-on-a-trades-website.html', label: 'What goes on a trades website' },
-      { href: 'https://neobookworm.uk/guides/work-photos-guide.html',             label: 'How to take good work photos' },
-      { href: 'https://neobookworm.uk/guides/local-search-guide.html',            label: 'How to appear in Google search' },
-    ];
-  } else if (['building', 'reviewing', 'revisions'].includes(stage)) {
-    links = [
-      { href: 'https://neobookworm.uk/guides/work-photos-guide.html',             label: 'How to take good work photos' },
-      { href: 'https://neobookworm.uk/guides/requesting-changes.html',            label: 'How to request changes to your site' },
-      { href: 'https://neobookworm.uk/guides/local-search-guide.html',            label: 'How to appear in Google search' },
-    ];
-  } else {
-    links = [
-      { href: 'https://neobookworm.uk/guides.html', label: 'All guides' },
-    ];
-  }
+  const links = [
+    {
+      href: 'https://neobookworm.uk/guides/what-goes-on-a-trades-website.html',
+      label: 'What goes on a trades website',
+      hook: 'The 5 pages that bring in the most enquiries',
+    },
+    {
+      href: 'https://neobookworm.uk/guides/work-photos-guide.html',
+      label: 'How to take good work photos',
+      hook: 'Better photos = better first impression (takes 2 minutes)',
+    },
+    {
+      href: 'https://neobookworm.uk/guides/local-search-guide.html',
+      label: 'How to appear in Google search',
+      hook: 'What I build in, and what you can do yourself',
+    },
+  ];
 
   const items = links.map(l =>
-    `<li><a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} →</a></li>`
+    `<li>` +
+      `<a href="${esc(l.href)}" target="_blank" rel="noopener">` +
+        `<span class="link-label">${esc(l.label)} →</span>` +
+        `<span class="link-hook">${esc(l.hook || '')}</span>` +
+      `</a>` +
+    `</li>`
   ).join('');
 
   return `<section class="useful-links" aria-label="Useful guides">
-  <h2 class="section-heading">Useful reading</h2>
+  <h2 class="section-heading">Good to know</h2>
   <ul>${items}</ul>
 </section>`;
 }
 
 function renderHistory(emailLog) {
   if (!emailLog || emailLog.length === 0) {
-    return `<section class="history" aria-label="Emails sent">
-  <h2 class="section-heading">Emails I've sent you</h2>
+    return `<section class="history" aria-label="Messages sent">
+  <h2 class="section-heading">Messages I've sent you</h2>
   <p class="no-emails">No emails sent yet.</p>
 </section>`;
   }
 
   const items = emailLog.map(row => {
+    const displayLabel = EMAIL_DISPLAY_LABELS[row.template] || row.subject;
     const failTag = row.status === 'failed'
       ? ` <span class="email-failed" aria-label="send failed">(send failed)</span>`
       : '';
     return (
       `<li>` +
-      `<span class="email-subject">${esc(row.subject)}</span>` +
+      `<span class="email-subject">${esc(displayLabel)}</span>` +
       `<span class="email-time">${esc(humanTime(row.sent_at))}${failTag}</span>` +
       `</li>`
     );
   }).join('');
 
-  return `<section class="history" aria-label="Emails sent">
-  <h2 class="section-heading">Emails I've sent you</h2>
+  return `<section class="history" aria-label="Messages sent">
+  <h2 class="section-heading">Messages I've sent you</h2>
   <ul>${items}</ul>
 </section>`;
 }
@@ -559,7 +985,6 @@ ${head}
 
   <header class="portal-header">
     <a href="https://neobookworm.uk" class="portal-logo">Neo<span>Bookworm</span></a>
-    <p class="portal-greeting">Hi <strong>${name}</strong> from <strong>${biz}</strong></p>
   </header>
 
   ${strip}
@@ -646,7 +1071,7 @@ module.exports = async function handler(req, res) {
   try {
     emailLog = await queryD1(
       enquiriesDb(),
-      'SELECT subject, sent_at, status FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 20',
+      'SELECT template, subject, sent_at, status FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 20',
       [slug]
     );
   } catch (err) {
