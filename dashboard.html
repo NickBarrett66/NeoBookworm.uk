@@ -4508,10 +4508,21 @@ function renderClientDetail(c, emailLog) {
     : emailLog.map(row => {
         const failed = row.status === 'failed'
           ? `<span style="color:var(--red);font-size:.72rem;margin-left:.3rem">(failed)</span>` : '';
-        return `<li style="padding:.65rem 0;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap">
-          <span style="color:var(--amber);font-size:.72rem;flex-shrink:0;font-weight:600">${escHtml(row.template || '')}</span>
-          <span style="flex:1;min-width:0;font-size:.85rem">${escHtml(row.subject || '')}</span>
-          <span style="color:var(--muted);font-size:.78rem;white-space:nowrap">${escHtml(clientHumanTime(row.sent_at))}${failed}</span>
+        const rowId   = escAttr(String(row.id || ''));
+        const rowSlug = escAttr(c.slug || '');
+        return `<li style="padding:.65rem 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap">
+            <span style="color:var(--amber);font-size:.72rem;flex-shrink:0;font-weight:600">${escHtml(row.template || '')}</span>
+            <span style="flex:1;min-width:0;font-size:.85rem">${escHtml(row.subject || '')}${failed}</span>
+            <span style="color:var(--muted);font-size:.78rem;white-space:nowrap">${escHtml(clientHumanTime(row.sent_at))}</span>
+            <button
+              data-log-id="${rowId}"
+              data-log-slug="${rowSlug}"
+              class="btn-delete-email"
+              title="Delete this email from history"
+              style="background:none;border:none;color:var(--red);font-size:.85rem;cursor:pointer;padding:0 .2rem;opacity:0.6;flex-shrink:0"
+              aria-label="Delete email from history">✕</button>
+          </div>
         </li>`;
       }).join('');
 
@@ -4682,6 +4693,25 @@ function renderClientDetail(c, emailLog) {
       const target = iframe.dataset.portalSrc || portalUrl;
       if (iframe.getAttribute('src') !== target) iframe.setAttribute('src', target);
     }
+  });
+
+  // ── Wire email log delete buttons ──
+  document.querySelectorAll('.btn-delete-email').forEach(btn => {
+    btn.addEventListener('click', async function () {
+      const id   = this.dataset.logId;
+      const slug = this.dataset.logSlug;
+      if (!id || !slug) return;
+      const subject = this.closest('li')?.querySelector('span:nth-child(2)')?.textContent || 'this email';
+      if (!confirm(`Delete "${subject.trim()}" from the email history?\n\nThis removes it from both the dashboard and the client's portal view. The email itself has already been sent — this only removes the record.`)) return;
+      this.disabled = true;
+      try {
+        await apiPost({ action: 'email_log_delete', id: Number(id), slug });
+        this.closest('li').remove();
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+        this.disabled = false;
+      }
+    });
   });
 
   // ── Stage date UI: acknowledged → since-date; other stages → deliver-by picker ──

@@ -44,13 +44,13 @@ function _getTransport() {
   return _transport;
 }
 
-async function _logEmail({ slug, templateId, subject, to, status, error = null }) {
+async function _logEmail({ slug, templateId, subject, body = null, to, status, error = null }) {
   try {
     await queryD1(
       enquiriesDb(),
-      `INSERT INTO email_log (slug, template, subject, recipient, status, error)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [slug, templateId, subject, to, status, error]
+      `INSERT INTO email_log (slug, template, subject, body, recipient, status, error)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [slug, templateId, subject, body, to, status, error]
     );
   } catch (err) {
     // Log write failures to console but never surface them to the caller.
@@ -89,14 +89,14 @@ async function sendTemplated({ slug, templateId, vars, to }) {
       text: body,
     });
 
-    await _logEmail({ slug, templateId, subject, to, status: 'sent' });
+    await _logEmail({ slug, templateId, subject, body, to, status: 'sent' });
 
     return { ok: true };
   } catch (err) {
     const message = err.message || String(err);
     console.error(`[email.js] sendTemplated failed (${templateId} → ${to}):`, message);
 
-    await _logEmail({ slug, templateId, subject, to, status: 'failed', error: message });
+    await _logEmail({ slug, templateId, subject, body, to, status: 'failed', error: message });
 
     return { ok: false, error: message };
   }

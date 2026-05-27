@@ -690,6 +690,21 @@ module.exports = async (req, res) => {
       }
     }
 
+    // ── Delete a single email_log row ─────────────────────────────────────────
+    if (action === 'email_log_delete') {
+      const { id, slug } = req.body || {};
+      if (!id || !slug) return res.status(400).json({ ok: false, error: 'id and slug required' });
+      // Verify the row belongs to this slug before deleting (prevents cross-client deletion).
+      const existing = await queryD1(
+        enquiriesDb(),
+        'SELECT id FROM email_log WHERE id = ? AND slug = ? LIMIT 1',
+        [id, slug]
+      );
+      if (!existing.length) return res.status(404).json({ ok: false, error: 'Email log row not found' });
+      await queryD1(enquiriesDb(), 'DELETE FROM email_log WHERE id = ? AND slug = ?', [id, slug]);
+      return res.status(200).json({ ok: true });
+    }
+
     if (!id) return res.status(400).json({ error: 'id required' });
     const isDelete = action && action.endsWith('_delete');
     if (!fields && !isDelete) return res.status(400).json({ error: 'fields object required' });
@@ -1429,7 +1444,7 @@ module.exports = async (req, res) => {
       const [clientRows, emailLogRows] = await Promise.all([
         queryD1(enquiriesDb(), `SELECT * FROM clients WHERE slug = ?`, [slug]),
         queryD1(enquiriesDb(),
-          `SELECT id, template, subject, sent_at, status, error, recipient
+          `SELECT id, template, subject, body, sent_at, status, error, recipient
            FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 30`,
           [slug]
         ),

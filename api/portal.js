@@ -770,6 +770,58 @@ main {
 .email-failed  { color: #f87171; margin-left: 0.25rem; }
 .no-emails     { color: var(--muted); font-size: 0.875rem; }
 
+/* ── Email expand ── */
+.email-item { list-style: none; border-bottom: 1px solid var(--border-sub); }
+.email-item:first-child { border-top: 1px solid var(--border-sub); }
+.email-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.email-summary::-webkit-details-marker { display: none; }
+.email-summary::marker { display: none; }
+.email-summary-left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+.email-expand-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+details[open] .email-expand-hint { display: none; }
+.email-body-wrap {
+  padding: 0.75rem 0 1rem;
+  border-top: 1px solid var(--border-sub);
+}
+.email-body-text {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.82);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-sub);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  margin: 0;
+}
+.email-body-unavailable {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
 /* ── Footer ── */
 .portal-footer {
   text-align: center;
@@ -1251,17 +1303,30 @@ function renderHistory(emailLog) {
     const failTag = row.status === 'failed'
       ? ` <span class="email-failed" aria-label="send failed">(send failed)</span>`
       : '';
+ 
+    const bodyContent = row.body
+      ? `<pre class="email-body-text">${esc(row.body)}</pre>`
+      : `<p class="email-body-unavailable">Body not stored for emails sent before May 2026.</p>`;
+
     return (
       `<li>` +
-      `<span class="email-subject">${esc(displayLabel)}</span>` +
-      `<span class="email-time">${esc(humanTime(row.sent_at))}${failTag}</span>` +
+      `<details class="email-item">` +
+      `<summary class="email-summary">` +
+      `<span class="email-summary-left">` +
+      `<span class="email-subject">${esc(displayLabel)}${failTag}</span>` +
+      `</span>` +
+      `<span class="email-time">${esc(humanTime(row.sent_at))}</span>` +
+      `<span class="email-expand-hint" aria-hidden="true">tap to read ↓</span>` +
+      `</summary>` +
+      `<div class="email-body-wrap">${bodyContent}</div>` +
+      `</details>` +
       `</li>`
     );
   }).join('');
 
   return `<section class="history" aria-label="Messages sent">
   <h2 class="section-heading">Messages I've sent you</h2>
-  <ul>${items}</ul>
+  <ul style="list-style:none">${items}</ul>
 </section>`;
 }
 
@@ -1396,7 +1461,7 @@ module.exports = async function handler(req, res) {
   try {
     emailLog = await queryD1(
       enquiriesDb(),
-      'SELECT template, subject, sent_at, status FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 20',
+      'SELECT id, template, subject, body, sent_at, status FROM email_log WHERE slug = ? ORDER BY sent_at DESC LIMIT 20',
       [slug]
     );
   } catch (err) {
