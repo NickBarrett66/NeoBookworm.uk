@@ -4221,6 +4221,43 @@ const STUCK_STAGES = new Set([
   'review_delivered', 'preview_ready', 'revisions', 'awaiting_payment', 'preparing_live',
 ]);
 
+const CLIENT_TEMPLATE_LABELS = {
+  'J1-E1':          'J1-E1 — Confirmation: I\'ve got your details',
+  'J1-E2':          'J1-E2 — Personal note from Nick',
+  'J1-E3':          'J1-E3 — Halfway update: build in progress',
+  'J1-E4':          'J1-E4 — Your preview is ready',
+  'J2-E1':          'J2-E1 — Confirmation: reviewing your site',
+  'J2-E2':          'J2-E2 — Your site review is ready',
+  'J2-Branch-A':    'J2-Branch-A — Next steps: building a new one',
+  'J2-Branch-B':    'J2-Branch-B — Thanks and all the best',
+  'J3-E1':          'J3-E1 — Confirmation: building your replacement',
+  'J3-E2':          'J3-E2 — Personal note from Nick',
+  'J3-E3':          'J3-E3 — Halfway update: build in progress',
+  'J3-E4':          'J3-E4 — Your replacement site is ready',
+  'J4-E1':          'J4-E1 — Confirmation: got your full brief',
+  'J4-E2':          'J4-E2 — Personal note from Nick',
+  'J4-E3':          'J4-E3 — Halfway update: build in progress',
+  'J4-E4':          'J4-E4 — Your site is ready',
+  'J5-E1-quick':    'J5-E1-quick — Confirmation: got your message',
+  'J5-E1-booking':  'J5-E1-booking — Confirmation: call booked',
+  'C1':             'C1 — Got your changes: working on them',
+  'C2':             'C2 — Changes done: have another look',
+  'C3':             'C3 — Going live: payment details',
+  'C4':             'C4 — All the best',
+  'C5':             'C5 — Payment received: going live soon',
+  'Post-1':         'Post-1 — Your site is live!',
+  'Post-2':         'Post-2 — Quick check: everything working?',
+  'Post-3-care':    'Post-3-care — Care plan confirmed',
+  'Post-3-self':    'Post-3-self — Your login credentials',
+  'Post-4':         'Post-4 — Week one check-in',
+  'Post-5':         'Post-5 — Google Business: worth doing now',
+  'Post-6':         'Post-6 — One month in',
+  'Ongoing-1':      'Ongoing-1 — Quarterly check-in',
+  'Ongoing-2-care': 'Ongoing-2-care — Domain renewal heads-up',
+  'Ongoing-2-self': 'Ongoing-2-self — Domain renewal reminder',
+  'Ongoing-3':      'Ongoing-3 — Happy anniversary',
+};
+
 const CLIENT_TEMPLATE_GROUPS = [
   { label: 'J1 — Free preview',  ids: ['J1-E1','J1-E2','J1-E3','J1-E4'] },
   { label: 'J2 — Site review',   ids: ['J2-E1','J2-E2','J2-Branch-A','J2-Branch-B'] },
@@ -4455,7 +4492,7 @@ function renderClientDetail(c, emailLog) {
 
   const templateOpts = CLIENT_TEMPLATE_GROUPS.map(g =>
     `<optgroup label="${escHtml(g.label)}">${
-      g.ids.map(id => `<option value="${escAttr(id)}">${escHtml(id)}</option>`).join('')
+      g.ids.map(id => `<option value="${escAttr(id)}">${escHtml(CLIENT_TEMPLATE_LABELS[id] || id)}</option>`).join('')
     }</optgroup>`
   ).join('');
 
