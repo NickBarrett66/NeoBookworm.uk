@@ -98,7 +98,7 @@ test('Post-3-self has the credentials subject (not the default)', () => {
 test('all other templates use the standard subject format', () => {
   for (const [id, tpl] of Object.entries(TEMPLATES)) {
     if (id === 'Post-3-self') continue;
-    assert.match(tpl.subject, /\{business\} — your NeoBookworm website/,
+    assert.match(tpl.subject, /^\{business\} — NeoBookworm\.uk — Websites, done properly$/,
       `${id} should use the standard subject`);
   }
 });
@@ -114,7 +114,7 @@ test('J1-E1 renders correct subject', () => {
     deliver_by: 'Tuesday 4 June',
     portal_url: 'https://neobookworm.uk/c/hart-plumbing-3f9k2/',
   });
-  assert.equal(subject, 'Hart Plumbing — your NeoBookworm website');
+  assert.equal(subject, 'Hart Plumbing — NeoBookworm.uk — Websites, done properly');
 });
 
 test('J1-E1 body opens with correct greeting', () => {
@@ -276,25 +276,26 @@ test('null for required var throws', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Stub templates
+// Former stub templates (now implemented)
 // ---------------------------------------------------------------------------
 
-test('stub templates are registered and have stub:true', () => {
-  const stubs = ['J1-E2', 'J2-E2', 'J2-Branch-A', 'J3-E2', 'J4-E2', 'C3', 'C5'];
-  for (const id of stubs) {
+test('former stubs are registered and are no longer stubs', () => {
+  const formerStubs = ['J1-E2', 'J2-E2', 'J2-Branch-A', 'J3-E2', 'J4-E2', 'C3', 'C5'];
+  for (const id of formerStubs) {
     assert.ok(
       Object.prototype.hasOwnProperty.call(TEMPLATES, id),
-      `Stub template "${id}" not found in TEMPLATES`
+      `Template "${id}" not found in TEMPLATES`
     );
-    assert.equal(TEMPLATES[id].stub, true, `${id} should have stub:true`);
+    assert.notEqual(TEMPLATES[id].stub, true, `${id} should not be marked stub:true`);
+    assert.doesNotMatch(TEMPLATES[id].body, /\[STUB:/, `${id} should not contain the STUB marker`);
   }
 });
 
-test('stub template J1-E2 renders without throwing when required vars supplied', () => {
+test('J1-E2 renders without throwing when required vars supplied', () => {
   const { subject, body } = renderTemplate('J1-E2', { name: 'Tom', business: 'Hart Plumbing' });
-  assert.equal(subject, 'Hart Plumbing — your NeoBookworm website');
-  assert.ok(body.includes('STUB'), 'stub body should contain STUB marker');
-  assert.ok(body.includes('J1-E2'), 'stub body should contain the template ID');
+  assert.equal(subject, 'Hart Plumbing — NeoBookworm.uk — Websites, done properly');
+  assert.doesNotMatch(body, /\[STUB:/, 'body should not contain the STUB marker');
+  assert.ok(body.includes('Quick note'), 'expected J1-E2 body to include the written content');
 });
 
 // ---------------------------------------------------------------------------

@@ -4258,6 +4258,13 @@ const CLIENT_TEMPLATE_LABELS = {
   'Ongoing-3':      'Ongoing-3 — Happy anniversary',
 };
 
+// Templates that are still stubs — warn before sending.
+// Update this list whenever templates.js gains or loses a stub.
+const STUB_TEMPLATE_IDS = new Set([
+  // All stubs have now been implemented — list kept empty as a safety net.
+  // If a new stub is added to templates.js, add its ID here.
+]);
+
 const CLIENT_TEMPLATE_GROUPS = [
   { label: 'J1 — Free preview',  ids: ['J1-E1','J1-E2','J1-E3','J1-E4'] },
   { label: 'J2 — Site review',   ids: ['J2-E1','J2-E2','J2-Branch-A','J2-Branch-B'] },
@@ -4743,6 +4750,11 @@ function renderClientDetail(c, emailLog) {
     const templateId = document.getElementById('template-select').value;
     if (!templateId) { alert('Please select a template first.'); return; }
 
+    if (STUB_TEMPLATE_IDS.has(templateId)) {
+      alert(`"${templateId}" hasn't been written yet — it will send a placeholder stub to the client. Either implement it in templates.js first, or choose a different template.`);
+      return;
+    }
+
     const deliverByOverride = document.getElementById('deliver-by-override').value;
     const extraVarsRaw      = document.getElementById('extra-vars-input').value;
 
@@ -4759,7 +4771,8 @@ function renderClientDetail(c, emailLog) {
     if (deliverByOverride) extra_vars.deliver_by = deliverByOverride;
 
     const status = document.getElementById('send-status');
-    if (!confirm(`Send "${templateId}" to ${c.email}?`)) return;
+    const templateLabel = CLIENT_TEMPLATE_LABELS[templateId] || templateId;
+    if (!confirm(`Send "${templateLabel}" to ${c.email}?\n\nThis will send immediately.`)) return;
 
     this.disabled = true; status.textContent = 'Sending…'; status.className = 'save-status';
     try {

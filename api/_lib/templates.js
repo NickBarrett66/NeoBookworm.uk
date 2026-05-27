@@ -132,7 +132,27 @@ const TEMPLATES = {
     required: ['name', 'business', 'deliver_by', 'portal_url'],
   },
 
-  'J1-E2': _stub('J1-E2', ['name', 'business']),
+  'J1-E2': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "Quick note from me while your site's in progress.",
+      '',
+      "I've had a look at what's publicly out there about {business} —",
+      "Google, Checkatrade, Facebook — and I've got a clear picture of",
+      "what you do and where you work. Build's underway.",
+      '',
+      "If there's anything you'd like me to know that doesn't show up",
+      'online — specific jobs you want more of, towns you cover that I',
+      "might not have found, anything about how you work that makes you",
+      "different — now's the good time to say. Just reply to this.",
+      '',
+      "Otherwise, I'll have something for you to look at soon.",
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business'],
+  },
 
   'J1-E3': {
     subject: DEFAULT_SUBJECT,
@@ -210,9 +230,55 @@ const TEMPLATES = {
     required: ['name', 'business', 'current_url', 'deliver_by', 'portal_url'],
   },
 
-  'J2-E2': _stub('J2-E2', ['name', 'business', 'portal_url']),
+  'J2-E2': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "Your site review is ready. It's on your portal:",
+      '',
+      '{portal_url}',
+      '',
+      "I've gone through {business}'s current site properly — what's",
+      "working, what isn't, what I'd change if it were mine, and whether",
+      "it's worth rebuilding or just tweaking.",
+      '',
+      "No sales pitch in there. If the site's fine as it is, I've said so.",
+      '',
+      'Have a read and let me know what you think. Three options are on',
+      'the portal — carry on as you are, go ahead with a new one, or just',
+      'leave it there. No awkward conversation either way.',
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business', 'portal_url'],
+  },
 
-  'J2-Branch-A': _stub('J2-Branch-A', ['name', 'business', 'deliver_by_switch']),
+  'J2-Branch-A': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "You've decided to go ahead with the new site — good.",
+      '',
+      "I'll build you a replacement from scratch, using what I found in",
+      "the review as the starting point. You'll have a link to see the",
+      'first version by {deliver_by_switch}.',
+      '',
+      'A few things to know:',
+      '',
+      "- Your current site stays live throughout. Nothing changes for",
+      "  you or your customers until you've seen the new one and said yes.",
+      '- The £299 covers the build. We\'ll agree the ongoing arrangement',
+      "  once you've seen it and you're happy.",
+      "- If you've got work photos better than the ones on your current",
+      '  site, now\'s a good time to send them. Just reply with them',
+      '  attached.',
+      '',
+      "I'll be in touch when it's ready.",
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business', 'deliver_by_switch'],
+  },
 
   'J2-Branch-B': {
     subject: DEFAULT_SUBJECT,
@@ -259,7 +325,26 @@ const TEMPLATES = {
     required: ['name', 'business', 'current_url', 'deliver_by', 'portal_url'],
   },
 
-  'J3-E2': _stub('J3-E2', ['name', 'business', 'current_url']),
+  'J3-E2': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "Quick note while I'm building your replacement.",
+      '',
+      "I've gone through {current_url} properly — I know what's there,",
+      "what's missing, and what I'm changing. The new one will cover the",
+      'same ground but load faster, look better on phones, and be much',
+      'easier for Google to read.',
+      '',
+      "If there's anything about the current site you want to keep —",
+      'a specific wording, a layout choice, anything — let me know now.',
+      "Otherwise I'll trust my own judgment and you can tell me what",
+      "to tweak when you've seen the first version.",
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business', 'current_url'],
+  },
 
   'J3-E3': {
     subject: DEFAULT_SUBJECT,
@@ -339,7 +424,24 @@ const TEMPLATES = {
     required: ['name', 'business', 'deliver_by', 'portal_url'],
   },
 
-  'J4-E2': _stub('J4-E2', ['name', 'business']),
+  'J4-E2': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "Quick note from me while your site's in progress.",
+      '',
+      "Your brief was more detailed than most — I've got a good picture",
+      "of what you want. Build's underway and I'm working from what you",
+      'sent, not guessing.',
+      '',
+      "If anything changed since you filled the form in, or you've got",
+      'new work photos you want me to use, just reply. Otherwise I\'ll',
+      'have something for you to look at soon.',
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business'],
+  },
 
   'J4-E3': {
     subject: DEFAULT_SUBJECT,
@@ -470,7 +572,29 @@ const TEMPLATES = {
     required: ['name', 'business', 'revisions_count', 'preview_url', 'portal_url'],
   },
 
-  'C3': _stub('C3', ['name', 'business', 'stripe_link', 'portal_url']),
+  'C3': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      "You've said the word — let's go.",
+      '',
+      'To set things in motion, the build fee is £299. Pay when',
+      "you're ready:",
+      '',
+      '{stripe_link}',
+      '',
+      "Once that's through, I'll get the domain pointed, everything",
+      'tested on a real phone, and the site live within one to two',
+      "working days. I'll email you the moment it's up.",
+      '',
+      "If you'd like to talk through anything before paying — the",
+      'ongoing plan, the domain, anything else — just reply.',
+      "No rush.",
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business', 'stripe_link', 'portal_url'],
+  },
 
   'C4': {
     subject: DEFAULT_SUBJECT,
@@ -490,7 +614,25 @@ const TEMPLATES = {
     required: ['name', 'business', 'preview_url'],
   },
 
-  'C5': _stub('C5', ['name', 'business', 'portal_url']),
+  'C5': {
+    subject: DEFAULT_SUBJECT,
+    body: [
+      'Hi {name},',
+      '',
+      'Payment received — thank you.',
+      '',
+      "I'll get {business} live within one to two working days. I'll",
+      'test everything on a real phone before it goes up, then email',
+      "you the live link the moment it's done.",
+      '',
+      'Your portal will update when the site is live:',
+      '{portal_url}',
+      '',
+      'Nothing you need to do in the meantime.',
+      SIGN_OFF,
+    ].join('\n'),
+    required: ['name', 'business', 'portal_url'],
+  },
 
   // ── Post-launch ───────────────────────────────────────────────────────────
 
