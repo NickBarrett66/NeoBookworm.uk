@@ -1181,10 +1181,10 @@ function renderActivePanel(client, slug) {
         `</div>`
       : `<div class="panel-deliver">` +
         `<p class="panel-deliver-date">Your preview link is on its way.</p>` +
-        `<p class="panel-deliver-sub">If you need it urgently, email me and I’ll resend it.</p>` +
+        `<p class="panel-deliver-sub">If you need it urgently, email me and I'll resend it.</p>` +
         `</div>`;
 
-    const safeSlug = esc(slug || ‘’);
+    const safeSlug = esc(slug || '');
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--you">` +
       `<span class="turn-dot turn-dot--you" aria-hidden="true"></span>` +
@@ -1196,26 +1196,26 @@ function renderActivePanel(client, slug) {
       `<div id="pa-root" data-slug="${safeSlug}">` +
       `<div id="pa-options" class="action-options">` +
       `<button class="action-btn action-btn--primary" id="pa-approve">Looks good — go live</button>` +
-      `<button class="action-btn" id="pa-changes">I’d like a few changes</button>` +
+      `<button class="action-btn" id="pa-changes">I'd like a few changes</button>` +
       `<button class="action-btn action-btn--muted" id="pa-decline">Not for me — close it down</button>` +
       `</div>` +
       `<div id="pa-changes-form" class="action-form" hidden>` +
       `<label class="action-form-label" for="pa-changes-text">What would you like changed?</label>` +
-      `<textarea class="action-textarea" id="pa-changes-text" rows="5" placeholder="Describe the changes you’d like — be as specific as you like. You can always send another round if needed."></textarea>` +
+      `<textarea class="action-textarea" id="pa-changes-text" rows="5" placeholder="Describe the changes you'd like — be as specific as you like. You can always send another round if needed."></textarea>` +
       `<div class="action-form-row">` +
       `<button class="action-btn action-btn--primary" id="pa-changes-send">Send changes</button>` +
       `<button class="action-btn action-btn--muted" id="pa-changes-cancel">Back</button>` +
       `</div>` +
       `</div>` +
       `<div id="pa-confirm-approve" class="action-confirm" hidden>` +
-      `<p class="action-confirm-text">Ready to go ahead? I’ll send you payment details next — it’s £299 for the build. You don’t pay until you’re happy with the site.</p>` +
+      `<p class="action-confirm-text">Ready to go ahead? I'll send you payment details next — it's £299 for the build. You don't pay until you're happy with the site.</p>` +
       `<div class="action-confirm-row">` +
-      `<button class="action-btn action-btn--primary" id="pa-confirm-approve-yes">Yes, let’s go</button>` +
+      `<button class="action-btn action-btn--primary" id="pa-confirm-approve-yes">Yes, let's go</button>` +
       `<button class="action-btn action-btn--muted" id="pa-confirm-approve-no">Go back</button>` +
       `</div>` +
       `</div>` +
       `<div id="pa-confirm-decline" class="action-confirm" hidden>` +
-      `<p class="action-confirm-text">Are you sure? I’ll close this down and you won’t owe anything. If you change your mind later, just drop me a line.</p>` +
+      `<p class="action-confirm-text">Are you sure? I'll close this down and you won't owe anything. If you change your mind later, just drop me a line.</p>` +
       `<div class="action-confirm-row">` +
       `<button class="action-btn" id="pa-confirm-decline-yes">Yes, close it down</button>` +
       `<button class="action-btn action-btn--muted" id="pa-confirm-decline-no">Go back</button>` +
