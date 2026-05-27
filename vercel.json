@@ -1,6 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/c/:slug/guides/", "destination": "/api/portal?slug=:slug&section=guides" },
+    { "source": "/c/:slug/guides",  "destination": "/api/portal?slug=:slug&section=guides" },
     { "source": "/c/:slug/google-business/", "destination": "/api/portal?slug=:slug&section=google-business" },
     { "source": "/c/:slug/google-business",  "destination": "/api/portal?slug=:slug&section=google-business" },
     { "source": "/c/:slug/handover/",         "destination": "/api/portal?slug=:slug&section=handover" },

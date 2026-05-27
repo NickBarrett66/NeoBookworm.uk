@@ -128,6 +128,105 @@ function ensureWorkingDay(isoStr) {
   return d.toISOString().slice(0, 10);
 }
 
+// ---------------------------------------------------------------------------
+// Guide catalogue
+// ---------------------------------------------------------------------------
+
+const STAGE_ORDER = [
+  'acknowledged', 'researching', 'building', 'reviewing', 'revisions',
+  'preview_ready', 'review_delivered', 'awaiting_payment', 'preparing_live',
+  'live', 'care_active', 'self_managed', 'dropped_out',
+];
+
+function stageIndex(stage) {
+  const idx = STAGE_ORDER.indexOf(stage);
+  return idx >= 0 ? idx : 0;
+}
+
+const GUIDE_CATALOGUE = [
+  {
+    slug:      'what-goes-on-a-trades-website',
+    label:     'What goes on a trades website',
+    hook:      'The 5 pages that bring in the most enquiries',
+    journeys:  new Set(['J1', 'J4', 'J5']),
+    fromStage: 'acknowledged',
+  },
+  {
+    slug:      'work-photos-guide',
+    label:     'How to take good work photos',
+    hook:      'Better photos = better first impression (2 minutes)',
+    journeys:  'all',
+    fromStage: 'acknowledged',
+  },
+  {
+    slug:      'local-search-guide',
+    label:     'How to appear in Google search',
+    hook:      'What I build in, and what you can do yourself',
+    journeys:  'all',
+    fromStage: 'acknowledged',
+  },
+  {
+    slug:      'seo-guide',
+    label:     'How search engines work',
+    hook:      'Plain English — no jargon',
+    journeys:  new Set(['J2', 'J3']),
+    fromStage: 'acknowledged',
+  },
+  {
+    slug:      'website-running-costs',
+    label:     'What it costs to keep a website running',
+    hook:      'Domain, hosting, care plan — all the numbers',
+    journeys:  'all',
+    fromStage: 'preview_ready',
+  },
+  {
+    slug:      'requesting-changes',
+    label:     'How to request changes to your site',
+    hook:      'What\'s included and how to ask',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'cold-calls',
+    label:     'Dealing with cold calls after launch',
+    hook:      'What to expect, and how to stay off the lists',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'site-is-live',
+    label:     'Your site is live — what next?',
+    hook:      'Google Business, photos, first steps',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'how-fast-is-my-website',
+    label:     'How fast is my website?',
+    hook:      'How to test it and what the scores mean',
+    journeys:  'all',
+    fromStage: 'live',
+  },
+  {
+    slug:      'website-handover',
+    label:     'Taking over your own website',
+    hook:      'Hosting, domain, what you need to know',
+    journeys:  'all',
+    fromStage: 'live',
+    selfManagedOnly: true,
+  },
+];
+
+function guidesForClient(stage, journey, plan, limit = 3) {
+  const currentIdx = stageIndex(stage);
+  return GUIDE_CATALOGUE.filter(g => {
+    if (stageIndex(g.fromStage) > currentIdx) return false;
+    if (g.journeys !== 'all' && journey && !g.journeys.has(journey)) return false;
+    if (g.selfManagedOnly && plan !== 'self_managed') return false;
+    return true;
+  }).slice(0, limit);
+}
+
 const EMAIL_DISPLAY_LABELS = {
   'J1-E1':          'Confirmation — I\'ve got your details',
   'J1-E2':          'Personal note from Nick',
@@ -518,6 +617,62 @@ main {
   font-size: 0.75rem;
   color: var(--muted);
   font-style: italic;
+}
+.guides-see-all {
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+}
+.guides-see-all a {
+  color: var(--muted);
+}
+.guides-see-all a:hover {
+  color: var(--amber);
+}
+.useful-links-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.useful-links-list li a {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.7rem 0.95rem;
+  background: var(--navy-card);
+  border: 1px solid var(--border-sub);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--amber);
+  transition: background 0.15s, border-color 0.15s;
+  min-height: 44px;
+  text-decoration: none;
+}
+.useful-links-list li a:hover {
+  background: var(--navy-mid);
+  border-color: var(--border);
+  text-decoration: none;
+}
+.guides-not-yet {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.guides-not-yet li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.7rem 0.95rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-sub);
+  border-radius: 8px;
+  opacity: 0.45;
+}
+.guides-locked {
+  font-size: 0.875rem;
+  color: var(--muted);
 }
 
 /* ── Conversation history ── */
@@ -922,37 +1077,88 @@ function renderSectionPanel(section) {
 </section>`;
 }
 
-function renderUsefulLinks(stage) {
-  const links = [
-    {
-      href: 'https://neobookworm.uk/guides/what-goes-on-a-trades-website.html',
-      label: 'What goes on a trades website',
-      hook: 'The 5 pages that bring in the most enquiries',
-    },
-    {
-      href: 'https://neobookworm.uk/guides/work-photos-guide.html',
-      label: 'How to take good work photos',
-      hook: 'Better photos = better first impression (takes 2 minutes)',
-    },
-    {
-      href: 'https://neobookworm.uk/guides/local-search-guide.html',
-      label: 'How to appear in Google search',
-      hook: 'What I build in, and what you can do yourself',
-    },
-  ];
+function renderUsefulLinks(stage, journey, plan, slug) {
+  const guides = guidesForClient(stage, journey, plan, 3);
 
-  const items = links.map(l =>
-    `<li>` +
-      `<a href="${esc(l.href)}" target="_blank" rel="noopener">` +
-        `<span class="link-label">${esc(l.label)} →</span>` +
-        `<span class="link-hook">${esc(l.hook || '')}</span>` +
+  if (guides.length === 0) return '';
+
+  const portalUrl = `/c/${encodeURIComponent(slug)}/`;
+
+  const items = guides.map(g => {
+    const guideUrl = `https://neobookworm.uk/guides/${esc(g.slug)}.html?from=${encodeURIComponent(portalUrl)}`;
+    return (
+      `<li>` +
+      `<a href="${guideUrl}">` +
+      `<span class="link-label">${esc(g.label)} →</span>` +
+      `<span class="link-hook">${esc(g.hook)}</span>` +
       `</a>` +
-    `</li>`
-  ).join('');
+      `</li>`
+    );
+  }).join('');
+
+  const totalAvailable = guidesForClient(stage, journey, plan, 999).length;
+  const seeAll = totalAvailable > 3
+    ? `<p class="guides-see-all">` +
+      `<a href="/c/${encodeURIComponent(slug)}/guides/">See all guides →</a>` +
+      `</p>`
+    : '';
 
   return `<section class="useful-links" aria-label="Useful guides">
   <h2 class="section-heading">Good to know</h2>
   <ul>${items}</ul>
+  ${seeAll}
+</section>`;
+}
+
+function renderAllGuidesPanel(client, slug) {
+  const stage   = client.stage;
+  const journey = client.journey || null;
+  const plan    = client.plan    || null;
+
+  const available = guidesForClient(stage, journey, plan, 999);
+  const notYet = GUIDE_CATALOGUE.filter(g => {
+    if (g.selfManagedOnly && plan !== 'self_managed') return false;
+    if (g.journeys !== 'all' && journey && !g.journeys.has(journey)) return false;
+    return stageIndex(g.fromStage) > stageIndex(stage);
+  });
+
+  const portalUrl = `/c/${encodeURIComponent(slug)}/`;
+  const backUrl   = `/c/${encodeURIComponent(slug)}/`;
+
+  const availableItems = available.map(g => {
+    const guideUrl = `https://neobookworm.uk/guides/${esc(g.slug)}.html?from=${encodeURIComponent(portalUrl)}`;
+    return (
+      `<li>` +
+      `<a href="${guideUrl}">` +
+      `<span class="link-label">${esc(g.label)} →</span>` +
+      `<span class="link-hook">${esc(g.hook)}</span>` +
+      `</a>` +
+      `</li>`
+    );
+  }).join('');
+
+  const notYetItems = notYet.length > 0
+    ? `<h3 class="section-heading" style="margin-top:1.5rem;margin-bottom:0.65rem;">Available later in the process</h3>` +
+      `<ul class="guides-not-yet">` +
+      notYet.map(g =>
+        `<li><span class="link-label guides-locked">${esc(g.label)}</span>` +
+        `<span class="link-hook">${esc(g.hook)}</span></li>`
+      ).join('') +
+      `</ul>`
+    : '';
+
+  return `<section class="panel" aria-label="All guides">
+  <p class="panel-stage-label">All guides</p>
+  <div class="panel-content">
+    <p style="margin-bottom:1rem;font-size:0.9rem;color:rgba(255,255,255,0.7);">
+      Everything that's available to you right now.
+    </p>
+    <ul class="useful-links-list">${availableItems}</ul>
+    ${notYetItems}
+    <p style="margin-top:1.25rem;font-size:0.8rem;">
+      <a href="${esc(backUrl)}">← Back to your portal</a>
+    </p>
+  </div>
 </section>`;
 }
 
@@ -987,13 +1193,13 @@ function renderHistory(emailLog) {
 // Full page renderers
 // ---------------------------------------------------------------------------
 
-function renderPage({ client, emailLog, section }) {
+function renderPage({ client, emailLog, section, slug }) {
   const biz  = esc(client.business_name || 'your site');
   const name = esc(client.contact_name  || 'there');
   const stage = client.stage;
 
   // Sub-section pages (review, handover, google-business) get their own panel.
-  const KNOWN_SECTIONS = new Set(['review', 'handover', 'google-business']);
+  const KNOWN_SECTIONS = new Set(['review', 'handover', 'google-business', 'guides']);
   const isSection = section && KNOWN_SECTIONS.has(section);
 
   // dropped_out has no strip
@@ -1001,8 +1207,12 @@ function renderPage({ client, emailLog, section }) {
 
   const head    = renderHead({ title: `${biz} — NeoBookworm` });
   const strip   = showStrip ? renderProgressStrip(stage) : '';
-  const panel   = isSection ? renderSectionPanel(section) : renderActivePanel(client);
-  const links   = renderUsefulLinks(stage);
+  const panel   = isSection
+    ? (section === 'guides'
+        ? renderAllGuidesPanel(client, slug)
+        : renderSectionPanel(section))
+    : renderActivePanel(client);
+  const links   = renderUsefulLinks(stage, client.journey || null, client.plan || null, slug);
   const history = renderHistory(emailLog);
 
   return `<!DOCTYPE html>
@@ -1089,7 +1299,7 @@ module.exports = async function handler(req, res) {
   try {
     const rows = await queryD1(
       enquiriesDb(),
-      'SELECT slug, business_name, contact_name, stage, next_action_by, preview_url, live_url FROM clients WHERE slug = ? LIMIT 1',
+      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url FROM clients WHERE slug = ? LIMIT 1',
       [slug]
     );
     client = rows[0] || null;
@@ -1119,5 +1329,5 @@ module.exports = async function handler(req, res) {
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
-  res.status(200).send(renderPage({ client, emailLog, section }));
+  res.status(200).send(renderPage({ client, emailLog, section, slug }));
 };

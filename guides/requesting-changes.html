@@ -279,6 +279,33 @@ footer {
   .guide-cta { flex-direction: column; align-items: flex-start; }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }
+
+/* ── Portal mode (opened via ?from= link) ── */
+.portal-mode .site-nav    { display: none !important; }
+.portal-mode .breadcrumb  { display: none !important; }
+.portal-mode footer       { display: none !important; }
+.portal-mode main         { padding-top: 0 !important; }
+body.portal-mode          { padding-top: 0 !important; }
+
+.portal-return-bar {
+  display: none;
+  background: #0f1f3d;
+  border-bottom: 1px solid rgba(245,166,35,0.18);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+}
+.portal-return-bar a {
+  color: #f5a623;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.portal-return-bar a:hover {
+  color: #d4891a;
+  text-decoration: underline;
+}
+.portal-mode .portal-return-bar { display: block; }
 </style>
 
 <!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
@@ -319,6 +346,10 @@ footer {
 
 </head>
 <body>
+
+<div class="portal-return-bar" id="portal-return-bar" aria-label="Return to portal">
+  <a href="#" id="portal-return-link">← Back to your portal</a>
+</div>
 
 <nav class="site-nav">
   <a href="../index.html" class="nav-logo">
@@ -453,6 +484,27 @@ footer {
     </ul>
   </div>
 </footer>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var from   = params.get('from');
+  if (!from) return;
+
+  // Validate: only allow relative paths starting with /c/
+  if (!/^\/c\/[a-z0-9_-]+\/?/.test(from)) return;
+
+  // Activate portal mode
+  document.body.classList.add('portal-mode');
+
+  // Wire the return link
+  var link = document.getElementById('portal-return-link');
+  if (link) {
+    link.href = from;
+    link.textContent = '← Back to your portal';
+  }
+})();
+</script>
 
 <script src="/nav-mobile.js" defer></script>
 
