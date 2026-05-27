@@ -4265,6 +4265,48 @@ const STUB_TEMPLATE_IDS = new Set([
   // If a new stub is added to templates.js, add its ID here.
 ]);
 
+// Suggested client stage when each template is selected. Used to
+// pre-set the stage dropdown when picking a template, and applied
+// automatically on send. Templates not listed leave the stage alone.
+const TEMPLATE_SUGGESTED_STAGE = {
+  'J1-E1':         'acknowledged',
+  'J1-E2':         'researching',
+  'J1-E3':         'building',
+  'J1-E4':         'preview_ready',
+  'J2-E1':         'acknowledged',
+  'J2-E2':         'review_delivered',
+  'J2-Branch-A':   'researching',
+  'J2-Branch-B':   'dropped_out',
+  'J3-E1':         'acknowledged',
+  'J3-E2':         'researching',
+  'J3-E3':         'building',
+  'J3-E4':         'preview_ready',
+  'J4-E1':         'acknowledged',
+  'J4-E2':         'researching',
+  'J4-E3':         'building',
+  'J4-E4':         'preview_ready',
+  'J5-E1-quick':   'acknowledged',
+  'J5-E1-booking': 'acknowledged',
+  'C1':            'revisions',
+  'C2':            'preview_ready',
+  'C3':            'awaiting_payment',
+  'C4':            'dropped_out',
+  'C5':            'preparing_live',
+  'Post-1':        'live',
+  'Post-2':        'live',
+  'Post-3-care':   'care_active',
+  'Post-3-self':   'self_managed',
+};
+
+// Strip the "ID — " prefix from CLIENT_TEMPLATE_LABELS so we get just
+// the human description (e.g. "Your preview is ready").
+function templateDescription(id) {
+  const label = CLIENT_TEMPLATE_LABELS[id];
+  if (!label) return '';
+  const dash = label.indexOf(' — ');
+  return dash >= 0 ? label.slice(dash + 3) : label;
+}
+
 const CLIENT_TEMPLATE_GROUPS = [
   { label: 'J1 — Free preview',  ids: ['J1-E1','J1-E2','J1-E3','J1-E4'] },
   { label: 'J2 — Site review',   ids: ['J2-E1','J2-E2','J2-Branch-A','J2-Branch-B'] },
@@ -4510,10 +4552,11 @@ function renderClientDetail(c, emailLog, changeRequests) {
           ? `<span style="color:var(--red);font-size:.72rem;margin-left:.3rem">(failed)</span>` : '';
         const rowId   = escAttr(String(row.id || ''));
         const rowSlug = escAttr(c.slug || '');
+        const desc    = templateDescription(row.template) || row.subject || '';
         return `<li style="padding:.65rem 0;border-bottom:1px solid var(--border)">
           <div style="display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap">
             <span style="color:var(--amber);font-size:.72rem;flex-shrink:0;font-weight:600">${escHtml(row.template || '')}</span>
-            <span style="flex:1;min-width:0;font-size:.85rem">${escHtml(row.subject || '')}${failed}</span>
+            <span style="flex:1;min-width:0;font-size:.85rem">${escHtml(desc)}${failed}</span>
             <span style="color:var(--muted);font-size:.78rem;white-space:nowrap">${escHtml(clientHumanTime(row.sent_at))}</span>
             <button
               data-log-id="${rowId}"
@@ -4660,6 +4703,11 @@ function renderClientDetail(c, emailLog, changeRequests) {
                value="${escAttr(c.next_action_by ? c.next_action_by.substring(0, 10) : '')}"
                title="deliver_by — defaults to Next action by"
                style="padding:.43rem .65rem;border:1px solid var(--border);border-radius:7px;background:var(--navy);color:var(--white);font-size:.875rem;outline:none">
+      </div>
+
+      <div id="suggested-stage-hint" style="display:none;margin-bottom:.5rem;font-size:.78rem;color:var(--muted)">
+        Suggested stage: <strong id="suggested-stage-label" style="color:var(--amber)"></strong>
+        — auto-applied to the stage dropdown above (override before sending if needed).
       </div>
 
       <!-- Advanced toggle -->
@@ -4892,8 +4940,31 @@ function renderClientDetail(c, emailLog, changeRequests) {
     }
   }
 
+  function applySuggestedStage() {
+    const templateId = document.getElementById('template-select').value;
+    const hint       = document.getElementById('suggested-stage-hint');
+    const hintLabel  = document.getElementById('suggested-stage-label');
+    const suggested  = TEMPLATE_SUGGESTED_STAGE[templateId];
+    if (!suggested) {
+      if (hint) hint.style.display = 'none';
+      return;
+    }
+    const stageSel = document.getElementById('stage-select');
+    if (stageSel && stageSel.value !== suggested) {
+      stageSel.value = suggested;
+      syncStageDateUi(suggested);
+    }
+    if (hint && hintLabel) {
+      hintLabel.textContent = STAGE_LABELS[suggested] || suggested;
+      hint.style.display = 'block';
+    }
+  }
+
   // Trigger preview when template or date changes
-  document.getElementById('template-select').addEventListener('change', renderPreview);
+  document.getElementById('template-select').addEventListener('change', () => {
+    applySuggestedStage();
+    renderPreview();
+  });
   document.getElementById('deliver-by-override').addEventListener('change', renderPreview);
   document.getElementById('extra-vars-input').addEventListener('blur', () => {
     if (document.getElementById('template-select').value) renderPreview();
@@ -4922,6 +4993,18 @@ function renderClientDetail(c, emailLog, changeRequests) {
     try {
       const result = await apiPost({ action: 'client_send', slug: c.slug, templateId, subject, body });
       if (result.ok) {
+        // Apply the currently-selected stage (which may have been auto-suggested
+        // by the template, or manually overridden) if it differs from the
+        // client's current stage.
+        const newStage = document.getElementById('stage-select')?.value;
+        if (newStage && newStage !== c.stage) {
+          const stageBody = { action: 'client_set_stage', slug: c.slug, stage: newStage };
+          if (newStage !== 'acknowledged') {
+            const dateVal = document.getElementById('next-action-input')?.value;
+            if (dateVal) stageBody.next_action_by = dateVal;
+          }
+          try { await apiPost(stageBody); } catch (e) { console.warn('Stage update after send failed:', e); }
+        }
         status.textContent = 'Sent ✓'; status.className = 'save-status ok';
         setTimeout(() => loadClientDetail(c.slug), 1200);
       } else {
