@@ -1620,7 +1620,7 @@ ${head}
     var t = el('pa-changes-text');
     var msg = t ? t.value.trim() : '';
     if (!msg) {
-      showError('Please describe the changes you\'d like before sending.');
+      showError("Please describe the changes you'd like before sending.");
       return;
     }
     if (msg.length > 4000) {
