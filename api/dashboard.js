@@ -884,7 +884,8 @@ module.exports = async (req, res) => {
       const inCampaign = status === 'In Campaign';
       const withCampaignId = inCampaign || status === 'Emailed';
       const disqualified = status === 'Disqualified';
-      const salvageWebsite = status === 'Salvage - Website';
+      const salvageWebsite =
+        status === 'Salvage - Website' || status === 'Researched with website';
       const campaignIdExpr = `COALESCE(
         NULLIF(TRIM(prospects.email_campaign_id), ''),
         (SELECT o.campaign_id
