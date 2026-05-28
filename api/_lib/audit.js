@@ -202,7 +202,9 @@ Produce a plaintext review (no markdown headers, no asterisks — use dashes for
 3. One or two quick wins — changes that would make a real difference now without a full rebuild
 4. Verdict: rebuild from scratch or just tweak? Be honest and specific.
 
-The prospect will read this on their private portal page. It should feel like honest advice from a professional peer, not a pitch to sell them a new site.`;
+The prospect will read this on their private portal page. It should feel like honest advice from a professional peer, not a pitch to sell them a new site.
+
+Important note about the page content you are given: images cannot be visually rendered in this process. Instead, each image on the page is represented as a text placeholder like [Image: filename.jpg] or [Image: alt text]. These placeholders confirm the image EXISTS on the page — treat them as real images that a visitor would see. Do not suggest images are missing or broken just because you cannot see them visually.`;
 
   const userPrompt = `Business: ${business}
 Website: ${url}
