@@ -48,12 +48,29 @@ Verdict: Worth a rebuild. The structure isn't the problem — the bones are fine
 // HTML → plain text
 // ---------------------------------------------------------------------------
 
+/**
+ * Extract a text hint from an <img> tag's attributes.
+ * Returns e.g. "[Image: Kitchen repaint]" or "[Image: gallery-thumb.jpg]".
+ */
+function imgHint(tag) {
+  const alt = (tag.match(/\balt=["']([^"']+)["']/i) || [])[1];
+  if (alt && alt.trim()) return `[Image: ${alt.trim()}]`;
+  const src = (tag.match(/\bsrc=["']([^"']+)["']/i) || [])[1];
+  if (src) {
+    const file = src.split('/').pop().split('?')[0];
+    if (file) return `[Image: ${file}]`;
+  }
+  return '';
+}
+
 function stripHtml(html) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<head[\s\S]*?<\/head>/gi, ' ')
     .replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+    // Convert <img> tags to readable hints before stripping so Claude knows images exist
+    .replace(/<img\b[^>]*>/gi, tag => ' ' + imgHint(tag) + ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
