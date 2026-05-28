@@ -494,7 +494,7 @@
       transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.28s ease;
       padding: 0;
     }
-    .feat-card-body { padding: 20px 18px 16px; }
+    .feat-card-body { padding: 20px 18px 32px; position: relative; }
     .feat-card.featured::before {
       content: '';
       position: absolute;
@@ -522,23 +522,23 @@
       outline: 2px solid var(--amber);
       outline-offset: 3px;
     }
-    .feat-card.featured::after {
-      content: 'Click to explore';
+    .feat-card-body::after {
+      content: 'Click to explore \2192';
       position: absolute;
-      top: 16px;
-      right: 16px;
+      bottom: 10px;
+      right: 14px;
       font-size: 0.65rem;
       font-weight: 700;
       font-family: var(--sans);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--amber);
-      opacity: 0;
+      opacity: 0.4;
       transition: opacity 0.3s ease;
       pointer-events: none;
     }
-    .feat-card.featured:hover::after,
-    .feat-card.featured:focus-visible::after {
+    .feat-card.featured:hover .feat-card-body::after,
+    .feat-card.featured:focus-visible .feat-card-body::after {
       opacity: 1;
     }
 
