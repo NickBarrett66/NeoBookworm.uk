@@ -457,10 +457,6 @@
       gap: 1.25rem;
       margin-top: 2rem;
     }
-    /* Four-situations section: 2 columns so the 4 cards sit 2+2 */
-    #four-situations .cards-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
     .feat-card {
       background: var(--navy-mid);
       border: 1px solid var(--border);
@@ -2005,7 +2001,7 @@
   </section>
 
   <!-- ══ FOUR SITUATIONS ══ -->
-  <section class="includes" id="four-situations">
+  <section class="includes">
     <div class="section-inner">
       <span class="eyebrow">Which situation sounds like yours?</span>
       <h2 class="section-title">Four reasons electricians <em>look at switching.</em></h2>
@@ -2333,6 +2329,8 @@
                 <a href="#option-review" data-start-hash="option-review">Free site review</a>
                 <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
                 <a href="#option-switch" data-start-hash="option-switch">Ready to switch</a>
+                <span class="start-option-jump-sep" aria-hidden="true">&middot;</span>
+                <a href="#option-inquiry" data-start-hash="option-inquiry">Full inquiry</a>
               </nav>
 
               <div id="contact-fields-holder" hidden>
@@ -2415,7 +2413,27 @@
                 </div>
               </article>
 
-              <p style="text-align:center; margin-top:1.5rem; font-size:0.875rem; color:rgba(255,255,255,0.5);">Want to give me more detail up front? <a href="/intake-form.html" style="color:var(--amber);">Fill in the full intake form instead &rarr;</a></p>
+              <article id="option-inquiry" class="start-option" aria-expanded="false">
+                <input type="radio" name="start_option" value="intake_form" class="visually-hidden" tabindex="-1" aria-hidden="true">
+                <div class="start-option-num" aria-hidden="true">3</div>
+                <div class="start-option-main">
+                  <p class="start-option-kicker">Full inquiry</p>
+                  <h3 class="start-option-title" id="option-inquiry-heading">Fill in the full intake form</h3>
+                  <p class="start-option-desc">More detail up front means I can get closer on the first version. Takes about five minutes and covers services, area, accreditations, and photos.</p>
+                </div>
+                <div class="start-option-footer">
+                  <button type="button" class="start-option-btn start-option-expand" data-start-expand="option-inquiry" aria-expanded="false" aria-controls="panel-inquiry">
+                    Start the form
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+                <div id="panel-inquiry" class="start-option-panel" role="region" aria-labelledby="option-inquiry-heading" hidden>
+                  <div class="start-option-panel-inner"></div>
+                  <p class="intake-panel-note">The full intake form takes about five minutes. It covers your services, your area, accreditations and any photos you&rsquo;d like to include &mdash; the more you fill in, the closer I can get on the first version.</p>
+                  <button type="submit" class="bstart start-option-submit" data-default-label="Start the form &rarr;">Start the form &rarr;</button>
+                  <p class="form-privacy">I&rsquo;ll only use your details to contact you about your site. No marketing emails, no passing your details on.</p>
+                </div>
+              </article>
 
             </div>
 
@@ -2909,7 +2927,7 @@
   (function(){
     if (!document.documentElement.classList.contains('js-start-accordion')) return;
 
-    var IDS = ['option-review', 'option-switch'];
+    var IDS = ['option-review', 'option-switch', 'option-inquiry'];
     var contactFields = document.getElementById('contact-fields');
     var contactHolder = document.getElementById('contact-fields-holder');
 
@@ -2958,6 +2976,13 @@
       if (article) {
         var inner = article.querySelector('.start-option-panel-inner');
         moveContactFields(inner);
+      }
+
+      /* Hide URL field for Option 3 — intake form already asks for it */
+      var urlField = document.getElementById('f_url');
+      if (urlField) {
+        var urlWrap = urlField.closest('.field');
+        if (urlWrap) urlWrap.style.display = (id === 'option-inquiry') ? 'none' : '';
       }
 
       if (opts.scroll !== false && article) {
@@ -3142,6 +3167,20 @@
         ? ev.submitter
         : document.querySelector('.start-option.is-open .start-option-submit');
       var selectedOption=getSelectedOption();
+
+      if(selectedOption==='intake_form'){
+        var nameVal=document.getElementById('f_name').value.trim();
+        var bizVal=document.getElementById('f_biz').value.trim();
+        var emailVal=document.getElementById('f_email').value.trim();
+        window.location.href='/intake-form.html'
+          +'?name='+encodeURIComponent(nameVal)
+          +'&biz='+encodeURIComponent(bizVal)
+          +'&email='+encodeURIComponent(emailVal)
+          +'&trade='+encodeURIComponent('Electrician')
+          +'&step=1'
+          +'&ref=electricians-switch';
+        return;
+      }
 
       if(btn) btn.disabled=true;
       if(btn) btn.textContent='Sending\u2026';
