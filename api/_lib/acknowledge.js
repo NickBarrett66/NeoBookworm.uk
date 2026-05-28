@@ -36,12 +36,11 @@ const JOURNEY_TEMPLATE = {
 // ---------------------------------------------------------------------------
 
 /**
- * Calculate a human-readable date N working days from today.
- * Skips Saturday (6) and Sunday (0).
- * Returns e.g. "Wednesday 4 June".
+ * Calculate a date N working days from today (skipping Saturday and Sunday).
+ * Returns an ISO date string "YYYY-MM-DD" — safe for D1 storage and portal countdown.
  *
  * @param {number} n  - Number of working days to add (default 5)
- * @returns {string}
+ * @returns {string}  e.g. "2026-06-04"
  */
 function workingDaysFromNow(n = 5) {
   const d = new Date();
@@ -51,6 +50,18 @@ function workingDaysFromNow(n = 5) {
     const dow = d.getDay();
     if (dow !== 0 && dow !== 6) added++;
   }
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Format an ISO date string as a human-readable UK date for email templates.
+ * e.g. "2026-06-04" → "Thursday 4 June"
+ *
+ * @param {string} isoStr  - "YYYY-MM-DD"
+ * @returns {string}
+ */
+function humanDate(isoStr) {
+  const d = new Date(isoStr + 'T00:00:00Z');
   return d.toLocaleDateString('en-GB', {
     weekday: 'long',
     day:     'numeric',
@@ -133,20 +144,21 @@ async function sendAcknowledgement(slug) {
   // J2 (site review) promises "one working day" on the landing page; all other journeys use 5.
   const DELIVER_DAYS = { J2: 1 };
   if (['J1', 'J2', 'J3', 'J4'].includes(journey)) {
-    let deliverBy = client.next_action_by;
-    if (!deliverBy) {
-      deliverBy = workingDaysFromNow(DELIVER_DAYS[journey] ?? 5);
+    let deliverByIso = client.next_action_by;
+    if (!deliverByIso) {
+      deliverByIso = workingDaysFromNow(DELIVER_DAYS[journey] ?? 5);
       try {
         await queryD1(
           enquiriesDb(),
           `UPDATE clients SET next_action_by = ? WHERE slug = ?`,
-          [deliverBy, slug]
+          [deliverByIso, slug]
         );
       } catch (e) {
         console.error(`[acknowledge] next_action_by update failed for ${slug}:`, e.message);
       }
     }
-    vars.deliver_by = deliverBy;
+    // Email template gets a human-readable date; portal reads the ISO value from D1.
+    vars.deliver_by = humanDate(deliverByIso);
   }
 
   // {current_url} — required by J2/J3
@@ -171,4 +183,4 @@ async function sendAcknowledgement(slug) {
   }
 }
 
-module.exports = { sendAcknowledgement, JOURNEY_TEMPLATE, workingDaysFromNow };
+module.exports = { sendAcknowledgement, JOURNEY_TEMPLATE, workingDaysFromNow, humanDate };

@@ -117,15 +117,22 @@ function workingDaysFromNow(targetIso) {
 }
 
 function ensureWorkingDay(isoStr) {
-  if (!isoStr) return isoStr;
-  const norm = isoStr.length <= 10
-    ? isoStr + 'T00:00:00Z'
-    : (isoStr.includes('T') ? isoStr : isoStr.replace(' ', 'T') + 'Z');
-  const d = new Date(norm);
-  const dow = d.getUTCDay();
-  if (dow === 0) d.setUTCDate(d.getUTCDate() + 1); // Sunday → Monday
-  if (dow === 6) d.setUTCDate(d.getUTCDate() + 2); // Saturday → Monday
-  return d.toISOString().slice(0, 10);
+  if (!isoStr) return null;
+  // Accept only YYYY-MM-DD (or ISO datetime). Older rows stored a human-readable
+  // string like "Thursday 29 May" — return null for those so the portal degrades
+  // gracefully rather than throwing on Invalid Date.
+  if (!/^\d{4}-\d{2}-\d{2}/.test(isoStr)) return null;
+  try {
+    const norm = isoStr.length <= 10 ? isoStr + 'T00:00:00Z' : isoStr;
+    const d = new Date(norm);
+    if (isNaN(d.getTime())) return null;
+    const dow = d.getUTCDay();
+    if (dow === 0) d.setUTCDate(d.getUTCDate() + 1); // Sunday → Monday
+    if (dow === 6) d.setUTCDate(d.getUTCDate() + 2); // Saturday → Monday
+    return d.toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
