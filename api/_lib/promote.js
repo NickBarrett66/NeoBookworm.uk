@@ -208,7 +208,7 @@ async function promoteToClient({ source_type, source_id, journey } = {}) {
     throw err;
   }
 
-  return { slug, created: true };
+  return { slug, created: true, journey: finalJourney };
 }
 
 module.exports = {

@@ -100,9 +100,9 @@ module.exports = async (req, res) => {
   }
 
   // ── Promote ───────────────────────────────────────────────────────────────
-  let slug, created;
+  let slug, created, journey;
   try {
-    ({ slug, created } = await promoteToClient({ source_type, source_id }));
+    ({ slug, created, journey } = await promoteToClient({ source_type, source_id }));
   } catch (err) {
     console.error('[onboarding-intake] promoteToClient failed:', err.message);
     return res.status(400).json({ ok: false, error: err.message });
@@ -139,6 +139,7 @@ module.exports = async (req, res) => {
   return res.status(200).json({
     ok:           true,
     slug,
+    journey:      journey  || null,
     acknowledged,
     reason:       reason   || null,
     error:        ackError || null,

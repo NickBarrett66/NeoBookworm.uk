@@ -1077,22 +1077,30 @@ function renderActivePanel(client, slug) {
 
   if (stage === 'acknowledged') {
     const lead = `Hi ${name} — here's where things stand with ${biz}.`;
+    const isReview = client.journey === 'J2';
+    const statusMsg = isReview
+      ? `I'm going through your current site now. I'll have my honest opinion back to you by the date below.`
+      : `I've got your details. I'll be in touch within one working day.`;
     const zone1 = `<p class="panel-lead">${lead}</p>` +
-      `<p class="panel-status">I've got your details. I'll be in touch within one working day.</p>`;
+      `<p class="panel-status">${statusMsg}</p>`;
 
     const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
     const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
+    const deliverLabel = isReview ? 'Your review will be ready by' : 'Your first deliverable will be ready by';
     const zone2 = deliverBy
       ? `<div class="panel-deliver">` +
-        `<p class="panel-deliver-date">Your first deliverable will be ready by <strong>${esc(deliverBy)}</strong>.</p>` +
+        `<p class="panel-deliver-date">${deliverLabel} <strong>${esc(deliverBy)}</strong>.</p>` +
         (subText ? `<p class="panel-deliver-sub">${esc(subText)}</p>` : '') +
         `</div>`
       : '';
 
+    const turnMsg = isReview
+      ? `Waiting on Nick — I'm reviewing your site. Nothing for you to do.`
+      : `Waiting on Nick — I'll be in touch within one working day. Nothing for you to do.`;
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--nick">` +
       `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +
-      `Waiting on Nick — I'll be in touch within one working day. Nothing for you to do.` +
+      `${turnMsg}` +
       `</p>` +
       `</div>`;
 
@@ -1187,54 +1195,70 @@ function renderActivePanel(client, slug) {
 
   } else if (stage === 'preview_ready' || stage === 'review_delivered') {
     const lead = `Hi ${name} — here's where things stand with ${biz}.`;
-    const status = stage === 'review_delivered' ? 'Your review is ready.' : 'Your site is ready to view.';
+    const isJ2Review = stage === 'review_delivered' && client.journey === 'J2';
+    const statusMsg  = isJ2Review ? 'Your site review is ready — have a read below.' : 'Your site is ready to view.';
     const zone1 = `<p class="panel-lead">${lead}</p>` +
-      `<p class="panel-status">${esc(status)}</p>`;
+      `<p class="panel-status">${statusMsg}</p>`;
 
-    const previewUrl = client.preview_url ? String(client.preview_url).trim() : '';
-    const zone2 = previewUrl
-      ? `<div class="panel-preview-link">` +
-        `<a href="${esc(previewUrl)}" target="_blank" rel="noopener">View your site →</a>` +
-        `</div>`
-      : `<div class="panel-deliver">` +
-        `<p class="panel-deliver-date">Your preview link is on its way.</p>` +
-        `<p class="panel-deliver-sub">If you need it urgently, email me and I'll resend it.</p>` +
-        `</div>`;
+    const reviewContent = client.site_review_content ? String(client.site_review_content).trim() : '';
+    const previewUrl    = client.preview_url ? String(client.preview_url).trim() : '';
+    const zone2 = isJ2Review
+      ? (reviewContent
+          ? `<div class="panel-review-content" style="margin:1rem 0;padding:1rem 1.25rem;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid var(--border-sub)">` +
+            `<pre style="font-family:var(--sans,inherit);font-size:.9rem;line-height:1.7;color:rgba(255,255,255,.88);white-space:pre-wrap;word-break:break-word;margin:0">${esc(reviewContent)}</pre>` +
+            `</div>`
+          : `<div class="panel-deliver"><p class="panel-deliver-date">Your review is on its way. If you haven't had it within one working day, just reply to the email I sent.</p></div>`)
+      : (previewUrl
+          ? `<div class="panel-preview-link">` +
+            `<a href="${esc(previewUrl)}" target="_blank" rel="noopener">View your site →</a>` +
+            `</div>`
+          : `<div class="panel-deliver">` +
+            `<p class="panel-deliver-date">Your preview link is on its way.</p>` +
+            `<p class="panel-deliver-sub">If you need it urgently, email me and I'll resend it.</p>` +
+            `</div>`);
 
     const safeSlug = esc(slug || '');
+    const approveLabel  = isJ2Review ? 'Build me a new site — let\'s go' : 'Looks good — go live';
+    const approveConfirm = isJ2Review
+      ? `Happy with the review? I\'ll build you a replacement from scratch and have the first version to you within 5 working days. It\'s £299 for the build — you don\'t pay until you\'re happy.`
+      : `Ready to go ahead? I\'ll send you payment details next — it\'s £299 for the build. You don\'t pay until you\'re happy with the site.`;
+    const declineLabel   = isJ2Review ? 'I\'ll stick with what I\'ve got' : 'Not for me — close it down';
+    const declineConfirm = isJ2Review
+      ? `No problem at all. If you change your mind later, just drop me a line.`
+      : `Are you sure? I\'ll close this down and you won\'t owe anything. If you change your mind later, just drop me a line.`;
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--you">` +
       `<span class="turn-dot turn-dot--you" aria-hidden="true"></span>` +
-      `Over to you — take a look and let me know what you think.` +
+      `Over to you — have a read and let me know what you think.` +
       `</p>` +
       `</div>` +
       `<div class="panel-actions">` +
       `<p class="panel-actions-lead">What would you like to do?</p>` +
       `<div id="pa-root" data-slug="${safeSlug}">` +
       `<div id="pa-options" class="action-options">` +
-      `<button class="action-btn action-btn--primary" id="pa-approve">Looks good — go live</button>` +
-      `<button class="action-btn" id="pa-changes">I'd like a few changes</button>` +
-      `<button class="action-btn action-btn--muted" id="pa-decline">Not for me — close it down</button>` +
+      `<button class="action-btn action-btn--primary" id="pa-approve">${approveLabel}</button>` +
+      `<button class="action-btn" id="pa-changes">I'd like to ask a question</button>` +
+      `<button class="action-btn action-btn--muted" id="pa-decline">${declineLabel}</button>` +
       `</div>` +
       `<div id="pa-changes-form" class="action-form" hidden>` +
-      `<label class="action-form-label" for="pa-changes-text">What would you like changed?</label>` +
-      `<textarea class="action-textarea" id="pa-changes-text" rows="5" placeholder="Describe the changes you'd like — be as specific as you like. You can always send another round if needed."></textarea>` +
+      `<label class="action-form-label" for="pa-changes-text">${isJ2Review ? 'What would you like to ask?' : 'What would you like changed?'}</label>` +
+      `<textarea class="action-textarea" id="pa-changes-text" rows="5" placeholder="${isJ2Review ? 'Any questions about the review, or anything specific you\'d like me to consider?' : 'Describe the changes you\'d like — be as specific as you like. You can always send another round if needed.'}"></textarea>` +
       `<div class="action-form-row">` +
-      `<button class="action-btn action-btn--primary" id="pa-changes-send">Send changes</button>` +
+      `<button class="action-btn action-btn--primary" id="pa-changes-send">Send</button>` +
       `<button class="action-btn action-btn--muted" id="pa-changes-cancel">Back</button>` +
       `</div>` +
       `</div>` +
       `<div id="pa-confirm-approve" class="action-confirm" hidden>` +
-      `<p class="action-confirm-text">Ready to go ahead? I'll send you payment details next — it's £299 for the build. You don't pay until you're happy with the site.</p>` +
+      `<p class="action-confirm-text">${approveConfirm}</p>` +
       `<div class="action-confirm-row">` +
       `<button class="action-btn action-btn--primary" id="pa-confirm-approve-yes">Yes, let's go</button>` +
       `<button class="action-btn action-btn--muted" id="pa-confirm-approve-no">Go back</button>` +
       `</div>` +
       `</div>` +
       `<div id="pa-confirm-decline" class="action-confirm" hidden>` +
-      `<p class="action-confirm-text">Are you sure? I'll close this down and you won't owe anything. If you change your mind later, just drop me a line.</p>` +
+      `<p class="action-confirm-text">${declineConfirm}</p>` +
       `<div class="action-confirm-row">` +
-      `<button class="action-btn" id="pa-confirm-decline-yes">Yes, close it down</button>` +
+      `<button class="action-btn" id="pa-confirm-decline-yes">${isJ2Review ? 'Yes, thanks for looking' : 'Yes, close it down'}</button>` +
       `<button class="action-btn action-btn--muted" id="pa-confirm-decline-no">Go back</button>` +
       `</div>` +
       `</div>` +
@@ -1730,7 +1754,7 @@ module.exports = async function handler(req, res) {
   try {
     const rows = await queryD1(
       enquiriesDb(),
-      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url, stripe_link FROM clients WHERE slug = ? LIMIT 1',
+      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url, stripe_link, site_review_content FROM clients WHERE slug = ? LIMIT 1',
       [slug]
     );
     client = rows[0] || null;

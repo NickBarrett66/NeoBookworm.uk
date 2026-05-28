@@ -130,10 +130,12 @@ async function sendAcknowledgement(slug) {
   const vars = { name, business, portal_url: portalUrl };
 
   // {deliver_by} — required by J1/J2/J3/J4
+  // J2 (site review) promises "one working day" on the landing page; all other journeys use 5.
+  const DELIVER_DAYS = { J2: 1 };
   if (['J1', 'J2', 'J3', 'J4'].includes(journey)) {
     let deliverBy = client.next_action_by;
     if (!deliverBy) {
-      deliverBy = workingDaysFromNow(5);
+      deliverBy = workingDaysFromNow(DELIVER_DAYS[journey] ?? 5);
       try {
         await queryD1(
           enquiriesDb(),

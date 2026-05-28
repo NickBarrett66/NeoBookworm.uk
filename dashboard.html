@@ -4689,6 +4689,40 @@ function renderClientDetail(c, emailLog, changeRequests) {
 
     </div>
 
+    ${c.journey === 'J2' ? `
+    <!-- J2 Site Audit -->
+    <div id="j2-audit-panel" style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+        <div class="section-label" style="margin:0">Site Audit</div>
+        <span id="audit-status-badge" style="font-size:.72rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;${c.site_review_content ? 'background:rgba(80,200,120,.18);color:#50c878' : 'background:rgba(245,166,35,.18);color:var(--amber)'}">${c.site_review_content ? 'Ready' : 'Pending'}</span>
+      </div>
+
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.85rem">
+        <button id="btn-audit-rerun" class="filter-btn" style="font-size:.8rem">Re-run audit</button>
+        <button id="btn-audit-test"  class="filter-btn" style="font-size:.8rem">Test run (fixture)</button>
+        <span id="audit-run-status" class="save-status"></span>
+      </div>
+
+      <div style="margin-bottom:.85rem">
+        <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.3rem">
+          Review content — editable before sending. Shown on client portal at <em>review_delivered</em> stage.
+        </label>
+        <textarea id="audit-review-content" rows="14"
+                  style="width:100%;padding:.5rem .7rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none;resize:vertical;font-family:monospace;line-height:1.55"
+                  placeholder="Audit will appear here once generated…">${escHtml(c.site_review_content || '')}</textarea>
+      </div>
+
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+        <button id="btn-save-audit" class="filter-btn btn-dash-save">Save review</button>
+        <button id="btn-send-review"
+                style="padding:.5rem 1.2rem;background:var(--amber);color:var(--navy);border:none;border-radius:7px;font-size:.875rem;font-weight:700;cursor:pointer">
+          Send review to client →
+        </button>
+        <span id="audit-save-status" class="save-status"></span>
+      </div>
+    </div>
+    ` : ''}
+
     <!-- Send template -->
     <div style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
       <div class="section-label" style="margin:0 0 .75rem">Send Email</div>
@@ -4878,6 +4912,93 @@ function renderClientDetail(c, emailLog, changeRequests) {
       status.textContent = 'Error: ' + err.message; status.className = 'save-status err';
     } finally { this.disabled = false; }
   });
+
+  // ── J2 audit panel ──
+  if (c.journey === 'J2') {
+    const auditStatus  = document.getElementById('audit-status-badge');
+    const auditRunSt   = document.getElementById('audit-run-status');
+    const auditContent = document.getElementById('audit-review-content');
+
+    async function runAudit(opts = {}) {
+      auditRunSt.textContent = 'Running…'; auditRunSt.className = 'save-status';
+      const btns = ['btn-audit-rerun', 'btn-audit-test'].map(id => document.getElementById(id));
+      btns.forEach(b => { if (b) b.disabled = true; });
+      try {
+        const result = await apiPost({ action: 'client_audit_run', slug: c.slug, ...opts });
+        if (result.test_mode) {
+          auditRunSt.textContent = 'Test fixture loaded'; auditRunSt.className = 'save-status ok';
+          // Show in a modal-style alert so it's clearly not the real run
+          const win = window.open('', '_blank', 'width=700,height=600,scrollbars=yes');
+          if (win) {
+            win.document.write(`<html><head><title>Test audit — ${escHtml(c.business_name || c.slug)}</title>` +
+              `<style>body{font-family:monospace;font-size:.9rem;padding:1.5rem;white-space:pre-wrap;line-height:1.6;color:#1a1a1a;background:#f9f9f9}</style></head>` +
+              `<body>${escHtml(result.review)}</body></html>`);
+            win.document.close();
+          } else {
+            alert(result.review);
+          }
+        } else if (result.dry_run) {
+          auditRunSt.textContent = 'Dry run complete (not saved)'; auditRunSt.className = 'save-status ok';
+          if (auditContent) auditContent.value = result.review || '';
+        } else {
+          auditRunSt.textContent = 'Audit saved ✓'; auditRunSt.className = 'save-status ok';
+          if (auditContent) auditContent.value = result.review || '';
+          if (auditStatus) {
+            auditStatus.textContent = 'Ready';
+            auditStatus.style.background = 'rgba(80,200,120,.18)';
+            auditStatus.style.color      = '#50c878';
+          }
+        }
+      } catch (err) {
+        auditRunSt.textContent = 'Error: ' + err.message; auditRunSt.className = 'save-status err';
+      } finally {
+        btns.forEach(b => { if (b) b.disabled = false; });
+        setTimeout(() => { auditRunSt.textContent = ''; }, 4000);
+      }
+    }
+
+    document.getElementById('btn-audit-rerun')?.addEventListener('click', () => runAudit());
+    document.getElementById('btn-audit-test')?.addEventListener('click',  () => runAudit({ test_mode: true }));
+
+    document.getElementById('btn-save-audit')?.addEventListener('click', async function () {
+      const st = document.getElementById('audit-save-status');
+      this.disabled = true; st.textContent = 'Saving…'; st.className = 'save-status';
+      try {
+        await apiPost({ action: 'client_set_fields', slug: c.slug, fields: {
+          site_review_content: auditContent?.value || null,
+        }});
+        st.textContent = 'Saved ✓'; st.className = 'save-status ok';
+        setTimeout(() => { st.textContent = ''; }, 2500);
+      } catch (err) {
+        st.textContent = 'Error: ' + err.message; st.className = 'save-status err';
+      } finally { this.disabled = false; }
+    });
+
+    document.getElementById('btn-send-review')?.addEventListener('click', async function () {
+      const review = auditContent?.value?.trim();
+      if (!review) {
+        alert('Review content is empty — generate or write the review before sending.');
+        return;
+      }
+      if (!confirm(`Send the J2-E2 email to ${c.email} and mark stage as review_delivered?\n\nThis will also save the current review content.`)) return;
+
+      const st = document.getElementById('audit-save-status');
+      this.disabled = true; st.textContent = 'Sending…'; st.className = 'save-status';
+      try {
+        // 1. Save review content
+        await apiPost({ action: 'client_set_fields', slug: c.slug, fields: { site_review_content: review }});
+        // 2. Send J2-E2
+        await apiPost({ action: 'client_send', slug: c.slug, templateId: 'J2-E2' });
+        // 3. Advance stage
+        await apiPost({ action: 'client_set_stage', slug: c.slug, stage: 'review_delivered' });
+        st.textContent = 'Review sent ✓'; st.className = 'save-status ok';
+        setTimeout(() => loadClientDetail(c.slug), 800);
+      } catch (err) {
+        st.textContent = 'Error: ' + err.message; st.className = 'save-status err';
+        this.disabled = false;
+      }
+    });
+  }
 
   // ── Advanced toggle ──
   document.getElementById('btn-adv-toggle').addEventListener('click', function () {

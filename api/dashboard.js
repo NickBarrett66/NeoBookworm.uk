@@ -61,7 +61,7 @@ const CLIENTS_EDITABLE = [
   'preview_url', 'live_url', 'current_url', 'domain', 'domain_status',
   'plan', 'next_action_by', 'notes', 'revision_count',
   'hosting_provider', 'hosting_url', 'client_email', 'stripe_customer_id',
-  'stripe_link',
+  'stripe_link', 'site_review_content',
 ];
 
 const CLIENT_VALID_STAGES = [
@@ -695,6 +695,20 @@ module.exports = async (req, res) => {
       } catch (err) {
         console.error('[dashboard client_send]', err.message);
         return res.status(400).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_audit_run ────────────────────────────────────────────────────
+    if (action === 'client_audit_run') {
+      const { slug, dry_run = false, test_mode = false } = body;
+      if (!slug) return res.status(400).json({ ok: false, error: 'slug required' });
+      try {
+        const { runSiteAudit } = require('./_lib/audit');
+        const result = await runSiteAudit(slug, { dryRun: Boolean(dry_run), testMode: Boolean(test_mode) });
+        return res.status(result.ok ? 200 : 400).json(result);
+      } catch (err) {
+        console.error('[dashboard client_audit_run]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
       }
     }
 
