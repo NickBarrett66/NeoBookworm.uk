@@ -190,8 +190,8 @@ async function runSiteAudit(slug, { dryRun = false, testMode = false } = {}) {
 
   const business = (client.business_name || client.contact_name || 'this business').trim();
 
-  // Auto-enable test mode when business name contains "test"
-  const isTest = testMode || /test/i.test(business);
+  // Auto-enable test mode when business name contains the literal marker *Test*
+  const isTest = testMode || /\*[Tt]est\*/.test(business);
   if (isTest) {
     return { ok: true, review: TEST_FIXTURE, test_mode: true };
   }
