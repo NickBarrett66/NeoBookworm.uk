@@ -131,6 +131,20 @@
 
   <!-- Client-facing guides (After you launch) -->
   <url>
+    <loc>https://neobookworm.uk/guides/your-site-care-plan</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://neobookworm.uk/guides/your-site-self-manage</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
     <loc>https://neobookworm.uk/guides/work-photos-guide</loc>
     <lastmod>2026-05-27</lastmod>
     <changefreq>monthly</changefreq>

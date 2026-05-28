@@ -218,6 +218,22 @@ const GUIDE_CATALOGUE = [
 
   // ── Preparing_live stage ──
   {
+    slug:      'your-site-care-plan',
+    label:     'Your website is live — care plan guide',
+    hook:      'What\'s included, how to request changes, and everything that\'s yours',
+    journeys:  'all',
+    fromStage: 'preparing_live',
+    monthlyCareOnly: true,
+  },
+  {
+    slug:      'your-site-self-manage',
+    label:     'Your website is live — running it yourself',
+    hook:      'Running costs, domain renewal, how to request changes when you need them',
+    journeys:  'all',
+    fromStage: 'preparing_live',
+    selfManagedOnly: true,
+  },
+  {
     slug:      'site-is-live',
     label:     'Your site is live — what to do next',
     hook:      'The first-week checklist: Google Business, sharing the link, first reviews',
@@ -295,6 +311,7 @@ function guidesForClient(stage, journey, plan, limit = 3) {
     if (stageIndex(g.fromStage) > currentIdx) return false;
     if (g.journeys !== 'all' && journey && !g.journeys.has(journey)) return false;
     if (g.selfManagedOnly && plan !== 'self_managed') return false;
+    if (g.monthlyCareOnly && plan === 'self_managed') return false;
     return true;
   })
   // Sort: guides whose fromStage is closest to (but not after) the current stage come first.
@@ -1301,10 +1318,14 @@ function renderActivePanel(client, slug) {
         `</div>`
       : '';
 
+    const handoverLink = (client.plan === 'self_managed')
+      ? `<li><a href="https://neobookworm.uk/guides/your-site-self-manage.html" target="_blank" rel="noopener">Your complete handover guide</a></li>`
+      : `<li><a href="https://neobookworm.uk/guides/your-site-care-plan.html" target="_blank" rel="noopener">Your complete handover guide</a></li>`;
+
     const zone3 = `<div class="panel-actions">` +
       `<p class="panel-actions-lead">Good to know:</p>` +
       `<ul>` +
-      `<li><a href="https://neobookworm.uk/guides/website-handover.html" target="_blank" rel="noopener">Handover guide</a></li>` +
+      handoverLink +
       `<li><a href="https://neobookworm.uk/guides/local-search-guide.html" target="_blank" rel="noopener">Google Business guide</a></li>` +
       `<li><a href="https://neobookworm.uk/guides/requesting-changes.html" target="_blank" rel="noopener">Request a change</a></li>` +
       `</ul>` +

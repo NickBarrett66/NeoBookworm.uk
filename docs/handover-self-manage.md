@@ -115,13 +115,9 @@ You're not tied to me for anything. If you ever want to use a different web desi
 
 ## What I'd suggest you do in the first week
 
-Three things, and none of them take long. They make the difference between a website that just sits there and one that brings in jobs.
+I've put together a full first-week checklist on the website — it covers sharing your link, setting up your Google Business profile, and getting your first reviews. It takes about an hour in total and makes the difference between a site that just sits there and one that starts bringing in jobs.
 
-1. **Put your web address everywhere you already are.** Email signature, Facebook page (and pin a post announcing the launch), Instagram bio, WhatsApp Business profile, Checkatrade, Rated People, MyBuilder — anywhere you're listed. When you next reprint cards or update van signage, add it there too.
-2. **Claim your Google Business profile.** Go to business.google.com, search for your business, and claim it (or create one). Add your web address, your service area, three to five photos of your work, and a short description. Google will send a verification postcard within a week or so. This is the single biggest thing you can do to get found on Google.
-3. **Ask your next three or four happy customers for a Google review.** Don't wait for reviews to appear on their own — they usually don't. Ask directly at the end of a job you're pleased with, with a direct link. You'll find the link in your Google Business profile under "Get more reviews."
-
-There's a full first-week checklist in the guides on the site if you want it.
+The checklist is at: **neobookworm.uk/guides/site-is-live**
 
 ---
 
