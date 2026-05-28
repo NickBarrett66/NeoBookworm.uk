@@ -62,38 +62,113 @@ function stripHtml(html) {
     .replace(/&quot;/gi, '"')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 8000);
+    .slice(0, 4000); // reduced per-page limit when crawling multiple pages
+}
+
+// Keywords that identify worthwhile sub-pages to include in the audit.
+// Matched case-insensitively against the URL path.
+const KEY_PAGE_PATTERNS = [
+  /galler/i, /portfolio/i, /work/i, /projects/i,
+  /service/i, /about/i, /contact/i, /testimonial/i, /review/i,
+];
+
+/**
+ * Extract unique internal links from raw HTML, limited to the same origin.
+ * Returns absolute URL strings.
+ */
+function extractInternalLinks(html, baseUrl) {
+  const origin = new URL(baseUrl).origin;
+  const seen = new Set();
+  const links = [];
+  const re = /href=["']([^"'#?]+)/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    try {
+      const abs = new URL(m[1], baseUrl).href;
+      if (abs.startsWith(origin) && !seen.has(abs) && abs !== baseUrl) {
+        seen.add(abs);
+        links.push(abs);
+      }
+    } catch { /* skip malformed hrefs */ }
+  }
+  return links;
+}
+
+/**
+ * Pick up to maxPages sub-pages worth fetching, prioritising key-page patterns.
+ */
+function selectSubPages(links, maxPages = 4) {
+  const scored = links.map(url => {
+    const path = new URL(url).pathname.toLowerCase();
+    const score = KEY_PAGE_PATTERNS.findIndex(p => p.test(path));
+    return { url, score: score === -1 ? 999 : score };
+  });
+  scored.sort((a, b) => a.score - b.score);
+  return scored.slice(0, maxPages).map(s => s.url);
 }
 
 // ---------------------------------------------------------------------------
-// Page fetch
+// Page fetch (single)
 // ---------------------------------------------------------------------------
 
-async function fetchPageText(url) {
+async function fetchHtml(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
     const resp = await fetch(url, {
       signal: controller.signal,
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NeoBookwormBot/1.0; +https://neobookworm.uk)' },
     });
     clearTimeout(timer);
-    if (!resp.ok) {
-      return { text: `[HTTP ${resp.status} — page could not be loaded]`, fetchError: `HTTP ${resp.status}` };
-    }
-    const html = await resp.text();
-    return { text: stripHtml(html) };
+    if (!resp.ok) return { html: '', error: `HTTP ${resp.status}` };
+    return { html: await resp.text() };
   } catch (err) {
-    const msg = err.name === 'AbortError' ? 'request timed out after 10 seconds' : err.message;
-    return { text: `[Could not fetch page: ${msg}]`, fetchError: msg };
+    clearTimeout(timer);
+    const msg = err.name === 'AbortError' ? 'timed out' : err.message;
+    return { html: '', error: msg };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Multi-page crawl
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch the homepage plus up to 4 key sub-pages.
+ * Returns a combined plain-text string labelled by page, capped at ~16 000 chars.
+ */
+async function fetchSiteText(rootUrl) {
+  const { html: homeHtml, error: homeError } = await fetchHtml(rootUrl);
+
+  if (homeError && !homeHtml) {
+    return { text: `[Could not fetch ${rootUrl}: ${homeError}]` };
+  }
+
+  const pages = [{ url: rootUrl, label: 'Homepage', html: homeHtml }];
+
+  // Discover and fetch sub-pages in parallel
+  const subUrls = selectSubPages(extractInternalLinks(homeHtml, rootUrl));
+  const subResults = await Promise.all(subUrls.map(url => fetchHtml(url).then(r => ({ url, ...r }))));
+  for (const { url, html } of subResults) {
+    if (html) {
+      const path = new URL(url).pathname || '/';
+      pages.push({ url, label: path, html });
+    }
+  }
+
+  const combined = pages
+    .map(p => `--- ${p.label} (${p.url}) ---\n${stripHtml(p.html)}`)
+    .join('\n\n')
+    .slice(0, 16000);
+
+  return { text: combined, pageCount: pages.length };
 }
 
 // ---------------------------------------------------------------------------
 // Claude call
 // ---------------------------------------------------------------------------
 
-async function callClaude({ business, url, pageText }) {
+async function callClaude({ business, url, pageText, pageCount = 1 }) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
 
@@ -114,8 +189,9 @@ The prospect will read this on their private portal page. It should feel like ho
 
   const userPrompt = `Business: ${business}
 Website: ${url}
+Pages crawled: ${pageCount}
 
-Page content (extracted text):
+Page content (extracted text — ${pageCount > 1 ? 'homepage + key sub-pages' : 'homepage only'}):
 ${pageText}`;
 
   const message = await client.messages.create({
@@ -196,11 +272,11 @@ async function runSiteAudit(slug, { dryRun = false, testMode = false } = {}) {
     return { ok: true, review: TEST_FIXTURE, test_mode: true };
   }
 
-  const { text: pageText } = await fetchPageText(url);
+  const { text: pageText, pageCount } = await fetchSiteText(url);
 
   let review;
   try {
-    review = await callClaude({ business, url, pageText });
+    review = await callClaude({ business, url, pageText, pageCount });
   } catch (err) {
     return { ok: false, error: `Claude API error: ${err.message}` };
   }
