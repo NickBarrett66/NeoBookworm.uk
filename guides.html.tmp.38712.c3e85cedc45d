@@ -754,7 +754,6 @@
     </a>
 
     <a href="guides/cancelling.html" class="card">
-      <img src="/Images/guides/cancelling.webp" alt="Tradesperson walking away with a toolbox, waving goodbye" class="card__img" width="800" height="800" loading="lazy">
       <span class="card-icon">🚪</span>
       <div class="card-meta">
         <span class="card-badge blue">Transparency</span>
