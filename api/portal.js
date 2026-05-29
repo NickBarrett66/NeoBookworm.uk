@@ -329,7 +329,7 @@ function guidesForClient(stage, journey, plan, limit = 3) {
 
 const EMAIL_DISPLAY_LABELS = {
   'J1-E1':          'Confirmation — I\'ve got your details',
-  'J1-E2':          'Personal note from Nick',
+  'J1-E2':          'An update from Nick',
   'J1-E3':          'Halfway update — build in progress',
   'J1-E4':          'Your preview is ready',
   'J2-E1':          'Confirmation — reviewing your site',
@@ -337,11 +337,11 @@ const EMAIL_DISPLAY_LABELS = {
   'J2-Branch-A':    'Next steps — building a new one',
   'J2-Branch-B':    'Thanks and all the best',
   'J3-E1':          'Confirmation — building your replacement',
-  'J3-E2':          'Personal note from Nick',
+  'J3-E2':          'An update from Nick',
   'J3-E3':          'Halfway update — build in progress',
   'J3-E4':          'Your replacement site is ready',
   'J4-E1':          'Confirmation — got your full brief',
-  'J4-E2':          'Personal note from Nick',
+  'J4-E2':          'An update from Nick',
   'J4-E3':          'Halfway update — build in progress',
   'J4-E4':          'Your site is ready',
   'J5-E1-quick':    'Confirmation — got your message',
