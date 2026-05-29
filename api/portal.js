@@ -1084,16 +1084,27 @@ function renderActivePanel(client, slug) {
 
   if (stage === 'acknowledged') {
     const lead = `Hi ${name} — here's where things stand with ${biz}.`;
-    const isReview = client.journey === 'J2';
-    const statusMsg = isReview
-      ? `I'm going through your current site now. I'll have my honest opinion back to you by the date below.`
-      : `I've got your details. I'll be in touch within one working day.`;
+    const j = client.journey;
+    const statusMessages = {
+      J1: `Thanks for getting in touch. I'm now looking into what's out there about ${biz} and building your first version.`,
+      J2: `I'm going through your current site now. I'll have my honest opinion back to you by the date below.`,
+      J3: `Thanks for getting in touch. I'm pulling what I need from your current site and building the replacement.`,
+      J4: `Thanks for filling that in. I've got everything I need — I'm building your site now.`,
+      J5: `Thanks for getting in touch. I'll come back to you personally within one working day.`,
+    };
+    const statusMsg = statusMessages[j] || statusMessages.J1;
     const zone1 = `<p class="panel-lead">${lead}</p>` +
       `<p class="panel-status">${statusMsg}</p>`;
 
     const wdLeft = deliverByIso ? workingDaysFromNow(deliverByIso) : null;
     const subText = wdLeft ? `${wdLeft} working day${wdLeft === 1 ? '' : 's'} from now` : '';
-    const deliverLabel = isReview ? 'Your review will be ready by' : 'Your first deliverable will be ready by';
+    const deliverLabels = {
+      J1: 'Your preview site will be ready by',
+      J2: 'Your site review will be ready by',
+      J3: 'Your replacement site will be ready by',
+      J4: 'Your site will be ready by',
+    };
+    const deliverLabel = deliverLabels[j] || 'Your first deliverable will be ready by';
     const zone2 = deliverBy
       ? `<div class="panel-deliver">` +
         `<p class="panel-deliver-date">${deliverLabel} <strong>${esc(deliverBy)}</strong>.</p>` +
@@ -1101,9 +1112,14 @@ function renderActivePanel(client, slug) {
         `</div>`
       : '';
 
-    const turnMsg = isReview
-      ? `Waiting on Nick — I'm reviewing your site. Nothing for you to do.`
-      : `Waiting on Nick — I'll be in touch within one working day. Nothing for you to do.`;
+    const turnMessages = {
+      J1: `Waiting on Nick — I'm building your preview. Nothing for you to do.`,
+      J2: `Waiting on Nick — I'm reviewing your site. Nothing for you to do.`,
+      J3: `Waiting on Nick — I'm building your replacement. Nothing for you to do.`,
+      J4: `Waiting on Nick — I'm building your site. Nothing for you to do.`,
+      J5: `Waiting on Nick — I'll be in touch soon. Nothing for you to do.`,
+    };
+    const turnMsg = turnMessages[j] || turnMessages.J1;
     const zone3 = `<div class="panel-turn">` +
       `<p class="panel-turn-indicator panel-turn--nick">` +
       `<span class="turn-dot turn-dot--nick" aria-hidden="true"></span>` +

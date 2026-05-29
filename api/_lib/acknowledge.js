@@ -133,7 +133,8 @@ async function sendAcknowledgement(slug) {
     return { acknowledged: false, reason: `no_template_for_journey_${journey}` };
   }
 
-  const name     = client.contact_name  || client.business_name || 'there';
+  const fullName = (client.contact_name || '').trim();
+  const name     = fullName.split(/\s+/)[0] || client.business_name || 'there';
   const business = client.business_name || client.contact_name  || 'your business';
   const portalUrl = `https://neobookworm.uk/c/${slug}/`;
 
