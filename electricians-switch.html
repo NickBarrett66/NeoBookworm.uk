@@ -741,7 +741,7 @@
       }
     }
 
-    /* ── Peek strip (Option D: one-shot on scroll-in) ── */
+    /* ── Peek strip (Option D: loops on scroll-in) ── */
     .peek-strip {
       height: 104px;
       border-top: 1px solid transparent;
@@ -3738,19 +3738,25 @@
     });
   })();
 
-  /* ── Peek animation (Option D): fires once when #what-i-build enters view ── */
+  /* ── Peek animation (Option D): loops when #what-i-build enters view ── */
   (function(){
     var section = document.getElementById('what-i-build');
     var cards   = Array.from(document.querySelectorAll('#what-i-build .feat-card.featured'));
     var dots    = Array.from(document.querySelectorAll('#whatIBuildDots .peek-dot'));
     if (!section || !cards.length) return;
-    var PEEK_OPEN     = 420;
-    var PEEK_HOLD     = 2200;
-    var PEEK_CLOSE    = 380;
-    var PEEK_GAP      = 250;
-    var INITIAL_DELAY = 600;
+    var PEEK_OPEN      = 420;
+    var PEEK_HOLD      = 2200;
+    var PEEK_CLOSE     = 380;
+    var PEEK_GAP       = 250;
+    var PEEK_LOOP_EXTRA = 500;
+    var INITIAL_DELAY  = 600;
     var timers = [];
-    var done   = false;
+    var started = false;
+    function resetDots() {
+      dots.forEach(function(d) {
+        d.classList.remove('active', 'done');
+      });
+    }
     function peekCard(index, onDone) {
       var card = cards[index];
       var dot  = dots[index];
@@ -3764,7 +3770,13 @@
       }, PEEK_OPEN + PEEK_HOLD));
     }
     function runSequence(i) {
-      if (i >= cards.length) return;
+      if (i >= cards.length) {
+        timers.push(setTimeout(function() {
+          resetDots();
+          runSequence(0);
+        }, PEEK_LOOP_EXTRA));
+        return;
+      }
       peekCard(i, function(){ runSequence(i + 1); });
     }
     function startPeekSequence() {
@@ -3772,8 +3784,8 @@
     }
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
-        if (entry.isIntersecting && !done) {
-          done = true;
+        if (entry.isIntersecting && !started) {
+          started = true;
           observer.disconnect();
           startPeekSequence();
         }
