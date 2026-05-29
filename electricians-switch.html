@@ -848,6 +848,47 @@
       content: ''; width: 5px; height: 5px; border-radius: 50%;
       background: var(--amber); flex-shrink: 0;
     }
+    /* Mobile explore button — hidden on desktop, shown via ≤640px rule */
+    .card-explore-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin: 10px 18px 16px;
+      padding: 9px 16px;
+      background: transparent;
+      border: 1.5px solid var(--amber);
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--amber);
+      cursor: pointer;
+      width: calc(100% - 36px);
+      justify-content: center;
+    }
+    .card-explore-btn:active { background: rgba(245,166,35,0.12); }
+
+    /* Mobile modal close bar — hidden on desktop, shown via ≤640px rule */
+    .modal-close-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      border: none;
+      border-bottom: 1px solid rgba(15,31,61,0.12);
+      border-radius: 12px 12px 0 0;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: rgba(15,31,61,0.04);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+    .modal-close-bar:active { background: rgba(15,31,61,0.1); }
+
     .peek-progress {
       display: flex; justify-content: center; gap: 8px; margin-top: 1.5rem;
     }
@@ -1949,6 +1990,24 @@
       .hero { padding: 6rem 1.25rem 2.75rem; }
       .cards-grid { grid-template-columns: 1fr; }
       #four-situations .cards-grid { grid-template-columns: 1fr; }
+
+      /* ── Fix 1: always show peek strips on mobile (animation makes no sense single-column) ── */
+      #what-i-build .peek-strip {
+        opacity: 0.75;
+        transform: translateY(0);
+        border-top-color: rgba(245,166,35,0.2);
+      }
+      .peek-progress { display: none; }
+
+      /* ── Fix 2: disable whole-card tap on mobile; only the Explore button opens modals ── */
+      #what-i-build .feat-card.featured { pointer-events: none; }
+      .card-explore-btn { display: inline-flex; pointer-events: auto; }
+
+      /* ── Fix 3: show close bar at top of modals on mobile ── */
+      .modal-close-bar { display: flex; }
+      .custom-modal-inner { padding-top: 0 !important; grid-template-columns: 1fr !important; }
+      .modal-close-bar { grid-column: 1 / -1; }
+
       .bstart { display: flex; width: 100%; justify-content: center; }
       .start-option {
         padding: 22px 18px;
@@ -2168,6 +2227,7 @@
           <div class="feat-card-body">
             <h3>Your registration, front and centre</h3>
             <p>Your NICEIC, NAPIT or ELECSA registration number goes on every page &mdash; linked to the official register so customers can verify it in one click. Most Wix and template sites don&rsquo;t do this properly.</p>
+            <button class="card-explore-btn" aria-label="Explore: Your registration, front and centre">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2188,6 +2248,7 @@
           <div class="feat-card-body">
             <h3>Your area, spelled out</h3>
             <p>An interactive map showing exactly where you cover &mdash; postcode districts, radius from base, or county-wide. Three styles to choose from. Click to see them.</p>
+            <button class="card-explore-btn" aria-label="Explore: Your area, spelled out">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2206,6 +2267,7 @@
           <div class="feat-card-body">
             <h3>Services in plain English</h3>
             <p>Written around how you actually work &mdash; not a generic list. All-rounder, heating specialist, or emergency-first: click to see three real layout approaches.</p>
+            <button class="card-explore-btn" aria-label="Explore: Services in plain English">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2224,6 +2286,7 @@
           <div class="feat-card-body">
             <h3>Photos of real work</h3>
             <p>A job-by-job gallery with captions &mdash; the work you do and where you did it. Real photos sell better than any amount of copy.</p>
+            <button class="card-explore-btn" aria-label="Explore: Photos of real work">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2255,6 +2318,7 @@
           <div class="feat-card-body">
             <h3>Tap to call, tap to message</h3>
             <p>Most people searching for an electrician are on their mobile. Your number needs to be one tap &mdash; not buried three scrolls into a contact page. Click to see what this looks like.</p>
+            <button class="card-explore-btn" aria-label="Explore: Tap to call, tap to message">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2275,6 +2339,7 @@
           <div class="feat-card-body">
             <h3>Your business, not a template</h3>
             <p>No two sites look the same. Built from scratch around how your business actually works &mdash; your colours, your sections, your layout. Click to see what I mean.</p>
+            <button class="card-explore-btn" aria-label="Explore: Your business, not a template">Explore &rarr;</button>
           </div>
           <div class="peek-strip" aria-hidden="true">
             <div class="peek-inner">
@@ -2668,6 +2733,7 @@
   <button type="button" class="custom-modal-close" id="servicesCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="custom-modal-text">
         <h2 id="modal-services-heading">Your services, written for the way <em>you</em> work.</h2>
@@ -2829,6 +2895,7 @@
   <button type="button" class="custom-modal-close" id="photosCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="custom-modal-text">
         <h2 id="modal-photos-heading">A job gallery that <em>sells the work.</em></h2>
@@ -2884,6 +2951,7 @@
   <button type="button" class="custom-modal-close" id="gasSafeCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:28px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-text">
         <h2 id="modal-gassafe-heading">Your registration, verified in <em>one click.</em></h2>
         <p>Your NICEIC, NAPIT or ELECSA registration number goes on every page &mdash; not buried in small print, but displayed as a proper badge, linked live to the official register. A customer who wants to check you&rsquo;re qualified can do it in seconds, before they even pick up the phone. Most Wix and template sites don&rsquo;t do this.</p>
@@ -2936,6 +3004,7 @@
   <button type="button" class="custom-modal-close" id="callCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:840px; grid-template-columns:auto 1fr; gap:44px; padding:40px 48px; align-items:start;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="phone-mock" aria-hidden="true">
         <div class="phone-mock-inner">
@@ -2984,6 +3053,7 @@
 
   <div class="custom-modal-content">
     <div class="custom-modal-inner">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-video">
         <!-- src set in JS on first open — tied to tap gesture (iOS Safari). Preload none until then. -->
         <video
@@ -3026,6 +3096,7 @@
   <button type="button" class="custom-modal-close" id="areaCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-text">
         <h2 id="modal-area-heading">Your service area, shown <em>your</em> way.</h2>
         <p>When I build your site, you choose how your coverage area appears on the map. Three options &mdash; pick whichever matches how you think about your patch.</p>
@@ -3832,6 +3903,8 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(syncCardHeights);
     }
+    /* On mobile the strips are always-visible via CSS — no animation needed */
+    if (window.innerWidth <= 640) return;
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting && !started) {
@@ -3842,6 +3915,50 @@
       });
     }, { threshold: 0.25 });
     observer.observe(section);
+  })();
+
+  /* ── Wire modal close bars to their modal's existing close button ── */
+  (function() {
+    document.querySelectorAll('.modal-close-bar').forEach(function(bar) {
+      var modal = bar.closest('.custom-modal');
+      if (!modal) return;
+      var closeBtn = modal.querySelector('.custom-modal-close');
+      if (closeBtn) bar.addEventListener('click', function() { closeBtn.click(); });
+    });
+  })();
+
+  /* ── Mobile: wire Explore buttons + scroll-vs-tap guard ── */
+  (function() {
+    if (window.innerWidth > 640) return;
+
+    /* Explore buttons — click bubbles up to the card's own click handler */
+    var exploreBtns = document.querySelectorAll('#what-i-build .card-explore-btn');
+    exploreBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var card = btn.closest('.feat-card.featured');
+        if (card) card.click();
+      });
+    });
+
+    /* Scroll-vs-tap guard — cancel card touchend if the finger has moved */
+    var touchStartY = 0;
+    var touchMoved  = false;
+    var featCards   = document.querySelectorAll('#what-i-build .feat-card.featured');
+    featCards.forEach(function(card) {
+      card.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+        touchMoved  = false;
+      }, { passive: true });
+      card.addEventListener('touchmove', function(e) {
+        if (Math.abs(e.touches[0].clientY - touchStartY) > 10) touchMoved = true;
+      }, { passive: true });
+    });
+    document.addEventListener('touchend', function(e) {
+      if (!touchMoved) return;
+      var card = e.target.closest('#what-i-build .feat-card.featured');
+      if (card) e.stopImmediatePropagation();
+    }, { capture: true, passive: false });
   })();
 </script>
 
