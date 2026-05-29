@@ -1991,12 +1991,8 @@
       .cards-grid { grid-template-columns: 1fr; }
       #four-situations .cards-grid { grid-template-columns: 1fr; }
 
-      /* ── Fix 1: always show peek strips on mobile (animation makes no sense single-column) ── */
-      #what-i-build .peek-strip {
-        opacity: 0.75;
-        transform: translateY(0);
-        border-top-color: rgba(245,166,35,0.2);
-      }
+      /* ── Fix 1: hide peek strips on mobile — not enough room for them ── */
+      #what-i-build .peek-strip { display: none; }
       .peek-progress { display: none; }
 
       /* ── Fix 2: disable whole-card tap on mobile; only the Explore button opens modals ── */
