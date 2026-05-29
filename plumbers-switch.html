@@ -697,6 +697,26 @@
       outline-offset: 3px;
     }
 
+    /* Mobile modal close bar — hidden on desktop, shown at ≤640px */
+    .modal-close-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      border: none;
+      border-bottom: 1px solid rgba(15,31,61,0.12);
+      border-radius: 12px 12px 0 0;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: rgba(15,31,61,0.04);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+    .modal-close-bar:active { background: rgba(15,31,61,0.1); }
+
     @media (max-width: 768px) {
       .custom-modal-inner {
         grid-template-columns: 1fr;
@@ -1955,6 +1975,11 @@
       #what-i-build .feat-card.featured { min-height: 0; pointer-events: none; }
       .card-explore-btn { display: inline-flex; pointer-events: auto; }
       .peek-progress { display: none; }
+      /* ── Modal close bar: show on mobile ── */
+      .modal-close-bar { display: flex; grid-column: 1 / -1; }
+      .custom-modal-inner { padding-top: 0 !important; padding-left: 20px !important; padding-right: 20px !important; grid-template-columns: 1fr !important; width: calc(100vw - 24px) !important; max-width: calc(100vw - 24px) !important; overflow: hidden; }
+      .custom-modal-content { padding-left: 12px !important; padding-right: 12px !important; box-sizing: border-box; overflow-x: hidden; }
+      .custom-modal { overflow-x: hidden; }
       .bstart { display: flex; width: 100%; justify-content: center; }
       .start-option {
         padding: 22px 18px;
@@ -2737,6 +2762,7 @@
   <button type="button" class="custom-modal-close" id="servicesCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="custom-modal-text">
         <h2 id="modal-services-heading">Your services, written for the way <em>you</em> work.</h2>
@@ -2898,6 +2924,7 @@
   <button type="button" class="custom-modal-close" id="photosCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:24px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="custom-modal-text">
         <h2 id="modal-photos-heading">Your gallery, <em>your way.</em></h2>
@@ -2987,6 +3014,7 @@
   <button type="button" class="custom-modal-close" id="gasSafeCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:860px; grid-template-columns:1fr; gap:28px; padding:40px 48px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-text">
         <h2 id="modal-gassafe-heading">Your registration, verified in <em>one click.</em></h2>
         <p>Your Gas Safe number goes on every page &mdash; not buried in small print, but displayed as a proper badge, linked live to the public register. A customer who wants to check you&rsquo;re legit can do it in seconds, before they even pick up the phone. Most Wix and template sites don&rsquo;t do this.</p>
@@ -3039,6 +3067,7 @@
   <button type="button" class="custom-modal-close" id="callCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:840px; grid-template-columns:auto 1fr; gap:44px; padding:40px 48px; align-items:start;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
 
       <div class="phone-mock" aria-hidden="true">
         <div class="phone-mock-inner">
@@ -3087,6 +3116,7 @@
 
   <div class="custom-modal-content">
     <div class="custom-modal-inner">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-video">
         <!-- src set in JS on first open — tied to tap gesture (iOS Safari). Preload none until then. -->
         <video
@@ -3129,6 +3159,7 @@
   <button type="button" class="custom-modal-close" id="areaCloseBtn" aria-label="Close dialog">&times;</button>
   <div class="custom-modal-content">
     <div class="custom-modal-inner" style="max-width:1060px; grid-template-columns:1fr; gap:32px;">
+      <button class="modal-close-bar" aria-label="Close dialog">&#10005;&ensp;Close</button>
       <div class="custom-modal-text">
         <h2 id="modal-area-heading">Your service area, shown <em>your</em> way.</h2>
         <p>When I build your site, you choose how your coverage area appears on the map. Three options &mdash; pick whichever matches how you think about your patch.</p>
@@ -3938,6 +3969,16 @@
     });
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
+    });
+  })();
+
+  /* ── Wire modal close bars to their modal's existing close button ── */
+  (function() {
+    document.querySelectorAll('.modal-close-bar').forEach(function(bar) {
+      var modal = bar.closest('.custom-modal');
+      if (!modal) return;
+      var closeBtn = modal.querySelector('.custom-modal-close');
+      if (closeBtn) bar.addEventListener('click', function() { closeBtn.click(); });
     });
   })();
 
