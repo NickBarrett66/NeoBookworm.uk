@@ -31,6 +31,12 @@ const JOURNEY_TEMPLATE = {
   J5: 'J5-E1-quick',
 };
 
+// Stage to advance to when E1 is sent successfully, keyed by journey.
+// Forward-only: the update is skipped if the client is already past this stage.
+const STAGE_AFTER_E1 = {
+  J1: 'researching',
+};
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -175,6 +181,19 @@ async function sendAcknowledgement(slug) {
   try {
     const result = await sendTemplated({ slug, templateId, vars, to: client.email });
     if (result.ok) {
+      // Advance stage if this journey has a post-E1 target and the client isn't already past it.
+      const nextStage = STAGE_AFTER_E1[journey];
+      if (nextStage && client.stage === 'acknowledged') {
+        try {
+          await queryD1(
+            enquiriesDb(),
+            `UPDATE clients SET stage = ?, stage_changed_at = datetime('now') WHERE slug = ?`,
+            [nextStage, slug]
+          );
+        } catch (e) {
+          console.error(`[acknowledge] stage advance to ${nextStage} failed for ${slug}:`, e.message);
+        }
+      }
       return { acknowledged: true };
     }
     return { acknowledged: false, error: result.error };

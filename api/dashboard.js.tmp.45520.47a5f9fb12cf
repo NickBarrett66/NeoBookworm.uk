@@ -700,29 +700,7 @@ module.exports = async (req, res) => {
           const vars = { ...buildClientVars(client), ...extra_vars };
           result = await sendTemplated({ slug, templateId, vars, to: client.email });
         }
-
-        let stageAdvanced = null;
-        if (result.ok) {
-          const nextStage = TEMPLATE_STAGE_ADVANCE[templateId];
-          if (nextStage) {
-            const currentRank = CLIENT_VALID_STAGES.indexOf(client.stage);
-            const nextRank    = CLIENT_VALID_STAGES.indexOf(nextStage);
-            if (nextRank > currentRank) {
-              try {
-                await queryD1(
-                  enquiriesDb(),
-                  `UPDATE clients SET stage = ?, stage_changed_at = datetime('now') WHERE slug = ?`,
-                  [nextStage, slug]
-                );
-                stageAdvanced = nextStage;
-              } catch (e) {
-                console.error(`[client_send] stage advance to ${nextStage} failed for ${slug}:`, e.message);
-              }
-            }
-          }
-        }
-
-        return res.status(200).json({ ok: result.ok, error: result.error || null, stage_advanced: stageAdvanced });
+        return res.status(200).json({ ok: result.ok, error: result.error || null });
       } catch (err) {
         console.error('[dashboard client_send]', err.message);
         return res.status(400).json({ ok: false, error: err.message });
