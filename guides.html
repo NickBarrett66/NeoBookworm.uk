@@ -300,6 +300,38 @@
     .card-start-here::after { display: none; }
     .card-start-here:hover::after { transform: scaleX(0); }
 
+    /* Single-width pinned card — used in section 2 sub-groups */
+    .card-pick {
+      background: var(--amber-faint);
+      border-color: var(--border-gold);
+      border-left: 3px solid var(--amber);
+    }
+    .card-pick:hover {
+      background: var(--amber-faint);
+      border-color: var(--border-gold);
+      border-left-color: var(--amber);
+    }
+
+    /* Sub-section headings inside "After you launch" */
+    .subsection-head {
+      padding: 2.25rem 0 1rem;
+    }
+    .subsection-head h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+      line-height: 1.25;
+    }
+    .subsection-head p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+    .subsection-head + .card-grid { margin-top: 0; }
+
     /* ── DIVIDER ── */
     .divider {
       display: flex; align-items: center;
@@ -611,12 +643,18 @@
   <div class="section-head">
     <div class="section-tag blue"><span class="pip"></span>Already a NeoBookworm client?</div>
     <h2>After you launch</h2>
-    <p>Eight guides for clients who've gone live. Start with the guide that matches your setup — the first two are your full handover packs.</p>
+    <p>Guides for clients who've gone live. Pick the one that matches your setup, then explore the rest.</p>
+  </div>
+
+  <!-- Sub-section: pick your setup -->
+  <div class="subsection-head">
+    <h3>Start with your setup</h3>
+    <p>Two handover packs — read the one that matches your plan first. Both cover how to request changes for your setup.</p>
   </div>
 
   <div class="card-grid">
 
-    <a href="guides/your-site-care-plan.html" class="card card-start-here">
+    <a href="guides/your-site-care-plan.html" class="card card-pick">
       <img src="/Images/guides/your-site-care-plan.webp" alt="Hands tending to something carefully representing the monthly website care plan service" class="card__img" width="800" height="800" loading="lazy">
       <div class="card-meta">
         <span class="card-badge blue">Start here</span>
@@ -627,7 +665,7 @@
       <span class="card-cta">Read guide →</span>
     </a>
 
-    <a href="guides/your-site-self-manage.html" class="card card-start-here">
+    <a href="guides/your-site-self-manage.html" class="card card-pick">
       <img src="/Images/guides/your-site-self-manage.webp" alt="Key in a lock representing a client taking ownership of their own website" class="card__img" width="800" height="800" loading="lazy">
       <div class="card-meta">
         <span class="card-badge blue">Start here</span>
@@ -638,6 +676,16 @@
       <span class="card-cta">Read guide →</span>
     </a>
 
+  </div><!-- /grid -->
+
+  <!-- Sub-section: for everyone -->
+  <div class="subsection-head">
+    <h3>For everyone</h3>
+    <p>Eight guides that apply whether you're on the care plan or running things yourself.</p>
+  </div>
+
+  <div class="card-grid">
+
     <a href="guides/site-is-live.html" class="card">
       <img src="/Images/guides/site-is-live.webp" alt="Laptop showing a live website representing a newly launched trade site" class="card__img" width="800" height="800" loading="lazy">
       <div class="card-meta">
@@ -646,28 +694,6 @@
       </div>
       <div class="card-title">Your Site Is Live — What to Do Next</div>
       <div class="card-tagline">A simple checklist for the first week — sharing the link, Google Business, and getting your first reviews.</div>
-      <span class="card-cta">Read guide →</span>
-    </a>
-
-    <a href="guides/website-handover.html" class="card">
-      <img src="/Images/guides/website-handover.webp" alt="Keys being handed over representing the transfer of a website to a client" class="card__img" width="800" height="800" loading="lazy">
-      <div class="card-meta">
-        <span class="card-badge blue">Self-manage</span>
-        <span class="card-time">6 min read</span>
-      </div>
-      <div class="card-title">Taking Over Your Website — Customer Handover Guide</div>
-      <div class="card-tagline">Step-by-step instructions if you want to manage your own hosting after the build.</div>
-      <span class="card-cta">Read guide →</span>
-    </a>
-
-    <a href="guides/requesting-changes.html" class="card">
-      <img src="/Images/guides/requesting-changes.webp" alt="Tradesperson writing notes on a notepad representing how to request website changes" class="card__img" width="800" height="800" loading="lazy">
-      <div class="card-meta">
-        <span class="card-badge blue">Making changes</span>
-        <span class="card-time">3 min read</span>
-      </div>
-      <div class="card-title">Requesting Changes After Handover</div>
-      <div class="card-tagline">How to ask for an update, what it costs, and how the process works.</div>
       <span class="card-cta">Read guide →</span>
     </a>
 
@@ -756,6 +782,38 @@
       </div>
       <div class="card-title">What Happens If I Want to Cancel?</div>
       <div class="card-tagline">A month's notice, no exit fees, your site files and web address come with you. The straight version.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- Sub-section: self-managers only -->
+  <div class="subsection-head">
+    <h3>If you're managing your own site</h3>
+    <p>Two extras for clients who've taken over their own hosting after handover.</p>
+  </div>
+
+  <div class="card-grid">
+
+    <a href="guides/website-handover.html" class="card">
+      <img src="/Images/guides/website-handover.webp" alt="Keys being handed over representing the transfer of a website to a client" class="card__img" width="800" height="800" loading="lazy">
+      <div class="card-meta">
+        <span class="card-badge blue">Self-manage</span>
+        <span class="card-time">6 min read</span>
+      </div>
+      <div class="card-title">Taking Over Your Website — Customer Handover Guide</div>
+      <div class="card-tagline">Step-by-step instructions if you want to manage your own hosting after the build.</div>
+      <span class="card-cta">Read guide →</span>
+    </a>
+
+    <a href="guides/requesting-changes.html" class="card">
+      <img src="/Images/guides/requesting-changes.webp" alt="Tradesperson writing notes on a notepad representing how to request website changes" class="card__img" width="800" height="800" loading="lazy">
+      <div class="card-meta">
+        <span class="card-badge blue">Self-manage</span>
+        <span class="card-time">3 min read</span>
+      </div>
+      <div class="card-title">Requesting Changes After Handover</div>
+      <div class="card-tagline">For clients managing their own site: how to ask for an update, what it costs, and how the process works.</div>
       <span class="card-cta">Read guide →</span>
     </a>
 
