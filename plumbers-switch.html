@@ -735,6 +735,139 @@
       }
     }
 
+    /* ── Peek strip: loops when #what-i-build enters view ── */
+    #what-i-build .feat-card.featured {
+      display: flex;
+      flex-direction: column;
+      min-height: 23rem;
+    }
+    #what-i-build .feat-card-body {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    #what-i-build .peek-strip {
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+    .peek-strip {
+      height: 7.5rem;
+      box-sizing: border-box;
+      border-top: 1px solid transparent;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.38s ease,
+                  transform 0.38s cubic-bezier(0.23,1,0.32,1),
+                  border-top-color 0.38s ease;
+    }
+    .feat-card.peeking .peek-strip {
+      opacity: 1;
+      transform: translateY(0);
+      border-top-color: rgba(245,166,35,0.2);
+    }
+    .feat-card.peeking {
+      box-shadow: 0 0 0 2px rgba(245,166,35,0.35), 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .peek-inner {
+      padding: 10px 18px 12px;
+      height: 100%;
+      box-sizing: border-box;
+      background: rgba(245,166,35,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+    .peek-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,166,35,0.6);
+      margin: 0 0 6px;
+      flex-shrink: 0;
+    }
+    .peek-pills { display: flex; gap: 7px; flex-wrap: wrap; }
+    .peek-pill {
+      background: rgba(245,166,35,0.12);
+      border: 1px solid rgba(245,166,35,0.28);
+      border-radius: 100px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--amber);
+    }
+    .peek-svc-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .peek-svc {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .peek-job-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; }
+    .peek-job-tile { border-radius: 4px; height: 46px; overflow: hidden; position: relative; }
+    .peek-job-tile-img { width: 100%; height: 100%; background-size: cover; background-position: center; }
+    .peek-job-tile-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2px 4px;
+      background: rgba(10,20,40,0.75);
+      font-size: 0.58rem; font-weight: 600; color: #fff; line-height: 1.3;
+    }
+    .peek-badge-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .peek-verify { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+    .peek-call-row { display: flex; align-items: center; gap: 10px; }
+    .peek-call-btn {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--amber); border-radius: 6px; padding: 8px 13px; flex-shrink: 0;
+    }
+    .peek-call-btn strong { font-size: 0.78rem; font-weight: 700; color: var(--navy); }
+    .peek-call-note {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.35;
+      min-width: 0;
+    }
+    .peek-custom-list { display: flex; flex-direction: column; gap: 3px; min-height: 0; }
+    .peek-custom-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: rgba(255,255,255,0.65); }
+    .peek-custom-item::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--amber); flex-shrink: 0;
+    }
+    .card-explore-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin: 10px 18px 16px;
+      padding: 9px 16px;
+      background: transparent;
+      border: 1.5px solid var(--amber);
+      border-radius: 5px;
+      color: var(--amber);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      width: fit-content;
+    }
+    .card-explore-btn:hover { background: rgba(245,166,35,0.1); }
+    .peek-progress {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+    }
+    .peek-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(245,166,35,0.2);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .peek-dot.active { background: var(--amber); transform: scale(1.4); }
+    .peek-dot.done   { background: rgba(245,166,35,0.45); }
+
     /* ── Accreditation badges (Gas Safe modal) ── */
     .nb-badge {
       display: flex; align-items: stretch; border-radius: 6px; overflow: hidden;
@@ -1807,6 +1940,7 @@
       .hero-plumber-photo { max-width: 560px; margin: 0 auto; }
       .steps-grid { grid-template-columns: 1fr; gap: 2rem; }
       .cards-grid { grid-template-columns: 1fr 1fr; }
+      #what-i-build .feat-card.featured { min-height: 25rem; }
       .scroll-hint { margin-top: 2.25rem; }
     }
     @media (max-width: 640px) {
@@ -1816,6 +1950,11 @@
       section { padding: 3rem 1.25rem; }
       .hero { padding: 6rem 1.25rem 2.75rem; }
       .cards-grid { grid-template-columns: 1fr; }
+      /* ── Peek: hide strips on mobile; Explore button opens modals instead ── */
+      #what-i-build .peek-strip { display: none; }
+      #what-i-build .feat-card.featured { min-height: 0; pointer-events: none; }
+      .card-explore-btn { display: inline-flex; pointer-events: auto; }
+      .peek-progress { display: none; }
       .bstart { display: flex; width: 100%; justify-content: center; }
       .start-option {
         padding: 22px 18px;
@@ -2032,39 +2171,144 @@
         <!-- Interactive: opens Gas Safe badge demo modal -->
         <div class="feat-card featured" id="gasSafeCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="gasSafeModal" aria-label="Open details: Gas Safe front and centre">
-          <h3>Gas Safe front and centre</h3>
-          <p>Your licence number goes on every page &mdash; linked to the register so customers can verify it in one click. Most Wix and template sites don&rsquo;t do this properly.</p>
+          <div class="feat-card-body">
+            <h3>Gas Safe front and centre</h3>
+            <p>Your licence number goes on every page &mdash; linked to the register so customers can verify it in one click. Most Wix and template sites don&rsquo;t do this properly.</p>
+            <button class="card-explore-btn" aria-label="Explore: Gas Safe front and centre">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">What this looks like</div>
+              <div class="peek-badge-row">
+                <div class="nb-badge nb-gassafe">
+                  <div class="nb-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                  <div class="nb-text"><div class="nb-top">GAS SAFE</div><div class="nb-bot">Registered<br>Reg. No. 000000</div></div>
+                </div>
+                <span class="peek-verify">Linked live to the register &rarr;</span>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Interactive: opens service area map modal -->
         <div class="feat-card featured" id="areaCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="areaModal" aria-label="Open details: your area, spelled out">
-          <h3>Your area, spelled out</h3>
-          <p>An interactive map showing exactly where you cover &mdash; postcode districts, radius from base, or county-wide. Three styles to choose from. Click to see them.</p>
+          <div class="feat-card-body">
+            <h3>Your area, spelled out</h3>
+            <p>An interactive map showing exactly where you cover &mdash; postcode districts, radius from base, or county-wide. Three styles to choose from. Click to see them.</p>
+            <button class="card-explore-btn" aria-label="Explore: Your area, spelled out">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">Three map styles</div>
+              <div class="peek-pills">
+                <span class="peek-pill">Postcode districts</span>
+                <span class="peek-pill">Radius from base</span>
+                <span class="peek-pill">County-wide</span>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Interactive: opens services layout demo modal -->
         <div class="feat-card featured" id="servicesCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="servicesModal" aria-label="Open details: services in plain English">
-          <h3>Services in plain English</h3>
-          <p>Written around how you actually work &mdash; not a generic list. All-rounder, heating specialist, or emergency-first: click to see three real layout approaches.</p>
+          <div class="feat-card-body">
+            <h3>Services in plain English</h3>
+            <p>Written around how you actually work &mdash; not a generic list. All-rounder, heating specialist, or emergency-first: click to see three real layout approaches.</p>
+            <button class="card-explore-btn" aria-label="Explore: Services in plain English">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">Three layout approaches</div>
+              <div class="peek-svc-row">
+                <span class="peek-svc">Heating specialist</span>
+                <span class="peek-svc">All-rounder</span>
+                <span class="peek-svc">Emergency / same-day</span>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Interactive: opens gallery layout demo modal -->
         <div class="feat-card featured" id="photosCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="photosModal" aria-label="Open details: photos of real work">
-          <h3>Photos of real work</h3>
-          <p>Before-and-afters or a job-by-job gallery &mdash; whichever shows your work best. Drag the slider to compare. Real photos do more than any amount of copy.</p>
+          <div class="feat-card-body">
+            <h3>Photos of real work</h3>
+            <p>Before-and-afters or a job-by-job gallery &mdash; whichever shows your work best. Drag the slider to compare. Real photos do more than any amount of copy.</p>
+            <button class="card-explore-btn" aria-label="Explore: Photos of real work">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">Job gallery</div>
+              <div class="peek-job-grid">
+                <div class="peek-job-tile">
+                  <div class="peek-job-tile-img" style="background:url('/Images/gallery/boiler-replacement.webp') center/cover no-repeat,linear-gradient(135deg,#1a3260,#0f1f3d);"></div>
+                  <div class="peek-job-tile-label">Boiler</div>
+                </div>
+                <div class="peek-job-tile">
+                  <div class="peek-job-tile-img" style="background:url('/Images/gallery/bathroom-refit.webp') center/cover no-repeat,linear-gradient(135deg,#243d72,#1a3260);"></div>
+                  <div class="peek-job-tile-label">Bathroom</div>
+                </div>
+                <div class="peek-job-tile">
+                  <div class="peek-job-tile-img" style="background:url('/Images/gallery/leak-repair.webp') center/cover no-repeat,linear-gradient(135deg,#1a3260,#0f1f3d);"></div>
+                  <div class="peek-job-tile-label">Leak repair</div>
+                </div>
+                <div class="peek-job-tile">
+                  <div class="peek-job-tile-img" style="background:url('/Images/gallery/outdoor-pipework.webp') center/cover no-repeat,linear-gradient(135deg,#243d72,#1a3260);"></div>
+                  <div class="peek-job-tile-label">Pipework</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Interactive: opens mobile contact demo modal -->
         <div class="feat-card featured" id="callCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="callModal" aria-label="Open details: tap to call, tap to message">
-          <h3>Tap to call, tap to message</h3>
-          <p>Most people searching for a plumber are on their mobile. Your number needs to be one tap &mdash; not buried three scrolls into a contact page. Click to see what this looks like.</p>
+          <div class="feat-card-body">
+            <h3>Tap to call, tap to message</h3>
+            <p>Most people searching for a plumber are on their mobile. Your number needs to be one tap &mdash; not buried three scrolls into a contact page. Click to see what this looks like.</p>
+            <button class="card-explore-btn" aria-label="Explore: Tap to call, tap to message">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">Mobile contact</div>
+              <div class="peek-call-row">
+                <div class="peek-call-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#0f1f3d" aria-hidden="true"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14 14.6C14.2 14.4 14.6 14.3 14.9 14.5C16 14.9 17.2 15.1 18.5 15.1C19 15.1 19.4 15.5 19.4 16V18.5C19.4 19 19 19.4 18.5 19.4C9.7 19.4 2.6 12.3 2.6 3.5C2.6 3 3 2.6 3.5 2.6H6C6.5 2.6 6.9 3 6.9 3.5C6.9 4.8 7.1 6 7.5 7.1C7.6 7.4 7.5 7.8 7.3 8L5.5 9.8C5.5 10 6 10.5 6.6 10.8Z"/></svg>
+                  <strong>Call Hartley Plumbing</strong>
+                </div>
+                <span class="peek-call-note">One tap from any page &mdash; not buried in a contact page.</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- Interactive: opens Paul avatar modal -->
+        <!-- Interactive: opens custom site modal -->
         <div class="feat-card featured" id="customCard" role="button" tabindex="0"
              aria-haspopup="dialog" aria-controls="modal" aria-label="Open details: your business, not a template">
-          <h3>Your business, not a template</h3>
-          <p>No two sites look the same. Built from scratch around how your business actually works &mdash; your colours, your sections, your layout. Click to see what I mean.</p>
+          <div class="feat-card-body">
+            <h3>Your business, not a template</h3>
+            <p>No two sites look the same. Built from scratch around how your business actually works &mdash; your colours, your sections, your layout. Click to see what I mean.</p>
+            <button class="card-explore-btn" aria-label="Explore: Your business, not a template">Explore &rarr;</button>
+          </div>
+          <div class="peek-strip" aria-hidden="true">
+            <div class="peek-inner">
+              <div class="peek-label">Built around you</div>
+              <div class="peek-custom-list">
+                <div class="peek-custom-item">Your colours and typography</div>
+                <div class="peek-custom-item">Only the sections your business actually needs</div>
+                <div class="peek-custom-item">Avatar, gallery, testimonials &mdash; your call</div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Peek progress dots -->
+      <div class="peek-progress" id="whatIBuildDots" aria-hidden="true">
+        <div class="peek-dot" data-dot="0"></div>
+        <div class="peek-dot" data-dot="1"></div>
+        <div class="peek-dot" data-dot="2"></div>
+        <div class="peek-dot" data-dot="3"></div>
+        <div class="peek-dot" data-dot="4"></div>
+        <div class="peek-dot" data-dot="5"></div>
       </div>
 
       <!-- Speed comparison — a concrete technical fact, not a client claim -->
@@ -3695,6 +3939,91 @@
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && areaModal.classList.contains('active')) closeAreaModal();
     });
+  })();
+
+  /* ── Peek animation: loops when #what-i-build enters view ── */
+  (function(){
+    var section = document.getElementById('what-i-build');
+    var cards   = Array.from(document.querySelectorAll('#what-i-build .feat-card.featured'));
+    var dots    = Array.from(document.querySelectorAll('#whatIBuildDots .peek-dot'));
+    if (!section || !cards.length) return;
+    var PEEK_OPEN       = 420;
+    var PEEK_HOLD       = 2200;
+    var PEEK_CLOSE      = 380;
+    var PEEK_GAP        = 250;
+    var PEEK_LOOP_EXTRA = 500;
+    var INITIAL_DELAY   = 600;
+    var timers = [];
+    var started = false;
+    var resizeTimer = null;
+    function syncCardHeights() {
+      cards.forEach(function(c) { c.style.minHeight = ''; });
+      var maxH = 0;
+      cards.forEach(function(c) { maxH = Math.max(maxH, c.offsetHeight); });
+      if (maxH > 0) { var h = maxH + 'px'; cards.forEach(function(c) { c.style.minHeight = h; }); }
+    }
+    function resetDots() { dots.forEach(function(d) { d.classList.remove('active', 'done'); }); }
+    function peekCard(index, onDone) {
+      var card = cards[index];
+      var dot  = dots[index];
+      if (!card) return;
+      card.classList.add('peeking');
+      if (dot) { dot.classList.add('active'); }
+      timers.push(setTimeout(function(){
+        card.classList.remove('peeking');
+        if (dot) { dot.classList.remove('active'); dot.classList.add('done'); }
+        if (onDone) timers.push(setTimeout(onDone, PEEK_CLOSE + PEEK_GAP));
+      }, PEEK_OPEN + PEEK_HOLD));
+    }
+    function runSequence(i) {
+      if (i >= cards.length) {
+        timers.push(setTimeout(function() { resetDots(); runSequence(0); }, PEEK_LOOP_EXTRA));
+        return;
+      }
+      peekCard(i, function(){ runSequence(i + 1); });
+    }
+    syncCardHeights();
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(syncCardHeights, 150);
+    });
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(syncCardHeights); }
+    if (window.innerWidth <= 640) return;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          observer.disconnect();
+          timers.push(setTimeout(function(){ runSequence(0); }, INITIAL_DELAY));
+        }
+      });
+    }, { threshold: 0.25 });
+    observer.observe(section);
+  })();
+
+  /* ── Mobile: Explore buttons + scroll-vs-tap guard ── */
+  (function() {
+    if (window.innerWidth > 640) return;
+    var exploreBtns = document.querySelectorAll('#what-i-build .card-explore-btn');
+    exploreBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var card = btn.closest('.feat-card.featured');
+        if (card) card.click();
+      });
+    });
+    var touchStartY = 0;
+    var touchMoved  = false;
+    var featCards   = document.querySelectorAll('#what-i-build .feat-card.featured');
+    featCards.forEach(function(card) {
+      card.addEventListener('touchstart', function(e) { touchStartY = e.touches[0].clientY; touchMoved = false; }, { passive: true });
+      card.addEventListener('touchmove',  function(e) { if (Math.abs(e.touches[0].clientY - touchStartY) > 10) touchMoved = true; }, { passive: true });
+    });
+    document.addEventListener('touchend', function(e) {
+      if (!touchMoved) return;
+      var card = e.target.closest('#what-i-build .feat-card.featured');
+      if (card) e.stopImmediatePropagation();
+    }, { capture: true, passive: false });
   })();
 </script>
 
