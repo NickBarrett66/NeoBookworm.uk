@@ -2002,8 +2002,8 @@
 
       /* ── Fix 3: show close bar at top of modals on mobile ── */
       .modal-close-bar { display: flex; }
-      .custom-modal-inner { padding-top: 0 !important; padding-left: 20px !important; padding-right: 20px !important; grid-template-columns: 1fr !important; }
-      .custom-modal-content { padding-left: 12px !important; padding-right: 12px !important; box-sizing: border-box; }
+      .custom-modal-inner { padding-top: 0 !important; padding-left: 20px !important; padding-right: 20px !important; grid-template-columns: 1fr !important; width: calc(100vw - 24px) !important; max-width: calc(100vw - 24px) !important; overflow: hidden; }
+      .custom-modal-content { padding-left: 12px !important; padding-right: 12px !important; box-sizing: border-box; overflow-x: hidden; }
       .custom-modal { overflow-x: hidden; }
       .modal-close-bar { grid-column: 1 / -1; }
 
