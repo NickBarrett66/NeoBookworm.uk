@@ -1,5 +1,8 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/c/:slug/guides/", "destination": "/api/portal?slug=:slug&section=guides" },
     { "source": "/c/:slug/guides",  "destination": "/api/portal?slug=:slug&section=guides" },
