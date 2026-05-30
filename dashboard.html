@@ -4540,13 +4540,197 @@ async function loadClientDetail(slug) {
   main.innerHTML = '<div class="state-msg">Loading…</div>';
   try {
     const data = await apiFetch({ action: 'client_detail', slug });
-    renderClientDetail(data.data, data.email_log, data.change_requests || []);
+    renderClientDetail(data.data, data.email_log, data.change_requests || [], {
+      sourceType:   data.source_type || null,
+      sourceRecord: data.source_record || null,
+      sourceError:  data.source_error || null,
+    });
   } catch (err) {
     main.innerHTML = `<div class="state-msg">Error: ${escHtml(err.message)}</div>`;
   }
 }
 
-function renderClientDetail(c, emailLog, changeRequests) {
+// ── Original submission panel (per source_type) ─────────────────────────────
+// Renders the raw inbound row the client was promoted from, so site-building
+// in the Clients tab doesn't require flipping back to the Enquiries tab.
+// Data shapes match the SELECTs in api/dashboard.js fetchClientSourceRecord.
+const SOURCE_TYPE_LABELS = {
+  landing_enquiry: 'Landing-page enquiry',
+  intake:          'Full intake form',
+  contact:         'Contact-form message',
+  prospect:        'Cold prospect',
+};
+
+function sourceField(label, value, opts = {}) {
+  if (value === null || value === undefined || value === '' || value === 0 && opts.zeroIsEmpty) {
+    return `<div><div style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.15rem">${escHtml(label)}</div><div style="color:var(--muted);font-size:.85rem">—</div></div>`;
+  }
+  const safe = escHtml(String(value));
+  const inner = opts.href
+    ? `<a href="${escAttr(opts.href)}" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none">${safe} ↗</a>`
+    : opts.multiline
+      ? `<div style="white-space:pre-wrap;line-height:1.55">${safe}</div>`
+      : safe;
+  return `<div><div style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.15rem">${escHtml(label)}</div><div style="font-size:.88rem;color:rgba(255,255,255,.92);word-break:break-word">${inner}</div></div>`;
+}
+
+function sourceSection(title, fieldsHtml) {
+  if (!fieldsHtml.trim()) return '';
+  return `<div style="margin-bottom:1rem">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin-bottom:.55rem;padding-bottom:.3rem;border-bottom:1px solid var(--border-sub)">${escHtml(title)}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.85rem 1.25rem">${fieldsHtml}</div>
+  </div>`;
+}
+
+function renderSourceLandingEnquiry(r) {
+  const startLabel = ({
+    leave_it_with_me: 'Free preview',
+    tell_more: 'Tell me more',
+    review_site_first: 'Site review (J2)',
+    ready_to_switch: 'Ready to switch (J3)',
+  })[r.start_option] || r.start_option;
+  return sourceSection('Enquiry', [
+    sourceField('Source page', r.source),
+    sourceField('Start option', startLabel),
+    sourceField('Submitted', r.created_at ? fmtUtc(r.created_at) : null),
+    sourceField('Full name', r.full_name),
+    sourceField('Business', r.biz_name),
+    sourceField('Email', r.email, { href: r.email ? `mailto:${r.email}` : null }),
+    sourceField('Current website', r.current_url, { href: r.current_url || null }),
+  ].join('')) +
+  (r.details ? sourceSection('Their message', sourceField('Details', r.details, { multiline: true })) : '');
+}
+
+function renderSourceContact(r) {
+  return sourceSection('Contact', [
+    sourceField('Submitted', r.created_at ? fmtUtc(r.created_at) : null),
+    sourceField('Name', r.name),
+    sourceField('Trade', r.trade),
+    sourceField('Email', r.email, { href: r.email ? `mailto:${r.email}` : null }),
+    sourceField('Phone', r.phone, { href: r.phone ? `tel:${r.phone}` : null }),
+  ].join('')) +
+  sourceSection('Their message', sourceField('Message', r.message, { multiline: true }));
+}
+
+function renderSourceProspect(r) {
+  return sourceSection('Cold prospect', [
+    sourceField('Business', r.business_name),
+    sourceField('Trade', r.trade_category),
+    sourceField('Town', r.town),
+    sourceField('Postcode', r.postcode),
+    sourceField('Contact name', r.contact_name),
+    sourceField('Email', r.email_address, { href: r.email_address ? `mailto:${r.email_address}` : null }),
+    sourceField('Phone', r.phone, { href: r.phone ? `tel:${r.phone}` : null }),
+    sourceField('Current website', r.website_url, { href: r.website_url || null }),
+    sourceField('Has website', r.has_website ? 'Yes' : 'No'),
+    sourceField('Rating', r.rating),
+    sourceField('Review count', r.review_count),
+    sourceField('Companies House', r.ch_number ? `${r.ch_number} (${r.ch_status || '—'})` : null),
+    sourceField('Demo URL', r.demo_url, { href: r.demo_url || null }),
+    sourceField('Prospect status', r.status),
+    sourceField('Segment', r.prospect_segment),
+    sourceField('Contact count', r.contact_count),
+    sourceField('Last email sent', r.last_email_sent ? fmtUtc(r.last_email_sent) : null),
+  ].join(''));
+}
+
+function renderSourceIntake(r) {
+  let photoUrls = [];
+  try { photoUrls = JSON.parse(r.photo_urls || '[]'); } catch { /* ignore */ }
+  const photoLinks = photoUrls.length
+    ? photoUrls.map((u, i) => `<a href="${escAttr(u)}" target="_blank" rel="noopener" style="display:inline-block;margin:0 .5rem .25rem 0;color:var(--amber);font-size:.82rem">Photo ${i + 1} ↗</a>`).join('')
+    : '<span style="color:var(--muted);font-size:.85rem">—</span>';
+
+  return sourceSection('Business', [
+    sourceField('Business name', r.business_name),
+    sourceField('Trade', r.trade_category),
+    sourceField('Full name', r.full_name),
+    sourceField('Email', r.email, { href: r.email ? `mailto:${r.email}` : null }),
+    sourceField('Phone', r.phone, { href: r.phone ? `tel:${r.phone}` : null }),
+    sourceField('Area', r.area),
+    sourceField('Years trading', r.years_trading),
+    sourceField('Team size', r.team_size),
+    sourceField('Submitted', r.created_at ? fmtUtc(r.created_at) : null),
+  ].join('')) +
+  sourceSection('Services & accreditations', [
+    sourceField('Services', r.services, { multiline: true }),
+    sourceField('Accreditations', r.accreditations, { multiline: true }),
+    sourceField('Trust marks', r.trust_marks),
+    sourceField('Free quotes', r.free_quotes),
+    sourceField('Emergency callouts', r.emergency_callouts),
+    sourceField('Work exclusions', r.work_exclusions, { multiline: true }),
+    sourceField('Ideal work', r.ideal_work, { multiline: true }),
+  ].join('')) +
+  sourceSection('About & story', [
+    sourceField('About', r.about, { multiline: true }),
+    sourceField('Testimonials', r.testimonials, { multiline: true }),
+    sourceField('Additional notes', r.additional_notes, { multiline: true }),
+  ].join('')) +
+  sourceSection('Brand & design', [
+    sourceField('Colour preferences', r.colour_preferences),
+    sourceField('Website style', r.website_style),
+    sourceField('Inspiration URL', r.inspiration_url, { href: r.inspiration_url || null }),
+  ].join('')) +
+  sourceSection('Contact & operations', [
+    sourceField('Contact methods', r.contact_methods),
+    sourceField('Working hours', r.working_hours),
+    sourceField('Google Business', r.google_business),
+  ].join('')) +
+  sourceSection('Domain', [
+    sourceField('Domain status', r.domain_status),
+    sourceField('Domain name', r.domain_name),
+  ].join('')) +
+  `<div style="margin-bottom:1rem">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin-bottom:.55rem;padding-bottom:.3rem;border-bottom:1px solid var(--border-sub)">Uploads</div>
+    <div style="margin-bottom:.65rem">
+      <div style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem">Logo</div>
+      ${r.logo_url ? `<a href="${escAttr(r.logo_url)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.85rem;text-decoration:none">Open logo ↗</a>` : '<span style="color:var(--muted);font-size:.85rem">—</span>'}
+    </div>
+    <div>
+      <div style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem">Work photos (${photoUrls.length})</div>
+      <div>${photoLinks}</div>
+    </div>
+  </div>`;
+}
+
+function renderOriginalSubmissionPanel(sourceType, sourceRecord, sourceError) {
+  if (!sourceType) return '';
+  const title = SOURCE_TYPE_LABELS[sourceType] || sourceType;
+
+  let bodyHtml;
+  if (sourceError) {
+    bodyHtml = `<p style="color:var(--red);font-size:.85rem;margin:0">Could not load source row: ${escHtml(sourceError)}</p>`;
+  } else if (!sourceRecord) {
+    bodyHtml = `<p style="color:var(--muted);font-size:.85rem;margin:0">The original ${escHtml(title.toLowerCase())} row was not found. It may have been deleted from the Enquiries tab after promotion.</p>`;
+  } else if (sourceType === 'intake') {
+    bodyHtml = renderSourceIntake(sourceRecord);
+  } else if (sourceType === 'landing_enquiry') {
+    bodyHtml = renderSourceLandingEnquiry(sourceRecord);
+  } else if (sourceType === 'contact') {
+    bodyHtml = renderSourceContact(sourceRecord);
+  } else if (sourceType === 'prospect') {
+    bodyHtml = renderSourceProspect(sourceRecord);
+  } else {
+    bodyHtml = `<pre style="font-size:.78rem;color:var(--muted);white-space:pre-wrap">${escHtml(JSON.stringify(sourceRecord, null, 2))}</pre>`;
+  }
+
+  // Default open for intake (most data, most needed during build).
+  // Other sources default closed to keep the page compact.
+  const openByDefault = sourceType === 'intake';
+
+  return `
+    <details ${openByDefault ? 'open' : ''} style="background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:0 1.5rem;margin-bottom:1.5rem">
+      <summary style="cursor:pointer;padding:1.1rem 0;list-style:none;display:flex;align-items:center;gap:.6rem">
+        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Original submission</span>
+        <span style="font-size:.72rem;font-weight:600;padding:.12rem .5rem;border-radius:4px;background:rgba(75,156,245,.18);color:var(--blue)">${escHtml(title)}</span>
+        <span style="margin-left:auto;color:var(--muted);font-size:.78rem">click to ${openByDefault ? 'collapse' : 'expand'}</span>
+      </summary>
+      <div style="padding:0 0 1.25rem 0">${bodyHtml}</div>
+    </details>
+  `;
+}
+
+function renderClientDetail(c, emailLog, changeRequests, sourceInfo = {}) {
   const main        = document.getElementById('main-content');
   const portalUrl   = `/c/${encodeURIComponent(c.slug)}/`;
   const stageColor  = STAGE_COLORS[c.stage]  || 'var(--grey)';
@@ -4628,6 +4812,8 @@ function renderClientDetail(c, emailLog, changeRequests) {
         Send personal note (Gmail) ↗
       </a>
     </div>
+
+    ${renderOriginalSubmissionPanel(sourceInfo.sourceType, sourceInfo.sourceRecord, sourceInfo.sourceError)}
 
     <!-- Portal preview (collapsible iframe) -->
     <div style="margin-bottom:1.5rem">

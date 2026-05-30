@@ -141,6 +141,53 @@ function parseSortParams(query, prefix = 'sort') {
 
 const SUBMISSIONS_SOURCE_TYPES = new Set(['enquiry', 'intake', 'contact']);
 
+/**
+ * Fetch the raw inbound row that a `clients` row was promoted from.
+ *
+ * `clients.source_type` is one of: 'landing_enquiry' | 'intake' | 'contact' | 'prospect'.
+ * `clients.source_id` is the primary key of the row in the matching table:
+ *   - landing_enquiry → landing_enquiries.id           (enquiries DB)
+ *   - intake          → intake_submissions.id          (enquiries DB)
+ *   - contact         → contact_enquiries.id           (enquiries DB)
+ *   - prospect        → prospects.notion_id            (prospects DB — cross-database read)
+ *
+ * Returns the row as-is from D1 (no field renames) or null if the source row
+ * has been deleted since promotion. Throws only on D1 connection errors.
+ */
+async function fetchClientSourceRecord(source_type, source_id) {
+  if (!source_type || !source_id) return null;
+  switch (source_type) {
+    case 'landing_enquiry': {
+      const rows = await queryD1(enquiriesDb(),
+        `SELECT id, created_at, full_name, biz_name, email, start_option,
+                source, details, current_url, handled, admin_notes
+           FROM landing_enquiries WHERE id = ? LIMIT 1`, [source_id]);
+      return rows[0] || null;
+    }
+    case 'intake': {
+      const rows = await queryD1(enquiriesDb(),
+        `SELECT * FROM intake_submissions WHERE id = ? LIMIT 1`, [source_id]);
+      return rows[0] || null;
+    }
+    case 'contact': {
+      const rows = await queryD1(enquiriesDb(),
+        `SELECT * FROM contact_enquiries WHERE id = ? LIMIT 1`, [source_id]);
+      return rows[0] || null;
+    }
+    case 'prospect': {
+      const rows = await queryD1(prospectsDb(),
+        `SELECT notion_id, business_name, contact_name, email_address, phone,
+                trade_category, town, postcode, website_url, has_website,
+                rating, review_count, ch_number, ch_status, demo_url, demo_site_name,
+                status, prospect_segment, last_email_sent, contact_count
+           FROM prospects WHERE notion_id = ? LIMIT 1`, [source_id]);
+      return rows[0] || null;
+    }
+    default:
+      return null;
+  }
+}
+
 /** Linked client row for a dashboard submission / prospect (if promoted). */
 async function findLinkedClient(source_type, source_id) {
   const rows = await queryD1(
@@ -1530,7 +1577,28 @@ module.exports = async (req, res) => {
         ),
       ]);
       if (!clientRows.length) return res.status(404).json({ error: 'Client not found' });
-      return res.status(200).json({ ok: true, data: clientRows[0], email_log: emailLogRows, change_requests: changeRequestRows });
+
+      const client = clientRows[0];
+      let sourceRecord = null;
+      let sourceError  = null;
+      try {
+        sourceRecord = await fetchClientSourceRecord(client.source_type, client.source_id);
+      } catch (err) {
+        // Source row may have been deleted by the operator after promotion —
+        // don't fail the whole detail load.
+        sourceError = err.message;
+        console.warn('[dashboard] client_detail source fetch failed:', err.message);
+      }
+
+      return res.status(200).json({
+        ok: true,
+        data: client,
+        email_log: emailLogRows,
+        change_requests: changeRequestRows,
+        source_type: client.source_type,
+        source_record: sourceRecord,
+        source_error: sourceError,
+      });
     }
 
     return res.status(400).json({ error: `Unknown action: ${action}` });
