@@ -3759,7 +3759,12 @@ function renderEmailPreviewContent(row, rows, idx) {
     return div;
   }
 
-  hPane.appendChild(makeHRow('From:', 'NeoBookworm <neobookworm@icloud.com>'));
+  const ICLOUD_CUTOFF = new Date('2026-05-30T00:00:00Z');
+  const sentDate = row.sent_at ? new Date(row.sent_at.replace(' ', 'T') + 'Z') : null;
+  const fromAddr = (sentDate && sentDate < ICLOUD_CUTOFF)
+    ? 'NeoBookworm <neobookworm@icloud.com>'
+    : 'Nick Barrett <nick@neobookworm.uk>';
+  hPane.appendChild(makeHRow('From:', fromAddr));
   hPane.appendChild(makeHRow('To:', row.email || ''));
 
   const subjRow = makeHRow('Subject:', row.subject || '', 'email-subject-row');
