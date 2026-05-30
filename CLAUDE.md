@@ -438,6 +438,12 @@ so keeping it current is essential. Do not wait to be asked.
 | Wiltshire Pest Control | No | No | No | No | — |
 | Clean Sweep Window Cleaning | No | No | No | No | — |
 
+### Real client pitch sites (not the 8 fictional demos)
+
+| Site | HTML built | Images | Deployed | Notes |
+|---|---|---|---|---|
+| HE Tyres (HEtyres Swindon) | Yes (`he-tyres/index.html`) | Placeholders only — awaiting client photos | No | Real pitch site for H E Tyres Ltd (CH 13659688), owners Emma & Howard. Brand colour-picked from their signage (navy `#1a2336` + orange `#ec7325` + silver; `[HEtyres]` bracket logo). Sections: hero → trust strip → services (native `<dialog>` modals) → premium brands → "Watch the work, coffee in hand" lounge/openness section → work gallery → Meet Emma & Howard (their Facebook caricatures) → reviews (3 real + 98%/62 badge) → 15-mile coverage → FAQ → contact (call-for-quote, static form). `AutomotiveBusiness` schema, scroll-reveal, mobile nav. Pitch model: pay-what-you-think one-off + £9.99/mo. TODO: client to drop real photos into `he-tyres/images/` (hero, lounge, brands, emma, howard, gallery-1..4, og); self-host fonts; Google Maps embed; deploy. Added to Prospects DB (`manual-hetyres-13659688`). |
+
 ### Outstanding items
 
 | Item | Priority | Notes |

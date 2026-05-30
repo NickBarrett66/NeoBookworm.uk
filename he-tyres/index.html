@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HE Tyres Swindon | Mobile &amp; Depot Tyre Fitting | Cars, Vans &amp; Caravans</title>
-  <meta name="description" content="Family-run mobile and depot tyre fitting in Swindon. We come to your home or work. Cars, vans and caravans. TPMS servicing and locking wheel nut removal. Call 01793 876969.">
+  <title>HEtyres Swindon | Mobile &amp; Depot Tyre Fitting | Cars, Vans &amp; Caravans</title>
+  <meta name="description" content="Family-run mobile and depot tyre fitting in Swindon. We come to you, or fit you in at the depot where you watch the work over a coffee. Cars, vans, caravans. Call 01793 876 969.">
   <link rel="canonical" href="https://hetyres.co.uk/">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://hetyres.co.uk/">
-  <meta property="og:title" content="HE Tyres Swindon | Mobile &amp; Depot Tyre Fitting">
-  <meta property="og:description" content="Family-run mobile and depot tyre fitting in Swindon. We come to your home or work. Cars, vans and caravans.">
+  <meta property="og:title" content="HEtyres Swindon | Mobile &amp; Depot Tyre Fitting">
+  <meta property="og:description" content="Family-run tyre fitting in Swindon — at your door, or watched over a coffee at our depot. 98% of customers recommend us.">
   <meta property="og:image" content="https://hetyres.co.uk/images/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -22,46 +22,43 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
   <!--
-    FONTS — TODO before going live:
-    Replace this Google Fonts link with self-hosted woff2 files in /fonts/
-    following the NeoBookworm font-loading pattern (media="print" non-blocking).
-    Fonts needed: Montserrat (700, 800, 900) + Open Sans (400, 500, 600)
+    FONTS — TODO before go-live:
+    Per NeoBookworm standards, self-host these as woff2 in /fonts/ with a
+    non-blocking fonts.css (media="print" pattern). Using the CDN here only
+    for the pitch preview.
+    Needed: Montserrat (700/800/900) for headings + logo, Open Sans (400/500/600) body.
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "AutomotiveBusiness",
-    "name": "HEtyres Ltd",
+    "name": "HEtyres",
+    "legalName": "H E Tyres Ltd",
     "description": "Family-run mobile and depot tyre fitting in Swindon for cars, vans and caravans.",
     "url": "https://hetyres.co.uk",
     "telephone": "+441793876969",
     "email": "info@hetyres.co.uk",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Unit 5 Starwest, Westmead Drive",
+      "streetAddress": "Unit 5 Star West, Westmead Drive, Westlea",
       "addressLocality": "Swindon",
       "postalCode": "SN5 7SW",
       "addressCountry": "GB"
     },
     "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-        "opens": "09:00",
-        "closes": "17:00"
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Saturday",
-        "opens": "09:00",
-        "closes": "14:00"
-      }
-    ]
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "17:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "14:00" }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "62"
+    }
   }
   </script>
 
@@ -71,480 +68,374 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Open Sans', system-ui, sans-serif;
-      color: #222; background: #fff; line-height: 1.6;
+      color: var(--text); background: var(--white); line-height: 1.65;
+    }
+
+    /* ── Tokens (colour-picked from HEtyres signage + lounge) ── */
+    :root {
+      --navy:      #1a2336;
+      --navy-2:    #222d45;
+      --navy-deep: #121826;
+      --orange:    #ec7325;
+      --orange-h:  #d35f17;
+      --orange-soft:#fdf0e7;
+      --silver:    #c2c8d0;
+      --light:     #f4f5f7;
+      --border:    #e2e4e8;
+      --text:      #20242c;
+      --muted:     #5f6671;
+      --white:     #ffffff;
+      --max:       1140px;
     }
 
     /* ── Skip link ── */
     .skip-link {
       position: absolute; top: -100%; left: 1rem;
-      background: #e85500; color: #fff; padding: .5rem 1rem;
-      font-weight: 700; text-decoration: none;
-      border-radius: 0 0 4px 4px; z-index: 9999;
-      transition: top .2s;
+      background: var(--orange); color: #fff; padding: .5rem 1rem;
+      font-weight: 700; text-decoration: none; border-radius: 0 0 4px 4px;
+      z-index: 9999; transition: top .2s;
     }
     .skip-link:focus { top: 0; }
 
-    /* ── Tokens ── */
-    :root {
-      --orange:      #e85500;
-      --orange-h:    #c44800;
-      --dark:        #111111;
-      --mid:         #2a2a2a;
-      --light:       #f5f5f5;
-      --border:      #e0e0e0;
-      --text:        #222222;
-      --muted:       #666666;
-      --white:       #ffffff;
-      --max:         1120px;
-    }
-
     /* ── Utilities ── */
     .container { max-width: var(--max); margin: 0 auto; padding: 0 1.25rem; }
-
-    /* ── Shared section headings ── */
     .title-block { text-align: center; margin-bottom: 3rem; }
     .section-title {
       font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: clamp(1.75rem, 3.5vw, 2.5rem); line-height: 1.15; color: var(--dark);
+      font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.12; color: var(--navy);
+      letter-spacing: -.01em;
     }
-    .section-sub { font-size: 1.05rem; color: var(--muted); margin-top: .5rem; }
-    .accent-bar { width: 48px; height: 4px; background: var(--orange); border-radius: 2px; margin: .75rem auto 0; }
+    .section-sub { font-size: 1.05rem; color: var(--muted); margin-top: .6rem; max-width: 620px; margin-left:auto; margin-right:auto; }
+    .accent-bar { width: 52px; height: 4px; background: var(--orange); border-radius: 2px; margin: 1rem auto 0; }
 
     /* ── Buttons ── */
-    .btn-orange {
-      display: inline-block; background: var(--orange); color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem;
-      text-decoration: none; padding: .875rem 2rem; border-radius: 4px;
-      transition: background .2s;
+    .btn-orange, .btn-ghost {
+      display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: 1rem; text-decoration: none; padding: .9rem 2rem; border-radius: 5px;
+      transition: background .2s, border-color .2s, color .2s; cursor: pointer; border: none;
     }
+    .btn-orange { background: var(--orange); color: #fff; }
     .btn-orange:hover { background: var(--orange-h); }
-    .btn-ghost {
-      display: inline-block; background: transparent; color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem;
-      text-decoration: none; padding: .875rem 2rem; border-radius: 4px;
-      border: 2px solid rgba(255,255,255,.4); transition: border-color .2s;
-    }
-    .btn-ghost:hover { border-color: var(--white); }
+    .btn-ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); }
+    .btn-ghost:hover { border-color: #fff; }
 
-    /* ── Image placeholders (remove once real images are added) ── */
-    .img-placeholder {
-      background: #ddd; border-radius: 8px; overflow: hidden;
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: .5rem;
-      font-family: 'Open Sans', sans-serif; font-size: .8rem;
-      color: #888; text-align: center; padding: 1rem;
+    /* ── Image placeholders (swap for real images — see comments) ── */
+    .ph {
+      background: #eceef1; border: 1.5px dashed #c4cad2;
+      border-radius: 10px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: .4rem; text-align: center; padding: 1.25rem;
+      font-size: .8rem; color: #7b828c; height: 100%; min-height: 180px;
     }
-    .img-placeholder .cam { font-size: 2rem; }
-    .img-placeholder.dark { background: #2a2a2a; color: #666; }
+    .ph .cam { font-size: 1.9rem; }
+    .ph strong { color: #4a5360; font-size: .85rem; }
+    .ph.dark { background: #202a42; border-color: #38445f; color: #8a93a6; }
+    .ph.dark strong { color: #aeb6c7; }
 
-    /* ══════════════════════════════
-       HEADER
-    ══════════════════════════════ */
+    /* ══════════════ HEADER ══════════════ */
     header {
       position: sticky; top: 0; z-index: 100;
-      background: var(--dark); color: var(--white);
-      border-bottom: 3px solid var(--orange);
+      background: var(--navy); border-bottom: 3px solid var(--orange);
     }
     .header-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .875rem 1.25rem; max-width: var(--max); margin: 0 auto;
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: .8rem 1.25rem; max-width: var(--max); margin: 0 auto;
     }
+    /* [HEtyres] bracket lockup */
     .logo {
-      font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: 1.5rem; color: var(--white); text-decoration: none;
-      letter-spacing: -.02em;
+      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.55rem;
+      text-decoration: none; letter-spacing: -.02em; line-height: 1; white-space: nowrap;
     }
-    .logo em { font-style: normal; color: var(--orange); }
+    .logo .bk { color: var(--silver); font-weight: 700; }
+    .logo .he { color: var(--orange); }
+    .logo .ty { color: #fff; }
+    .nav-links { display: flex; gap: 1.4rem; margin-left: auto; }
+    .nav-links a {
+      color: #d6dae2; text-decoration: none; font-size: .92rem; font-weight: 600;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--orange); }
     .header-phone {
-      font-family: 'Montserrat', sans-serif; font-weight: 800;
-      font-size: 1.2rem; color: var(--white); text-decoration: none;
+      font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: #fff; text-decoration: none;
     }
     .header-phone:hover { color: var(--orange); }
     .btn-header {
-      background: var(--orange); color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 700;
-      font-size: .875rem; text-decoration: none;
-      padding: .5rem 1.25rem; border-radius: 4px;
-      white-space: nowrap; transition: background .2s;
+      background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif;
+      font-weight: 700; font-size: .85rem; text-decoration: none; padding: .55rem 1.25rem;
+      border-radius: 5px; white-space: nowrap; transition: background .2s;
     }
     .btn-header:hover { background: var(--orange-h); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: .25rem; }
+    .nav-toggle span { display: block; width: 26px; height: 3px; background: #fff; margin: 5px 0; border-radius: 2px; transition: .2s; }
 
-    /* ══════════════════════════════
-       HERO
-    ══════════════════════════════ */
-    .hero {
-      background: var(--dark); color: var(--white);
-      padding: 4.5rem 1.25rem;
+    /* ══════════════ HERO ══════════════ */
+    .hero { background: var(--navy); color: #fff; padding: 4.5rem 1.25rem; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(236,115,37,.16), transparent 55%);
+      pointer-events: none;
     }
     .hero-inner {
-      max-width: var(--max); margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 3rem; align-items: center;
+      max-width: var(--max); margin: 0 auto; position: relative;
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center;
     }
     .hero-eyebrow {
-      font-family: 'Montserrat', sans-serif; font-weight: 700;
-      font-size: .75rem; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--orange); margin-bottom: .75rem;
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .75rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--orange); margin-bottom: .9rem;
     }
     .hero h1 {
       font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: clamp(2.25rem, 5vw, 3.5rem); line-height: 1.08;
-      margin-bottom: 1.25rem;
+      font-size: clamp(2.3rem, 5vw, 3.6rem); line-height: 1.06; margin-bottom: 1.3rem; letter-spacing: -.02em;
     }
     .hero h1 em { font-style: normal; color: var(--orange); }
-    .hero-sub {
-      font-size: 1.1rem; color: #ccc; margin-bottom: 2rem; line-height: 1.75;
-    }
+    .hero-sub { font-size: 1.12rem; color: #c7cdd8; margin-bottom: 2rem; }
     .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-
+    .hero-image { border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 24px 60px rgba(0,0,0,.4); }
     /*
-      ┌─────────────────────────────────────────────┐
-      │  HERO IMAGE — replace this div with:         │
-      │  <img src="images/hero.webp"                 │
-      │       alt="HE Tyres van parked outside a     │
-      │            home for a mobile tyre fitting"   │
-      │       width="640" height="480"               │
-      │       loading="eager">                       │
-      │                                              │
-      │  Best shot: van on a driveway, or fitter     │
-      │  crouching with a wheel in hand.             │
-      └─────────────────────────────────────────────┘
-    */
-    .hero-image {
-      border-radius: 8px; overflow: hidden;
-      aspect-ratio: 4 / 3;
-    }
+      HERO IMAGE — replace .ph below with:
+      <img src="images/hero.webp"
+           alt="Howard fitting a tyre in the HEtyres workshop"
+           width="640" height="480" loading="eager" decoding="async">
+      Best shot: Howard fitting a wheel, OR the lounge looking through to the workshop.
+    -->
 
-    /* ══════════════════════════════
-       TRUST STRIP
-    ══════════════════════════════ */
-    .trust-strip { background: var(--orange); color: var(--white); padding: .875rem 1.25rem; }
-    .trust-strip-inner {
-      max-width: var(--max); margin: 0 auto;
-      display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
-    }
-    .trust-item {
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .9rem;
-      display: flex; align-items: center; gap: .5rem;
-    }
-    .trust-icon { font-size: 1rem; }
+    /* ══════════════ TRUST STRIP ══════════════ */
+    .trust-strip { background: var(--orange); color: #fff; padding: .9rem 1.25rem; }
+    .trust-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+    .trust-item { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .9rem; display: flex; align-items: center; gap: .5rem; }
 
-    /* ══════════════════════════════
-       SERVICES
-    ══════════════════════════════ */
-    .services { padding: 5rem 1.25rem; background: var(--white); }
-    .services-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
+    /* ══════════════ SERVICES ══════════════ */
+    .services { padding: 5rem 1.25rem; background: #fff; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1.5rem; }
     .service-card {
-      border: 2px solid var(--border); border-radius: 8px;
-      padding: 2rem 1.5rem; transition: border-color .2s, box-shadow .2s;
+      border: 2px solid var(--border); border-radius: 10px; padding: 2rem 1.5rem;
+      transition: border-color .2s, box-shadow .2s, transform .2s; text-align: left; background: #fff;
+      cursor: pointer; font: inherit; width: 100%; display: block;
     }
-    .service-card:hover {
-      border-color: var(--orange);
-      box-shadow: 0 4px 24px rgba(232,85,0,.12);
-    }
-    .service-card.featured { border-color: var(--orange); background: #fff8f4; }
+    .service-card:hover { border-color: var(--orange); box-shadow: 0 8px 28px rgba(236,115,37,.13); transform: translateY(-3px); }
+    .service-card.featured { border-color: var(--orange); background: var(--orange-soft); }
     .service-icon {
-      width: 48px; height: 48px; background: #ffede3; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 1rem;
+      width: 50px; height: 50px; background: var(--orange-soft); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;
     }
-    .service-card h3 {
-      font-family: 'Montserrat', sans-serif; font-weight: 800;
-      font-size: 1.05rem; color: var(--dark); margin-bottom: .5rem;
-    }
-    .service-card p { font-size: .95rem; color: var(--muted); line-height: 1.65; }
+    .service-card.featured .service-icon { background: #fff; }
+    .service-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.08rem; color: var(--navy); margin-bottom: .4rem; }
+    .service-card p { font-size: .95rem; color: var(--muted); }
+    .service-more { display: inline-block; margin-top: .8rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .82rem; color: var(--orange); }
     .featured-tag {
-      display: inline-block; background: var(--orange); color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .7rem;
-      letter-spacing: .08em; text-transform: uppercase;
+      display: inline-block; background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif;
+      font-weight: 700; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
       padding: .2rem .6rem; border-radius: 3px; margin-bottom: .75rem;
     }
 
-    /* ══════════════════════════════
-       HOW IT WORKS
-    ══════════════════════════════ */
-    .how-it-works { padding: 5rem 1.25rem; background: var(--light); }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
-    .step { text-align: center; }
-    .step-num {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: var(--orange); color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.6rem;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.25rem;
+    /* ── Service modal (native dialog) ── */
+    dialog.svc {
+      border: none; border-radius: 12px; padding: 0; max-width: 520px; width: 92%;
+      box-shadow: 0 30px 80px rgba(0,0,0,.4);
     }
-    .step h3 {
-      font-family: 'Montserrat', sans-serif; font-weight: 700;
-      font-size: 1rem; color: var(--dark); margin-bottom: .4rem;
+    dialog.svc::backdrop { background: rgba(18,24,38,.6); }
+    .svc-head { background: var(--navy); color: #fff; padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: .9rem; }
+    .svc-head .si { font-size: 1.7rem; }
+    .svc-head h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
+    .svc-body { padding: 1.75rem; }
+    .svc-body p { color: var(--muted); margin-bottom: 1rem; }
+    .svc-body ul { list-style: none; margin: 0 0 1.25rem; }
+    .svc-body li { padding-left: 1.5rem; position: relative; margin-bottom: .5rem; font-size: .95rem; }
+    .svc-body li::before { content: "✓"; color: var(--orange); font-weight: 700; position: absolute; left: 0; }
+    .svc-foot { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .svc-close {
+      position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,.15); color: #fff;
+      border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; line-height: 1;
     }
-    .step p { font-size: .9rem; color: var(--muted); }
+    .svc-close:hover { background: rgba(255,255,255,.3); }
 
-    /* ══════════════════════════════
-       GALLERY
-    ══════════════════════════════ */
-    .gallery { padding: 5rem 1.25rem; background: var(--dark); }
-    .gallery .section-title { color: var(--white); }
-    .gallery .section-sub { color: #999; }
-    .gallery .accent-bar { margin: .75rem auto 0; }
-    .photo-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: .75rem; margin-top: 3rem;
+    /* ══════════════ BRANDS ══════════════ */
+    .brands { padding: 5rem 1.25rem; background: var(--light); }
+    .brands-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; max-width: var(--max); margin: 0 auto; }
+    .brands-content .section-title { text-align: left; }
+    .brands-content .accent-bar { margin-left: 0; }
+    .brands-content p { margin-top: 1.25rem; color: var(--muted); }
+    .brand-tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+    .brand-tag {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 30px;
+      padding: .45rem 1.1rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .85rem; color: var(--navy);
     }
-    .photo-cell {
-      aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden;
-      background: #222;
+    .brands-image { border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; }
+    /*
+      BRANDS IMAGE — replace .ph with the tyre-rack photo:
+      <img src="images/brands.webp"
+           alt="Continental and Bridgestone tyres in stock with EU energy labels"
+           width="600" height="450" loading="lazy" decoding="async">
+    -->
+
+    /* ══════════════ LOUNGE / OPENNESS ══════════════ */
+    .lounge { padding: 5rem 1.25rem; background: var(--navy); color: #fff; }
+    .lounge-inner { display: grid; grid-template-columns: .95fr 1.05fr; gap: 3.5rem; align-items: center; max-width: var(--max); margin: 0 auto; }
+    .lounge-image { border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .lounge .section-title { color: #fff; text-align: left; }
+    .lounge .accent-bar { margin-left: 0; }
+    .lounge p { color: #c7cdd8; margin-top: 1.25rem; }
+    .lounge .pill {
+      display: inline-flex; align-items: center; gap: .5rem; background: rgba(236,115,37,.18);
+      color: var(--orange); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .8rem;
+      letter-spacing: .04em; padding: .4rem 1rem; border-radius: 30px; margin-bottom: 1rem;
     }
-    .photo-cell img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      transition: transform .3s ease;
-    }
+    /*
+      LOUNGE IMAGE — replace .ph with the waiting-room photo:
+      <img src="images/lounge.webp"
+           alt="The HEtyres customer lounge with sofa, coffee and a screen showing the workshop"
+           width="600" height="450" loading="lazy" decoding="async">
+    -->
+
+    /* ══════════════ GALLERY ══════════════ */
+    .gallery { padding: 5rem 1.25rem; background: #fff; }
+    .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-top: 3rem; }
+    .photo-cell { aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; }
+    .photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
     .photo-cell:hover img { transform: scale(1.05); }
     /*
-      ┌─────────────────────────────────────────────────────────────────┐
-      │  GALLERY IMAGES — replace each .photo-cell > .img-placeholder   │
-      │  with a real <img> tag. Suggested shots from Facebook:           │
-      │                                                                  │
-      │  1. Fresh tyre fitted on a car — close-up of the wheel          │
-      │  2. Van parked on a residential street                           │
-      │  3. Worn vs new tyre comparison (before/after)                   │
-      │  4. TPMS reset tool / sensor close-up                           │
-      │  5. Locking wheel nut removal in progress                        │
-      │  6. Van interior with kit / tyre stock visible                   │
-      │                                                                  │
-      │  Each img: width="400" height="300" loading="lazy"              │
-      │            decoding="async"                                      │
-      └─────────────────────────────────────────────────────────────────┘
-    */
+      GALLERY — replace each .ph with a real <img>. Suggested shots from Facebook:
+        gallery-1: worn tyre vs new tyre (before/after)
+        gallery-2: the runflat fitted to the BMW
+        gallery-3: fresh tyre on a clean alloy (close-up)
+        gallery-4: van / mobile fitting on a driveway
+      Each img: width="400" height="400" loading="lazy" decoding="async" + descriptive alt.
+    -->
 
-    /* ══════════════════════════════
-       VEHICLES
-    ══════════════════════════════ */
-    .vehicles { padding: 5rem 1.25rem; background: var(--white); }
-    .vehicles-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem; margin-top: 3rem;
-    }
-    .vehicle-card {
-      text-align: center; padding: 2.5rem 1.5rem;
-      border: 2px solid var(--border); border-radius: 8px;
-      transition: border-color .2s;
-    }
-    .vehicle-card:hover { border-color: var(--orange); }
-    .vehicle-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
-    .vehicle-card h3 {
-      font-family: 'Montserrat', sans-serif; font-weight: 800;
-      font-size: 1.1rem; color: var(--dark); margin-bottom: .5rem;
-    }
-    .vehicle-card p { font-size: .9rem; color: var(--muted); }
-
-    /* ══════════════════════════════
-       ABOUT
-    ══════════════════════════════ */
-    .about { padding: 5rem 1.25rem; background: var(--light); }
-    .about-inner {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; align-items: center;
-      max-width: var(--max); margin: 0 auto;
-    }
-    .about-content .section-title { text-align: left; }
-    .about-content .accent-bar { margin-left: 0; }
-    .about-content p {
-      margin-top: 1.25rem; font-size: 1rem;
-      color: var(--muted); line-height: 1.8;
-    }
-    .about-stats {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1rem; margin-top: 2rem;
-    }
-    .stat {
-      background: var(--white); border-radius: 8px;
-      padding: 1.25rem; text-align: center;
-    }
-    .stat-num {
-      font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: 2rem; color: var(--orange);
-    }
-    .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+    /* ══════════════ MEET THE TEAM ══════════════ */
+    .team { padding: 5rem 1.25rem; background: var(--light); }
+    .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; max-width: 760px; margin: 3rem auto 0; }
+    .team-card { background: #fff; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1.5px solid var(--border); }
+    .team-photo { aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; margin-bottom: 1.1rem; }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .team-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--navy); }
+    .team-role { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--orange); margin: .2rem 0 .6rem; }
+    .team-card p { font-size: .92rem; color: var(--muted); }
+    .team-intro { max-width: 640px; margin: 1.5rem auto 0; text-align: center; color: var(--muted); }
     /*
-      ┌──────────────────────────────────────────┐
-      │  ABOUT IMAGE — replace with:              │
-      │  <img src="images/team.webp"              │
-      │       alt="The HE Tyres team beside       │
-      │            their mobile van"              │
-      │       width="600" height="450"            │
-      │       loading="lazy">                     │
-      │                                           │
-      │  Good options: team shot, van exterior,   │
-      │  depot frontage.                          │
-      └──────────────────────────────────────────┘
-    */
-    .about-image {
-      border-radius: 8px; overflow: hidden;
-      aspect-ratio: 4 / 3;
-    }
+      TEAM IMAGES — these are HEtyres' own caricatures from Facebook. Replace each .ph:
+        emma.webp   — Emma caricature (on the phone, "BOSS" mug)
+        howard.webp — Howard caricature (fitting a tyre)
+      Each img: width="400" height="400" loading="lazy" decoding="async".
+    -->
 
-    /* ══════════════════════════════
-       COVERAGE
-    ══════════════════════════════ */
-    .coverage { padding: 5rem 1.25rem; background: var(--dark); color: var(--white); }
-    .coverage .section-title { color: var(--white); }
-    .coverage .section-sub { color: #999; }
-    .coverage .accent-bar { margin: .75rem auto 0; }
-    .coverage-inner {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; align-items: start;
-      max-width: var(--max); margin: 3rem auto 0;
+    /* ══════════════ REVIEWS ══════════════ */
+    .reviews { padding: 5rem 1.25rem; background: #fff; }
+    .rec-badge {
+      display: inline-flex; align-items: center; gap: .75rem; background: var(--orange-soft);
+      border: 2px solid var(--orange); border-radius: 50px; padding: .6rem 1.5rem; margin: 0 auto 2.5rem;
     }
-    .coverage-areas {
-      list-style: none;
-      display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem;
-    }
-    .coverage-areas li {
-      font-size: .95rem; color: #ccc;
-      padding-left: 1.25rem; position: relative;
-    }
+    .rec-badge .big { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.8rem; color: var(--orange); line-height: 1; }
+    .rec-badge .lbl { text-align: left; font-size: .82rem; color: var(--navy); font-weight: 600; line-height: 1.3; }
+    .review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .review-card { background: var(--light); border-radius: 12px; padding: 1.75rem; border: 1.5px solid var(--border); }
+    .stars { color: var(--orange); font-size: 1rem; margin-bottom: .75rem; letter-spacing: 2px; }
+    .review-card p { font-size: .95rem; color: var(--text); margin-bottom: 1rem; }
+    .review-meta { font-size: .82rem; color: var(--muted); }
+    .review-meta strong { color: var(--navy); font-family: 'Montserrat', sans-serif; }
+
+    /* ══════════════ COVERAGE ══════════════ */
+    .coverage { padding: 5rem 1.25rem; background: var(--navy); color: #fff; }
+    .coverage .section-title { color: #fff; }
+    .coverage .section-sub { color: #aab2c2; }
+    .coverage-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; max-width: var(--max); margin: 3rem auto 0; }
+    .coverage-areas { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem; }
+    .coverage-areas li { font-size: .95rem; color: #c7cdd8; padding-left: 1.3rem; position: relative; }
     .coverage-areas li::before { content: "→"; color: var(--orange); position: absolute; left: 0; }
-    .coverage-note { font-size: .85rem; color: #888; margin-top: 1.5rem; }
-    .coverage-cta { margin-top: 2rem; }
-    .map-placeholder {
-      aspect-ratio: 4 / 3; border-radius: 8px;
-    }
+    .coverage-note { font-size: .85rem; color: #8a93a6; margin: 1.5rem 0; }
+    .map-box { aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; }
+    /*
+      COVERAGE MAP — replace .ph with a Google Maps embed iframe centred on
+      SN5 7SW, or a static map image showing a ~15-mile radius.
+    -->
 
-    /* ══════════════════════════════
-       CONTACT
-    ══════════════════════════════ */
-    .contact { padding: 5rem 1.25rem; background: var(--white); }
-    .contact-inner {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; max-width: var(--max); margin: 0 auto;
-    }
-    .contact-details h2 {
-      font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: 2rem; color: var(--dark); margin-bottom: 2rem;
-    }
-    .contact-item {
-      display: flex; gap: 1rem; align-items: flex-start;
-      margin-bottom: 1.5rem;
-    }
-    .ci-icon {
-      width: 44px; height: 44px; background: #ffede3; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
-    }
-    .ci-text strong {
-      font-family: 'Montserrat', sans-serif; font-weight: 700;
-      font-size: .75rem; text-transform: uppercase; letter-spacing: .06em;
-      color: var(--orange); display: block; margin-bottom: .25rem;
-    }
-    .ci-text a { color: var(--dark); text-decoration: none; font-size: 1rem; font-weight: 600; }
+    /* ══════════════ CONTACT ══════════════ */
+    .contact { padding: 5rem 1.25rem; background: #fff; }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; max-width: var(--max); margin: 0 auto; }
+    .contact-details h2 { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2rem; color: var(--navy); margin-bottom: 2rem; }
+    .contact-item { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; }
+    .ci-icon { width: 46px; height: 46px; background: var(--orange-soft); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .ci-text strong { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--orange); display: block; margin-bottom: .25rem; }
+    .ci-text a { color: var(--navy); text-decoration: none; font-size: 1.05rem; font-weight: 700; }
     .ci-text a:hover { color: var(--orange); }
     .ci-text p { color: var(--muted); font-size: .95rem; }
-    .hours-table {
-      display: grid; grid-template-columns: auto 1fr;
-      gap: .3rem 1.5rem; font-size: .95rem;
-    }
-    .hours-table .day { font-weight: 600; color: var(--dark); }
+    .hours-table { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1.5rem; font-size: .95rem; }
+    .hours-table .day { font-weight: 700; color: var(--navy); }
     .hours-table .time { color: var(--muted); }
-
-    /* ── Contact form ── */
-    .contact-form {
-      background: var(--light); border-radius: 8px; padding: 2rem;
-    }
-    .contact-form h3 {
-      font-family: 'Montserrat', sans-serif; font-weight: 800;
-      font-size: 1.25rem; color: var(--dark); margin-bottom: 1.5rem;
-    }
+    .contact-form { background: var(--light); border-radius: 12px; padding: 2rem; }
+    .contact-form h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--navy); margin-bottom: .4rem; }
+    .contact-form .lead { font-size: .9rem; color: var(--muted); margin-bottom: 1.5rem; }
     .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block; font-size: .85rem; font-weight: 600;
-      color: var(--dark); margin-bottom: .35rem;
+    .form-group label { display: block; font-size: .85rem; font-weight: 600; color: var(--navy); margin-bottom: .35rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: .75rem 1rem; border: 2px solid var(--border); border-radius: 6px;
+      font-family: 'Open Sans', sans-serif; font-size: .95rem; color: var(--text); background: #fff; transition: border-color .2s;
     }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%; padding: .75rem 1rem;
-      border: 2px solid var(--border); border-radius: 4px;
-      font-family: 'Open Sans', sans-serif; font-size: .95rem;
-      color: var(--text); background: var(--white);
-      transition: border-color .2s;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus { outline: none; border-color: var(--orange); }
-    .form-group textarea { height: 100px; resize: vertical; }
-    .btn-form {
-      width: 100%; background: var(--orange); color: var(--white);
-      font-family: 'Montserrat', sans-serif; font-weight: 700;
-      font-size: 1rem; padding: .875rem; border: none; border-radius: 4px;
-      cursor: pointer; transition: background .2s;
-    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--orange); }
+    .form-group textarea { height: 96px; resize: vertical; }
+    .btn-form { width: 100%; background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; padding: .9rem; border: none; border-radius: 6px; cursor: pointer; transition: background .2s; }
     .btn-form:hover { background: var(--orange-h); }
-    .form-success {
-      display: none; background: #e6f9f0;
-      border: 2px solid #27ae60; border-radius: 4px;
-      padding: 1.25rem; text-align: center;
-      color: #1a7a45; font-weight: 600; margin-top: 1rem;
-    }
+    .form-success { display: none; background: #e6f9f0; border: 2px solid #27ae60; border-radius: 6px; padding: 1.25rem; text-align: center; color: #1a7a45; font-weight: 600; margin-top: 1rem; }
 
-    /* ══════════════════════════════
-       FOOTER
-    ══════════════════════════════ */
-    footer {
-      background: var(--dark); color: #999;
-      padding: 2.5rem 1.25rem;
-      border-top: 3px solid var(--orange);
-    }
-    .footer-inner {
-      max-width: var(--max); margin: 0 auto;
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-logo {
-      font-family: 'Montserrat', sans-serif; font-weight: 900;
-      font-size: 1.1rem; color: var(--white);
-    }
-    .footer-logo em { font-style: normal; color: var(--orange); }
+    /* ══════════════ FAQ ══════════════ */
+    .faq { padding: 5rem 1.25rem; background: var(--light); }
+    .faq-list { max-width: 760px; margin: 3rem auto 0; }
+    .faq-item { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; margin-bottom: .75rem; overflow: hidden; }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 1.25rem 1.5rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; color: var(--navy); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq-q .chev { color: var(--orange); transition: transform .2s; flex-shrink: 0; }
+    .faq-item[open] .chev { transform: rotate(180deg); }
+    .faq-a { padding: 0 1.5rem 1.25rem; color: var(--muted); font-size: .95rem; }
+
+    /* ══════════════ FOOTER ══════════════ */
+    footer { background: var(--navy-deep); color: #8a93a6; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.2rem; }
+    .footer-logo .bk { color: var(--silver); font-weight: 700; }
+    .footer-logo .he { color: var(--orange); }
+    .footer-logo .ty { color: #fff; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a {
-      color: #999; text-decoration: none; font-size: .875rem;
-      transition: color .2s;
-    }
+    .footer-links a { color: #8a93a6; text-decoration: none; font-size: .875rem; transition: color .2s; }
     .footer-links a:hover { color: var(--orange); }
+    footer small { display: block; width: 100%; text-align: center; color: #5a6273; margin-top: .5rem; }
 
-    /* ══════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════ */
+    /* ══════════════ RESPONSIVE ══════════════ */
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; }
-      .hero-image { display: none; }
-      .about-inner { grid-template-columns: 1fr; }
-      .about-image { display: none; }
-      .coverage-inner { grid-template-columns: 1fr; }
-      .map-placeholder { display: none; }
-      .contact-inner { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .nav-toggle { display: block; margin-left: auto; }
+      .hero-inner, .brands-inner, .lounge-inner, .coverage-inner, .contact-inner { grid-template-columns: 1fr; }
+      .hero-image, .lounge-image { order: -1; }
+      .brands-image { display: none; }
+      .map-box { display: none; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+      .review-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
       .header-phone { display: none; }
-      .vehicles-grid { grid-template-columns: 1fr; }
-      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: 1fr; }
       .hero-ctas { flex-direction: column; }
-      .hero-ctas .btn-orange,
-      .hero-ctas .btn-ghost { text-align: center; }
-      .trust-strip-inner { gap: 1rem; justify-content: flex-start; }
+      .hero-ctas .btn-orange, .hero-ctas .btn-ghost { text-align: center; }
+      .trust-inner { gap: .9rem 1.5rem; }
     }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Pitch note: this is HEtyres' own site, presented as live. No demo banner. -->
+
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">HE<em>Tyres</em></a>
-      <a href="tel:01793876969" class="header-phone" aria-label="Call HE Tyres on 01793 876969">01793 876969</a>
+      <a href="/" class="logo" aria-label="HEtyres home"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk">]</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#services">Services</a>
+        <a href="#brands">Brands</a>
+        <a href="#lounge">The lounge</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a href="tel:01793876969" class="header-phone">01793 876 969</a>
       <a href="#contact" class="btn-header">Get a quote</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
 
@@ -554,43 +445,31 @@
     <section class="hero" aria-labelledby="hero-heading">
       <div class="hero-inner">
         <div class="hero-content">
-          <p class="hero-eyebrow">Mobile &amp; Depot Tyre Fitting · Swindon</p>
-          <h1 id="hero-heading">New tyres fitted<br><em>at your home or work</em></h1>
+          <p class="hero-eyebrow">Mobile &amp; depot tyre fitting · Swindon</p>
+          <h1 id="hero-heading">Tyres done right —<br><em>and out in the open</em></h1>
           <p class="hero-sub">
-            Family-run tyre service covering Swindon and surrounding areas.
-            We come to you — or visit our depot on Westmead.
-            Cars, vans and caravans welcome.
+            Family-run fitting for cars, vans and caravans. We'll come to you —
+            or fit you in at the depot, where you can put your feet up, grab a coffee
+            and watch the work on the screen. No back-room mystery.
           </p>
           <div class="hero-ctas">
-            <a href="tel:01793876969" class="btn-orange">Call 01793 876969</a>
+            <a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a>
             <a href="#contact" class="btn-ghost">Get a quote</a>
           </div>
         </div>
-
-        <!-- HERO IMAGE -->
         <div class="hero-image">
-          <div class="img-placeholder dark" style="height:100%;">
-            <span class="cam">📷</span>
-            <strong>Hero image</strong>
-            <span>Van on a driveway, or fitter with a wheel</span>
-          </div>
-          <!--
-            Replace the .img-placeholder div above with:
-            <img src="images/hero.webp"
-                 alt="HE Tyres van parked outside a home during a mobile tyre fitting visit"
-                 width="640" height="480" loading="eager">
-          -->
+          <div class="ph dark"><span class="cam">📷</span><strong>Hero image</strong><span>Howard fitting a tyre, or the lounge looking through to the workshop</span></div>
         </div>
       </div>
     </section>
 
     <!-- ══ TRUST STRIP ══ -->
-    <div class="trust-strip" role="list" aria-label="Key facts about HE Tyres">
-      <div class="trust-strip-inner">
-        <span class="trust-item" role="listitem"><span class="trust-icon" aria-hidden="true">⭐</span> Family-run business</span>
-        <span class="trust-item" role="listitem"><span class="trust-icon" aria-hidden="true">🚐</span> We come to you</span>
-        <span class="trust-item" role="listitem"><span class="trust-icon" aria-hidden="true">✓</span> Competitive prices</span>
-        <span class="trust-item" role="listitem"><span class="trust-icon" aria-hidden="true">⭐</span> 5-star service</span>
+    <div class="trust-strip">
+      <div class="trust-inner">
+        <span class="trust-item"><span aria-hidden="true">⭐</span> 98% would recommend</span>
+        <span class="trust-item"><span aria-hidden="true">🛞</span> Continental &amp; Bridgestone stockist</span>
+        <span class="trust-item"><span aria-hidden="true">🚐</span> Mobile + depot</span>
+        <span class="trust-item"><span aria-hidden="true">📡</span> TPMS specialists</span>
       </div>
     </div>
 
@@ -599,64 +478,129 @@
       <div class="container">
         <div class="title-block">
           <h2 class="section-title" id="services-heading">What we do</h2>
-          <p class="section-sub">Everything you need for your tyres — at your door or at our depot</p>
+          <p class="section-sub">Everything your tyres need — at your door, or at the depot. Tap any service for the detail.</p>
           <div class="accent-bar"></div>
         </div>
         <div class="services-grid">
-
-          <div class="service-card featured">
+          <button class="service-card featured" data-modal="m-mobile">
             <span class="featured-tag">Most popular</span>
             <div class="service-icon" aria-hidden="true">🚐</div>
             <h3>Mobile tyre fitting</h3>
-            <p>We come to your home, workplace, or anywhere in Swindon. No need to drive on a flat or take time off — we fit your tyres on the spot, at a time that suits you.</p>
-          </div>
-
-          <div class="service-card">
-            <div class="service-icon" aria-hidden="true">🏭</div>
-            <h3>Depot fitting</h3>
-            <p>Prefer to drop in? Our depot is at Unit 5 Starwest, Westmead Drive. Quick turnaround, professional service, competitive prices.</p>
-          </div>
-
-          <div class="service-card">
+            <p>We come to your home, work or roadside and fit on the spot — no driving on a flat, no waiting around.</p>
+            <span class="service-more">See more →</span>
+          </button>
+          <button class="service-card" data-modal="m-depot">
+            <div class="service-icon" aria-hidden="true">☕</div>
+            <h3>Depot fitting + lounge</h3>
+            <p>Drop in to our Westmead depot, relax in the lounge with a coffee and watch the work on the screen.</p>
+            <span class="service-more">See more →</span>
+          </button>
+          <button class="service-card" data-modal="m-tpms">
             <div class="service-icon" aria-hidden="true">📡</div>
             <h3>TPMS servicing</h3>
-            <p>We diagnose and replace tyre pressure monitoring system sensors, and reset your dashboard warning light — so everything works correctly after every tyre change.</p>
-          </div>
-
-          <div class="service-card">
+            <p>Sensors diagnosed, replaced and your dashboard warning light reset properly after every change.</p>
+            <span class="service-more">See more →</span>
+          </button>
+          <button class="service-card" data-modal="m-locking">
             <div class="service-icon" aria-hidden="true">🔧</div>
-            <h3>Locking wheel nut removal</h3>
-            <p>Lost your locking wheel nut key? We have specialist tools to safely remove locking wheel nuts without damaging your alloy wheels.</p>
-          </div>
-
+            <h3>Locking nut removal</h3>
+            <p>Lost your locking wheel nut key? We remove them safely with specialist tools — no damage to your alloys.</p>
+            <span class="service-more">See more →</span>
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- ══ HOW IT WORKS ══ -->
-    <section class="how-it-works" id="how-it-works" aria-labelledby="hiw-heading">
-      <div class="container">
-        <div class="title-block">
-          <h2 class="section-title" id="hiw-heading">How mobile fitting works</h2>
-          <p class="section-sub">Getting new tyres fitted at your door takes three steps</p>
+    <!-- Service modals -->
+    <dialog class="svc" id="m-mobile">
+      <button class="svc-close" data-close aria-label="Close">×</button>
+      <div class="svc-head"><span class="si" aria-hidden="true">🚐</span><h3>Mobile tyre fitting</h3></div>
+      <div class="svc-body">
+        <p>Don't risk driving on a damaged tyre. We bring the kit to you and fit wherever you are across the Swindon area.</p>
+        <ul>
+          <li>At home, at work, or stuck at the roadside</li>
+          <li>Cars, vans and caravans</li>
+          <li>Punctures, replacements and runflats</li>
+          <li>TPMS checked and reset on the spot</li>
+        </ul>
+        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      </div>
+    </dialog>
+    <dialog class="svc" id="m-depot">
+      <button class="svc-close" data-close aria-label="Close">×</button>
+      <div class="svc-head"><span class="si" aria-hidden="true">☕</span><h3>Depot fitting + lounge</h3></div>
+      <div class="svc-body">
+        <p>Pop in to Unit 5 Star West. While we work, you relax in a proper lounge — coffee in hand, watching your car on the workshop screen. No guesswork, no surprises.</p>
+        <ul>
+          <li>Comfortable lounge with free coffee</li>
+          <li>Watch the work on the screen as it happens</li>
+          <li>We talk you through what we find and why</li>
+          <li>Quick turnaround, fair prices</li>
+        </ul>
+        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      </div>
+    </dialog>
+    <dialog class="svc" id="m-tpms">
+      <button class="svc-close" data-close aria-label="Close">×</button>
+      <div class="svc-head"><span class="si" aria-hidden="true">📡</span><h3>TPMS servicing</h3></div>
+      <div class="svc-body">
+        <p>Tyre Pressure Monitoring System playing up? We diagnose, repair and replace sensors, and reset the dashboard warning light so everything reads correctly.</p>
+        <ul>
+          <li>Sensor diagnosis and replacement</li>
+          <li>Warning light reset after every fitting</li>
+          <li>Genuine and quality-matched sensors</li>
+        </ul>
+        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      </div>
+    </dialog>
+    <dialog class="svc" id="m-locking">
+      <button class="svc-close" data-close aria-label="Close">×</button>
+      <div class="svc-head"><span class="si" aria-hidden="true">🔧</span><h3>Locking wheel nut removal</h3></div>
+      <div class="svc-body">
+        <p>Lost the key? Bought a car without one? We safely remove locking wheel nuts using specialist tools — without damaging your alloys — so we can get your tyres changed.</p>
+        <ul>
+          <li>Specialist removal tools</li>
+          <li>No damage to your wheels</li>
+          <li>Mobile or at the depot</li>
+        </ul>
+        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      </div>
+    </dialog>
+
+    <!-- ══ BRANDS ══ -->
+    <section class="brands" id="brands" aria-labelledby="brands-heading">
+      <div class="brands-inner">
+        <div class="brands-content">
+          <h2 class="section-title" id="brands-heading">Quality tyres, and you see exactly what you're getting</h2>
           <div class="accent-bar"></div>
+          <p>We stock premium brands like Continental and Bridgestone, right through to budget options — and we'll talk you through the choice honestly so you pick what's right for your car and your wallet.</p>
+          <p>Every tyre carries its EU label for fuel economy, wet grip and noise. We'll show you, explain what it means, and never push you into more than you need.</p>
+          <div class="brand-tags">
+            <span class="brand-tag">Continental</span>
+            <span class="brand-tag">Bridgestone</span>
+            <span class="brand-tag">Premium &amp; budget</span>
+            <span class="brand-tag">Runflats</span>
+            <span class="brand-tag">4×4 &amp; van</span>
+          </div>
         </div>
-        <div class="steps">
-          <div class="step">
-            <div class="step-num" aria-hidden="true">1</div>
-            <h3>Get in touch</h3>
-            <p>Call us or send a message with your tyre size, vehicle type and location. We'll give you a price and book a slot that works for you.</p>
-          </div>
-          <div class="step">
-            <div class="step-num" aria-hidden="true">2</div>
-            <h3>We come to you</h3>
-            <p>Our mobile van turns up at your home or workplace. No waiting rooms, no arranging a lift, no disruption to your day.</p>
-          </div>
-          <div class="step">
-            <div class="step-num" aria-hidden="true">3</div>
-            <h3>Job done</h3>
-            <p>Your new tyres are fitted, balanced, and your TPMS is checked and reset. You're back on the road in no time.</p>
-          </div>
+        <div class="brands-image">
+          <div class="ph"><span class="cam">📷</span><strong>Tyre stock photo</strong><span>The rack shot — Continental &amp; Bridgestone with EU labels</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ LOUNGE / OPENNESS ══ -->
+    <section class="lounge" id="lounge" aria-labelledby="lounge-heading">
+      <div class="lounge-inner">
+        <div class="lounge-image">
+          <div class="ph dark"><span class="cam">📷</span><strong>The lounge</strong><span>Sofa, orange chairs, coffee — and the workshop screen</span></div>
+        </div>
+        <div class="lounge-content">
+          <span class="pill"><span aria-hidden="true">👀</span> Nothing to hide</span>
+          <h2 class="section-title" id="lounge-heading">Watch the work, coffee in hand</h2>
+          <div class="accent-bar"></div>
+          <p>Most tyre places hide the work away in a back room. We don't. Settle into the lounge, help yourself to a coffee, and watch your car on the workshop screen while we fit your tyres.</p>
+          <p>You see what we see. We explain what we find and why — so you drive away knowing the job was done properly. It's the way we'd want to be treated ourselves.</p>
         </div>
       </div>
     </section>
@@ -665,129 +609,72 @@
     <section class="gallery" id="gallery" aria-labelledby="gallery-heading">
       <div class="container">
         <div class="title-block">
-          <h2 class="section-title" id="gallery-heading">Our work</h2>
-          <p class="section-sub">A selection of recent jobs from around Swindon</p>
+          <h2 class="section-title" id="gallery-heading">Recent work</h2>
+          <p class="section-sub">A few jobs from around Swindon — the difference fresh rubber makes</p>
           <div class="accent-bar"></div>
         </div>
         <div class="photo-grid">
-          <!--
-            Replace each photo-cell with a real image once you have them from Facebook.
-            Aim for a mix of:
-              • Fresh tyres fitted (close-up of the wheel)
-              • Van on a residential driveway
-              • Worn tyre vs new tyre comparison
-              • TPMS sensor / reset tool in use
-              • Locking wheel nut removal
-              • Van interior with kit / stock visible
-
-            Each <img> needs:
-              src="images/gallery-N.webp"
-              alt="Descriptive caption for the specific shot"
-              width="400" height="300"
-              loading="lazy" decoding="async"
-          -->
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>Fresh tyre fitted — close-up</span>
-            </div>
-          </div>
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>Van on a driveway</span>
-            </div>
-          </div>
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>Worn vs new tyre</span>
-            </div>
-          </div>
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>TPMS in use</span>
-            </div>
-          </div>
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>Locking wheel nut removal</span>
-            </div>
-          </div>
-          <div class="photo-cell">
-            <div class="img-placeholder dark" style="height:100%;">
-              <span class="cam">📷</span>
-              <span>Van kit / stock</span>
-            </div>
-          </div>
+          <div class="photo-cell"><div class="ph"><span class="cam">📷</span><span>Worn vs new tyre</span></div></div>
+          <div class="photo-cell"><div class="ph"><span class="cam">📷</span><span>Runflat on the BMW</span></div></div>
+          <div class="photo-cell"><div class="ph"><span class="cam">📷</span><span>Fresh tyre on a clean alloy</span></div></div>
+          <div class="photo-cell"><div class="ph"><span class="cam">📷</span><span>Mobile fitting on a driveway</span></div></div>
         </div>
       </div>
     </section>
 
-    <!-- ══ VEHICLES ══ -->
-    <section class="vehicles" id="vehicles" aria-labelledby="vehicles-heading">
+    <!-- ══ MEET THE TEAM ══ -->
+    <section class="team" id="team" aria-labelledby="team-heading">
       <div class="container">
         <div class="title-block">
-          <h2 class="section-title" id="vehicles-heading">Vehicles we cover</h2>
-          <p class="section-sub">From city cars to caravans — we carry a wide range of tyre sizes</p>
+          <h2 class="section-title" id="team-heading">Meet Emma &amp; Howard</h2>
+          <p class="section-sub">A proper family business — the same friendly faces every time you call or drop in.</p>
           <div class="accent-bar"></div>
         </div>
-        <div class="vehicles-grid">
-          <div class="vehicle-card">
-            <span class="vehicle-emoji" aria-hidden="true">🚗</span>
-            <h3>Cars</h3>
-            <p>All makes and models. Hatchbacks, saloons, estates, SUVs and performance cars.</p>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-photo"><div class="ph"><span class="cam">📷</span><span>Emma caricature</span></div></div>
+            <h3>Emma</h3>
+            <p class="team-role">Runs the show</p>
+            <p>The voice on the end of the phone — booking you in, sorting quotes and making sure everyone's looked after.</p>
           </div>
-          <div class="vehicle-card">
-            <span class="vehicle-emoji" aria-hidden="true">🚐</span>
-            <h3>Vans</h3>
-            <p>Light commercial vehicles of all sizes. Single and twin rear wheel fitments.</p>
-          </div>
-          <div class="vehicle-card">
-            <span class="vehicle-emoji" aria-hidden="true">🏕️</span>
-            <h3>Caravans</h3>
-            <p>Touring and static caravans. Get your caravan tyres checked and replaced before the season starts.</p>
+          <div class="team-card">
+            <div class="team-photo"><div class="ph"><span class="cam">📷</span><span>Howard caricature</span></div></div>
+            <h3>Howard</h3>
+            <p class="team-role">On the tools</p>
+            <p>Hands-on with every fitting, balancing and repair — and happy to talk you through exactly what your car needs.</p>
           </div>
         </div>
+        <p class="team-intro">We started HEtyres to do tyres the way they should be done: honest advice, fair prices, and a warm welcome — whether you come to us or we come to you.</p>
       </div>
     </section>
 
-    <!-- ══ ABOUT ══ -->
-    <section class="about" id="about" aria-labelledby="about-heading">
-      <div class="about-inner">
-        <div class="about-content">
-          <h2 class="section-title" id="about-heading">A family business that cares about doing it right</h2>
+    <!-- ══ REVIEWS ══ -->
+    <section class="reviews" id="reviews" aria-labelledby="reviews-heading">
+      <div class="container" style="text-align:center;">
+        <div class="title-block" style="margin-bottom:1.5rem;">
+          <h2 class="section-title" id="reviews-heading">What our customers say</h2>
           <div class="accent-bar"></div>
-          <p>HE Tyres is a family-run business based in Swindon. We believe tyre fitting should be straightforward, fairly priced, and genuinely convenient — which means fitting your tyres where it suits <em>you</em>, not where it suits us.</p>
-          <p>Whether you're at home, at work, or stuck at the roadside, our mobile service means you're never left scrambling for a way to get to a garage. And if you'd rather drop in, our Westmead depot is open Monday to Saturday.</p>
-          <p>We keep our prices competitive, our service professional, and our customers coming back.</p>
-          <div class="about-stats">
-            <div class="stat">
-              <div class="stat-num">5★</div>
-              <div class="stat-label">Average customer rating</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num">Mobile</div>
-              <div class="stat-label">We come to you</div>
-            </div>
-          </div>
         </div>
-
-        <!-- ABOUT IMAGE -->
-        <div class="about-image">
-          <div class="img-placeholder" style="height:100%;">
-            <span class="cam">📷</span>
-            <strong>Team or van photo</strong>
-            <span>Team shot, van exterior, or depot frontage</span>
+        <div class="rec-badge">
+          <span class="big">98%</span>
+          <span class="lbl">would recommend us<br>from 62 reviews</span>
+        </div>
+        <div class="review-grid" style="text-align:left;">
+          <div class="review-card">
+            <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>"Quick stop in today for 2 replacement front tyres. Absolutely spot on as usual — quick, fuss free, great advice and top notch care taken! Coffee was superb too. Thanks HEtyres 👍"</p>
+            <p class="review-meta"><strong>dataplanet</strong> · 15 Nov 2025</p>
           </div>
-          <!--
-            Replace with:
-            <img src="images/team.webp"
-                 alt="The HE Tyres team beside their mobile van"
-                 width="600" height="450" loading="lazy">
-          -->
+          <div class="review-card">
+            <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>"Amazing and kind family run business! Quick to support and help and great with advice! We have reached out twice now in an 'emergency' and they have not let us down! Recommended 100%."</p>
+            <p class="review-meta"><strong>Sarah Newitt</strong> · 5 Aug 2025</p>
+          </div>
+          <div class="review-card">
+            <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>"Absolutely amazing service from these guys today! They were so friendly and sorted us out so quickly! Definitely recommend!"</p>
+            <p class="review-meta"><strong>Hazel Evans</strong> · 26 Apr 2025</p>
+          </div>
         </div>
       </div>
     </section>
@@ -797,37 +684,65 @@
       <div class="container">
         <div class="title-block">
           <h2 class="section-title" id="coverage-heading">Where we cover</h2>
-          <p class="section-sub">Based in Swindon — mobile fitting across the area</p>
+          <p class="section-sub">Based in Swindon — mobile fitting roughly 15 miles around the depot</p>
           <div class="accent-bar"></div>
         </div>
         <div class="coverage-inner">
           <div>
             <ul class="coverage-areas" aria-label="Areas covered">
-              <li>Swindon town centre</li>
-              <li>Westlea</li>
-              <li>Wroughton</li>
+              <li>Swindon (all areas)</li>
               <li>Royal Wootton Bassett</li>
-              <li>Chippenham</li>
-              <li>Marlborough</li>
+              <li>Wroughton</li>
               <li>Highworth</li>
               <li>Cricklade</li>
               <li>Purton</li>
               <li>Lyneham</li>
+              <li>Marlborough</li>
+              <li>Chippenham</li>
+              <li>Faringdon</li>
             </ul>
-            <p class="coverage-note">Not sure if we cover your area? Give us a call and we'll let you know.</p>
-            <div class="coverage-cta">
-              <a href="tel:01793876969" class="btn-orange">Call 01793 876969</a>
-            </div>
+            <p class="coverage-note">Not sure if we reach you? Give us a call — if you're a little further out, just ask.</p>
+            <a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a>
           </div>
+          <div class="map-box">
+            <div class="ph dark"><span class="cam">🗺️</span><strong>Coverage map</strong><span>Google Maps embed centred on SN5 7SW, ~15-mile radius</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <!-- MAP PLACEHOLDER -->
-          <div class="map-placeholder">
-            <div class="img-placeholder dark" style="height:100%; min-height:280px;">
-              <span class="cam">🗺️</span>
-              <strong>Coverage map</strong>
-              <span>Embed a Google Maps iframe here<br>centred on Swindon SN5 7SW</span>
-            </div>
-          </div>
+    <!-- ══ FAQ ══ -->
+    <section class="faq" id="faq" aria-labelledby="faq-heading">
+      <div class="container">
+        <div class="title-block">
+          <h2 class="section-title" id="faq-heading">Common questions</h2>
+          <div class="accent-bar"></div>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary class="faq-q">Do you come to me? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Yes — our mobile service covers around 15 miles of Swindon. We'll fit at your home, your workplace or at the roadside. Prefer to drop in? You're very welcome at the depot.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What tyre brands do you fit? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Everything from premium brands like Continental and Bridgestone to solid budget options. We'll explain the EU label ratings and help you choose what's right for your car and budget — no pressure.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Can I watch the work being done? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Absolutely — that's the point of our lounge. Relax with a coffee and watch your car on the workshop screen while we work. We'll talk you through anything we find.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Will you reset my TPMS warning light? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Yes. We diagnose and replace tyre pressure sensors and reset the dashboard warning light as part of the job, so everything reads correctly when you drive away.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">I've lost my locking wheel nut key — can you help? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">No problem. We have specialist tools to remove locking wheel nuts safely without damaging your alloys, then carry on with your tyre change.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">How do I get a price? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Give us a call on 01793 876 969 or send the form below with your tyre size and vehicle, and we'll get you a price. You'll find your tyre size on the sidewall (e.g. 205/55 R16).</div>
+          </details>
         </div>
       </div>
     </section>
@@ -835,34 +750,20 @@
     <!-- ══ CONTACT ══ -->
     <section class="contact" id="contact" aria-labelledby="contact-heading">
       <div class="contact-inner">
-
         <div class="contact-details">
           <h2 id="contact-heading">Get in touch</h2>
-
           <div class="contact-item">
             <div class="ci-icon" aria-hidden="true">📞</div>
-            <div class="ci-text">
-              <strong>Phone</strong>
-              <a href="tel:01793876969">01793 876969</a>
-            </div>
+            <div class="ci-text"><strong>Phone</strong><a href="tel:01793876969">01793 876 969</a></div>
           </div>
-
           <div class="contact-item">
             <div class="ci-icon" aria-hidden="true">✉️</div>
-            <div class="ci-text">
-              <strong>Email</strong>
-              <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a>
-            </div>
+            <div class="ci-text"><strong>Email</strong><a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a></div>
           </div>
-
           <div class="contact-item">
             <div class="ci-icon" aria-hidden="true">📍</div>
-            <div class="ci-text">
-              <strong>Depot</strong>
-              <p>Unit 5 Starwest, Westmead Drive<br>Swindon SN5 7SW</p>
-            </div>
+            <div class="ci-text"><strong>Depot</strong><p>Unit 5 Star West, Westmead Drive<br>Westlea, Swindon SN5 7SW</p></div>
           </div>
-
           <div class="contact-item">
             <div class="ci-icon" aria-hidden="true">🕐</div>
             <div class="ci-text">
@@ -877,11 +778,12 @@
         </div>
 
         <div class="contact-form">
-          <h3>Send us a message</h3>
+          <h3>Ask for a quote</h3>
+          <p class="lead">Tell us what you need and we'll get straight back to you. Prefer to talk? Just call.</p>
           <form id="enquiryForm" novalidate>
             <div class="form-group">
               <label for="name">Your name</label>
-              <input type="text" id="name" name="name" required autocomplete="name" placeholder="Jane Smith">
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="Jane Smith">
             </div>
             <div class="form-group">
               <label for="phone">Phone number</label>
@@ -891,22 +793,17 @@
               <label for="vehicle">Vehicle type</label>
               <select id="vehicle" name="vehicle">
                 <option value="">Select vehicle type</option>
-                <option>Car</option>
-                <option>Van</option>
-                <option>Caravan</option>
+                <option>Car</option><option>Van</option><option>Caravan</option>
               </select>
             </div>
             <div class="form-group">
               <label for="message">What do you need?</label>
-              <textarea id="message" name="message" placeholder="e.g. 2 new front tyres at home, size 205/55R16 — or I've lost my locking nut key…"></textarea>
+              <textarea id="message" name="message" placeholder="e.g. 2 front tyres at home, size 205/55 R16 — or I've lost my locking nut key…"></textarea>
             </div>
-            <button type="submit" class="btn-form">Send message</button>
+            <button type="submit" class="btn-form">Send enquiry</button>
           </form>
-          <div class="form-success" id="formSuccess" role="status" aria-live="polite">
-            ✓ Message sent — we'll be in touch shortly!
-          </div>
+          <div class="form-success" id="formSuccess" role="status" aria-live="polite">✓ Thanks — we'll be in touch shortly!</div>
         </div>
-
       </div>
     </section>
 
@@ -914,79 +811,88 @@
 
   <footer>
     <div class="footer-inner">
-      <span class="footer-logo">HE<em>Tyres</em> Ltd</span>
-      <nav class="footer-links" aria-label="Footer links">
+      <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk">]</span></span>
+      <nav class="footer-links" aria-label="Footer">
         <a href="#services">Services</a>
-        <a href="#gallery">Our work</a>
-        <a href="#vehicles">Vehicles</a>
+        <a href="#brands">Brands</a>
+        <a href="#lounge">The lounge</a>
+        <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
         <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a>
       </nav>
-      <small>© 2026 HEtyres Ltd · Unit 5 Starwest, Swindon SN5 7SW</small>
+      <small>© 2026 H E Tyres Ltd · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW · 01793 876 969</small>
     </div>
   </footer>
 
   <script defer>
-    // Form — show success message in place (static site / pitch version)
+    // ── Mobile nav toggle ──
+    (function () {
+      const toggle = document.getElementById('navToggle');
+      const links = document.querySelector('.nav-links');
+      if (!toggle || !links) return;
+      toggle.addEventListener('click', () => {
+        const open = links.style.display === 'flex';
+        links.style.display = open ? '' : 'flex';
+        links.style.position = 'absolute';
+        links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
+        links.style.flexDirection = 'column'; links.style.background = '#1a2336';
+        links.style.padding = open ? '' : '1rem 1.25rem'; links.style.gap = '1rem';
+        toggle.setAttribute('aria-expanded', String(!open));
+      });
+      links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        if (window.innerWidth <= 900) { links.style.display = ''; toggle.setAttribute('aria-expanded', 'false'); }
+      }));
+    })();
+
+    // ── Service modals (native <dialog>) ──
+    document.querySelectorAll('[data-modal]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dlg = document.getElementById(btn.dataset.modal);
+        if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+      });
+    });
+    document.querySelectorAll('dialog.svc').forEach(dlg => {
+      dlg.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => dlg.close()));
+      dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+    });
+
+    // ── Contact form (static success for preview) ──
     document.getElementById('enquiryForm').addEventListener('submit', function (e) {
       e.preventDefault();
       this.style.display = 'none';
       document.getElementById('formSuccess').style.display = 'block';
     });
 
-    // Scroll reveal — NeoBookworm standard pattern
+    // ── Scroll reveal (NeoBookworm standard pattern) ──
     document.documentElement.classList.add('js-reveal');
-
     const revealEls = Array.from(document.querySelectorAll(
-      '.service-card, .step, .vehicle-card, .photo-cell'
+      '.service-card, .brand-tag, .review-card, .team-card, .photo-cell, .faq-item'
     ));
-
     const siblingMap = new Map();
     revealEls.forEach(el => {
       const peers = Array.from(el.parentElement.children).filter(c => revealEls.includes(c));
       siblingMap.set(el, peers.indexOf(el));
     });
-
-    const revealStyle = document.createElement('style');
-    revealStyle.textContent = [
-      '.js-reveal .service-card,',
-      '.js-reveal .step,',
-      '.js-reveal .vehicle-card,',
-      '.js-reveal .photo-cell {',
-      '  opacity: 0; transform: translateY(24px);',
-      '  transition: opacity .5s ease, transform .5s ease;',
-      '}',
-      '.js-reveal .service-card.visible,',
-      '.js-reveal .step.visible,',
-      '.js-reveal .vehicle-card.visible,',
-      '.js-reveal .photo-cell.visible {',
-      '  opacity: 1; transform: none;',
-      '}'
-    ].join('\n');
-    document.head.appendChild(revealStyle);
-
+    const st = document.createElement('style');
+    st.textContent = '.js-reveal .service-card,.js-reveal .brand-tag,.js-reveal .review-card,.js-reveal .team-card,.js-reveal .photo-cell,.js-reveal .faq-item{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}.js-reveal .visible{opacity:1!important;transform:none!important}';
+    document.head.appendChild(st);
     if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(entries => {
+      const obs = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
-          const delay = (siblingMap.get(entry.target) || 0) * 80;
+          const delay = (siblingMap.get(entry.target) || 0) * 70;
           setTimeout(() => entry.target.classList.add('visible'), delay);
-          observer.unobserve(entry.target);
+          obs.unobserve(entry.target);
         });
       }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
-
       requestAnimationFrame(() => {
         const vh = window.innerHeight;
         const rects = revealEls.map(el => el.getBoundingClientRect());
-        revealEls.forEach((el, i) => {
-          if (rects[i].top < vh) el.classList.add('visible');
-          else observer.observe(el);
-        });
+        revealEls.forEach((el, i) => { if (rects[i].top < vh) el.classList.add('visible'); else obs.observe(el); });
       });
     } else {
       revealEls.forEach(el => el.classList.add('visible'));
     }
   </script>
-
 </body>
 </html>
