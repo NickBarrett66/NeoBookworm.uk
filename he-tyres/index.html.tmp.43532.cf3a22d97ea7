@@ -422,7 +422,6 @@
       .hero-image, .lounge-image { order: -1; }
       .brands-image { display: none; }
       .map-box { max-width: 100%; aspect-ratio: 1/1; }
-      .leaflet-tooltip.town { display: none !important; }
       .photo-grid { grid-template-columns: repeat(2, 1fr); }
       .review-grid { grid-template-columns: 1fr; }
     }

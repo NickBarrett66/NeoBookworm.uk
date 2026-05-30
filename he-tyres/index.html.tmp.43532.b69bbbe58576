@@ -343,27 +343,21 @@
     .coverage { padding: 5rem 1.25rem; background: var(--navy); color: #fff; }
     .coverage .section-title { color: #fff; }
     .coverage .section-sub { color: #aab2c2; }
-    .coverage-stack { max-width: 920px; margin: 3rem auto 0; }
-    .map-box { width: 100%; max-width: 680px; aspect-ratio: 1/1; margin: 0 auto; border-radius: 12px; background: #1e2840; position: relative; }
-    #areaMap { width: 100%; height: 100%; background: #1e2840; border-radius: 12px; }
-    .map-key { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .55rem 1.5rem; margin-top: 1.75rem; }
-    .map-key li { font-size: .92rem; color: #c7cdd8; display: flex; align-items: center; gap: .65rem; }
-    .key-code {
-      flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-      min-width: 40px; padding: .2rem .45rem; background: var(--orange); color: #fff;
-      font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .72rem; letter-spacing: .03em; border-radius: 5px;
-    }
-    .key-code.depot { background: #fff; color: var(--navy); }
-    .coverage-foot { text-align: center; margin-top: 2rem; }
-    .coverage-note { font-size: .9rem; color: #8a93a6; margin-bottom: 1.25rem; }
+    .coverage-inner { display: grid; grid-template-columns: 0.78fr 1.22fr; gap: 3rem; align-items: center; max-width: var(--max); margin: 3rem auto 0; }
+    .coverage-areas { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem; }
+    .coverage-areas li { font-size: .95rem; color: #c7cdd8; padding-left: 1.3rem; position: relative; }
+    .coverage-areas li::before { content: "→"; color: var(--orange); position: absolute; left: 0; }
+    .coverage-note { font-size: .85rem; color: #8a93a6; margin: 1.5rem 0; }
+    .map-box { aspect-ratio: 4/3; min-height: 460px; border-radius: 12px; overflow: hidden; background: #1e2840; }
+    #areaMap { width: 100%; height: 100%; min-height: 460px; background: #1e2840; }
     .leaflet-container { background: #1e2840; font-family: inherit; }
     .leaflet-tooltip.town {
-      background: var(--orange); border: none; color: #fff;
-      font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: .03em;
-      padding: 1px 5px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.3); white-space: nowrap;
+      background: #fff; border: 1px solid #cfd5de; color: var(--navy);
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10.5px;
+      padding: 1px 6px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.25); white-space: nowrap;
     }
     .leaflet-tooltip.town::before { display: none; }
-    .leaflet-tooltip.depot { background: #fff; color: var(--navy); }
+    .leaflet-tooltip.depot { background: var(--orange); color: #fff; border-color: var(--orange); font-size: 11px; }
 
     /* ══════════════ CONTACT ══════════════ */
     .contact { padding: 5rem 1.25rem; background: #fff; }
@@ -421,8 +415,8 @@
       .hero-inner, .brands-inner, .lounge-inner, .coverage-inner, .contact-inner { grid-template-columns: 1fr; }
       .hero-image, .lounge-image { order: -1; }
       .brands-image { display: none; }
-      .map-box { max-width: 100%; aspect-ratio: 1/1; }
-      .leaflet-tooltip.town { display: none !important; }
+      .map-box { aspect-ratio: 1/1; min-height: 340px; }
+      #areaMap { min-height: 340px; }
       .photo-grid { grid-template-columns: repeat(2, 1fr); }
       .review-grid { grid-template-columns: 1fr; }
     }
@@ -704,25 +698,25 @@
           <p class="section-sub">Based in Swindon — mobile fitting roughly 15 miles around the depot</p>
           <div class="accent-bar"></div>
         </div>
-        <div class="coverage-stack">
-          <div class="map-box">
-            <div id="areaMap" role="img" aria-label="Map of the HEtyres mobile coverage area — roughly 15 miles around the Swindon depot, with the towns we cover marked"></div>
-          </div>
-          <ul class="map-key" aria-label="Map key — towns we cover">
-            <li><span class="key-code depot">HE</span> HEtyres depot (Swindon)</li>
-            <li><span class="key-code">RWB</span> Royal Wootton Bassett</li>
-            <li><span class="key-code">WRO</span> Wroughton</li>
-            <li><span class="key-code">HIG</span> Highworth</li>
-            <li><span class="key-code">CRI</span> Cricklade</li>
-            <li><span class="key-code">PUR</span> Purton</li>
-            <li><span class="key-code">LYN</span> Lyneham</li>
-            <li><span class="key-code">MAR</span> Marlborough</li>
-            <li><span class="key-code">CHI</span> Chippenham</li>
-            <li><span class="key-code">FAR</span> Faringdon</li>
-          </ul>
-          <div class="coverage-foot">
+        <div class="coverage-inner">
+          <div>
+            <ul class="coverage-areas" aria-label="Areas covered">
+              <li>Swindon (all areas)</li>
+              <li>Royal Wootton Bassett</li>
+              <li>Wroughton</li>
+              <li>Highworth</li>
+              <li>Cricklade</li>
+              <li>Purton</li>
+              <li>Lyneham</li>
+              <li>Marlborough</li>
+              <li>Chippenham</li>
+              <li>Faringdon</li>
+            </ul>
             <p class="coverage-note">Not sure if we reach you? Give us a call — if you're a little further out, just ask.</p>
             <a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a>
+          </div>
+          <div class="map-box">
+            <div id="areaMap" role="img" aria-label="Map showing the HEtyres mobile coverage area — roughly 15 miles around the Swindon depot"></div>
           </div>
         </div>
       </div>
@@ -855,38 +849,35 @@
       var TILE_URL    = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
       var TILE_ATTR   = '&copy; Stadia Maps &copy; OpenStreetMap';
       var depot        = [51.5665, -1.8170];      // Unit 5 Star West, Westlea SN5 7SW
-      var radiusMetres = 16 * 1609.34;            // 16-mile mobile radius (keeps Chippenham inside)
+      var radiusMetres = 15 * 1609.34;            // 15-mile mobile radius
       var bounds       = L.latLng(depot).toBounds(radiusMetres * 2);
       var map = L.map('areaMap', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
-        .fitBounds(bounds, { padding: [34, 34] });
+        .fitBounds(bounds, { padding: [8, 8] });
       L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map);
       L.circle(depot, { radius: radiusMetres, color: ORANGE, weight: 2.5, fillColor: ORANGE_FILL, fillOpacity: 1 }).addTo(map);
 
       // Towns we cover — labelled so they're obvious on the map
-      // Add town markers and depot AFTER invalidateSize so tooltips position correctly
-      function addMarkers() {
-        map.invalidateSize();
-        var towns = [
-          { n: 'PUR', c: [51.5872, -1.8730] },
-          { n: 'WRO', c: [51.5236, -1.7956] },
-          { n: 'RWB', c: [51.5419, -1.9048] },
-          { n: 'CRI', c: [51.6410, -1.8556] },
-          { n: 'HIG', c: [51.6320, -1.7110] },
-          { n: 'LYN', c: [51.5160, -1.9930] },
-          { n: 'MAR', c: [51.4214, -1.7286] },
-          { n: 'CHI', c: [51.4585, -2.1160] },
-          { n: 'FAR', c: [51.6560, -1.5860] }
-        ];
-        towns.forEach(function (t) {
-          var dir = t.c[1] < depot[1] ? 'right' : 'left';
-          L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
-            .bindTooltip(t.n, { permanent: true, direction: dir, className: 'town', offset: [0, 0] });
-        });
-        L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(map)
-          .bindTooltip('HE', { permanent: true, direction: 'right', className: 'town depot', offset: [8, 0] });
-      }
-      setTimeout(addMarkers, 350);
-      var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { map.invalidateSize(); }, 200); });
+      var towns = [
+        { n: 'Royal Wootton Bassett', c: [51.5419, -1.9048], d: 'left' },
+        { n: 'Wroughton',            c: [51.5236, -1.7956], d: 'bottom' },
+        { n: 'Highworth',            c: [51.6320, -1.7110], d: 'right' },
+        { n: 'Cricklade',            c: [51.6410, -1.8556], d: 'top' },
+        { n: 'Purton',               c: [51.5872, -1.8730], d: 'left' },
+        { n: 'Lyneham',              c: [51.5160, -1.9930], d: 'left' },
+        { n: 'Marlborough',          c: [51.4214, -1.7286], d: 'bottom' },
+        { n: 'Chippenham',           c: [51.4585, -2.1160], d: 'left' },
+        { n: 'Faringdon',            c: [51.6560, -1.5860], d: 'right' }
+      ];
+      towns.forEach(function (t) {
+        L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
+          .bindTooltip(t.n, { permanent: true, direction: t.d, className: 'town', offset: [0, 0] });
+      });
+
+      // Depot marker (centre)
+      L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(map)
+        .bindTooltip('HEtyres depot', { permanent: true, direction: 'right', className: 'town depot', offset: [8, 0] });
+
+      setTimeout(function () { map.invalidateSize(); }, 250);
     })();
 
     // ── Mobile nav toggle ──
