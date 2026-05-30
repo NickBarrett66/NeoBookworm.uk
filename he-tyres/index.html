@@ -357,6 +357,27 @@
     .key-code.depot { background: #fff; color: var(--navy); }
     .coverage-foot { text-align: center; margin-top: 2rem; }
     .coverage-note { font-size: .9rem; color: #8a93a6; margin-bottom: 1.25rem; }
+
+    /* ══════════════ FIND US ══════════════ */
+    .find-us { padding: 5rem 1.25rem; background: var(--light); }
+    .find-us-inner { max-width: 920px; margin: 0 auto; }
+    .find-map-box { width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 2px solid var(--border); margin-bottom: 2rem; position: relative; }
+    #depotMap { width: 100%; height: 100%; }
+    .find-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .find-step { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+    .find-step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--orange); color: #fff; border-radius: 50%; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .85rem; margin-bottom: .75rem; }
+    .find-step p { font-size: .92rem; line-height: 1.55; color: var(--muted); }
+    .find-step strong { color: var(--text); }
+    .find-foot { text-align: center; }
+    .find-foot .btn-orange { display: inline-flex; align-items: center; gap: .5rem; }
+    .leaflet-tooltip.depot-tip {
+      background: #fff; color: var(--navy); font-family: 'Montserrat', sans-serif;
+      font-weight: 800; font-size: .72rem; letter-spacing: .03em;
+      padding: 2px 6px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.3);
+      white-space: nowrap; border: none;
+    }
+    .leaflet-tooltip.depot-tip::before { display: none; }
+    .leaflet-tooltip.depot-tip.dest { background: var(--orange); color: #fff; }
     .leaflet-container { background: #1e2840; font-family: inherit; }
     .leaflet-tooltip.town {
       background: var(--orange); border: none; color: #fff;
@@ -424,6 +445,8 @@
       .brands-image { display: none; }
       .map-box { max-width: 100%; aspect-ratio: 1/1; }
       .leaflet-tooltip.town { display: none !important; }
+      .find-steps { grid-template-columns: 1fr; }
+      .find-map-box { aspect-ratio: 1/1; }
       .photo-grid { grid-template-columns: repeat(2, 1fr); }
       .review-grid { grid-template-columns: 1fr; }
     }
@@ -729,6 +752,39 @@
       </div>
     </section>
 
+    <!-- ══ FIND US ══ -->
+    <section class="find-us" id="find-us" aria-labelledby="findus-heading">
+      <div class="container">
+        <div class="title-block">
+          <h2 class="section-title" id="findus-heading">Finding the depot</h2>
+          <p class="section-sub">Unit 5 Star West, Westmead Industrial Estate — the last bit of the journey can be tricky, so here's exactly where to go</p>
+          <div class="accent-bar"></div>
+        </div>
+        <div class="find-us-inner">
+          <div class="find-map-box">
+            <div id="depotMap" role="img" aria-label="Zoomed street-level map showing the route from Westmead Drive to Unit 5 Star West on the industrial estate"></div>
+          </div>
+          <div class="find-steps">
+            <div class="find-step">
+              <div class="find-step-num">1</div>
+              <p><strong>Turn off Mead Way</strong> onto Westmead Drive into the industrial estate — Travis Perkins is on your left.</p>
+            </div>
+            <div class="find-step">
+              <div class="find-step-num">2</div>
+              <p><strong>Stay on Westmead Drive</strong> as it curves northeast through the estate, past the other business units.</p>
+            </div>
+            <div class="find-step">
+              <div class="find-step-num">3</div>
+              <p><strong>The road curves around to Star West</strong> — Unit 5 is mid-row on your right. Look for the orange HEtyres sign.</p>
+            </div>
+          </div>
+          <div class="find-foot">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Unit+5+Star+West+Westmead+Drive+Swindon+SN5+7SW" target="_blank" rel="noopener" class="btn-orange">Open in Google Maps ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ══ FAQ ══ -->
     <section class="faq" id="faq" aria-labelledby="faq-heading">
       <div class="container">
@@ -888,6 +944,77 @@
       }
       setTimeout(addMarkers, 350);
       var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { map.invalidateSize(); }, 200); });
+    })();
+
+    // ── Depot finder map (Leaflet) — zoomed street-level route guide ──
+    (function () {
+      if (typeof L === 'undefined') return;
+      var el = document.getElementById('depotMap');
+      if (!el) return;
+      var ORANGE = '#ec7325';
+      var NAVY   = '#1a2336';
+      var unit5  = [51.5665, -1.8170];
+
+      var map = L.map('depotMap', {
+        zoomControl: false, attributionControl: false,
+        dragging: false, scrollWheelZoom: false,
+        doubleClickZoom: false, touchZoom: false
+      });
+
+      L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
+      }).addTo(map);
+
+      var route = [
+        [51.5629970, -1.8198591],
+        [51.5631864, -1.8196407],
+        [51.5632291, -1.8195749],
+        [51.5634140, -1.8194076],
+        [51.5636838, -1.8191278],
+        [51.5638762, -1.8188851],
+        [51.5640727, -1.8185729],
+        [51.5643144, -1.8180999],
+        [51.5645733, -1.8173331],
+        [51.5647806, -1.8165103],
+        [51.5649345, -1.8158655],
+        [51.5650308, -1.8155673],
+        [51.5653441, -1.8158429],
+        [51.5656039, -1.8160722],
+        [51.5658855, -1.8163208],
+        [51.5662109, -1.8166080],
+        [51.5661392, -1.8168850],
+        [51.5660827, -1.8170130],
+        unit5
+      ];
+
+      var line = L.polyline(route, {
+        color: ORANGE, weight: 5, opacity: 0.85,
+        dashArray: '12, 8', lineCap: 'round'
+      }).addTo(map);
+
+      map.fitBounds(line.getBounds(), { padding: [40, 40] });
+
+      L.circleMarker(unit5, {
+        radius: 10, color: '#fff', weight: 3,
+        fillColor: ORANGE, fillOpacity: 1
+      }).addTo(map).bindTooltip('Unit 5 — HEtyres', {
+        permanent: true, direction: 'right',
+        className: 'depot-tip dest', offset: [12, 0]
+      });
+
+      L.circleMarker(route[0], {
+        radius: 6, color: '#fff', weight: 2,
+        fillColor: NAVY, fillOpacity: 1
+      }).addTo(map).bindTooltip('Turn off Mead Way', {
+        permanent: true, direction: 'right',
+        className: 'depot-tip', offset: [8, 0]
+      });
+
+      setTimeout(function () { map.invalidateSize(); map.fitBounds(line.getBounds(), { padding: [40, 40] }); }, 350);
+      var rt; window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () { map.invalidateSize(); map.fitBounds(line.getBounds(), { padding: [40, 40] }); }, 200);
+      });
     })();
 
     // ── Mobile nav toggle ──
