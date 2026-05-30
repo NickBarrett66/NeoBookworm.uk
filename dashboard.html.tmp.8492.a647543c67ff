@@ -2280,7 +2280,7 @@ function renderSubmissionsList({ data: rows, total, page, pageSize }, { soft = f
   } else {
     rows.forEach(row => {
       const tr = document.createElement('tr');
-      const dt = row.created_at ? fmtUtc(row.created_at) : '—';
+      const dt = row.created_at ? row.created_at.slice(0, 16).replace('T', ' ') : '—';
       const srcLabel = SUBMISSIONS_SOURCE_LABELS[row.source_type] || row.source_type;
       tr.innerHTML = `
         <td class="muted" style="white-space:nowrap">${escHtml(dt)}</td>
@@ -2383,7 +2383,7 @@ function renderEnquiryHtml(r, client = null) {
     return `<span class="field-value">${safe}</span>`;
   };
 
-  const dt         = r.created_at ? fmtUtc(r.created_at) : '—';
+  const dt         = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
   const startLabel = START_OPTION_LABELS[r.start_option] || r.start_option || '—';
   const emailCls   = emailSyncPillClass(r.email_status);
 
@@ -2554,7 +2554,7 @@ function renderIntakeHtml(r, client = null) {
     `<option value="${escAttr(s)}"${s === r.status ? ' selected' : ''}>${escHtml(s)}</option>`
   ).join('');
 
-  const dt = r.created_at ? fmtUtc(r.created_at) : '—';
+  const dt = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
   const statusCls = r.status === 'complete' ? 'ok' : r.status === 'in_progress' ? 'pending-pill' : r.status === 'cancelled' ? 'fail' : 'unhandled';
 
   return `
@@ -2725,7 +2725,7 @@ function renderContactHtml(r, client = null) {
     return `<span class="field-value">${safe}</span>`;
   };
 
-  const dt = r.created_at ? fmtUtc(r.created_at) : '—';
+  const dt = r.created_at ? r.created_at.slice(0, 16).replace('T', ' ') : '—';
 
   return `
     <h2>${escHtml(r.name || 'Unknown')}</h2>
@@ -2895,7 +2895,7 @@ function renderCampaignsList(rows) {
   }
   rows.forEach(row => {
     const tr = document.createElement('tr');
-    const dt     = row.created_at ? fmtUtc(row.created_at, 'date') : '—';
+    const dt     = row.created_at ? row.created_at.slice(0, 10) : '—';
     const status = (row.status || 'draft').toLowerCase();
     const total  = row.count_total  ?? 0;
     const sent   = row.count_sent   ?? 0;
@@ -3453,7 +3453,7 @@ function renderOutboxSubRow(tbody, row, rows, idx, campaignId, hidden) {
   const tdSched = document.createElement('td');
   tdSched.className = 'muted';
   tdSched.style.fontSize = '.8rem';
-  tdSched.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
 
   const tdApproval = document.createElement('td');
   tdApproval.dataset.outboxCol = 'approval';
@@ -3495,7 +3495,7 @@ function renderOutboxFlatRow(tbody, row, rows, idx, campaignId, rowNum) {
   const tdSched = document.createElement('td');
   tdSched.className = 'muted';
   tdSched.style.fontSize = '.8rem';
-  tdSched.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  tdSched.textContent = row.scheduled_not_before ? row.scheduled_not_before.slice(0, 16) : '—';
 
   const tdActions = document.createElement('td');
   tdActions.dataset.outboxCol = 'actions';
@@ -3565,7 +3565,7 @@ function renderOutboxStatusCell(td, row) {
     if (row.sent_at) {
       const d = document.createElement('div');
       d.style.cssText = 'color:var(--muted);font-size:.75rem';
-      d.textContent = fmtUtc(row.sent_at);
+      d.textContent = row.sent_at.slice(0, 16);
       td.appendChild(d);
     }
     return;
@@ -3595,7 +3595,7 @@ function renderOutboxStatusCell(td, row) {
   if (row.scheduled_not_before && new Date(row.scheduled_not_before) > new Date()) {
     const s = document.createElement('span');
     s.style.color = 'var(--muted)';
-    s.textContent = 'Embargoed until ' + fmtUtc(row.scheduled_not_before, 'date');
+    s.textContent = 'Embargoed until ' + row.scheduled_not_before.slice(0, 10);
     td.appendChild(s); return;
   }
   const s = document.createElement('span');
@@ -3733,7 +3733,7 @@ function renderEmailPreviewContent(row, rows, idx) {
   const titleEl = document.getElementById('email-modal-title');
   const seqPart = outboxSeqLabel(row.seq_num);
   if (titleEl) titleEl.textContent = row.sent
-    ? `${seqPart} — ✓ Sent${row.sent_at ? ' ' + fmtUtc(row.sent_at, 'date') : ''}`
+    ? `${seqPart} — ✓ Sent${row.sent_at ? ' ' + row.sent_at.slice(0, 10) : ''}`
     : row.suppressed ? `${seqPart} — Suppressed`
     : row.approved ? `${seqPart} — ✓ Approved` : `${seqPart} — Awaiting Approval`;
 
@@ -4826,7 +4826,7 @@ function renderClientDetail(c, emailLog, changeRequests) {
         <div style="border:1px solid var(--border-sub);border-radius:8px;padding:.85rem 1rem">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.5rem">
             <span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber)">Round ${changeRequests.length - i}</span>
-            <span style="font-size:.75rem;color:var(--muted)">${escHtml(cr.created_at ? fmtUtc(cr.created_at) : '')}</span>
+            <span style="font-size:.75rem;color:var(--muted)">${escHtml(cr.created_at ? cr.created_at.slice(0, 16).replace('T', ' ') : '')}</span>
           </div>
           <pre style="font-family:var(--sans);font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.85);white-space:pre-wrap;word-break:break-word;margin:0">${escHtml(cr.body)}</pre>
         </div>`).join('')}
