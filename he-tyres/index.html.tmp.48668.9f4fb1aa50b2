@@ -230,16 +230,17 @@
     .services { padding: 5rem 1.25rem; background: #fff; }
     .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1.5rem; }
     .service-card {
-      border: 2px solid var(--border); border-radius: 10px; padding: 0;
+      border: 2px solid var(--border); border-radius: 10px; padding: 2rem 1.5rem;
       transition: border-color .2s, box-shadow .2s, transform .2s; text-align: left; background: #fff;
-      cursor: pointer; font: inherit; width: 100%; display: flex; flex-direction: column; overflow: hidden;
+      cursor: pointer; font: inherit; width: 100%; display: block;
     }
     .service-card:hover { border-color: var(--orange); box-shadow: 0 8px 28px rgba(236,115,37,.13); transform: translateY(-3px); }
     .service-card.featured { border-color: var(--orange); background: var(--orange-soft); }
-    .service-img {
-      width: 100%; height: 160px; object-fit: cover; display: block; flex-shrink: 0;
+    .service-icon {
+      width: 50px; height: 50px; background: var(--orange-soft); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;
     }
-    .svc-body { padding: 1.25rem 1.5rem 2rem; display: flex; flex-direction: column; flex: 1; }
+    .service-card.featured .service-icon { background: #fff; }
     .service-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.08rem; color: var(--navy); margin-bottom: .4rem; }
     .service-card p { font-size: .95rem; color: var(--muted); }
     .service-more { display: inline-block; margin-top: .8rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .82rem; color: var(--orange); }
@@ -626,37 +627,29 @@
         </div>
         <div class="services-grid">
           <button class="service-card featured" data-modal="m-mobile">
-            <img src="images/tyre-icon.webp" alt="" class="service-img" width="800" height="800" loading="lazy" aria-hidden="true">
-            <div class="svc-body">
-              <span class="featured-tag">Most popular</span>
-              <h3>Mobile tyre fitting</h3>
-              <p>We come to your home, work or roadside and fit on the spot — no driving on a flat, no waiting around.</p>
-              <span class="service-more">See more →</span>
-            </div>
+            <span class="featured-tag">Most popular</span>
+            <div class="service-icon" aria-hidden="true">🚐</div>
+            <h3>Mobile tyre fitting</h3>
+            <p>We come to your home, work or roadside and fit on the spot — no driving on a flat, no waiting around.</p>
+            <span class="service-more">See more →</span>
           </button>
           <button class="service-card" data-modal="m-depot">
-            <img src="images/lounge-icon.webp" alt="" class="service-img" width="800" height="800" loading="lazy" aria-hidden="true">
-            <div class="svc-body">
-              <h3>Depot fitting + lounge</h3>
-              <p>Drop in to our Westmead depot, relax in the lounge with a coffee and watch the work on the screen. Book your slot online in seconds.</p>
-              <span class="service-more">See more →</span>
-            </div>
+            <div class="service-icon" aria-hidden="true">☕</div>
+            <h3>Depot fitting + lounge</h3>
+            <p>Drop in to our Westmead depot, relax in the lounge with a coffee and watch the work on the screen. Book your slot online in seconds.</p>
+            <span class="service-more">See more →</span>
           </button>
           <button class="service-card" data-modal="m-tpms">
-            <img src="images/wrench-icon.webp" alt="" class="service-img" width="800" height="800" loading="lazy" aria-hidden="true">
-            <div class="svc-body">
-              <h3>TPMS servicing</h3>
-              <p>Sensors diagnosed, replaced and your dashboard warning light reset properly after every change.</p>
-              <span class="service-more">See more →</span>
-            </div>
+            <div class="service-icon" aria-hidden="true">📡</div>
+            <h3>TPMS servicing</h3>
+            <p>Sensors diagnosed, replaced and your dashboard warning light reset properly after every change.</p>
+            <span class="service-more">See more →</span>
           </button>
           <button class="service-card" data-modal="m-locking">
-            <img src="images/lock-icon.webp" alt="" class="service-img" width="800" height="800" loading="lazy" aria-hidden="true">
-            <div class="svc-body">
-              <h3>Locking nut removal</h3>
-              <p>Lost your locking wheel nut key? We remove them safely with specialist tools — no damage to your alloys.</p>
-              <span class="service-more">See more →</span>
-            </div>
+            <div class="service-icon" aria-hidden="true">🔧</div>
+            <h3>Locking nut removal</h3>
+            <p>Lost your locking wheel nut key? We remove them safely with specialist tools — no damage to your alloys.</p>
+            <span class="service-more">See more →</span>
           </button>
         </div>
       </div>
@@ -859,6 +852,8 @@
         </div>
       </div>
     </section>
+
+    <div class="tread-divider" aria-hidden="true"></div>
 
     <!-- ══ COVERAGE ══ -->
     <section class="coverage" id="coverage" aria-labelledby="coverage-heading">
