@@ -138,7 +138,7 @@
 
     /* ══════════════ HEADER ══════════════ */
     header {
-      position: sticky; top: 0; z-index: 100;
+      position: sticky; top: 0; z-index: 1000;
       background: var(--navy); border-bottom: 3px solid var(--orange);
     }
     .header-inner {
@@ -345,7 +345,11 @@
     .coverage .section-title { color: #fff; }
     .coverage .section-sub { color: #aab2c2; }
     .coverage-stack { max-width: 920px; margin: 3rem auto 0; }
-    .map-box { width: 100%; max-width: 680px; aspect-ratio: 1/1; margin: 0 auto; border-radius: 12px; background: #1e2840; position: relative; }
+    .map-box {
+      width: 100%; max-width: 680px; aspect-ratio: 1/1; margin: 0 auto;
+      border-radius: 12px; background: #1e2840; position: relative;
+      overflow: hidden; isolation: isolate; z-index: 0;
+    }
     #areaMap { width: 100%; height: 100%; background: #1e2840; border-radius: 12px; }
     .map-key { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .55rem 1.5rem; margin-top: 1.75rem; }
     .map-key li { font-size: .92rem; color: #c7cdd8; display: flex; align-items: center; gap: .65rem; }
@@ -361,7 +365,11 @@
     /* ══════════════ FIND US ══════════════ */
     .find-us { padding: 5rem 1.25rem; background: var(--light); }
     .find-us-inner { max-width: 920px; margin: 0 auto; }
-    .find-map-box { width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; border: 2px solid var(--border); margin-bottom: 2rem; position: relative; }
+    .find-map-box {
+      width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--border); margin-bottom: 2rem; position: relative;
+      isolation: isolate; z-index: 0;
+    }
     #depotMap { width: 100%; height: 100%; }
     .find-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
     .find-step { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 1.25rem; }
