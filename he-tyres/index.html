@@ -35,7 +35,7 @@
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -147,10 +147,11 @@
     }
     /* [HEtyres] bracket lockup */
     .logo {
-      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.55rem;
-      text-decoration: none; letter-spacing: -.02em; line-height: 1; white-space: nowrap;
+      font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.55rem;
+      text-decoration: none; letter-spacing: .01em; line-height: 1; white-space: nowrap;
     }
-    .logo .bk { color: var(--silver); font-weight: 700; }
+    .logo .bk { color: var(--silver); }
+    .logo .bk-r { color: var(--orange); }
     .logo .he { color: var(--orange); }
     .logo .ty { color: #fff; }
     .nav-links { display: flex; gap: 1.4rem; margin-left: auto; }
@@ -531,8 +532,9 @@
     /* ══════════════ FOOTER ══════════════ */
     footer { background: var(--navy-deep); color: #8a93a6; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
     .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    .footer-logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.2rem; }
-    .footer-logo .bk { color: var(--silver); font-weight: 700; }
+    .footer-logo { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .01em; }
+    .footer-logo .bk { color: var(--silver); }
+    .footer-logo .bk-r { color: var(--orange); }
     .footer-logo .he { color: var(--orange); }
     .footer-logo .ty { color: #fff; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
@@ -576,7 +578,7 @@
 
   <header>
     <div class="header-inner">
-      <a href="/" class="logo" aria-label="HEtyres home"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk">]</span></a>
+      <a href="/" class="logo" aria-label="HEtyres home"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></a>
       <nav class="nav-links" aria-label="Primary">
         <a href="#services">Services</a>
         <a href="#brands">Brands</a>
@@ -984,7 +986,7 @@
 
   <footer>
     <div class="footer-inner">
-      <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk">]</span></span>
+      <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></span>
       <nav class="footer-links" aria-label="Footer">
         <a href="#services">Services</a>
         <a href="#brands">Brands</a>
