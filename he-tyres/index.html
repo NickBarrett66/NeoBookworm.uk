@@ -182,7 +182,8 @@
     }
     .hero-inner {
       max-width: var(--max); margin: 0 auto; position: relative;
-      display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center;
+      display: grid; grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      gap: 2.5rem; align-items: stretch;
     }
     .hero-eyebrow {
       font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .75rem;
@@ -195,8 +196,14 @@
     .hero h1 em { font-style: normal; color: var(--orange); }
     .hero-sub { font-size: 1.12rem; color: #c7cdd8; margin-bottom: 2rem; }
     .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .hero-image { border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.4); }
-    .hero-image img { width: 100%; height: auto; display: block; }
+    .hero-image {
+      border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.4);
+      min-height: 320px; align-self: stretch;
+    }
+    .hero-image img {
+      width: 100%; height: 100%; min-height: 320px;
+      object-fit: cover; object-position: center; display: block;
+    }
     /*
       HERO IMAGE — replace .ph below with:
       <img src="/he-tyres/images/hero.webp"
@@ -206,9 +213,17 @@
     -->
 
     /* ══════════════ TRUST STRIP ══════════════ */
-    .trust-strip { background: var(--orange); color: #fff; padding: .9rem 1.25rem; }
-    .trust-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
-    .trust-item { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .9rem; display: flex; align-items: center; gap: .5rem; }
+    .trust-strip { background: var(--orange); color: #fff; padding: .5rem 1rem; }
+    .trust-inner {
+      max-width: var(--max); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: clamp(.35rem, 1.2vw, 1rem); flex-wrap: nowrap;
+    }
+    .trust-item {
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: clamp(.68rem, 1.05vw, .82rem); line-height: 1.2;
+      display: flex; align-items: center; gap: .35rem; white-space: nowrap; flex-shrink: 0;
+    }
 
     /* ══════════════ SERVICES ══════════════ */
     .services { padding: 5rem 1.25rem; background: #fff; }
@@ -490,7 +505,13 @@
       .team-grid { grid-template-columns: 1fr; }
       .hero-ctas { flex-direction: column; }
       .hero-ctas .btn-orange, .hero-ctas .btn-ghost { text-align: center; }
-      .trust-inner { gap: .9rem 1.5rem; }
+      .trust-inner {
+        justify-content: flex-start; gap: 1rem;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; padding-bottom: .1rem;
+      }
+      .trust-inner::-webkit-scrollbar { display: none; }
+      .hero-image, .hero-image img { min-height: 240px; }
     }
   </style>
 </head>
