@@ -426,7 +426,27 @@
 
     /* ══════════════ BOOK ══════════════ */
     .book { padding: 5rem 1.25rem; background: #fff; }
-    .book-embed { border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); margin-top: 2.5rem; }
+    .book-trigger-wrap { text-align: center; padding-top: 1rem; }
+    .book-embed {
+      display: none; border-radius: 10px; overflow: hidden;
+      border: 1.5px solid var(--border); margin-top: 1.5rem;
+    }
+    .book-embed.open { display: block; animation: bookFadeIn .35s ease; }
+    @keyframes bookFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .book-close-btn {
+      display: flex; align-items: center; justify-content: flex-end; gap: .4rem;
+      width: 100%; background: var(--light); border: none; border-bottom: 1px solid var(--border);
+      padding: .65rem 1.1rem; font-family: 'Open Sans', sans-serif; font-size: .85rem;
+      font-weight: 600; color: var(--muted); cursor: pointer;
+    }
+    .book-close-btn:hover { color: var(--navy); background: var(--border); }
+    .book-success {
+      display: none; text-align: center; padding: 2.5rem 2rem; background: var(--orange-soft);
+      border: 2px solid var(--orange); border-radius: 10px; margin-top: 2rem;
+    }
+    .book-success.show { display: block; }
+    .book-success .success-icon { font-size: 2.5rem; line-height: 1; margin-bottom: .75rem; }
+    .book-success p { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 1.25rem; }
     .book-note { text-align: center; margin-top: 1.25rem; font-size: .9rem; color: var(--muted); }
     .book-note a { color: var(--orange); text-decoration: none; font-weight: 600; }
     .book-note a:hover { text-decoration: underline; }
@@ -665,17 +685,27 @@
           <p class="section-sub">Pick a half-hour slot that works for you — we'll have the bay ready. Bring the car, grab a coffee, and watch the work.</p>
           <div class="accent-bar"></div>
         </div>
-        <div class="book-embed">
+        <div class="book-trigger-wrap">
+          <button class="btn-orange" id="bookOpenBtn">Book a depot slot →</button>
+          <p class="book-note">Rather call? Ring <a href="tel:01793876969">01793 876 969</a> and Emma will sort a time that suits.</p>
+        </div>
+        <div class="book-embed" id="bookEmbed" aria-hidden="true">
+          <button class="book-close-btn" id="bookCloseBtn" aria-label="Close booking calendar">✕ Close booking calendar</button>
           <iframe
+            id="bookIframe"
             title="Booking page powered by Koalendar"
-            src="https://koalendar.com/e/book-depot-slot?embed=true"
+            src="about:blank"
+            data-src="https://koalendar.com/e/book-depot-slot?embed=true"
             width="100%"
             height="800px"
-            frameborder="0"
-            loading="lazy">
+            frameborder="0">
           </iframe>
         </div>
-        <p class="book-note">Rather call? Ring <a href="tel:01793876969">01793 876 969</a> and Emma will sort a time that suits.</p>
+        <div class="book-success" id="bookSuccess" aria-live="polite">
+          <div class="success-icon" aria-hidden="true">✅</div>
+          <p>Booked! We'll see you at the depot. Check your email for the confirmation and calendar invite.</p>
+          <button class="btn-orange" id="bookAnotherBtn">Book another slot</button>
+        </div>
       </div>
     </section>
 
@@ -1087,6 +1117,50 @@
       dlg.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => dlg.close()));
       dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
     });
+
+    // ── Book a depot slot — toggle + lazy-load + postMessage collapse ──
+    (function () {
+      const openBtn    = document.getElementById('bookOpenBtn');
+      const closeBtn   = document.getElementById('bookCloseBtn');
+      const anotherBtn = document.getElementById('bookAnotherBtn');
+      const embed      = document.getElementById('bookEmbed');
+      const iframe     = document.getElementById('bookIframe');
+      const success    = document.getElementById('bookSuccess');
+      if (!openBtn || !embed || !iframe) return;
+
+      function openCalendar() {
+        // Lazy-load: swap src on first open only
+        if (iframe.src === 'about:blank' || iframe.src === window.location.href) {
+          iframe.src = iframe.dataset.src;
+        }
+        embed.classList.add('open');
+        embed.setAttribute('aria-hidden', 'false');
+        success.classList.remove('show');
+        setTimeout(() => embed.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+
+      function closeCalendar() {
+        embed.classList.remove('open');
+        embed.setAttribute('aria-hidden', 'true');
+      }
+
+      function showSuccess() {
+        closeCalendar();
+        success.classList.add('show');
+        setTimeout(() => success.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+      }
+
+      openBtn.addEventListener('click', openCalendar);
+      closeBtn.addEventListener('click', closeCalendar);
+      if (anotherBtn) anotherBtn.addEventListener('click', openCalendar);
+
+      // Koalendar fires a postMessage when a booking is confirmed
+      window.addEventListener('message', function (e) {
+        if (!String(e.origin).includes('koalendar.com')) return;
+        var data = typeof e.data === 'string' ? e.data : JSON.stringify(e.data || '');
+        if (/booking|confirmed|scheduled|booked|success/i.test(data)) showSuccess();
+      });
+    })();
 
     // ── Contact form (static success for preview) ──
     document.getElementById('enquiryForm').addEventListener('submit', function (e) {
