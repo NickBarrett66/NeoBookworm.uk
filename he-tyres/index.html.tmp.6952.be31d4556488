@@ -576,7 +576,7 @@
       .header-phone { display: none; }
       .team-grid { grid-template-columns: 1fr; }
       .hero-ctas { flex-direction: column; }
-      .hero-ctas .hero-pill { width: 100%; min-width: unset; }
+      .hero-ctas .btn-orange, .hero-ctas .btn-ghost { text-align: center; }
       .trust-inner {
         justify-content: flex-start; gap: 1rem;
         overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -623,9 +623,9 @@
             and watch the work on the screen. No back-room mystery.
           </p>
           <div class="hero-ctas">
-            <a href="tel:01793876969" class="hero-pill hero-pill-hot">📞 Call 01793 876 969</a>
-            <a href="#book" class="hero-pill hero-pill-mid">📅 Book a depot slot</a>
-            <a href="#contact" class="hero-pill hero-pill-cool">💬 Get a quote</a>
+            <a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a>
+            <a href="#book" class="btn-ghost">Book a depot slot</a>
+            <a href="#contact" class="btn-ghost">Get a quote</a>
           </div>
         </div>
         <div class="hero-image">
