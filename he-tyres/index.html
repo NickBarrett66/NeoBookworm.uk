@@ -239,7 +239,7 @@
     .service-img {
       width: 100%; height: 160px; object-fit: cover; display: block; flex-shrink: 0;
     }
-    .svc-body { padding: 1.25rem 1.5rem 2rem; display: flex; flex-direction: column; flex: 1; }
+    .service-card .svc-body { padding: 1.25rem 1.5rem 2rem; display: flex; flex-direction: column; flex: 1; }
     .service-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.08rem; color: var(--navy); margin-bottom: .4rem; }
     .service-card p { font-size: .95rem; color: var(--muted); }
     .service-more { display: inline-block; margin-top: .8rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .82rem; color: var(--orange); }
@@ -251,19 +251,30 @@
 
     /* ── Service modal (native dialog) ── */
     dialog.svc {
-      border: none; border-radius: 12px; padding: 0; max-width: 520px; width: 92%;
+      border: none; border-radius: 12px; padding: 0;
+      width: min(520px, 92vw); max-height: min(90vh, 720px); overflow: auto;
       box-shadow: 0 30px 80px rgba(0,0,0,.4);
+      /* Reset strips UA margin:auto — anchor centre of viewport explicitly */
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+    }
+    dialog.svc:not([open]) { display: none; }
+    dialog.svc[open] { animation: svcPop .22s ease; }
+    @keyframes svcPop {
+      from { opacity: 0; transform: translate(-50%, calc(-50% + 14px)); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
     }
     dialog.svc::backdrop { background: rgba(18,24,38,.6); }
-    .svc-head { background: var(--navy); color: #fff; padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: .9rem; }
-    .svc-head .si { font-size: 1.7rem; }
-    .svc-head h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
-    .svc-body { padding: 1.75rem; }
-    .svc-body p { color: var(--muted); margin-bottom: 1rem; }
-    .svc-body ul { list-style: none; margin: 0 0 1.25rem; }
-    .svc-body li { padding-left: 1.5rem; position: relative; margin-bottom: .5rem; font-size: .95rem; }
-    .svc-body li::before { content: "✓"; color: var(--orange); font-weight: 700; position: absolute; left: 0; }
-    .svc-foot { display: flex; gap: .75rem; flex-wrap: wrap; }
+    dialog.svc .svc-head { background: var(--navy); color: #fff; padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: .9rem; position: relative; }
+    dialog.svc .svc-head .si { font-size: 1.7rem; }
+    dialog.svc .svc-head h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
+    dialog.svc .svc-body { padding: 1.75rem; }
+    dialog.svc .svc-body p { color: var(--muted); margin-bottom: 1rem; }
+    dialog.svc .svc-body ul { list-style: none; margin: 0 0 1.25rem; }
+    dialog.svc .svc-body li { padding-left: 1.5rem; position: relative; margin-bottom: .5rem; font-size: .95rem; }
+    dialog.svc .svc-body li::before { content: "✓"; color: var(--orange); font-weight: 700; position: absolute; left: 0; }
+    dialog.svc .svc-foot { display: flex; gap: .75rem; flex-wrap: wrap; }
     .svc-close {
       position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,.15); color: #fff;
       border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; line-height: 1;
@@ -662,62 +673,6 @@
       </div>
     </section>
 
-    <!-- Service modals -->
-    <dialog class="svc" id="m-mobile">
-      <button class="svc-close" data-close aria-label="Close">×</button>
-      <div class="svc-head"><span class="si" aria-hidden="true">🚐</span><h3>Mobile tyre fitting</h3></div>
-      <div class="svc-body">
-        <p>Don't risk driving on a damaged tyre. We bring the kit to you and fit wherever you are across the Swindon area.</p>
-        <ul>
-          <li>At home, at work, or stuck at the roadside</li>
-          <li>Cars, vans and caravans</li>
-          <li>Punctures, replacements and runflats</li>
-          <li>TPMS checked and reset on the spot</li>
-        </ul>
-        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      </div>
-    </dialog>
-    <dialog class="svc" id="m-depot">
-      <button class="svc-close" data-close aria-label="Close">×</button>
-      <div class="svc-head"><span class="si" aria-hidden="true">☕</span><h3>Depot fitting + lounge</h3></div>
-      <div class="svc-body">
-        <p>Pop in to Unit 5 Star West. While we work, you relax in a proper lounge — coffee in hand, watching your car on the workshop screen. No guesswork, no surprises.</p>
-        <ul>
-          <li>Comfortable lounge with free coffee</li>
-          <li>Watch the work on the screen as it happens</li>
-          <li>We talk you through what we find and why</li>
-          <li>Quick turnaround, fair prices</li>
-        </ul>
-        <div class="svc-foot"><a href="#book" class="btn-orange" data-close>Book a depot slot</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
-      </div>
-    </dialog>
-    <dialog class="svc" id="m-tpms">
-      <button class="svc-close" data-close aria-label="Close">×</button>
-      <div class="svc-head"><span class="si" aria-hidden="true">📡</span><h3>TPMS servicing</h3></div>
-      <div class="svc-body">
-        <p>Tyre Pressure Monitoring System playing up? We diagnose, repair and replace sensors, and reset the dashboard warning light so everything reads correctly.</p>
-        <ul>
-          <li>Sensor diagnosis and replacement</li>
-          <li>Warning light reset after every fitting</li>
-          <li>Genuine and quality-matched sensors</li>
-        </ul>
-        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      </div>
-    </dialog>
-    <dialog class="svc" id="m-locking">
-      <button class="svc-close" data-close aria-label="Close">×</button>
-      <div class="svc-head"><span class="si" aria-hidden="true">🔧</span><h3>Locking wheel nut removal</h3></div>
-      <div class="svc-body">
-        <p>Lost the key? Bought a car without one? We safely remove locking wheel nuts using specialist tools — without damaging your alloys — so we can get your tyres changed.</p>
-        <ul>
-          <li>Specialist removal tools</li>
-          <li>No damage to your wheels</li>
-          <li>Mobile or at the depot</li>
-        </ul>
-        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      </div>
-    </dialog>
-
     <!-- ══ BRANDS ══ -->
     <section class="brands" id="brands" aria-labelledby="brands-heading">
       <div class="brands-inner">
@@ -1042,6 +997,62 @@
       <small>© 2026 H E Tyres Ltd · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW · 01793 876 969</small>
     </div>
   </footer>
+
+  <!-- Service modals — end of body so they centre in the viewport, not page flow -->
+  <dialog class="svc" id="m-mobile">
+    <button class="svc-close" data-close aria-label="Close">×</button>
+    <div class="svc-head"><span class="si" aria-hidden="true">🚐</span><h3>Mobile tyre fitting</h3></div>
+    <div class="svc-body">
+      <p>Don't risk driving on a damaged tyre. We bring the kit to you and fit wherever you are across the Swindon area.</p>
+      <ul>
+        <li>At home, at work, or stuck at the roadside</li>
+        <li>Cars, vans and caravans</li>
+        <li>Punctures, replacements and runflats</li>
+        <li>TPMS checked and reset on the spot</li>
+      </ul>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+    </div>
+  </dialog>
+  <dialog class="svc" id="m-depot">
+    <button class="svc-close" data-close aria-label="Close">×</button>
+    <div class="svc-head"><span class="si" aria-hidden="true">☕</span><h3>Depot fitting + lounge</h3></div>
+    <div class="svc-body">
+      <p>Pop in to Unit 5 Star West. While we work, you relax in a proper lounge — coffee in hand, watching your car on the workshop screen. No guesswork, no surprises.</p>
+      <ul>
+        <li>Comfortable lounge with free coffee</li>
+        <li>Watch the work on the screen as it happens</li>
+        <li>We talk you through what we find and why</li>
+        <li>Quick turnaround, fair prices</li>
+      </ul>
+      <div class="svc-foot"><a href="#book" class="btn-orange" data-close>Book a depot slot</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
+    </div>
+  </dialog>
+  <dialog class="svc" id="m-tpms">
+    <button class="svc-close" data-close aria-label="Close">×</button>
+    <div class="svc-head"><span class="si" aria-hidden="true">📡</span><h3>TPMS servicing</h3></div>
+    <div class="svc-body">
+      <p>Tyre Pressure Monitoring System playing up? We diagnose, repair and replace sensors, and reset the dashboard warning light so everything reads correctly.</p>
+      <ul>
+        <li>Sensor diagnosis and replacement</li>
+        <li>Warning light reset after every fitting</li>
+        <li>Genuine and quality-matched sensors</li>
+      </ul>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+    </div>
+  </dialog>
+  <dialog class="svc" id="m-locking">
+    <button class="svc-close" data-close aria-label="Close">×</button>
+    <div class="svc-head"><span class="si" aria-hidden="true">🔧</span><h3>Locking wheel nut removal</h3></div>
+    <div class="svc-body">
+      <p>Lost the key? Bought a car without one? We safely remove locking wheel nuts using specialist tools — without damaging your alloys — so we can get your tyres changed.</p>
+      <ul>
+        <li>Specialist removal tools</li>
+        <li>No damage to your wheels</li>
+        <li>Mobile or at the depot</li>
+      </ul>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+    </div>
+  </dialog>
 
   <!-- Leaflet JS — loaded before the inline init below -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
