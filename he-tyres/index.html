@@ -191,17 +191,29 @@
     .nav-toggle span { display: block; width: 26px; height: 3px; background: #fff; margin: 5px 0; border-radius: 2px; transition: .2s; }
 
     /* ══════════════ HERO ══════════════ */
-    .hero { background: var(--navy); color: #fff; padding: 4.5rem 1.25rem; position: relative; overflow: hidden; }
-    .hero::before {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(circle at 80% 20%, rgba(236,115,37,.16), transparent 55%);
-      pointer-events: none;
+    .hero {
+      background: var(--navy); color: #fff; padding: 5.5rem 1.25rem;
+      position: relative; overflow: hidden;
+      min-height: 500px; display: flex; align-items: center;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 50% 45%; display: block;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        rgba(26,35,54,.88) 0%,
+        rgba(26,35,54,.72) 40%,
+        rgba(26,35,54,.30) 72%,
+        rgba(26,35,54,.18) 100%
+      );
     }
     .hero-inner {
-      max-width: var(--max); margin: 0 auto; position: relative;
-      display: grid; grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-      gap: 2.5rem; align-items: stretch;
+      max-width: var(--max); margin: 0 auto; position: relative; z-index: 1; width: 100%;
     }
+    .hero-content { max-width: 620px; }
     .hero-eyebrow {
       font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .75rem;
       letter-spacing: .15em; text-transform: uppercase; color: var(--orange); margin-bottom: .9rem;
@@ -213,15 +225,6 @@
     .hero h1 em { font-style: normal; color: var(--orange); }
     .hero-sub { font-size: 1.12rem; color: #c7cdd8; margin-bottom: 2rem; }
     .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .hero-image {
-      border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.4);
-      min-height: 320px; align-self: stretch;
-    }
-    .hero-image img {
-      width: 100%; height: 100%; min-height: 320px;
-      /* Wide shot: logo ~75% across source; high % keeps that point near crop centre */
-      object-fit: cover; object-position: 100% 50%; display: block;
-    }
     /*
       HERO IMAGE — replace .ph below with:
       <img src="/he-tyres/images/hero.webp"
@@ -563,7 +566,7 @@
       .nav-links { display: none; }
       .nav-toggle { display: block; margin-left: auto; }
       .hero-inner, .brands-inner, .lounge-inner, .coverage-inner, .contact-inner { grid-template-columns: 1fr; }
-      .hero-image, .lounge-image { order: -1; }
+      .lounge-image { order: -1; }
       .brands-image { display: none; }
       .map-box { max-width: 100%; aspect-ratio: 1/1; }
       .leaflet-tooltip.town { display: none !important; }
@@ -583,7 +586,7 @@
         scrollbar-width: none; padding-bottom: .1rem;
       }
       .trust-inner::-webkit-scrollbar { display: none; }
-      .hero-image, .hero-image img { min-height: 240px; }
+      .hero { min-height: 420px; padding: 4rem 1.25rem; }
     }
   </style>
 </head>
@@ -613,6 +616,8 @@
 
     <!-- ══ HERO ══ -->
     <section class="hero" aria-labelledby="hero-heading">
+      <img class="hero-bg" src="/he-tyres/images/hero.webp" alt="" aria-hidden="true" width="1132" height="412" loading="eager" decoding="async">
+      <div class="hero-overlay"></div>
       <div class="hero-inner">
         <div class="hero-content">
           <p class="hero-eyebrow">Mobile &amp; depot tyre fitting · Swindon</p>
@@ -627,9 +632,6 @@
             <a href="#book" class="hero-pill hero-pill-mid">📅 Book a depot slot</a>
             <a href="#contact" class="hero-pill hero-pill-cool">💬 Get a quote</a>
           </div>
-        </div>
-        <div class="hero-image">
-          <img src="/he-tyres/images/hero.webp" alt="HEtyres — mobile and depot tyre fitting in Swindon" width="1132" height="412" loading="eager" decoding="async">
         </div>
       </div>
     </section>
