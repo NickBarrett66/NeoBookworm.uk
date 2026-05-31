@@ -607,7 +607,7 @@
         <a href="#contact">Contact</a>
       </nav>
       <a href="tel:01793876969" class="header-phone">01793 876 969</a>
-      <a href="#book" class="btn-header">Book depot slot</a>
+      <a href="#book" class="btn-header" data-open-book>Book depot slot</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -629,7 +629,7 @@
           </p>
           <div class="hero-ctas">
             <a href="tel:01793876969" class="hero-pill hero-pill-hot">📞 Call 01793 876 969</a>
-            <a href="#book" class="hero-pill hero-pill-mid">📅 Book a depot slot</a>
+            <a href="#book" class="hero-pill hero-pill-mid" data-open-book>📅 Book a depot slot</a>
             <a href="#contact" class="hero-pill hero-pill-cool">💬 Get a quote</a>
           </div>
         </div>
@@ -727,7 +727,7 @@
           <div class="accent-bar"></div>
           <p>Most tyre places hide the work away in a back room. We don't. Settle into the lounge, help yourself to a coffee, and watch your car on the workshop screen while we fit your tyres.</p>
           <p>You see what we see. We explain what we find and why — so you drive away knowing the job was done properly. It's the way we'd want to be treated ourselves.</p>
-          <a href="#book" class="btn-orange" style="margin-top:1.75rem;display:inline-block;">Book a depot slot</a>
+          <a href="#book" class="btn-orange" style="margin-top:1.75rem;display:inline-block;" data-open-book>Book a depot slot</a>
         </div>
       </div>
     </section>
@@ -1264,6 +1264,14 @@
       openBtn.addEventListener('click', openCalendar);
       closeBtn.addEventListener('click', closeCalendar);
       if (anotherBtn) anotherBtn.addEventListener('click', openCalendar);
+
+      // Any link with data-open-book skips the two-click journey and opens directly
+      document.querySelectorAll('[data-open-book]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          openCalendar();
+        });
+      });
 
       // Koalendar fires a postMessage when a booking is confirmed
       window.addEventListener('message', function (e) {
