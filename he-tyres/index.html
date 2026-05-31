@@ -424,6 +424,13 @@
     .faq-item[open] .chev { transform: rotate(180deg); }
     .faq-a { padding: 0 1.5rem 1.25rem; color: var(--muted); font-size: .95rem; }
 
+    /* ══════════════ BOOK ══════════════ */
+    .book { padding: 5rem 1.25rem; background: #fff; }
+    .book-embed { border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); margin-top: 2.5rem; }
+    .book-note { text-align: center; margin-top: 1.25rem; font-size: .9rem; color: var(--muted); }
+    .book-note a { color: var(--orange); text-decoration: none; font-weight: 600; }
+    .book-note a:hover { text-decoration: underline; }
+
     /* ══════════════ FOOTER ══════════════ */
     footer { background: var(--navy-deep); color: #8a93a6; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
     .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
@@ -471,11 +478,12 @@
         <a href="#services">Services</a>
         <a href="#brands">Brands</a>
         <a href="#lounge">The lounge</a>
+        <a href="#book">Book</a>
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
       </nav>
       <a href="tel:01793876969" class="header-phone">01793 876 969</a>
-      <a href="#contact" class="btn-header">Get a quote</a>
+      <a href="#book" class="btn-header">Book depot slot</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -495,6 +503,7 @@
           </p>
           <div class="hero-ctas">
             <a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a>
+            <a href="#book" class="btn-ghost">Book a depot slot</a>
             <a href="#contact" class="btn-ghost">Get a quote</a>
           </div>
         </div>
@@ -511,6 +520,7 @@
         <span class="trust-item"><span aria-hidden="true">🛞</span> Continental &amp; Bridgestone stockist</span>
         <span class="trust-item"><span aria-hidden="true">🚐</span> Mobile + depot</span>
         <span class="trust-item"><span aria-hidden="true">📡</span> TPMS specialists</span>
+        <span class="trust-item"><span aria-hidden="true">📅</span> Book a depot slot online</span>
       </div>
     </div>
 
@@ -533,7 +543,7 @@
           <button class="service-card" data-modal="m-depot">
             <div class="service-icon" aria-hidden="true">☕</div>
             <h3>Depot fitting + lounge</h3>
-            <p>Drop in to our Westmead depot, relax in the lounge with a coffee and watch the work on the screen.</p>
+            <p>Drop in to our Westmead depot, relax in the lounge with a coffee and watch the work on the screen. Book your slot online in seconds.</p>
             <span class="service-more">See more →</span>
           </button>
           <button class="service-card" data-modal="m-tpms">
@@ -578,7 +588,7 @@
           <li>We talk you through what we find and why</li>
           <li>Quick turnaround, fair prices</li>
         </ul>
-        <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+        <div class="svc-foot"><a href="#book" class="btn-orange" data-close>Book a depot slot</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
       </div>
     </dialog>
     <dialog class="svc" id="m-tpms">
@@ -642,7 +652,30 @@
           <div class="accent-bar"></div>
           <p>Most tyre places hide the work away in a back room. We don't. Settle into the lounge, help yourself to a coffee, and watch your car on the workshop screen while we fit your tyres.</p>
           <p>You see what we see. We explain what we find and why — so you drive away knowing the job was done properly. It's the way we'd want to be treated ourselves.</p>
+          <a href="#book" class="btn-orange" style="margin-top:1.75rem;display:inline-block;">Book a depot slot</a>
         </div>
+      </div>
+    </section>
+
+    <!-- ══ BOOK ══ -->
+    <section class="book" id="book" aria-labelledby="book-heading">
+      <div class="container">
+        <div class="title-block">
+          <h2 class="section-title" id="book-heading">Book a depot slot</h2>
+          <p class="section-sub">Pick a half-hour slot that works for you — we'll have the bay ready. Bring the car, grab a coffee, and watch the work.</p>
+          <div class="accent-bar"></div>
+        </div>
+        <div class="book-embed">
+          <iframe
+            title="Booking page powered by Koalendar"
+            src="https://koalendar.com/u/nickbarrett?embed=true"
+            width="100%"
+            height="800px"
+            frameborder="0"
+            loading="lazy">
+          </iframe>
+        </div>
+        <p class="book-note">Rather call? Ring <a href="tel:01793876969">01793 876 969</a> and Emma will sort a time that suits.</p>
       </div>
     </section>
 
@@ -794,6 +827,10 @@
         </div>
         <div class="faq-list">
           <details class="faq-item">
+            <summary class="faq-q">Can I book a depot appointment online? <span class="chev" aria-hidden="true">▾</span></summary>
+            <div class="faq-a">Yes — use the booking calendar on this page to pick a half-hour slot. You'll get an instant confirmation and a calendar invite straight to your phone. If you'd rather just call, Emma is on 01793 876 969.</div>
+          </details>
+          <details class="faq-item">
             <summary class="faq-q">Do you come to me? <span class="chev" aria-hidden="true">▾</span></summary>
             <div class="faq-a">Yes — our mobile service covers around 15 miles of Swindon. We'll fit at your home, your workplace or at the roadside. Prefer to drop in? You're very welcome at the depot.</div>
           </details>
@@ -852,8 +889,8 @@
         </div>
 
         <div class="contact-form">
-          <h3>Ask for a quote</h3>
-          <p class="lead">Tell us what you need and we'll get straight back to you. Prefer to talk? Just call.</p>
+          <h3>Mobile fitting or other enquiry</h3>
+          <p class="lead">Need a mobile visit, a price for unusual tyres, or have a question? Tell us what you need and we'll get straight back. Depot visits can be <a href="#book" style="color:var(--orange);font-weight:600;">booked online above</a>.</p>
           <form id="enquiryForm" novalidate>
             <div class="form-group">
               <label for="name">Your name</label>
@@ -890,6 +927,7 @@
         <a href="#services">Services</a>
         <a href="#brands">Brands</a>
         <a href="#lounge">The lounge</a>
+        <a href="#book">Book</a>
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
         <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a>
