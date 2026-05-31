@@ -449,13 +449,56 @@
     .faq-a { padding: 0 1.5rem 1.25rem; color: var(--muted); font-size: .95rem; }
 
     /* ══════════════ BOOK ══════════════ */
+    #book { scroll-margin-top: 4.75rem; }
     .book { padding: 5rem 1.25rem; background: #fff; }
     .book-trigger-wrap { text-align: center; padding-top: 1rem; }
     .book-embed {
-      display: none; border-radius: 10px; overflow: hidden;
-      border: 1.5px solid var(--border); margin-top: 1.5rem;
+      display: none; width: min(80vw, 100%);
+      margin: 1.5rem auto 0; border-radius: 10px; overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+    #bookIframe {
+      display: block; width: 100%; height: 70vh; max-height: calc(100dvh - 10rem);
+      border: 0;
     }
     .book-embed.open { display: block; animation: bookFadeIn .35s ease; }
+    /* Desktop: when calendar is open, fit heading + full Koalendar in one viewport */
+    @media (min-width: 901px) {
+      #book.is-open {
+        padding: 1rem 1.25rem .75rem;
+        height: calc(100dvh - 4.75rem);
+        max-height: calc(100dvh - 4.75rem);
+        box-sizing: border-box;
+      }
+      #book.is-open .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      #book.is-open .title-block {
+        margin-bottom: .35rem;
+        flex-shrink: 0;
+      }
+      #book.is-open .title-block .section-sub,
+      #book.is-open .title-block .accent-bar,
+      #book.is-open .book-trigger-wrap { display: none; }
+      #book.is-open .book-embed.open {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+      }
+      #book.is-open #bookIframe {
+        flex: 1;
+        height: 100%;
+        min-height: 0;
+        max-height: none;
+      }
+    }
     @keyframes bookFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     .book-close-btn {
       display: flex; align-items: center; justify-content: flex-end; gap: .4rem;
@@ -725,10 +768,7 @@
             id="bookIframe"
             title="Booking page powered by Koalendar"
             src="about:blank"
-            data-src="https://koalendar.com/e/book-depot-slot?embed=true"
-            width="100%"
-            height="800px"
-            frameborder="0">
+            data-src="https://koalendar.com/e/book-depot-slot?embed=true">
           </iframe>
         </div>
         <div class="book-success" id="bookSuccess" aria-live="polite">
@@ -1150,13 +1190,14 @@
 
     // ── Book a depot slot — toggle + lazy-load + postMessage collapse ──
     (function () {
+      const bookSection = document.getElementById('book');
       const openBtn    = document.getElementById('bookOpenBtn');
       const closeBtn   = document.getElementById('bookCloseBtn');
       const anotherBtn = document.getElementById('bookAnotherBtn');
       const embed      = document.getElementById('bookEmbed');
       const iframe     = document.getElementById('bookIframe');
       const success    = document.getElementById('bookSuccess');
-      if (!openBtn || !embed || !iframe) return;
+      if (!openBtn || !embed || !iframe || !bookSection) return;
 
       function openCalendar() {
         // Lazy-load: swap src on first open only
@@ -1165,13 +1206,15 @@
         }
         embed.classList.add('open');
         embed.setAttribute('aria-hidden', 'false');
+        bookSection.classList.add('is-open');
         success.classList.remove('show');
-        setTimeout(() => embed.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        setTimeout(() => bookSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       }
 
       function closeCalendar() {
         embed.classList.remove('open');
         embed.setAttribute('aria-hidden', 'true');
+        bookSection.classList.remove('is-open');
       }
 
       function showSuccess() {
