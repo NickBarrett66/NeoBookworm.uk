@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service — NeoBookworm</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+<style>
+  :root {
+    --navy: #1a2e4a;
+    --navy-mid: #243d61;
+    --navy-light: #2f517e;
+    --red: #c0392b;
+    --red-light: #e04535;
+    --grey-bg: #f2f3f5;
+    --grey-mid: #dde0e5;
+    --grey-text: #6b7280;
+    --white: #ffffff;
+    --body-text: #2c3440;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--body-text);
+    background: var(--grey-bg);
+  }
+
+  /* ── Page shell ── */
+  .page-wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--white);
+    box-shadow: 0 4px 40px rgba(26,46,74,0.10);
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    background: var(--navy);
+    padding: 48px 56px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.12);
+  }
+
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    right: 40px;
+    bottom: -80px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .brand-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .doc-subtitle {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    position: relative;
+    z-index: 1;
+  }
+
+  .doc-meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Red accent bar ── */
+  .accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--red-light) 60%, transparent 100%);
+  }
+
+  /* ── Content area ── */
+  .doc-body {
+    padding: 48px 56px 56px;
+  }
+
+  /* ── Intro callout ── */
+  .intro-callout {
+    background: var(--grey-bg);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    font-size: 15px;
+    color: var(--body-text);
+  }
+
+  .intro-callout p { margin: 0; }
+
+  /* ── Section headings ── */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 48px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--grey-mid);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  h2 .section-num {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  /* ── Paragraphs & lists ── */
+  p { margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul, ol {
+    margin: 10px 0 16px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  ul li, ol li {
+    padding: 5px 0 5px 28px;
+    position: relative;
+    font-size: 15px;
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* ── Highlight callout ── */
+  .callout {
+    background: #fff8f7;
+    border: 1px solid rgba(192,57,43,0.2);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--body-text);
+  }
+
+  .callout p { margin: 0; }
+
+  /* ── Price pill ── */
+  .price-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+
+  .price-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--grey-bg);
+    border: 1px solid var(--grey-mid);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--body-text);
+  }
+
+  .price-pill strong {
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1.5px solid var(--grey-mid);
+    margin: 40px 0;
+  }
+
+  /* ── Links ── */
+  a { color: var(--navy); font-weight: 500; }
+  a:hover { color: var(--red); }
+
+  /* ── Footer ── */
+  .doc-footer {
+    background: var(--navy);
+    padding: 28px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-contact {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .footer-contact a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-weight: 400;
+  }
+
+  .footer-red-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    display: inline-block;
+    margin: 0 8px;
+    vertical-align: middle;
+  }
+
+  .footer-back {
+    font-size: 13px;
+  }
+
+  .footer-back a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+  }
+
+  .footer-back a:hover { color: rgba(255,255,255,0.85); }
+
+  /* ── Print / PDF ── */
+  @media print {
+    body { background: white; }
+    .page-wrapper { box-shadow: none; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    .callout { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .doc-header, .doc-body { padding: 32px 24px; }
+    .doc-footer { padding: 24px; }
+    .doc-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <header class="doc-header">
+    <div class="brand-line">
+      <div class="brand-dot"></div>
+      <span class="brand-name">NeoBookworm</span>
+    </div>
+    <h1 class="doc-title">Terms of<br>Service</h1>
+    <p class="doc-subtitle">NeoBookworm.uk — website builds and the optional care plan</p>
+    <p class="doc-meta">Last updated: June 2026 · Nick Barrett, Swindon, Wiltshire</p>
+  </header>
+  <div class="accent-bar"></div>
+
+  <!-- Body -->
+  <main class="doc-body">
+
+    <div class="intro-callout">
+      <p>These terms apply to your website build and, if you choose it, the monthly care plan. If anything here is unclear, email me at <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> before proceeding.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <h2><span class="section-num">01</span> Who I am and what these terms cover</h2>
+    <p>NeoBookworm.uk is run by me, Nick Barrett, from Swindon, Wiltshire. I build websites for tradespeople and small businesses across the UK — one person, doing the work properly.</p>
+    <p>These terms apply when you ask me to build you a website and/or when you take out a monthly care plan. By proceeding with an order you are agreeing to them.</p>
+
+    <!-- Section 2 -->
+    <h2><span class="section-num">02</span> The website build</h2>
+    <div class="price-row">
+      <span class="price-pill">Standard rate <strong>£299</strong></span>
+    </div>
+    <p>The price agreed with you before work begins covers the design, build, and launch of your new website. That means:</p>
+    <ul>
+      <li>A site built around your business and how you work</li>
+      <li>Your services, contact details, and the areas you cover</li>
+      <li>A design that looks right on phones, tablets, and desktop</li>
+      <li>Setup on hosting so it is ready for people to find</li>
+      <li>Your web address (e.g. nicksplumbing.co.uk) — most cost £10–15/year and that's included. If your preferred name is taken I'll suggest alternatives at no extra cost</li>
+      <li>Changes included until you're happy — you review the site before it goes live and I make any adjustments you need</li>
+    </ul>
+    <div class="callout">
+      <p><strong>You don't pay until you're happy with it.</strong> I'll show you the finished site before asking for payment. If it's not right for you, there's no obligation to proceed and the site won't go live.</p>
+    </div>
+    <p>Once payment is made the site goes live and it's yours outright — no hidden costs, no ongoing obligations unless you choose to add the care plan.</p>
+    <p>The price shown here is the standard starting rate. The price quoted to you before work begins is the one that applies to your project — you will always know the exact figure before anything is commissioned.</p>
+
+    <!-- Section 3 -->
+    <h2><span class="section-num">03</span> Monthly care plan (optional)</h2>
+    <div class="price-row">
+      <span class="price-pill"><strong>£9.99</strong> / month</span>
+    </div>
+    <p>The care plan is entirely your choice — your site stays live either way. It is there if you would rather I handle the technical side so you can focus on the work you are actually paid for.</p>
+    <p>It covers:</p>
+    <ul>
+      <li>Keeping your site live, fast, and on the right hosting</li>
+      <li>Security and software updates as they come out</li>
+      <li>Small text and content changes (up to around 30 minutes of work a month)</li>
+      <li>Your annual web address renewal — I sort it so it stays registered in your name (typically £8–15/year to the registrar, covered while you're on the plan)</li>
+    </ul>
+    <p>Bigger changes — new pages, new sections, new features — are quoted separately at £25 an hour. I will always tell you the cost before starting.</p>
+    <p>You can cancel at any time with no fuss. Cancellation takes effect at the end of your current billing month, and your site files are yours regardless.</p>
+    <p>If I ever need to change the monthly price, I will give you at least 30 days' notice by email before it takes effect. You are free to cancel with no penalty if you would prefer not to continue at the new rate.</p>
+
+    <!-- Section 4 -->
+    <h2><span class="section-num">04</span> Ownership of your website</h2>
+    <p>Once the build fee is paid, the site is yours. The pages, the copy I have written, the design — all of it belongs to you.</p>
+    <p>Any photos or logos you supply stay yours throughout. I will not use them for anything else without asking.</p>
+    <p>If you ever want to move the site to a different provider or hand it to another developer, I will give you all the files at no extra charge.</p>
+
+    <!-- Section 5 -->
+    <h2><span class="section-num">05</span> What I need from you</h2>
+    <p>To build your site I will need some information from you — your business details, a description of what you do, and any photos or a logo you want to use. I'll let you know what I need at each stage. The more you give me, the better the result.</p>
+    <p>By sending me images and other content, you are confirming that you own them or have the right to use them on your website.</p>
+    <p>I will keep things moving at my end. If I am waiting on information or sign-off from you for more than 14 days and cannot reach you, I will put the project on hold. There is no penalty — just get back in touch when you are ready and I will pick it back up.</p>
+
+    <!-- Section 6 -->
+    <h2><span class="section-num">06</span> Payment</h2>
+    <p>Build payment is taken online via a secure payment link — powered by Stripe — after you have seen and approved the finished site.</p>
+    <p>Care plan payments are taken monthly by card on the same date each month. You will get a receipt by email each time.</p>
+    <p>I do not store your card details. All payments go through Stripe, which handles the security side.</p>
+
+    <!-- Section 7 -->
+    <h2><span class="section-num">07</span> My liability</h2>
+    <p>I build sites carefully and test them properly before they go live. That said, no hosting setup can guarantee 100% uptime — if your site goes down for a reason within my control, I will get it fixed as quickly as I can.</p>
+    <p>I am not liable for loss of business, lost revenue, or indirect costs arising from your site being unavailable or not performing as expected.</p>
+    <p>My total liability to you in any situation is limited to the amount you have paid me in the preceding 12 months.</p>
+
+    <!-- Section 8 -->
+    <h2><span class="section-num">08</span> Changes to these terms</h2>
+    <p>I may update these terms occasionally. The date at the top of this document shows when they were last changed. If you are on a care plan, I will email you at least 30 days before any significant changes — including price changes — take effect.</p>
+
+    <!-- Section 9 -->
+    <h2><span class="section-num">09</span> Governing law</h2>
+    <p>These terms are governed by the laws of England and Wales. Any disputes are subject to the jurisdiction of the courts of England and Wales.</p>
+    <p>If something is not right, please come to me first at <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> — I would always rather sort things out directly.</p>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <div class="footer-contact">
+      <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>
+      <span class="footer-red-dot"></span>
+      Nick Barrett
+      <span class="footer-red-dot"></span>
+      Based in Swindon
+    </div>
+    <div class="footer-back">
+      <a href="javascript:history.back()">← Back to your portal</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
