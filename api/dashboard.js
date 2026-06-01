@@ -41,6 +41,7 @@ const { promoteToClient }                  = require('./_lib/promote');
 const { sendTemplated, sendRendered }      = require('./_lib/email');
 const { renderTemplate }                   = require('./_lib/templates');
 const { sendAcknowledgement }              = require('./_lib/acknowledge');
+const { resolveSiteUrl, resolveLiveSiteUrl, normalizeStoredUrl } = require('./_lib/site-url');
 
 const PROSPECTS_EDITABLE = [
   'business_name', 'status', 'trade_category', 'contact_name', 'email_address', 'phone',
@@ -631,9 +632,11 @@ module.exports = async (req, res) => {
       vars.name       = client.contact_name  || client.business_name || 'there';
       vars.business   = client.business_name || client.contact_name  || 'your business';
       vars.portal_url = `https://neobookworm.uk/c/${client.slug}/`;
-      if (client.preview_url)      vars.preview_url      = client.preview_url;
-      if (client.live_url)         vars.live_url          = client.live_url;
-      if (client.current_url)      vars.current_url       = client.current_url;
+      if (client.preview_url)      vars.preview_url      = resolveSiteUrl(client.preview_url);
+      if (client.live_url || client.domain) {
+        vars.live_url = resolveLiveSiteUrl(client.live_url, client.domain);
+      }
+      if (client.current_url)      vars.current_url       = resolveSiteUrl(client.current_url);
       if (client.next_action_by)   vars.deliver_by        = client.next_action_by;
       if (client.domain)           vars.domain            = client.domain;
       if (client.hosting_provider) vars.hosting_provider  = client.hosting_provider;
@@ -800,8 +803,12 @@ module.exports = async (req, res) => {
       if (!allowed.length) {
         return res.status(400).json({ ok: false, error: 'No editable fields provided' });
       }
+      const URL_FIELDS = new Set(['preview_url', 'live_url', 'current_url']);
       const set    = allowed.map(k => `${k} = ?`).join(', ');
-      const params = [...allowed.map(k => fields[k] || null), slug];
+      const params = [...allowed.map(k => {
+        const val = fields[k] || null;
+        return URL_FIELDS.has(k) ? normalizeStoredUrl(val) : val;
+      }), slug];
       try {
         await queryD1(enquiriesDb(), `UPDATE clients SET ${set} WHERE slug = ?`, params);
         return res.status(200).json({ ok: true });

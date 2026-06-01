@@ -4074,6 +4074,26 @@ function escHtml(str) {
 }
 function escAttr(str) { return String(str || '').replace(/"/g, '&quot;'); }
 
+/** Absolute https URL for site links — bare domains/paths break when used as href from /c/{slug}/. */
+function resolveSiteUrl(primary, domainFallback) {
+  let raw = primary != null ? String(primary).trim() : '';
+  if (!raw && domainFallback != null) raw = String(domainFallback).trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith('//')) return `https:${raw}`;
+  if (raw.startsWith('/')) return `https://neobookworm.uk${raw}`;
+  return `https://${raw.replace(/^\/+/, '')}`;
+}
+
+function resolveLiveSiteUrl(liveUrl, domain) {
+  const liveRaw = liveUrl != null ? String(liveUrl).trim() : '';
+  const domainRaw = domain != null ? String(domain).trim() : '';
+  if (liveRaw && domainRaw && /neobookworm\.uk/i.test(liveRaw)) {
+    return resolveSiteUrl(null, domainRaw);
+  }
+  return resolveSiteUrl(liveUrl, domain);
+}
+
 /** Format a D1 UTC datetime string in the user's local time.
  *  D1 datetime('now') returns strings like "2026-05-30 08:00:05" with no
  *  timezone indicator — we append 'Z' so Date() treats them as UTC. */
@@ -4773,15 +4793,20 @@ function renderClientDetail(c, emailLog, changeRequests, sourceInfo = {}) {
         </li>`;
       }).join('');
 
-  const fieldRow = (field, label, val) => `
+  const fieldRow = (field, label, val) => {
+    const href = field === 'live_url'
+      ? resolveLiveSiteUrl(val, c.domain)
+      : resolveSiteUrl(val);
+    return `
     <div style="margin-bottom:.5rem">
       <label style="display:block;color:var(--muted);font-size:.78rem;margin-bottom:.2rem">${label}</label>
       <div style="display:flex;gap:.35rem;align-items:center">
         <input type="text" id="field-${field}" value="${escAttr(val || '')}"
                style="flex:1;padding:.38rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--navy);color:var(--white);font-size:.83rem;outline:none;min-width:0">
-        ${val ? `<a href="${escAttr(val)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.82rem;padding:.38rem .35rem;flex-shrink:0;text-decoration:none">↗</a>` : ''}
+        ${href ? `<a href="${escAttr(href)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.82rem;padding:.38rem .35rem;flex-shrink:0;text-decoration:none">↗</a>` : ''}
       </div>
     </div>`;
+  };
 
   const ackDate      = formatUkDate(c.stage_changed_at || c.created_at);
   const isAckStage   = c.stage === 'acknowledged';

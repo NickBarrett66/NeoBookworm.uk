@@ -15,6 +15,7 @@
 'use strict';
 
 const { queryD1, enquiriesDb } = require('./_lib/d1');
+const { resolveSiteUrl, resolveLiveSiteUrl } = require('./_lib/site-url');
 
 // ---------------------------------------------------------------------------
 // Security helper — escape every piece of client data before inserting into HTML
@@ -1224,7 +1225,7 @@ function renderActivePanel(client, slug) {
       `<p class="panel-status">${statusMsg}</p>`;
 
     const reviewContent = client.site_review_content ? String(client.site_review_content).trim() : '';
-    const previewUrl    = client.preview_url ? String(client.preview_url).trim() : '';
+    const previewUrl    = resolveSiteUrl(client.preview_url);
     const zone2 = isJ2Review
       ? (reviewContent
           ? `<div class="panel-review-content" style="margin:1rem 0;padding:1rem 1.25rem;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid var(--border-sub)">` +
@@ -1358,7 +1359,7 @@ function renderActivePanel(client, slug) {
 
   } else if (stage === 'live' || stage === 'care_active' || stage === 'self_managed') {
     const lead = `Hi ${name} — here's where things stand with ${biz}.`;
-    const liveUrl = client.live_url ? String(client.live_url).trim() : '';
+    const liveUrl = resolveLiveSiteUrl(client.live_url, client.domain);
     const zone1 = `<p class="panel-lead">${lead}</p>` +
       `<p class="panel-status">${biz} is live.</p>`;
 
@@ -1780,7 +1781,7 @@ module.exports = async function handler(req, res) {
   try {
     const rows = await queryD1(
       enquiriesDb(),
-      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url, stripe_link, site_review_content FROM clients WHERE slug = ? LIMIT 1',
+      'SELECT slug, business_name, contact_name, stage, journey, plan, next_action_by, preview_url, live_url, domain, stripe_link, site_review_content FROM clients WHERE slug = ? LIMIT 1',
       [slug]
     );
     client = rows[0] || null;
