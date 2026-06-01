@@ -129,6 +129,30 @@ Project documentation describes **separate Netlify sites** per trade demo; they 
 
 ---
 
+### 6.1a `POST /api/he-tyres-enquiry`
+
+**File:** `api/he-tyres-enquiry.js`  
+
+**Purpose:** Accept JSON from `he-tyres/index.html` (“Mobile fitting or other enquiry”) and email Nick.
+
+**Request body (JSON):**
+
+- `name`, `phone`, `message` — **required**
+- `email`, `vehicle` — optional (`Reply-To` set when email provided)
+- `website` — honeypot; if filled, returns `{ ok: true }` without sending
+
+**Environment variables:**
+
+| Variable | Required | Notes |
+|----------|----------|--------|
+| `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` | For real send | Same iCloud SMTP as contact form |
+| `SMTP_PORT` | Optional | Default `587` |
+| `HE_TYRES_TO_EMAIL` | Optional | Default `nickbarrett@me.com` |
+
+**CORS:** Allowed origins: `neobookworm.uk`, `hetyres.co.uk` (+ www), localhost. Cross-origin forms on a future custom domain POST to `https://neobookworm.uk/api/he-tyres-enquiry` until the API moves with hosting.
+
+---
+
 ### 6.2 Intake: `POST /api/intake-upload-session`
 
 **File:** `api/intake-upload-session.js`  
