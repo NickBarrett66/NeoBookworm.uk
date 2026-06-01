@@ -468,9 +468,6 @@
     .btn-form { width: 100%; background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; padding: .9rem; border: none; border-radius: 6px; cursor: pointer; transition: background .2s; }
     .btn-form:hover { background: var(--orange-h); }
     .form-success { display: none; background: #e6f9f0; border: 2px solid #27ae60; border-radius: 6px; padding: 1.25rem; text-align: center; color: #1a7a45; font-weight: 600; margin-top: 1rem; }
-    .form-notice { display: none; margin-bottom: 1rem; padding: .75rem 1rem; border-radius: 6px; font-size: .9rem; font-weight: 600; }
-    .form-notice.error { display: block; background: #fdecea; border: 2px solid #e74c3c; color: #922b21; }
-    .form-hp { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
     /* ══════════════ FAQ ══════════════ */
     .faq { padding: 5rem 1.25rem; background: var(--light); }
@@ -1019,22 +1016,13 @@
           <h3>Mobile fitting or other enquiry</h3>
           <p class="lead">Need a mobile visit, a price for unusual tyres, or have a question? Tell us what you need and we'll get straight back. Depot visits can be <a href="#book" style="color:var(--orange);font-weight:600;">booked online above</a>.</p>
           <form id="enquiryForm" novalidate>
-            <div class="form-hp" aria-hidden="true">
-              <label for="enquiry-website">Website</label>
-              <input type="text" id="enquiry-website" name="website" tabindex="-1" autocomplete="off">
-            </div>
-            <div class="form-notice" id="formNotice" role="alert"></div>
             <div class="form-group">
               <label for="name">Your name</label>
-              <input type="text" id="name" name="name" autocomplete="name" required placeholder="Jane Smith">
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="Jane Smith">
             </div>
             <div class="form-group">
               <label for="phone">Phone number</label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" required placeholder="07700 900000">
-            </div>
-            <div class="form-group">
-              <label for="email">Email <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-              <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com">
+              <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="07700 900000">
             </div>
             <div class="form-group">
               <label for="vehicle">Vehicle type</label>
@@ -1045,9 +1033,9 @@
             </div>
             <div class="form-group">
               <label for="message">What do you need?</label>
-              <textarea id="message" name="message" required placeholder="e.g. 2 front tyres at home, size 205/55 R16 — or I've lost my locking nut key…"></textarea>
+              <textarea id="message" name="message" placeholder="e.g. 2 front tyres at home, size 205/55 R16 — or I've lost my locking nut key…"></textarea>
             </div>
-            <button type="submit" class="btn-form" id="enquirySubmitBtn">Send enquiry</button>
+            <button type="submit" class="btn-form">Send enquiry</button>
           </form>
           <div class="form-success" id="formSuccess" role="status" aria-live="polite">✓ Thanks — we'll be in touch shortly!</div>
         </div>
@@ -1346,66 +1334,12 @@
       });
     })();
 
-    // ── Contact form → /api/he-tyres-enquiry (Vercel SMTP) ──
-    (function () {
-      const form = document.getElementById('enquiryForm');
-      const notice = document.getElementById('formNotice');
-      const success = document.getElementById('formSuccess');
-      const btn = document.getElementById('enquirySubmitBtn');
-      if (!form || !notice || !success || !btn) return;
-
-      const host = window.location.hostname;
-      const apiUrl = (host === 'neobookworm.uk' || host === 'www.neobookworm.uk' ||
-        host === 'localhost' || host.startsWith('127.0.0.1'))
-        ? '/api/he-tyres-enquiry'
-        : 'https://neobookworm.uk/api/he-tyres-enquiry';
-
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        notice.className = 'form-notice';
-        notice.textContent = '';
-
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const vehicle = document.getElementById('vehicle').value.trim();
-        const message = document.getElementById('message').value.trim();
-        const website = document.getElementById('enquiry-website').value.trim();
-
-        if (!name || !phone || !message) {
-          notice.className = 'form-notice error';
-          notice.textContent = 'Please fill in your name, phone number and message.';
-          return;
-        }
-
-        btn.disabled = true;
-        const prevLabel = btn.textContent;
-        btn.textContent = 'Sending…';
-
-        try {
-          const res = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, phone, email, vehicle, message, website }),
-          });
-          let json = {};
-          try { json = await res.json(); } catch { /* ignore */ }
-
-          if (res.ok && (json.ok || json.note)) {
-            form.style.display = 'none';
-            success.style.display = 'block';
-            return;
-          }
-          throw new Error(json.error || 'Something went wrong. Please try again or call 01793 876 969.');
-        } catch (err) {
-          notice.className = 'form-notice error';
-          notice.textContent = err.message || 'Something went wrong. Please call 01793 876 969.';
-        } finally {
-          btn.disabled = false;
-          btn.textContent = prevLabel;
-        }
-      });
-    })();
+    // ── Contact form (static success for preview) ──
+    document.getElementById('enquiryForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      this.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    });
 
     // ── Scroll reveal (NeoBookworm standard pattern) ──
     document.documentElement.classList.add('js-reveal');

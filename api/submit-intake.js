@@ -4,7 +4,7 @@
 //
 // See api/intake-shared.js for env vars and Notion property names.
 
-const intake = require('./intake-shared.js');
+const intake = require('./_lib/intake-shared.js');
 
 const handler = async (req, res) => {
   if (req.method !== 'POST') {

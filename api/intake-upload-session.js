@@ -1,7 +1,7 @@
 // POST JSON { photos: [{ name, mimeType }], logo?: { name, mimeType } }
 // Returns presigned PUT URLs for direct browser upload to R2 (bypasses Vercel 4.5 MB limit).
 
-const intake = require('./intake-shared.js');
+const intake = require('./_lib/intake-shared.js');
 
 function parseJsonBody(req) {
   const b = req.body;

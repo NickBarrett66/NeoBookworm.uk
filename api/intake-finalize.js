@@ -1,7 +1,7 @@
 // POST JSON { session, ...same field names as multipart intake }
 // Verifies R2 objects exist, creates Notion row, writes idempotency marker.
 
-const intake = require('./intake-shared.js');
+const intake = require('./_lib/intake-shared.js');
 
 function parseJsonBody(req) {
   const b = req.body;
