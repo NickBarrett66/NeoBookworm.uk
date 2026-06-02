@@ -600,16 +600,22 @@
 
     /* ══════════════ FOOTER ══════════════ */
     footer { background: var(--navy-deep); color: #c7cdd8; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
-    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    .footer-logo { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .01em; }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem 1.5rem; width: 100%; }
+    .footer-logo { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .01em; flex-shrink: 0; }
     .footer-logo .bk { color: var(--silver); }
     .footer-logo .bk-r { color: #f5c08a; }
     .footer-logo .he { color: #f5c08a; }
     .footer-logo .ty { color: #fff; }
-    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links { display: flex; gap: 1.25rem 1.5rem; flex-wrap: wrap; justify-content: flex-end; flex: 1; }
     .footer-links a { color: #c7cdd8; text-decoration: none; font-size: .875rem; transition: color .2s; }
     .footer-links a:hover { color: #fff; }
-    footer small { display: block; width: 100%; text-align: center; color: #c7cdd8; margin-top: .5rem; }
+    footer small {
+      display: block; width: 100%; text-align: center; color: #c7cdd8;
+      padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.1);
+    }
+    footer small a { color: #fff; text-decoration: none; font-weight: 600; }
+    footer small a:hover { color: #f5c08a; }
 
     /* Skip layout work for below-fold sections until they scroll near */
     .services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us {
@@ -627,6 +633,8 @@
       }
       .nav-toggle { display: block; margin-left: auto; }
       .hero-inner, .brands-inner, .lounge-inner, .coverage-inner, .contact-inner { grid-template-columns: 1fr; }
+      .footer-row { flex-direction: column; align-items: center; }
+      .footer-links { justify-content: center; }
       .lounge-image { order: -1; }
       .brands-image { display: none; }
       .map-box { max-width: 100%; aspect-ratio: 1/1; }
@@ -1011,10 +1019,6 @@
             <div class="ci-text"><strong>Phone</strong><a href="tel:01793876969">01793 876 969</a></div>
           </div>
           <div class="contact-item">
-            <div class="ci-icon" aria-hidden="true">✉️</div>
-            <div class="ci-text"><strong>Email</strong><a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a></div>
-          </div>
-          <div class="contact-item">
             <div class="ci-icon" aria-hidden="true">📍</div>
             <div class="ci-text"><strong>Depot</strong><p>Unit 5 Star West, Westmead Drive<br>Westlea, Swindon SN5 7SW</p></div>
           </div>
@@ -1074,17 +1078,18 @@
 
   <footer>
     <div class="footer-inner">
-      <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></span>
-      <nav class="footer-links" aria-label="Footer">
-        <a href="#services">Services</a>
-        <a href="#brands">Brands</a>
-        <a href="#lounge">The lounge</a>
-        <a href="#book">Book</a>
-        <a href="#reviews">Reviews</a>
-        <a href="#contact">Contact</a>
-        <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a>
-      </nav>
-      <small>© 2026 H E Tyres Ltd · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW · 01793 876 969</small>
+      <div class="footer-row">
+        <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></span>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="#services">Services</a>
+          <a href="#brands">Brands</a>
+          <a href="#lounge">The lounge</a>
+          <a href="#book">Book</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+      <small>© 2026 H E Tyres Ltd · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW · <a href="tel:01793876969">01793 876 969</a></small>
     </div>
   </footer>
 
