@@ -24,6 +24,7 @@
 // POST /api/dashboard  body: { action:"client_preview",    slug, templateId, extra_vars:{...} }
 // POST /api/dashboard  body: { action:"client_send",       slug, templateId, extra_vars:{...}, subject?, body? }
 // POST /api/dashboard  body: { action:"client_set_fields", slug, fields:{...} }
+// POST /api/dashboard  body: { action:"client_delete",     slug, confirm_slug }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
 // Proxies queries to D1 via the Cloudflare REST API.
@@ -814,6 +815,35 @@ module.exports = async (req, res) => {
         return res.status(200).json({ ok: true });
       } catch (err) {
         console.error('[dashboard client_set_fields]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
+    // ── client_delete ───────────────────────────────────────────────────────
+    if (action === 'client_delete') {
+      const { slug, confirm_slug } = body;
+      if (!slug) {
+        return res.status(400).json({ ok: false, error: 'slug required' });
+      }
+      if (!confirm_slug || confirm_slug !== slug) {
+        return res.status(400).json({ ok: false, error: 'confirm_slug must match slug' });
+      }
+      const existing = await queryD1(
+        enquiriesDb(),
+        'SELECT slug FROM clients WHERE slug = ? LIMIT 1',
+        [slug]
+      );
+      if (!existing.length) {
+        return res.status(404).json({ ok: false, error: 'Client not found' });
+      }
+      try {
+        await queryD1(enquiriesDb(), 'DELETE FROM change_requests WHERE slug = ?', [slug]);
+        await queryD1(enquiriesDb(), 'DELETE FROM email_log WHERE slug = ?', [slug]);
+        await queryD1(enquiriesDb(), 'DELETE FROM feedback WHERE slug = ?', [slug]);
+        await queryD1(enquiriesDb(), 'DELETE FROM clients WHERE slug = ?', [slug]);
+        return res.status(200).json({ ok: true });
+      } catch (err) {
+        console.error('[dashboard client_delete]', err.message);
         return res.status(500).json({ ok: false, error: err.message });
       }
     }

@@ -548,6 +548,37 @@
   }
   .btn-confirm-no:hover { color: var(--white); border-color: var(--muted); }
 
+  .client-delete-zone {
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(248, 113, 113, .06);
+    border: 1px solid rgba(248, 113, 113, .35);
+    border-radius: 10px;
+  }
+  .client-delete-zone .section-label { color: var(--red); }
+  .client-delete-zone p { font-size: .85rem; color: var(--muted); margin: 0 0 1rem; line-height: 1.5; }
+  .client-delete-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .client-delete-step2 {
+    display: none;
+    flex-direction: column;
+    gap: .65rem;
+    width: 100%;
+    max-width: 420px;
+  }
+  .client-delete-step2.open { display: flex; }
+  .client-delete-step2 label { font-size: .78rem; color: var(--muted); }
+  .client-delete-step2 input {
+    padding: .43rem .65rem;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: .875rem;
+    outline: none;
+    font-family: monospace;
+  }
+  .client-delete-step2 .step2-actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+
   .text-multiline {
     white-space: pre-wrap;
     word-break: break-word;
@@ -3978,6 +4009,91 @@ function closeEmailModal() {
   document.getElementById('email-modal-overlay').classList.remove('open');
 }
 
+// ── Client delete (two-step: confirm panel, then type slug) ───────────────────
+function wireClientDelete(c) {
+  const btn       = document.getElementById('btn-delete-client');
+  const actions   = document.getElementById('client-delete-actions');
+  const step2     = document.getElementById('client-delete-step2');
+  const input     = document.getElementById('client-delete-confirm-input');
+  const finalBtn  = document.getElementById('btn-delete-client-final');
+  const cancel2   = document.getElementById('btn-delete-client-cancel-step2');
+  const statusEl  = document.getElementById('client-delete-status');
+  if (!btn || !actions || !step2 || !input || !finalBtn) return;
+
+  const slug = c.slug;
+
+  function resetDeleteUi() {
+    step2.classList.remove('open');
+    input.value = '';
+    finalBtn.disabled = true;
+    if (statusEl) { statusEl.textContent = ''; statusEl.className = 'save-status'; }
+    const stale = actions.querySelector('.delete-confirm');
+    if (stale) stale.remove();
+    if (!document.getElementById('btn-delete-client')) {
+      const restore = document.createElement('button');
+      restore.type = 'button';
+      restore.className = 'btn-delete';
+      restore.id = 'btn-delete-client';
+      restore.textContent = 'Delete client';
+      actions.appendChild(restore);
+      restore.addEventListener('click', onFirstClick);
+    }
+  }
+
+  function onFirstClick() {
+    const trigger = document.getElementById('btn-delete-client');
+    if (!trigger) return;
+    trigger.remove();
+
+    const confirm = document.createElement('div');
+    confirm.className = 'delete-confirm';
+    confirm.innerHTML = `
+      <span>Delete <strong>${escHtml(c.business_name || c.contact_name || slug)}</strong>? This cannot be undone.</span>
+      <button type="button" class="btn-confirm-yes" data-step="continue">Continue</button>
+      <button type="button" class="btn-confirm-no">Cancel</button>
+    `;
+    actions.appendChild(confirm);
+
+    confirm.querySelector('.btn-confirm-no').addEventListener('click', resetDeleteUi);
+
+    confirm.querySelector('[data-step="continue"]').addEventListener('click', () => {
+      confirm.remove();
+      step2.classList.add('open');
+      input.focus();
+    });
+  }
+
+  btn.addEventListener('click', onFirstClick);
+
+  input.addEventListener('input', () => {
+    finalBtn.disabled = input.value.trim() !== slug;
+  });
+
+  cancel2?.addEventListener('click', resetDeleteUi);
+
+  finalBtn.addEventListener('click', async () => {
+    if (input.value.trim() !== slug) return;
+    finalBtn.disabled = true;
+    cancel2.disabled = true;
+    input.disabled = true;
+    if (statusEl) { statusEl.textContent = 'Deleting…'; statusEl.className = 'save-status'; }
+    try {
+      await apiPost({ action: 'client_delete', slug, confirm_slug: input.value.trim() });
+      state.clientsView = 'list';
+      state.clientsSlug = null;
+      loadClientsList({ soft: true });
+    } catch (err) {
+      if (statusEl) {
+        statusEl.textContent = 'Delete failed: ' + err.message;
+        statusEl.className = 'save-status err';
+      }
+      finalBtn.disabled = false;
+      cancel2.disabled = false;
+      input.disabled = false;
+    }
+  });
+}
+
 // ── Shared delete helper ──────────────────────────────────────────────────────
 function wireDeleteButton({ btnId, action, recordId, isUnhandled, unhandledStateKey, badgeFn, onDeleted }) {
   const btn = document.getElementById(btnId);
@@ -5048,7 +5164,32 @@ function renderClientDetail(c, emailLog, changeRequests, sourceInfo = {}) {
         </div>`).join('')}
       </div>
     </div>` : ''}
+
+    <!-- Delete client (danger zone) -->
+    <div class="client-delete-zone" id="client-delete-zone">
+      <div class="section-label" style="margin:0 0 .5rem">Danger zone</div>
+      <p>
+        Permanently removes this client from the dashboard and deletes their portal, email history, change requests, and feedback.
+        The original enquiry or intake row is <strong>not</strong> deleted — you can promote again from Enquiries if needed.
+      </p>
+      <div class="client-delete-actions" id="client-delete-actions">
+        <button type="button" class="btn-delete" id="btn-delete-client">Delete client</button>
+      </div>
+      <div class="client-delete-step2" id="client-delete-step2">
+        <label for="client-delete-confirm-input">
+          Type <strong style="color:var(--white);font-family:monospace">${escHtml(c.slug)}</strong> to confirm permanent deletion:
+        </label>
+        <input type="text" id="client-delete-confirm-input" autocomplete="off" spellcheck="false" placeholder="${escAttr(c.slug)}">
+        <div class="step2-actions">
+          <button type="button" class="btn-confirm-yes" id="btn-delete-client-final" disabled>Permanently delete</button>
+          <button type="button" class="btn-confirm-no" id="btn-delete-client-cancel-step2">Cancel</button>
+          <span id="client-delete-status" class="save-status"></span>
+        </div>
+      </div>
+    </div>
   `;
+
+  wireClientDelete(c);
 
   // ── Wire iframe toggle ──
   // Do not use src="" — browsers resolve that to the dashboard URL, so the portal never loads.
