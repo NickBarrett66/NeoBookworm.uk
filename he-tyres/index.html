@@ -435,7 +435,10 @@
     .leaflet-tooltip.depot { background: #fff; color: var(--navy); }
 
     /* ══════════════ CONTACT ══════════════ */
-    .contact { padding: 5rem 1.25rem; background: #fff; }
+    .contact {
+      padding: 5rem 1.25rem; background: #fff;
+      position: relative; z-index: 1; content-visibility: visible;
+    }
     .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; max-width: var(--max); margin: 0 auto; }
     .contact-details h2 { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2rem; color: var(--navy); margin-bottom: 2rem; }
     .contact-item { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; }
@@ -447,9 +450,18 @@
     .hours-table { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1.5rem; font-size: .95rem; }
     .hours-table .day { font-weight: 700; color: var(--navy); }
     .hours-table .time { color: var(--muted); }
-    .contact-form { background: var(--light); border-radius: 12px; padding: 2rem; }
+    .contact-form {
+      background-color: var(--light); border-radius: 12px; padding: 2rem;
+      isolation: isolate;
+    }
     .contact-form h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--navy); margin-bottom: .4rem; }
     .contact-form .lead { font-size: .9rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .contact-form .lead a {
+      color: #0f1419; font-weight: 600;
+      background-color: var(--light);
+      text-decoration: underline; text-underline-offset: .15em;
+    }
+    .contact-form .lead a:hover { color: var(--orange-h); }
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; font-size: .85rem; font-weight: 600; color: var(--navy); margin-bottom: .35rem; }
     .form-group input, .form-group select, .form-group textarea {
@@ -587,20 +599,20 @@
     .book-note a:hover { text-decoration: underline; }
 
     /* ══════════════ FOOTER ══════════════ */
-    footer { background: var(--navy-deep); color: #8a93a6; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
+    footer { background: var(--navy-deep); color: #c7cdd8; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
     .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     .footer-logo { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .01em; }
     .footer-logo .bk { color: var(--silver); }
-    .footer-logo .bk-r { color: var(--orange); }
-    .footer-logo .he { color: var(--orange); }
+    .footer-logo .bk-r { color: #f5c08a; }
+    .footer-logo .he { color: #f5c08a; }
     .footer-logo .ty { color: #fff; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a { color: #8a93a6; text-decoration: none; font-size: .875rem; transition: color .2s; }
-    .footer-links a:hover { color: var(--orange); }
+    .footer-links a { color: #c7cdd8; text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: #fff; }
     footer small { display: block; width: 100%; text-align: center; color: #c7cdd8; margin-top: .5rem; }
 
     /* Skip layout work for below-fold sections until they scroll near */
-    .services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us, .faq, .contact {
+    .services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us {
       content-visibility: auto;
       contain-intrinsic-size: auto 480px;
     }
@@ -1021,7 +1033,7 @@
 
         <div class="contact-form">
           <h3>Mobile fitting or other enquiry</h3>
-          <p class="lead">Need a mobile visit, a price for unusual tyres, or have a question? Tell us what you need and we'll get straight back. Depot visits can be <a href="#book" style="color:var(--navy);font-weight:600;">booked online above</a>.</p>
+          <p class="lead">Need a mobile visit, a price for unusual tyres, or have a question? Tell us what you need and we'll get straight back. Depot visits can be <a href="#book">booked online above</a>.</p>
           <form id="enquiryForm" novalidate>
             <div class="form-hp" aria-hidden="true">
               <label for="enquiry-website">Website</label>
