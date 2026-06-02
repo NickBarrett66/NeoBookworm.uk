@@ -96,7 +96,7 @@
     /* ── Skip link ── */
     .skip-link {
       position: absolute; top: -100%; left: 1rem;
-      background: var(--orange); color: #fff; padding: .5rem 1rem;
+      background: var(--orange); color: var(--navy); padding: .5rem 1rem;
       font-weight: 700; text-decoration: none; border-radius: 0 0 4px 4px;
       z-index: 9999; transition: top .2s;
     }
@@ -119,7 +119,7 @@
       font-size: 1rem; text-decoration: none; padding: .9rem 2rem; border-radius: 5px;
       transition: background .2s, border-color .2s, color .2s; cursor: pointer; border: none;
     }
-    .btn-orange { background: var(--orange); color: #fff; }
+    .btn-orange { background: var(--orange); color: var(--navy); }
     .btn-orange:hover { background: var(--orange-h); }
     .btn-ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); }
     .btn-ghost:hover { border-color: #fff; }
@@ -133,7 +133,7 @@
       transition: background .2s, border-color .2s, color .2s, opacity .2s;
       white-space: nowrap; border: 2px solid transparent;
     }
-    .hero-pill-hot  { background: var(--orange); color: #fff; border-color: var(--orange); }
+    .hero-pill-hot  { background: var(--orange); color: var(--navy); border-color: var(--orange); }
     .hero-pill-hot:hover { background: var(--orange-h); border-color: var(--orange-h); }
     .hero-pill-mid  { background: #fff; color: var(--navy); border-color: #fff; }
     .hero-pill-mid:hover { background: #edf0f4; border-color: #edf0f4; }
@@ -182,7 +182,7 @@
     }
     .header-phone:hover { color: var(--orange); }
     .btn-header {
-      background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif;
+      background: var(--orange); color: var(--navy); font-family: 'Montserrat', sans-serif;
       font-weight: 700; font-size: .85rem; text-decoration: none; padding: .55rem 1.25rem;
       border-radius: 5px; white-space: nowrap; transition: background .2s;
     }
@@ -234,7 +234,7 @@
     -->
 
     /* ══════════════ TRUST STRIP ══════════════ */
-    .trust-strip { background: var(--orange); color: #fff; padding: .5rem 1rem; }
+    .trust-strip { background: var(--orange); color: var(--navy); padding: .5rem 1rem; }
     .trust-inner {
       max-width: var(--max); margin: 0 auto;
       display: flex; justify-content: space-between; align-items: center;
@@ -264,7 +264,7 @@
     .service-card p { font-size: .95rem; color: var(--muted); }
     .service-more { display: inline-block; margin-top: .8rem; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .82rem; color: var(--orange); }
     .featured-tag {
-      display: inline-block; background: var(--orange); color: #fff; font-family: 'Montserrat', sans-serif;
+      display: inline-block; background: var(--orange); color: var(--navy); font-family: 'Montserrat', sans-serif;
       font-weight: 700; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
       padding: .2rem .6rem; border-radius: 3px; margin-bottom: .75rem;
     }
@@ -401,7 +401,7 @@
     .map-key li { font-size: .92rem; color: #c7cdd8; display: flex; align-items: center; gap: .65rem; }
     .key-code {
       flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-      min-width: 40px; padding: .2rem .45rem; background: var(--orange); color: #fff;
+      min-width: 40px; padding: .2rem .45rem; background: var(--orange); color: var(--navy);
       font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .72rem; letter-spacing: .03em; border-radius: 5px;
     }
     .key-code.depot { background: #fff; color: var(--navy); }
@@ -419,7 +419,7 @@
     #depotMap { width: 100%; height: 100%; }
     .find-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
     .find-step { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 1.25rem; }
-    .find-step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--orange); color: #fff; border-radius: 50%; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .85rem; margin-bottom: .75rem; }
+    .find-step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--orange); color: var(--navy); border-radius: 50%; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .85rem; margin-bottom: .75rem; }
     .find-step p { font-size: .92rem; line-height: 1.55; color: var(--muted); }
     .find-step strong { color: var(--text); }
     .find-foot { text-align: center; }
@@ -661,7 +661,7 @@
 
     <!-- ══ HERO ══ -->
     <section class="hero" aria-labelledby="hero-heading">
-      <img class="hero-bg" src="/he-tyres/images/hero.webp" alt="" aria-hidden="true" width="1132" height="412" loading="eager" decoding="async">
+      <img class="hero-bg" src="/he-tyres/images/hero.webp" alt="" aria-hidden="true" width="1132" height="412" loading="eager" decoding="async" fetchpriority="high">
       <div class="hero-overlay"></div>
       <div class="hero-inner">
         <div class="hero-content">
@@ -1128,125 +1128,174 @@
     </div>
   </dialog>
 
-  <!-- Leaflet JS — loaded before the inline init below -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script defer>
-    // ── Coverage radius map (Leaflet) — mirrors the landing-page radius map ──
+    // ── Leaflet maps — defer loading until the map is near viewport ──
     (function () {
-      if (typeof L === 'undefined') return;
-      var el = document.getElementById('areaMap');
-      if (!el) return;
-      var ORANGE      = '#ec7325';
-      var ORANGE_FILL = 'rgba(236,115,37,0.18)';
-      var NAVY        = '#1a2336';
-      var TILE_URL    = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
-      var TILE_ATTR   = '&copy; Stadia Maps &copy; OpenStreetMap';
-      var depot        = [51.5665, -1.8170];      // Unit 5 Star West, Westlea SN5 7SW
-      var radiusMetres = 16 * 1609.34;            // 16-mile mobile radius (keeps Chippenham inside)
-      var bounds       = L.latLng(depot).toBounds(radiusMetres * 2);
-      var map = L.map('areaMap', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
-        .fitBounds(bounds, { padding: [34, 34] });
-      L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map);
-      L.circle(depot, { radius: radiusMetres, color: ORANGE, weight: 2.5, fillColor: ORANGE_FILL, fillOpacity: 1 }).addTo(map);
+      var areaEl = document.getElementById('areaMap');
+      var depotEl = document.getElementById('depotMap');
+      if (!areaEl && !depotEl) return;
 
-      // Towns we cover — labelled so they're obvious on the map
-      // Add town markers and depot AFTER invalidateSize so tooltips position correctly
-      function addMarkers() {
-        map.invalidateSize();
-        var towns = [
-          { n: 'PUR', c: [51.5872, -1.8730] },
-          { n: 'WRO', c: [51.5236, -1.7956] },
-          { n: 'RWB', c: [51.5419, -1.9048] },
-          { n: 'CRI', c: [51.6410, -1.8556] },
-          { n: 'HIG', c: [51.6320, -1.7110] },
-          { n: 'LYN', c: [51.5160, -1.9930] },
-          { n: 'MAR', c: [51.4214, -1.7286] },
-          { n: 'CHI', c: [51.4585, -2.1160] },
-          { n: 'FAR', c: [51.6560, -1.5860] }
-        ];
-        towns.forEach(function (t) {
-          var dir = t.c[1] < depot[1] ? 'right' : 'left';
-          L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
-            .bindTooltip(t.n, { permanent: true, direction: dir, className: 'town', offset: [0, 0] });
-        });
-        L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(map)
-          .bindTooltip('HE', { permanent: true, direction: 'right', className: 'town depot', offset: [8, 0] });
+      var started = false;
+
+      function initMaps() {
+        // Coverage radius map (Leaflet) — mirrors the landing-page radius map
+        (function () {
+          if (typeof L === 'undefined') return;
+          var el = document.getElementById('areaMap');
+          if (!el) return;
+          var ORANGE      = '#ec7325';
+          var ORANGE_FILL = 'rgba(236,115,37,0.18)';
+          var NAVY        = '#1a2336';
+          var TILE_URL    = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+          var TILE_ATTR   = '&copy; Stadia Maps &copy; OpenStreetMap';
+          var depot        = [51.5665, -1.8170];      // Unit 5 Star West, Westlea SN5 7SW
+          var radiusMetres = 16 * 1609.34;            // 16-mile mobile radius (keeps Chippenham inside)
+          var bounds       = L.latLng(depot).toBounds(radiusMetres * 2);
+          var map = L.map('areaMap', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
+            .fitBounds(bounds, { padding: [34, 34] });
+          L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map);
+          L.circle(depot, { radius: radiusMetres, color: ORANGE, weight: 2.5, fillColor: ORANGE_FILL, fillOpacity: 1 }).addTo(map);
+
+          // Towns we cover — labelled so they're obvious on the map
+          // Add town markers and depot AFTER invalidateSize so tooltips position correctly
+          function addMarkers() {
+            map.invalidateSize();
+            var towns = [
+              { n: 'PUR', c: [51.5872, -1.8730] },
+              { n: 'WRO', c: [51.5236, -1.7956] },
+              { n: 'RWB', c: [51.5419, -1.9048] },
+              { n: 'CRI', c: [51.6410, -1.8556] },
+              { n: 'HIG', c: [51.6320, -1.7110] },
+              { n: 'LYN', c: [51.5160, -1.9930] },
+              { n: 'MAR', c: [51.4214, -1.7286] },
+              { n: 'CHI', c: [51.4585, -2.1160] },
+              { n: 'FAR', c: [51.6560, -1.5860] }
+            ];
+            towns.forEach(function (t) {
+              var dir = t.c[1] < depot[1] ? 'right' : 'left';
+              L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
+                .bindTooltip(t.n, { permanent: true, direction: dir, className: 'town', offset: [0, 0] });
+            });
+            L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(map)
+              .bindTooltip('HE', { permanent: true, direction: 'right', className: 'town depot', offset: [8, 0] });
+          }
+          setTimeout(addMarkers, 350);
+          var rt; window.addEventListener('resize', function () {
+            clearTimeout(rt);
+            rt = setTimeout(function () { map.invalidateSize(); }, 200);
+          });
+        })();
+
+        // Depot finder map (Leaflet) — zoomed street-level route guide
+        (function () {
+          if (typeof L === 'undefined') return;
+          var el = document.getElementById('depotMap');
+          if (!el) return;
+          var ORANGE = '#ec7325';
+          var NAVY   = '#1a2336';
+          var unit5  = [51.5660844, -1.8176500];
+
+          var map = L.map('depotMap', {
+            zoomControl: false, attributionControl: false,
+            dragging: false, scrollWheelZoom: false,
+            doubleClickZoom: false, touchZoom: false
+          });
+
+          L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19
+          }).addTo(map);
+
+          var route = [
+            [51.5629970, -1.8198591],
+            [51.5631864, -1.8196407],
+            [51.5632291, -1.8195749],
+            [51.5634140, -1.8194076],
+            [51.5636838, -1.8191278],
+            [51.5638762, -1.8188851],
+            [51.5640727, -1.8185729],
+            [51.5643144, -1.8180999],
+            [51.5645733, -1.8173331],
+            [51.5647806, -1.8165103],
+            [51.5649345, -1.8158655],
+            [51.5650308, -1.8155673],
+            [51.5653441, -1.8158429],
+            [51.5656039, -1.8160722],
+            [51.5658855, -1.8163208],
+            [51.5662109, -1.8166080],
+            [51.5661392, -1.8168850],
+            [51.5660827, -1.8170130],
+            [51.5660057, -1.8172654],
+            [51.5659641, -1.8174020],
+            [51.5660844, -1.8175010]
+          ];
+
+          var line = L.polyline(route, {
+            color: ORANGE, weight: 5, opacity: 0.85,
+            dashArray: '12, 8', lineCap: 'round'
+          }).addTo(map);
+
+          map.fitBounds(line.getBounds(), { padding: [40, 40] });
+
+          L.circleMarker(unit5, {
+            radius: 10, color: '#fff', weight: 3,
+            fillColor: ORANGE, fillOpacity: 1
+          }).addTo(map).bindTooltip('Unit 5 — HEtyres', {
+            permanent: true, direction: 'right',
+            className: 'depot-tip dest', offset: [12, 0]
+          });
+
+          L.circleMarker(route[0], {
+            radius: 6, color: '#fff', weight: 2,
+            fillColor: NAVY, fillOpacity: 1
+          }).addTo(map).bindTooltip('Turn off Mead Way', {
+            permanent: true, direction: 'right',
+            className: 'depot-tip', offset: [8, 0]
+          });
+
+          setTimeout(function () {
+            map.invalidateSize();
+            map.fitBounds(line.getBounds(), { padding: [40, 40] });
+          }, 350);
+          var rt; window.addEventListener('resize', function () {
+            clearTimeout(rt);
+            rt = setTimeout(function () {
+              map.invalidateSize();
+              map.fitBounds(line.getBounds(), { padding: [40, 40] });
+            }, 200);
+          });
+        })();
       }
-      setTimeout(addMarkers, 350);
-      var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { map.invalidateSize(); }, 200); });
-    })();
 
-    // ── Depot finder map (Leaflet) — zoomed street-level route guide ──
-    (function () {
-      if (typeof L === 'undefined') return;
-      var el = document.getElementById('depotMap');
-      if (!el) return;
-      var ORANGE = '#ec7325';
-      var NAVY   = '#1a2336';
-      var unit5  = [51.5660844, -1.8176500];
+      function start() {
+        if (started) return;
+        started = true;
 
-      var map = L.map('depotMap', {
-        zoomControl: false, attributionControl: false,
-        dragging: false, scrollWheelZoom: false,
-        doubleClickZoom: false, touchZoom: false
-      });
+        if (typeof L !== 'undefined') {
+          initMaps();
+          return;
+        }
 
-      L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19
-      }).addTo(map);
+        var s = document.createElement('script');
+        s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        s.async = true;
+        s.onload = initMaps;
+        document.head.appendChild(s);
+      }
 
-      var route = [
-        [51.5629970, -1.8198591],
-        [51.5631864, -1.8196407],
-        [51.5632291, -1.8195749],
-        [51.5634140, -1.8194076],
-        [51.5636838, -1.8191278],
-        [51.5638762, -1.8188851],
-        [51.5640727, -1.8185729],
-        [51.5643144, -1.8180999],
-        [51.5645733, -1.8173331],
-        [51.5647806, -1.8165103],
-        [51.5649345, -1.8158655],
-        [51.5650308, -1.8155673],
-        [51.5653441, -1.8158429],
-        [51.5656039, -1.8160722],
-        [51.5658855, -1.8163208],
-        [51.5662109, -1.8166080],
-        [51.5661392, -1.8168850],
-        [51.5660827, -1.8170130],
-        [51.5660057, -1.8172654],
-        [51.5659641, -1.8174020],
-        [51.5660844, -1.8175010]
-      ];
+      if (!('IntersectionObserver' in window)) {
+        start();
+        return;
+      }
 
-      var line = L.polyline(route, {
-        color: ORANGE, weight: 5, opacity: 0.85,
-        dashArray: '12, 8', lineCap: 'round'
-      }).addTo(map);
+      var obs = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) {
+          obs.disconnect();
+          start();
+        }
+      }, { threshold: 0.01, rootMargin: '0px 0px 450px 0px' });
 
-      map.fitBounds(line.getBounds(), { padding: [40, 40] });
-
-      L.circleMarker(unit5, {
-        radius: 10, color: '#fff', weight: 3,
-        fillColor: ORANGE, fillOpacity: 1
-      }).addTo(map).bindTooltip('Unit 5 — HEtyres', {
-        permanent: true, direction: 'right',
-        className: 'depot-tip dest', offset: [12, 0]
-      });
-
-      L.circleMarker(route[0], {
-        radius: 6, color: '#fff', weight: 2,
-        fillColor: NAVY, fillOpacity: 1
-      }).addTo(map).bindTooltip('Turn off Mead Way', {
-        permanent: true, direction: 'right',
-        className: 'depot-tip', offset: [8, 0]
-      });
-
-      setTimeout(function () { map.invalidateSize(); map.fitBounds(line.getBounds(), { padding: [40, 40] }); }, 350);
-      var rt; window.addEventListener('resize', function () {
-        clearTimeout(rt);
-        rt = setTimeout(function () { map.invalidateSize(); map.fitBounds(line.getBounds(), { padding: [40, 40] }); }, 200);
-      });
+      if (areaEl) obs.observe(areaEl);
+      if (depotEl) obs.observe(depotEl);
     })();
 
     // ── Mobile nav toggle ──
