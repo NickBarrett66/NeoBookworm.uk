@@ -26,16 +26,12 @@
         media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 
-  <!--
-    FONTS — TODO before go-live:
-    Per NeoBookworm standards, self-host these as woff2 in /fonts/ with a
-    non-blocking fonts.css (media="print" pattern). Using the CDN here only
-    for the pitch preview.
-    Needed: Montserrat (700/800/900) for headings + logo, Open Sans (400/500/600) body.
-  -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <!-- Self-hosted fonts: preload woff2 first, then load CSS non-blocking -->
+  <link rel="preload" href="/he-tyres/fonts/montserrat-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/he-tyres/fonts/opensans-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/he-tyres/fonts/oswald-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/he-tyres/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/he-tyres/fonts.css"></noscript>
 
   <!-- Structured data -->
   <script type="application/ld+json">
