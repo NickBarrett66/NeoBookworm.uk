@@ -21,10 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-  <!-- Leaflet CSS — non-blocking; needed for the coverage radius map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
+  <!-- Leaflet CSS loads only when a map enters the viewport (see script below) -->
 
   <!-- Self-hosted fonts: preload woff2 first, then load CSS non-blocking -->
   <link rel="preload" href="/he-tyres/fonts/montserrat-latin-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -602,9 +599,20 @@
     .footer-links a:hover { color: var(--orange); }
     footer small { display: block; width: 100%; text-align: center; color: #c7cdd8; margin-top: .5rem; }
 
+    /* Skip layout work for below-fold sections until they scroll near */
+    .services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us, .faq, .contact {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 480px;
+    }
+
     /* ══════════════ RESPONSIVE ══════════════ */
     @media (max-width: 900px) {
       .nav-links { display: none; }
+      header.nav-open .nav-links {
+        display: flex; position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; background: #1a2336;
+        padding: 1rem 1.25rem; gap: 1rem;
+      }
       .nav-toggle { display: block; margin-left: auto; }
       .hero-inner, .brands-inner, .lounge-inner, .coverage-inner, .contact-inner { grid-template-columns: 1fr; }
       .lounge-image { order: -1; }
@@ -636,7 +644,7 @@
 
   <!-- Pitch note: this is HEtyres' own site, presented as live. No demo banner. -->
 
-  <header>
+  <header id="siteHeader">
     <div class="header-inner">
       <a href="/" class="logo" aria-label="HEtyres home"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></a>
       <nav class="nav-links" aria-label="Primary">
@@ -1125,192 +1133,168 @@
   </dialog>
 
   <script defer>
-    // ── Leaflet maps — defer loading until the map is near viewport ──
+    // ── Leaflet maps — load library/CSS only when each map nears viewport ──
     (function () {
       var areaEl = document.getElementById('areaMap');
       var depotEl = document.getElementById('depotMap');
       if (!areaEl && !depotEl) return;
 
-      var started = false;
+      var leafletReady = null;
+      var areaDone = false;
+      var depotDone = false;
+      var TILE_URL = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
 
-      function initMaps() {
-        // Coverage radius map (Leaflet) — mirrors the landing-page radius map
-        (function () {
-          if (typeof L === 'undefined') return;
-          var el = document.getElementById('areaMap');
-          if (!el) return;
-          var ORANGE      = '#ec7325';
+      function loadLeafletCss() {
+        if (document.getElementById('leaflet-css')) return;
+        var l = document.createElement('link');
+        l.id = 'leaflet-css';
+        l.rel = 'stylesheet';
+        l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(l);
+      }
+
+      function ensureLeaflet() {
+        if (leafletReady) return leafletReady;
+        loadLeafletCss();
+        leafletReady = new Promise(function (resolve) {
+          if (typeof L !== 'undefined') { resolve(); return; }
+          var s = document.createElement('script');
+          s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+          s.async = true;
+          s.onload = resolve;
+          document.head.appendChild(s);
+        });
+        return leafletReady;
+      }
+
+      function initAreaMap() {
+        if (areaDone || !areaEl) return;
+        areaDone = true;
+        ensureLeaflet().then(function () {
+          var ORANGE = '#ec7325';
           var ORANGE_FILL = 'rgba(236,115,37,0.18)';
-          var NAVY        = '#1a2336';
-          var TILE_URL    = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
-          var TILE_ATTR   = '&copy; Stadia Maps &copy; OpenStreetMap';
-          var depot        = [51.5665, -1.8170];      // Unit 5 Star West, Westlea SN5 7SW
-          var radiusMetres = 16 * 1609.34;            // 16-mile mobile radius (keeps Chippenham inside)
-          var bounds       = L.latLng(depot).toBounds(radiusMetres * 2);
-          var map = L.map('areaMap', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false })
-            .fitBounds(bounds, { padding: [34, 34] });
-          L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map);
+          var NAVY = '#1a2336';
+          var depot = [51.5665, -1.8170];
+          var radiusMetres = 16 * 1609.34;
+          var map = L.map('areaMap', {
+            zoomControl: false, attributionControl: false,
+            dragging: false, scrollWheelZoom: false, preferCanvas: true
+          }).fitBounds(L.latLng(depot).toBounds(radiusMetres * 2), { padding: [34, 34] });
+          L.tileLayer(TILE_URL, { maxZoom: 16 }).addTo(map);
           L.circle(depot, { radius: radiusMetres, color: ORANGE, weight: 2.5, fillColor: ORANGE_FILL, fillOpacity: 1 }).addTo(map);
 
-          // Towns we cover — labelled so they're obvious on the map
-          // Add town markers and depot AFTER invalidateSize so tooltips position correctly
-          function addMarkers() {
+          requestAnimationFrame(function () {
             map.invalidateSize();
-            var towns = [
-              { n: 'PUR', c: [51.5872, -1.8730] },
-              { n: 'WRO', c: [51.5236, -1.7956] },
-              { n: 'RWB', c: [51.5419, -1.9048] },
-              { n: 'CRI', c: [51.6410, -1.8556] },
-              { n: 'HIG', c: [51.6320, -1.7110] },
-              { n: 'LYN', c: [51.5160, -1.9930] },
-              { n: 'MAR', c: [51.4214, -1.7286] },
-              { n: 'CHI', c: [51.4585, -2.1160] },
-              { n: 'FAR', c: [51.6560, -1.5860] }
-            ];
-            towns.forEach(function (t) {
-              var dir = t.c[1] < depot[1] ? 'right' : 'left';
-              L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
-                .bindTooltip(t.n, { permanent: true, direction: dir, className: 'town', offset: [0, 0] });
-            });
+            if (window.matchMedia('(min-width: 901px)').matches) {
+              var towns = [
+                { n: 'PUR', c: [51.5872, -1.8730] },
+                { n: 'WRO', c: [51.5236, -1.7956] },
+                { n: 'RWB', c: [51.5419, -1.9048] },
+                { n: 'CRI', c: [51.6410, -1.8556] },
+                { n: 'HIG', c: [51.6320, -1.7110] },
+                { n: 'LYN', c: [51.5160, -1.9930] },
+                { n: 'MAR', c: [51.4214, -1.7286] },
+                { n: 'CHI', c: [51.4585, -2.1160] },
+                { n: 'FAR', c: [51.6560, -1.5860] }
+              ];
+              towns.forEach(function (t) {
+                var dir = t.c[1] < depot[1] ? 'right' : 'left';
+                L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: ORANGE, fillOpacity: 1 }).addTo(map)
+                  .bindTooltip(t.n, { permanent: true, direction: dir, className: 'town', offset: [0, 0] });
+              });
+            }
             L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: NAVY, fillOpacity: 1, weight: 2 }).addTo(map)
               .bindTooltip('HE', { permanent: true, direction: 'right', className: 'town depot', offset: [8, 0] });
-          }
-          setTimeout(addMarkers, 350);
-          var rt; window.addEventListener('resize', function () {
+          });
+
+          var rt;
+          window.addEventListener('resize', function () {
             clearTimeout(rt);
             rt = setTimeout(function () { map.invalidateSize(); }, 200);
-          });
-        })();
+          }, { passive: true });
+        });
+      }
 
-        // Depot finder map (Leaflet) — zoomed street-level route guide
-        (function () {
-          if (typeof L === 'undefined') return;
-          var el = document.getElementById('depotMap');
-          if (!el) return;
+      function initDepotMap() {
+        if (depotDone || !depotEl) return;
+        depotDone = true;
+        ensureLeaflet().then(function () {
           var ORANGE = '#ec7325';
-          var NAVY   = '#1a2336';
-          var unit5  = [51.5660844, -1.8176500];
-
+          var NAVY = '#1a2336';
+          var unit5 = [51.5660844, -1.8176500];
+          var route = [
+            [51.5629970, -1.8198591], [51.5631864, -1.8196407], [51.5632291, -1.8195749],
+            [51.5634140, -1.8194076], [51.5636838, -1.8191278], [51.5638762, -1.8188851],
+            [51.5640727, -1.8185729], [51.5643144, -1.8180999], [51.5645733, -1.8173331],
+            [51.5647806, -1.8165103], [51.5649345, -1.8158655], [51.5650308, -1.8155673],
+            [51.5653441, -1.8158429], [51.5656039, -1.8160722], [51.5658855, -1.8163208],
+            [51.5662109, -1.8166080], [51.5661392, -1.8168850], [51.5660827, -1.8170130],
+            [51.5660057, -1.8172654], [51.5659641, -1.8174020], [51.5660844, -1.8175010]
+          ];
           var map = L.map('depotMap', {
             zoomControl: false, attributionControl: false,
             dragging: false, scrollWheelZoom: false,
-            doubleClickZoom: false, touchZoom: false
+            doubleClickZoom: false, touchZoom: false, preferCanvas: true
           });
-
-          L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19
-          }).addTo(map);
-
-          var route = [
-            [51.5629970, -1.8198591],
-            [51.5631864, -1.8196407],
-            [51.5632291, -1.8195749],
-            [51.5634140, -1.8194076],
-            [51.5636838, -1.8191278],
-            [51.5638762, -1.8188851],
-            [51.5640727, -1.8185729],
-            [51.5643144, -1.8180999],
-            [51.5645733, -1.8173331],
-            [51.5647806, -1.8165103],
-            [51.5649345, -1.8158655],
-            [51.5650308, -1.8155673],
-            [51.5653441, -1.8158429],
-            [51.5656039, -1.8160722],
-            [51.5658855, -1.8163208],
-            [51.5662109, -1.8166080],
-            [51.5661392, -1.8168850],
-            [51.5660827, -1.8170130],
-            [51.5660057, -1.8172654],
-            [51.5659641, -1.8174020],
-            [51.5660844, -1.8175010]
-          ];
-
-          var line = L.polyline(route, {
-            color: ORANGE, weight: 5, opacity: 0.85,
-            dashArray: '12, 8', lineCap: 'round'
-          }).addTo(map);
-
+          L.tileLayer(TILE_URL, { maxZoom: 16 }).addTo(map);
+          var line = L.polyline(route, { color: ORANGE, weight: 5, opacity: 0.85, dashArray: '12, 8', lineCap: 'round' }).addTo(map);
           map.fitBounds(line.getBounds(), { padding: [40, 40] });
 
-          L.circleMarker(unit5, {
-            radius: 10, color: '#fff', weight: 3,
-            fillColor: ORANGE, fillOpacity: 1
-          }).addTo(map).bindTooltip('Unit 5 — HEtyres', {
-            permanent: true, direction: 'right',
-            className: 'depot-tip dest', offset: [12, 0]
-          });
-
-          L.circleMarker(route[0], {
-            radius: 6, color: '#fff', weight: 2,
-            fillColor: NAVY, fillOpacity: 1
-          }).addTo(map).bindTooltip('Turn off Mead Way', {
-            permanent: true, direction: 'right',
-            className: 'depot-tip', offset: [8, 0]
-          });
-
-          setTimeout(function () {
+          requestAnimationFrame(function () {
             map.invalidateSize();
             map.fitBounds(line.getBounds(), { padding: [40, 40] });
-          }, 350);
-          var rt; window.addEventListener('resize', function () {
+            L.circleMarker(unit5, { radius: 10, color: '#fff', weight: 3, fillColor: ORANGE, fillOpacity: 1 })
+              .addTo(map).bindTooltip('Unit 5 — HEtyres', { permanent: true, direction: 'right', className: 'depot-tip dest', offset: [12, 0] });
+            L.circleMarker(route[0], { radius: 6, color: '#fff', weight: 2, fillColor: NAVY, fillOpacity: 1 })
+              .addTo(map).bindTooltip('Turn off Mead Way', { permanent: true, direction: 'right', className: 'depot-tip', offset: [8, 0] });
+          });
+
+          var rt;
+          window.addEventListener('resize', function () {
             clearTimeout(rt);
             rt = setTimeout(function () {
               map.invalidateSize();
               map.fitBounds(line.getBounds(), { padding: [40, 40] });
             }, 200);
-          });
-        })();
+          }, { passive: true });
+        });
       }
 
-      function start() {
-        if (started) return;
-        started = true;
-
-        if (typeof L !== 'undefined') {
-          initMaps();
+      function observeMap(el, initFn) {
+        if (!('IntersectionObserver' in window)) {
+          initFn();
           return;
         }
-
-        var s = document.createElement('script');
-        s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        s.async = true;
-        s.onload = initMaps;
-        document.head.appendChild(s);
-      }
-
-      if (!('IntersectionObserver' in window)) {
-        start();
-        return;
-      }
-
-      var obs = new IntersectionObserver(function (entries) {
-        if (entries.some(function (e) { return e.isIntersecting; })) {
+        var obs = new IntersectionObserver(function (entries) {
+          if (!entries.some(function (e) { return e.isIntersecting; })) return;
           obs.disconnect();
-          start();
-        }
-      }, { threshold: 0.01, rootMargin: '0px 0px 450px 0px' });
+          initFn();
+        }, { threshold: 0, rootMargin: '0px 0px 100px 0px' });
+        obs.observe(el);
+      }
 
-      if (areaEl) obs.observe(areaEl);
-      if (depotEl) obs.observe(depotEl);
+      if (areaEl) observeMap(areaEl, initAreaMap);
+      if (depotEl) observeMap(depotEl, initDepotMap);
     })();
 
-    // ── Mobile nav toggle ──
+    // ── Mobile nav toggle (class toggle — avoids inline style reflows) ──
     (function () {
-      const toggle = document.getElementById('navToggle');
-      const links = document.querySelector('.nav-links');
-      if (!toggle || !links) return;
-      toggle.addEventListener('click', () => {
-        const open = links.style.display === 'flex';
-        links.style.display = open ? '' : 'flex';
-        links.style.position = 'absolute';
-        links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
-        links.style.flexDirection = 'column'; links.style.background = '#1a2336';
-        links.style.padding = open ? '' : '1rem 1.25rem'; links.style.gap = '1rem';
-        toggle.setAttribute('aria-expanded', String(!open));
+      var header = document.getElementById('siteHeader');
+      var toggle = document.getElementById('navToggle');
+      var links = document.querySelector('.nav-links');
+      if (!header || !toggle || !links) return;
+      toggle.addEventListener('click', function () {
+        var open = header.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', String(open));
       });
-      links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-        if (window.innerWidth <= 900) { links.style.display = ''; toggle.setAttribute('aria-expanded', 'false'); }
-      }));
+      links.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          if (window.innerWidth <= 900) {
+            header.classList.remove('nav-open');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
     })();
 
     // ── Service modals (native <dialog>) ──
@@ -1452,39 +1436,23 @@
       });
     })();
 
-    // ── Scroll reveal (NeoBookworm standard pattern) ──
-    document.documentElement.classList.add('js-reveal');
-    const revealEls = Array.from(document.querySelectorAll(
-      '.service-card, .brand-tag, .review-card, .team-card, .photo-cell, .faq-item'
-    ));
-    const siblingMap = new Map();
-    revealEls.forEach(el => {
-      const peers = Array.from(el.parentElement.children).filter(c => revealEls.includes(c));
-      siblingMap.set(el, peers.indexOf(el));
-    });
-    const st = document.createElement('style');
-    st.textContent = '.js-reveal .service-card,.js-reveal .brand-tag,.js-reveal .review-card,.js-reveal .team-card,.js-reveal .photo-cell,.js-reveal .faq-item{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}.js-reveal .visible{opacity:1!important;transform:none!important}';
-    document.head.appendChild(st);
-    if ('IntersectionObserver' in window) {
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          const delay = (siblingMap.get(entry.target) || 0) * 70;
-          setTimeout(() => entry.target.classList.add('visible'), delay);
-          obs.unobserve(entry.target);
-        });
-      }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
-      requestAnimationFrame(() => {
-        const vh = window.innerHeight;
-        const rects = revealEls.map(el => el.getBoundingClientRect());
-        revealEls.forEach((el, i) => { if (rects[i].top < vh) el.classList.add('visible'); else obs.observe(el); });
-      });
-    } else {
-      revealEls.forEach(el => el.classList.add('visible'));
-    }
   </script>
 
-  <!-- CookieConsent v3 (self-hosted UMD) + GA4 opt-in -->
-  <script type="module" src="/cookieconsent-config.js"></script>
+  <!-- Cookie banner + GA4 — idle load so it does not compete with first paint -->
+  <script defer>
+    (function () {
+      function loadCookies() {
+        var s = document.createElement('script');
+        s.type = 'module';
+        s.src = '/cookieconsent-config.js';
+        document.body.appendChild(s);
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadCookies, { timeout: 5000 });
+      } else {
+        setTimeout(loadCookies, 3500);
+      }
+    })();
+  </script>
 </body>
 </html>
