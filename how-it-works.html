@@ -336,6 +336,8 @@ display: flex; align-items: flex-start; gap: 0.6rem;
 font-size: 0.875rem;
 color: rgba(255,255,255,0.7);
 line-height: 1.55;
+overflow-wrap: anywhere;
+min-width: 0;
 }
 
 .stage-features li svg {
@@ -461,6 +463,8 @@ gap: 0.5rem;
 font-size: 0.82rem;
 color: rgba(255,255,255,0.68);
 line-height: 1.5;
+overflow-wrap: anywhere;
+min-width: 0;
 }
 
 .aftercare-list li svg {
@@ -624,6 +628,10 @@ nav { padding: 1rem 1.25rem; }
 .timeline-section::before { left: calc(1.25rem + 24px); }
 .stage { grid-template-columns: 50px 1fr; gap: 0 1rem; }
 .stage-card { padding: 1.5rem; }
+.stage-499-scope { padding: 1.25rem; }
+.stage-499-head { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+.stage-pill { white-space: normal; max-width: 100%; }
+.aftercare-card { padding: 1rem; }
 }
 
 .footer-logo-img {
