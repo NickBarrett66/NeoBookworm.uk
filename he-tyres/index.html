@@ -280,7 +280,9 @@
     }
     dialog.svc::backdrop { background: rgba(18,24,38,.6); }
     dialog.svc .svc-head { background: var(--navy); color: #fff; padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: .9rem; position: relative; }
-    dialog.svc .svc-head .si { font-size: 1.7rem; }
+    dialog.svc .svc-head .svc-head-img {
+      width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+    }
     dialog.svc .svc-head h3 {
       flex: 1; min-width: 0;
       font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem;
@@ -306,19 +308,11 @@
       font-size: .82rem; color: var(--muted); background: var(--light);
       border-bottom: 1px solid var(--border);
     }
-    .svc-back {
-      display: none; width: 100%; margin-top: 1.25rem; padding: .9rem 1rem;
-      background: var(--light); border: 1.5px solid var(--border); border-radius: 8px;
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .92rem;
-      color: var(--navy); cursor: pointer; text-align: center;
-    }
-    .svc-back:hover, .svc-back:focus-visible { border-color: var(--orange); color: var(--orange); outline: none; }
     @media (max-width: 900px) {
       dialog.svc { width: min(520px, 96vw); max-height: min(88vh, 720px); }
       dialog.svc .svc-head { padding: 1.1rem 1.15rem; gap: .65rem; }
       dialog.svc .svc-body { padding: 1.35rem 1.15rem 1.5rem; }
       .svc-hint { display: block; padding-left: 1.15rem; padding-right: 1.15rem; }
-      .svc-back { display: block; }
     }
 
     /* ══════════════ BRANDS ══════════════ */
@@ -1141,11 +1135,11 @@
   <!-- Service modals — end of body so they centre in the viewport, not page flow -->
   <dialog class="svc" id="m-mobile">
     <div class="svc-head">
-      <span class="si" aria-hidden="true">🚐</span>
+      <img src="images/tyre-icon.webp" alt="" class="svc-head-img" width="800" height="800" decoding="async" aria-hidden="true">
       <h3>Mobile tyre fitting</h3>
       <button type="button" class="svc-close" data-close aria-label="Close service details"><span class="svc-close-x" aria-hidden="true">×</span><span>Close</span></button>
     </div>
-    <p class="svc-hint">Tap <strong>Close</strong>, <strong>Back to services</strong> below, or the dimmed area outside this card.</p>
+    <p class="svc-hint">Tap <strong>Close</strong> or the dimmed area outside this card.</p>
     <div class="svc-body">
       <p>Don't risk driving on a damaged tyre. We bring the kit to you and fit wherever you are across the Swindon area.</p>
       <ul>
@@ -1155,16 +1149,15 @@
         <li>TPMS checked and reset on the spot</li>
       </ul>
       <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      <button type="button" class="svc-back" data-close>← Back to services</button>
     </div>
   </dialog>
   <dialog class="svc" id="m-depot">
     <div class="svc-head">
-      <span class="si" aria-hidden="true">☕</span>
+      <img src="images/lounge-icon.webp" alt="" class="svc-head-img" width="800" height="800" decoding="async" aria-hidden="true">
       <h3>Depot fitting + lounge</h3>
       <button type="button" class="svc-close" data-close aria-label="Close service details"><span class="svc-close-x" aria-hidden="true">×</span><span>Close</span></button>
     </div>
-    <p class="svc-hint">Tap <strong>Close</strong>, <strong>Back to services</strong> below, or the dimmed area outside this card.</p>
+    <p class="svc-hint">Tap <strong>Close</strong> or the dimmed area outside this card.</p>
     <div class="svc-body">
       <p>Pop in to Unit 5 Star West. While we work, you relax in a proper lounge — coffee in hand, watching your car on the workshop screen. No guesswork, no surprises.</p>
       <ul>
@@ -1174,16 +1167,15 @@
         <li>Quick turnaround, fair prices</li>
       </ul>
       <div class="svc-foot"><a href="#book" class="btn-orange" data-close>Book a depot slot</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
-      <button type="button" class="svc-back" data-close>← Back to services</button>
     </div>
   </dialog>
   <dialog class="svc" id="m-tpms">
     <div class="svc-head">
-      <span class="si" aria-hidden="true">📡</span>
+      <img src="images/wrench-icon.webp" alt="" class="svc-head-img" width="800" height="800" decoding="async" aria-hidden="true">
       <h3>TPMS servicing</h3>
       <button type="button" class="svc-close" data-close aria-label="Close service details"><span class="svc-close-x" aria-hidden="true">×</span><span>Close</span></button>
     </div>
-    <p class="svc-hint">Tap <strong>Close</strong>, <strong>Back to services</strong> below, or the dimmed area outside this card.</p>
+    <p class="svc-hint">Tap <strong>Close</strong> or the dimmed area outside this card.</p>
     <div class="svc-body">
       <p>Tyre Pressure Monitoring System playing up? We diagnose, repair and replace sensors, and reset the dashboard warning light so everything reads correctly.</p>
       <ul>
@@ -1192,16 +1184,15 @@
         <li>Genuine and quality-matched sensors</li>
       </ul>
       <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      <button type="button" class="svc-back" data-close>← Back to services</button>
     </div>
   </dialog>
   <dialog class="svc" id="m-locking">
     <div class="svc-head">
-      <span class="si" aria-hidden="true">🔧</span>
+      <img src="images/lock-icon.webp" alt="" class="svc-head-img" width="800" height="800" decoding="async" aria-hidden="true">
       <h3>Locking wheel nut removal</h3>
       <button type="button" class="svc-close" data-close aria-label="Close service details"><span class="svc-close-x" aria-hidden="true">×</span><span>Close</span></button>
     </div>
-    <p class="svc-hint">Tap <strong>Close</strong>, <strong>Back to services</strong> below, or the dimmed area outside this card.</p>
+    <p class="svc-hint">Tap <strong>Close</strong> or the dimmed area outside this card.</p>
     <div class="svc-body">
       <p>Lost the key? Bought a car without one? We safely remove locking wheel nuts using specialist tools — without damaging your alloys — so we can get your tyres changed.</p>
       <ul>
@@ -1210,7 +1201,6 @@
         <li>Mobile or at the depot</li>
       </ul>
       <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
-      <button type="button" class="svc-back" data-close>← Back to services</button>
     </div>
   </dialog>
 
