@@ -842,6 +842,20 @@
   }
   .btn-ed-cancel:hover { color: var(--white); }
 
+  .outbox-sched-cell { display: flex; flex-direction: column; gap: .2rem; align-items: flex-start; }
+  .btn-ob-sched-edit {
+    padding: 0 .35rem; border: none; background: none; cursor: pointer;
+    font-size: .7rem; color: var(--amber); font-weight: 600;
+  }
+  .btn-ob-sched-edit:hover { text-decoration: underline; }
+  .outbox-sched-edit { display: flex; flex-direction: column; gap: .35rem; min-width: 9rem; }
+  .outbox-sched-edit input[type="date"] {
+    padding: .25rem .4rem; border: 1px solid var(--border); border-radius: 4px;
+    font-size: .78rem; font-family: inherit; color: var(--white); background: var(--navy);
+  }
+  .outbox-sched-edit label { font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: .3rem; }
+  .outbox-sched-edit-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+
   /* ── Clients tab ────────────────────────────────────────────────────────── */
   tr.stuck-row td { background: rgba(224, 80, 80, .07); }
   tr.stuck-row:hover td { background: rgba(224, 80, 80, .14) !important; }
@@ -904,6 +918,7 @@
       <div class="edit-btns">
         <button class="btn-em-edit" id="btn-edit-subject">Edit subject</button>
         <button class="btn-em-edit" id="btn-edit-body">Edit body</button>
+        <button class="btn-em-edit" id="btn-edit-embargo">Edit embargo</button>
       </div>
       <div class="approval-btns" id="email-approval-btns"></div>
     </div>
@@ -3483,9 +3498,7 @@ function renderOutboxSubRow(tbody, row, rows, idx, campaignId, hidden) {
   tdSubj.textContent = row.subject || '—';
 
   const tdSched = document.createElement('td');
-  tdSched.className = 'muted';
-  tdSched.style.fontSize = '.8rem';
-  tdSched.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  renderOutboxScheduledCell(tdSched, row, rows, idx, campaignId);
 
   const tdApproval = document.createElement('td');
   tdApproval.dataset.outboxCol = 'approval';
@@ -3525,9 +3538,7 @@ function renderOutboxFlatRow(tbody, row, rows, idx, campaignId, rowNum) {
   renderOutboxStatusCell(tdStatus, row);
 
   const tdSched = document.createElement('td');
-  tdSched.className = 'muted';
-  tdSched.style.fontSize = '.8rem';
-  tdSched.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  renderOutboxScheduledCell(tdSched, row, rows, idx, campaignId);
 
   const tdActions = document.createElement('td');
   tdActions.dataset.outboxCol = 'actions';
@@ -3563,12 +3574,131 @@ function renderOutboxRows(rows, campaignId, groups, isGrouped) {
 function refreshOutboxRowCells(rowId, row, rows, idx, campaignId) {
   const tr = document.getElementById('outbox-row-' + rowId);
   if (!tr) return;
+  const schedTd = tr.querySelector('[data-outbox-col="scheduled"]');
   const approvalTd = tr.querySelector('[data-outbox-col="approval"]');
   const statusTd = tr.querySelector('[data-outbox-col="status"]');
   const actionsTd = tr.querySelector('[data-outbox-col="actions"]');
+  if (schedTd) renderOutboxScheduledCell(schedTd, row, rows, idx, campaignId);
   if (approvalTd) renderOutboxApprovalCell(approvalTd, row);
   if (statusTd) renderOutboxStatusCell(statusTd, row);
   if (actionsTd) renderOutboxActionsCell(actionsTd, row, rows, idx, campaignId);
+}
+
+/** YYYY-MM-DD for date input from a D1 UTC datetime string. */
+function embargoDateForInput(str) {
+  if (!str) return '';
+  return fmtUtc(str, 'date');
+}
+
+/** D1 storage format for an embargo date picked in the UI (start of that UTC day). */
+function embargoDateToStore(dateStr) {
+  if (!dateStr) return null;
+  return dateStr + ' 00:00:00';
+}
+
+function embargoLabel(row) {
+  return row.scheduled_not_before
+    ? 'Embargo until ' + fmtUtc(row.scheduled_not_before, 'date')
+    : 'No embargo — send when approved';
+}
+
+async function saveOutboxEmbargo(row, value, rows, idx, campaignId) {
+  await apiPost({ action: 'outbox_edit', id: row.id, fields: { scheduled_not_before: value } });
+  row.scheduled_not_before = value;
+  const sr = state.outboxRows.find(r => r.id === row.id);
+  if (sr) sr.scheduled_not_before = value;
+  refreshOutboxRowCells(row.id, row, rows, idx, campaignId);
+  updateOutboxSummaryBar(state.outboxRows);
+  const embargoVal = document.getElementById('email-embargo-val');
+  if (embargoVal) embargoVal.textContent = embargoLabel(row);
+}
+
+function mountEmbargoEditControls(host, row, rows, idx, campaignId, onDone) {
+  host.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'outbox-sched-edit';
+
+  const input = document.createElement('input');
+  input.type = 'date';
+  input.value = embargoDateForInput(row.scheduled_not_before);
+
+  const lblClear = document.createElement('label');
+  const chkClear = document.createElement('input');
+  chkClear.type = 'checkbox';
+  chkClear.checked = !row.scheduled_not_before;
+  lblClear.append(chkClear, document.createTextNode('No embargo (send when approved)'));
+
+  const syncInput = () => {
+    input.disabled = chkClear.checked;
+    if (chkClear.checked) input.value = '';
+  };
+  chkClear.addEventListener('change', syncInput);
+  syncInput();
+
+  const actions = document.createElement('div');
+  actions.className = 'outbox-sched-edit-actions';
+  const btnSave = document.createElement('button');
+  btnSave.className = 'btn-ed-save';
+  btnSave.textContent = 'Save';
+  const btnCancel = document.createElement('button');
+  btnCancel.className = 'btn-ed-cancel';
+  btnCancel.textContent = 'Cancel';
+  actions.append(btnSave, btnCancel);
+
+  wrap.append(input, lblClear, actions);
+  host.appendChild(wrap);
+
+  btnCancel.addEventListener('click', onDone);
+  btnSave.addEventListener('click', async () => {
+    let value;
+    if (chkClear.checked) {
+      value = null;
+    } else {
+      if (!input.value) {
+        alert('Pick an embargo date, or tick “No embargo”.');
+        return;
+      }
+      value = embargoDateToStore(input.value);
+    }
+    btnSave.disabled = true;
+    try {
+      await saveOutboxEmbargo(row, value, rows, idx, campaignId);
+      onDone();
+    } catch (err) {
+      btnSave.disabled = false;
+      alert('Error: ' + err.message);
+    }
+  });
+}
+
+function renderOutboxScheduledCell(td, row, rows, idx, campaignId) {
+  td.innerHTML = '';
+  td.dataset.outboxCol = 'scheduled';
+  td.className = 'muted';
+  td.style.fontSize = '.8rem';
+
+  const canEdit = !row.sent && !row.skipped && !row.suppressed;
+  if (!canEdit) {
+    td.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+    return;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'outbox-sched-cell';
+  const dateSpan = document.createElement('span');
+  dateSpan.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  const btnEdit = document.createElement('button');
+  btnEdit.type = 'button';
+  btnEdit.className = 'btn-ob-sched-edit';
+  btnEdit.textContent = 'Edit date';
+  btnEdit.addEventListener('click', e => {
+    e.stopPropagation();
+    mountEmbargoEditControls(td, row, rows, idx, campaignId, () => {
+      renderOutboxScheduledCell(td, row, rows, idx, campaignId);
+    });
+  });
+  wrap.append(dateSpan, btnEdit);
+  td.appendChild(wrap);
 }
 
 function renderOutboxApprovalCell(td, row) {
@@ -3751,6 +3881,8 @@ async function openEmailPreview(rowId, rows, idx) {
   document.getElementById('email-approval-btns').innerHTML = '';
   document.getElementById('btn-edit-subject').classList.remove('editing');
   document.getElementById('btn-edit-body').classList.remove('editing');
+  const btnEmb = document.getElementById('btn-edit-embargo');
+  if (btnEmb) { btnEmb.classList.remove('editing'); btnEmb.textContent = 'Edit embargo'; }
   overlay.classList.add('open');
 
   try {
@@ -3803,6 +3935,10 @@ function renderEmailPreviewContent(row, rows, idx) {
   subjRow.querySelector('.email-header-value').id = 'email-subject-val';
   hPane.appendChild(subjRow);
 
+  const embargoRow = makeHRow('Embargo:', embargoLabel(row), 'email-embargo-row');
+  embargoRow.querySelector('.email-header-value').id = 'email-embargo-val';
+  hPane.appendChild(embargoRow);
+
   // Body pane
   const bPane = document.createElement('div');
   bPane.className = 'email-body-pane';
@@ -3835,14 +3971,26 @@ function linkifyIntoContainer(text, container) {
 function wireEmailFooter(row, rows, idx) {
   const btnSubj = document.getElementById('btn-edit-subject');
   const btnBody = document.getElementById('btn-edit-body');
+  const btnEmb = document.getElementById('btn-edit-embargo');
   if (row.sent || row.suppressed) {
     if (btnSubj) { btnSubj.style.display = 'none'; }
     if (btnBody) { btnBody.style.display = 'none'; }
+    if (btnEmb) { btnEmb.style.display = 'none'; }
     document.getElementById('email-approval-btns').innerHTML = '';
     return;
   }
   if (btnSubj) { btnSubj.style.display = ''; btnSubj.classList.remove('editing'); btnSubj.textContent = 'Edit subject'; btnSubj.onclick = () => startSubjectEdit(row, rows, idx); }
   if (btnBody) { btnBody.style.display = ''; btnBody.classList.remove('editing');  btnBody.textContent = 'Edit body';    btnBody.onclick = () => startBodyEdit(row, rows, idx); }
+  if (btnEmb) {
+    if (row.skipped) {
+      btnEmb.style.display = 'none';
+    } else {
+      btnEmb.style.display = '';
+      btnEmb.classList.remove('editing');
+      btnEmb.textContent = 'Edit embargo';
+      btnEmb.onclick = () => startEmbargoEdit(row, rows, idx);
+    }
+  }
   renderEmailApprovalBtns(row, rows, idx);
 }
 
@@ -3965,6 +4113,35 @@ function startSubjectEdit(row, rows, idx) {
       restore();
     } catch (err) { btnSave.disabled = false; alert('Error: ' + err.message); }
   });
+}
+
+function startEmbargoEdit(row, rows, idx) {
+  const btnEmb = document.getElementById('btn-edit-embargo');
+  if (!btnEmb) return;
+  btnEmb.classList.add('editing');
+  const embargoRow = document.getElementById('email-embargo-row');
+  if (!embargoRow) return;
+
+  const lbl = embargoRow.querySelector('.email-header-label');
+  embargoRow.innerHTML = '';
+  if (lbl) embargoRow.appendChild(lbl);
+
+  const restore = () => {
+    embargoRow.innerHTML = '';
+    const l2 = document.createElement('span');
+    l2.className = 'email-header-label';
+    l2.textContent = 'Embargo:';
+    const v2 = document.createElement('span');
+    v2.className = 'email-header-value';
+    v2.id = 'email-embargo-val';
+    v2.textContent = embargoLabel(row);
+    embargoRow.append(l2, v2);
+    btnEmb.classList.remove('editing');
+    btnEmb.textContent = 'Edit embargo';
+    btnEmb.onclick = () => startEmbargoEdit(row, rows, idx);
+  };
+
+  mountEmbargoEditControls(embargoRow, row, rows, idx, state.outboxCampaignId, restore);
 }
 
 function startBodyEdit(row, rows, idx) {
