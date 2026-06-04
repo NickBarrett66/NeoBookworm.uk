@@ -850,10 +850,21 @@
   .btn-ob-sched-edit:hover { text-decoration: underline; }
   .outbox-sched-edit { display: flex; flex-direction: column; gap: .35rem; min-width: 9rem; }
   .outbox-sched-edit input[type="date"] {
-    padding: .25rem .4rem; border: 1px solid var(--border); border-radius: 4px;
-    font-size: .78rem; font-family: inherit; color: var(--white); background: var(--navy);
+    padding: .35rem .5rem; border: 1px solid #bbb; border-radius: 5px;
+    font-size: .78rem; font-family: inherit;
+    color: #1a1a1a; background: #f5f5f5;
+    color-scheme: light;
+    min-width: 10.5rem;
   }
-  .outbox-sched-edit label { font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: .3rem; }
+  .outbox-sched-edit input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer; opacity: .85;
+  }
+  .outbox-sched-edit label {
+    font-size: .72rem; color: var(--muted);
+    display: flex; align-items: center; gap: .3rem;
+  }
+  .email-header-pane .outbox-sched-edit label { color: #555; }
+  .email-header-pane .outbox-sched-edit input[type="date"] { background: #fff; }
   .outbox-sched-edit-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
 
   /* ── Clients tab ────────────────────────────────────────────────────────── */
@@ -3679,14 +3690,14 @@ function renderOutboxScheduledCell(td, row, rows, idx, campaignId) {
 
   const canEdit = !row.sent && !row.skipped && !row.suppressed;
   if (!canEdit) {
-    td.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+    td.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before, 'date') : '—';
     return;
   }
 
   const wrap = document.createElement('div');
   wrap.className = 'outbox-sched-cell';
   const dateSpan = document.createElement('span');
-  dateSpan.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before) : '—';
+  dateSpan.textContent = row.scheduled_not_before ? fmtUtc(row.scheduled_not_before, 'date') : '—';
   const btnEdit = document.createElement('button');
   btnEdit.type = 'button';
   btnEdit.className = 'btn-ob-sched-edit';
