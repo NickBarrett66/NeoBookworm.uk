@@ -397,26 +397,21 @@
     }
     .step-header {
       position: relative;
-      height: 52px;
+      height: 80px;
       margin-bottom: 1rem;
     }
-    .step-icon {
+    .step-img-wrap {
       position: absolute;
       left: 0;
       top: 0;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--amber-pale);
-      border: 1px solid rgba(245,166,35,0.28);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 80px;
+      height: 80px;
     }
-    .step-icon img {
-      width: 26px;
-      height: 26px;
+    .step-img {
+      width: 80px;
+      height: 80px;
       display: block;
+      object-fit: contain;
     }
     .step-num {
       position: absolute;
@@ -2453,8 +2448,8 @@
       <div class="steps-grid">
         <div class="step">
           <div class="step-header">
-            <div class="step-icon" aria-hidden="true">
-              <img src="Images/icon-step-1.webp" alt="" width="40" height="40" loading="lazy">
+            <div class="step-img-wrap" aria-hidden="true">
+              <img class="step-img" src="Images/NeoBookworm_Search.webp" alt="" width="1024" height="1024" loading="lazy" decoding="async">
             </div>
             <span class="step-num">1</span>
           </div>
@@ -2464,8 +2459,8 @@
         </div>
         <div class="step">
           <div class="step-header">
-            <div class="step-icon" aria-hidden="true">
-              <img src="Images/icon-step-2.webp" alt="" width="40" height="40" loading="lazy">
+            <div class="step-img-wrap" aria-hidden="true">
+              <img class="step-img" src="Images/NeoBookworm_build.webp" alt="" width="1024" height="1024" loading="lazy" decoding="async">
             </div>
             <span class="step-num">2</span>
           </div>
@@ -2475,8 +2470,8 @@
         </div>
         <div class="step">
           <div class="step-header">
-            <div class="step-icon" aria-hidden="true">
-              <img src="Images/icon-step-3.webp" alt="" width="40" height="40" loading="lazy">
+            <div class="step-img-wrap" aria-hidden="true">
+              <img class="step-img" src="Images/NeoBookworm_move.webp" alt="" width="1024" height="1024" loading="lazy" decoding="async">
             </div>
             <span class="step-num">3</span>
           </div>
