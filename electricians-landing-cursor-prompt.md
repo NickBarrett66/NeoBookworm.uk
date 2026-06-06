@@ -24,7 +24,7 @@ edits described. When in doubt, leave it exactly as the plumber page has it.
 - **Do not touch** any CSS, `<style>` blocks, fonts/preloads, the form JavaScript, the
   Cloudflare Worker endpoint URL (`https://neobookworm-landing-enquiry.nickbarrett.workers.dev`),
   the accordion/modal/Leaflet/CookieConsent logic, the header, or the footer.
-- **Do not change the pricing** anywhere: £199 (limited), £299 (normal), £9.99/mo, and the
+- **Do not change the pricing** anywhere: £49.99 build, £9.99/mo, and the
   Wix/agency cost-comparison figures all stay exactly as written.
 - **Do NOT add either page to `sitemap.xml`.** These stay out of the sitemap until go-live
   (same as the plumber pages today).
@@ -85,11 +85,11 @@ Duplicate `plumbers.html`, apply the glossary above, then make these specific ed
 
 ### A1. Meta block (the `TRADE-SPECIFIC: Meta` comment near the top)
 ```html
-<title>Websites for UK Electricians — £199 While I Have Capacity | NeoBookworm</title>
-<meta name="description" content="I build £199 websites for UK electricians while I have capacity (normally £299). You see your site before paying — walk away owing nothing if it's not right.">
+<title>Websites for UK Electricians — £49.99 Fixed | NeoBookworm</title>
+<meta name="description" content="I build £49.99 websites for UK electricians. You see your site before paying — walk away owing nothing if it's not right.">
 <link rel="canonical" href="https://neobookworm.uk/electricians">
 <meta property="og:url" content="https://neobookworm.uk/electricians">
-<meta property="og:title" content="Websites for UK Electricians — £199 Limited Availability | NeoBookworm">
+<meta property="og:title" content="Websites for UK Electricians — £49.99 Fixed | NeoBookworm">
 <meta property="og:description" content="A website built specifically for your electrical business. See it before you pay anything. Walk away if it's not right.">
 ```
 Leave `og:image`, dimensions, favicons, twitter card unchanged.
@@ -97,7 +97,7 @@ Leave `og:image`, dimensions, favicons, twitter card unchanged.
 ### A2. Structured data (the `TRADE-SPECIFIC: Structured data` JSON-LD block)
 - `"serviceType": "Website design for electricians"`
 - `"audience"` → `"audienceType": "Electricians"`
-- offer `"description": "Limited availability website build price for UK electrical businesses"`
+- offer `"description": "Fixed-price website build for UK electrical businesses"`
 
 ### A3. Hero
 - Eyebrow → `For electricians without a website`
@@ -203,7 +203,7 @@ plumber/Gas Safe references through the prose, so read each section and swap tho
 - Bullet: "no Gas Safe number, no working contact form" → "no registration number, no working contact form".
 
 ### B7. Cost comparison
-- Leave **all numbers exactly as they are** (£199/£299/£9.99, £15–20, £40–250+, year 1/3 break-even). No trade words to change here beyond the glossary.
+- Leave **all numbers exactly as they are** (£49.99/£9.99, £15–20, £40–250+, year 1/3 break-even). No trade words to change here beyond the glossary.
 
 ### B8. How switching works (steps) & About Nick
 - Steps: glossary only.
@@ -231,7 +231,7 @@ plumber/Gas Safe references through the prose, so read each section and swap tho
 - [ ] No remaining instances of "plumber", "plumbing", "Gas Safe", "Hartley", or
       `hartley-plumbing` anywhere (search both files).
 - [ ] No invented statistics or "searches per month" numbers anywhere.
-- [ ] Pricing untouched (£199 / £299 / £9.99 and the cost table figures).
+- [ ] Pricing untouched (£49.99 / £9.99 and the cost table figures).
 - [ ] Demo links point to `swift-electrical-njb-demo.netlify.app` and images to
       `demo-swift-electricals*`; `<img>` width/height match the real file dimensions.
 - [ ] Form `source` values and intake `ref` params are the electrician versions.

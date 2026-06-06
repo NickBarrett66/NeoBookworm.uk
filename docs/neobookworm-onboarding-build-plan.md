@@ -399,7 +399,7 @@ visit the URLs, check the rendering on mobile and desktop.
 **Deliverables:**
 - The three big buttons on `preview_ready` stage: "Love it", "A few changes please" (opens structured form), "Not for me"
 - The structured feedback form for changes
-- The "Pay £199" button on `awaiting_payment` (links to Stripe Checkout — webhook handling is session 7)
+- The "Pay £49.99" button on `awaiting_payment` (links to Stripe Checkout — webhook handling is session 7)
 - The "Send work photos" upload form on `researching` / `building` (uses existing R2 pattern)
 - New POST routes in the portal Worker: `/c/:slug/decision`, `/c/:slug/feedback`
 - D1 stage transitions triggered correctly
@@ -475,12 +475,12 @@ land in your inbox.
 **Pre-flight thinking:**
 
 You'll need two Stripe products:
-- A one-off £199 product (the build fee)
+- A one-off £49.99 product (the build fee)
 - A £9.99/month subscription product (the care plan)
 
-The portal "Pay £199" button creates a Stripe Checkout session for the one-off. The care plan signup happens later — either after launch via a separate "subscribe to care plan" link in Post-3, or bundled into the Stripe Checkout at the same time as the £199.
+The portal "Pay £49.99" button creates a Stripe Checkout session for the one-off. The care plan signup happens later — either after launch via a separate "subscribe to care plan" link in Post-3, or bundled into the Stripe Checkout at the same time as the £49.99.
 
-My recommendation: **keep them separate.** Per the Convergence-3 email, the care plan question is explicitly deferred to after launch. Forcing the decision at payment muddles the experience. The £199 Checkout is for the build; the care plan is offered separately in Post-3 with its own Stripe Payment Link.
+My recommendation: **keep them separate.** Per the Convergence-3 email, the care plan question is explicitly deferred to after launch. Forcing the decision at payment muddles the experience. The £49.99 Checkout is for the build; the care plan is offered separately in Post-3 with its own Stripe Payment Link.
 
 Webhook security: Stripe signs webhooks. Workers can verify using Web Crypto API. Don't skip this — without verification, anyone can POST to your webhook and trigger emails / state changes.
 
@@ -492,7 +492,7 @@ Should this be its own Worker or part of intake? Webhooks are an unusual shape (
 I'm adding Stripe webhook handling for NeoBookworm.
 
 Stripe products to create in dashboard before this session:
-- One-off £199 build fee (product ID: {{FILL IN AFTER CREATION}})
+- One-off £49.99 build fee (product ID: {{FILL IN AFTER CREATION}})
 - £9.99/month care plan subscription (product ID: {{FILL IN}})
 
 Webhook endpoint will receive: checkout.session.completed,
@@ -523,7 +523,7 @@ Tasks:
    - Personal email to you (not the client) so you can reach out
 6. Handle customer.subscription.deleted:
    - Update plan to NULL, send a kind "sorry to see you go" email
-7. On the portal Worker (session 6), update the "Pay £199" button
+7. On the portal Worker (session 6), update the "Pay £49.99" button
    to create a Stripe Checkout session with metadata.prospect_id
    set to the slug. Use Stripe Payment Links if simpler — they
    support metadata too.

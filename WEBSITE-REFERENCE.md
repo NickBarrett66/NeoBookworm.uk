@@ -6,7 +6,7 @@ This document describes what the site is for, how it is built as of the latest r
 
 ## 1. Purpose and positioning
 
-**NeoBookworm.uk** is the marketing website for a small web design business focused on **local tradespeople** (especially around Swindon / Wiltshire), with a **fixed build price (£299)** and optional **ongoing care (£9.99/month)**.
+**NeoBookworm.uk** is the marketing website for a small web design business focused on **local tradespeople** (especially around Swindon / Wiltshire), with a **fixed build price (£49.99)** and optional **ongoing care (£9.99/month)**.
 
 ### What the site tries to achieve
 

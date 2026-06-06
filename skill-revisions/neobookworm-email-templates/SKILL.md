@@ -1,6 +1,6 @@
 ---
 name: neobookworm-email-templates
-description: "Defines the structure, tone, angle, and constraints for all NeoBookworm cold-email sequences across every segment (A, B, C1–C4, D). Covers initial outreach, follow-ups, and final emails for both no-website and has-website campaigns. All prospects are Ltd companies — sole trader variants have been removed. Includes pricing context (£199 direct-approach rate vs £299 public price) and universal rules. Read this file before drafting any NeoBookworm outreach email."
+description: "Defines the structure, tone, angle, and constraints for all NeoBookworm cold-email sequences across every segment (A, B, C1–C4, D). Covers initial outreach, follow-ups, and final emails for both no-website and has-website campaigns. All prospects are Ltd companies — sole trader variants have been removed. Includes pricing context (£49.99 fixed build) and universal rules. Read this file before drafting any NeoBookworm outreach email."
 ---
 
 This file defines the email templates for all NeoBookworm cold-email campaigns. It covers all four segments (A, B, C, D) with initial emails and follow-ups. All prospects targeted are Ltd companies — sole trader variants have been removed.
@@ -36,32 +36,22 @@ For each segment you'll find:
 
 ---
 
-## Pricing context — direct-approach offer
+## Pricing context
 
-**The website (neobookworm.uk) shows £299.** The £199 price in these emails is a direct-approach rate offered exclusively to prospects contacted by email — it is not advertised publicly and does not appear on the landing page.
+**The build price is £49.99 fixed** — the same on neobookworm.uk, trade landing pages, and in outreach emails. £9.99/month hosting is separate and optional.
 
-This is a genuine exclusive, not a coupon-style discount. The framing options:
+**Default framing (Email 1):**
+> A full 5-page site is £49.99 fixed, £9.99/month after that.
 
-**Option B — name the offer explicitly (DEFAULT for all segments except A and C3):**
-> The site shows £299 — because you've come across this directly, it's £199.
-
-Use this in Email 1 for Segments B, C1, C2, C4, and D. It is the standard framing — the price difference is a genuine exclusive and should always be explained. Never use it in Segment A (too salesy for that audience) or Segment C3 Agency (wrong register entirely).
-
-**Option A — state it plainly without explanation (fallback only):**
-> It's £199 for a full 5-page site, £9.99/month after that.
-
-Use this only when the email is genuinely full and adding the £299 explanation would tip it over the word count target. This should be the exception, not the rule. If in doubt, use Option B.
-
-**Option C — anchor it against the public price in a follow-up:**
-> For context: the public rate is £299 — I offer £199 to people I contact directly, because there's no middleman.
-
-Use this sparingly — E2 only, for Segment B or D, where the prospect hasn't responded and a concrete new reason to engage is needed.
+**Shorter fallback (when word count is tight):**
+> It's £49.99 for a full 5-page site, £9.99/month after that.
 
 **Rules:**
-- Never imply the offer expires or is time-limited unless Nick explicitly sets a deadline — false urgency damages trust
-- Never use the word "discount" — it cheapens the service and implies the £299 is the real price paid by suckers
+- Never imply the price expires or is time-limited unless Nick explicitly sets a deadline
+- Never use "starting from", "around", or "typically" for the build price
+- Never use the word "discount"
 - The £9.99/month hosting is the same regardless — never vary it
-- If a prospect replies asking whether the £199 is correct, confirm it and explain it's the direct-approach rate
+- If a prospect asks about price, confirm £49.99 fixed for the build
 
 ---
 
@@ -273,7 +263,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 > 
 > 
 
-> If you like it, a full 5-page site is £199 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
+> If you like it, a full 5-page site is £49.99 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
 > 
 
 > 
@@ -304,7 +294,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 
 **Angle:** Switch from the examples-page angle to the **platform cost comparison** angle — the most effective rational argument for this segment.
 
-**Checkatrade variant** (use when the prospect is a Checkatrade member): most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £199 once, then £9.99/month — and unlike Checkatrade, they own it.
+**Checkatrade variant** (use when the prospect is a Checkatrade member): most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £49.99 once, then £9.99/month — and unlike Checkatrade, they own it.
 
 **Generic variant** (use when the prospect is not on Checkatrade, or their platform is unknown): frame around whatever platform they were found on (Rated People, TrustATrader, Facebook ads, etc.), or use "lead generation platforms" generically. The key point is ownership: they're paying indefinitely for visibility on someone else's platform.
 
@@ -316,9 +306,9 @@ Optionally include a local search volume data point if it's strong enough to be 
 >
 > Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 >
-> One thing worth knowing: most tradespeople pay hundreds of pounds a year for lead generation platforms. This site costs £199 once, then £9.99 a month — and unlike any platform, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
+> One thing worth knowing: most tradespeople pay hundreds of pounds a year for lead generation platforms. This site costs £49.99 once, then £9.99 a month — and unlike any platform, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
 >
-> [Checkatrade variant: "Most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £199 once, then £9.99 a month — and unlike Checkatrade, you own it."]
+> [Checkatrade variant: "Most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £49.99 once, then £9.99 a month — and unlike Checkatrade, you own it."]
 >
 > [Optional: Around [X] people search Google for a [trade] in Swindon every month. Right now that's not finding you.]
 >
@@ -419,7 +409,7 @@ Do not frame this as "you need a new website" — frame it as "you need your old
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until it's better than what you had. Full 5-page site is £199 fixed, £9.99/month after that.
+> You don't pay until it's better than what you had. Full 5-page site is £49.99 fixed, £9.99/month after that.
 >
 > Worth a look, or not — no pressure either way.
 >
@@ -500,7 +490,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 
 **Structure:**
 1. Affirm first — they've already got a working site up, which puts them ahead of most
-2. State the platform fact softly, then the ownership argument — £199 once vs paying Wix forever, no branding
+2. State the platform fact softly, then the ownership argument — £49.99 once vs paying Wix forever, no branding
 3. Landing page link
 4. Risk reversal: "don't pay until it's better than what you've got"
 5. Pricing — one sentence
@@ -511,7 +501,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 
 > Hi [Name],
 >
-> You've already got a site up and running, which puts you ahead of most [trade]s. Yours is on Wix, which means a monthly fee to them for a site that carries their branding. That's fine — but there's an alternative: for £199 I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
+> You've already got a site up and running, which puts you ahead of most [trade]s. Yours is on Wix, which means a monthly fee to them for a site that carries their branding. That's fine — but there's an alternative: for £49.99 I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
 >
 > Examples of what I build for plumbers:
 >
@@ -545,7 +535,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 >
 > neobookworm.uk/plumbers-switch
 >
-> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £199 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
+> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £49.99 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
 >
 > Nick | NeoBookworm.uk
 
@@ -709,7 +699,7 @@ The risk reversal is the strongest it has been since the prospect has a working 
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until it's better than what you've got. The site shows £299 — because you've come across this directly, it's £199. £9.99/month after that.
+> You don't pay until it's better than what you've got. A full 5-page site is £49.99 fixed, £9.99/month after that.
 >
 > Worth a look, or not — up to you.
 >
@@ -783,7 +773,7 @@ The tone should be **warm and peer-to-peer** — acknowledging that starting out
 
 **Never:** imply they're struggling, mention competitors, talk about growth or scaling, or use business-development language. These all feel overwhelming to someone in their first two years.
 
-The **cost framing** is important for this segment. £199 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
+The **cost framing** is important for this segment. £49.99 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
 
 ## Email 1 — Initial Outreach
 
@@ -825,7 +815,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 > 
 > 
 
-> It's £199 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
+> It's £49.99 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
 > 
 
 > 
@@ -854,7 +844,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** The cost anchor — make the £199 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
+**Angle:** The cost anchor — make the £49.99 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
 
 **Example output:**
 
@@ -862,7 +852,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 >
 > Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 >
-> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £199, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
+> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £49.99, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
 >
 > Nick | [NeoBookworm.uk](http://NeoBookworm.uk)
 
@@ -978,7 +968,7 @@ Use these when drafting emails. Each brief is a compact version of the full segm
 ## Segment D — New Entrant
 
 **PROFILE:** New tradesperson (0–5 reviews or equivalent signals, under 2 years trading). Cash-aware, time-stretched, open-minded. Found via [platform] — use the actual source when personalising, do not assume Checkatrade.
-**APPROACH:** Open with a warm acknowledgement that they're new and building something — positive, not sympathetic. Frame the website as credibility infrastructure — it makes them look established when someone searches their name. Cost anchor: compare £199 to something trade-relevant. Use Option B pricing.
+**APPROACH:** Open with a warm acknowledgement that they're new and building something — positive, not sympathetic. Frame the website as credibility infrastructure — it makes them look established when someone searches their name. Cost anchor: compare £49.99 to something trade-relevant. Use Option B pricing.
 **NEVER say:** 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings. Never frame the landing page as a demo built for them.
 **ALWAYS include:** The trade landing page URL framed as 'here's an example of the kind of site I'd build'. Risk reversal in Email 1. A trade-relevant cost anchor. Option B pricing line.
 **TONE:** Warm, encouraging, peer-to-peer. Not corporate.
@@ -995,7 +985,7 @@ These apply regardless of segment. Claude must follow all of them:
 3. **One URL appears once, prominently** — the landing page URL (or `-switch` variant for has-website segments) appears once per email, not buried and not repeated. Never frame it as "the demo I built for you" or "a demo site for you to look at" — there is no bespoke demo; it is a page showing examples of what I build. For Segment C (has-website), the link lead-in must never imply their site is being replaced: banned lead-ins include "a rebuilt site", "an updated site", "your new site", "what your site could be". Use "here's the standard I build to:" or "examples of what I build for [trade]s:" instead.
 4. **No jargon** — no 'SEO', 'digital presence', 'online visibility', 'responsive design', 'CMS', 'conversion rate'. Plain English throughout.
 5. **No calls to action other than 'look at the examples page'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
-6. **Pricing mentioned clearly** — £199 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide. The website shows £299 — £199 is the direct-approach rate for prospects contacted by email. See **Pricing context — direct-approach offer** above for when and how to name this explicitly. Never use the word "discount".
+6. **Pricing mentioned clearly** — £49.99 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide. See **Pricing context** above. Never use the word "discount".
 7. **Autonomy-preserving close** — every email needs a low-pressure way to say no. The closer the email is to the contact cap, the more prominent this must be.
 8. **Compliance footer** — appended in code, not written by Claude. Use the short PECR/Ltd variant. Never write the footer as part of the email body.
 9. **Sign-off** — always 'Nick | [NeoBookworm.uk](http://NeoBookworm.uk)'. Nothing else.
@@ -1054,4 +1044,4 @@ Use when drafting E2 and E3 follow-ups — include the relevant figure for the p
 
 ---
 
-*Templates updated: 21 May 2026 — has-website (Segment C) reworked to "affirm first, gap softly": every C example now opens by acknowledging the prospect's existing site before any gap is mentioned; "rebuilt site / updated one / your new site" link lead-ins banned and replaced with "here's the standard I build to:" (echoing the -switch page); explicit "demo is retired" guidance added so drafts stop reverting to demo-first language; new "Email ↔ landing-page seam" section added mapping each campaign to its destination page's hero/section wording. Previous update: 20 May 2026. Simplified for direct Claude use: sole trader variants removed throughout (all prospects are Ltd); all Agent 2/3/6 references removed; Agent 3/6 JS prompt blocks converted to plain Claude briefs and moved inline; Email 2/3 headings cleaned up; E2 farewell language removed (E3 is the final contact); universal rule 8 simplified to PECR/Ltd footer only; local search volume converted from JS object to plain reference table. Previous update: 20 May 2026 — Option B pricing made default for all segments except A and C3. Previous update: 20 May 2026 — pricing context added, £199 direct-approach rate documented.*
+*Templates updated: 21 May 2026 — has-website (Segment C) reworked to "affirm first, gap softly": every C example now opens by acknowledging the prospect's existing site before any gap is mentioned; "rebuilt site / updated one / your new site" link lead-ins banned and replaced with "here's the standard I build to:" (echoing the -switch page); explicit "demo is retired" guidance added so drafts stop reverting to demo-first language; new "Email ↔ landing-page seam" section added mapping each campaign to its destination page's hero/section wording. Previous update: 20 May 2026. Simplified for direct Claude use: sole trader variants removed throughout (all prospects are Ltd); all Agent 2/3/6 references removed; Agent 3/6 JS prompt blocks converted to plain Claude briefs and moved inline; Email 2/3 headings cleaned up; E2 farewell language removed (E3 is the final contact); universal rule 8 simplified to PECR/Ltd footer only; local search volume converted from JS object to plain reference table. Previous update: 20 May 2026 — Option B pricing made default for all segments except A and C3. Previous update: 20 May 2026 — pricing context added, £49.99 direct-approach rate documented.*

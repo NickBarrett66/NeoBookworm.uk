@@ -751,7 +751,7 @@ Brilliant — really glad you're happy with it.
 
 Here's what happens next:
 
-1. Payment. £199 to get the site live. Pay here whenever's convenient
+1. Payment. £49.99 to get the site live. Pay here whenever's convenient
    (it goes straight to me, no third party): {stripe_link}
 
 2. The £9.99/month care plan. You can decide on this after launch if
@@ -1277,7 +1277,7 @@ No action buttons (waiting on you).
 ```
 You're going ahead — brilliant.
 
-Pay £199 to get the site live: [Pay with Stripe →]
+Pay £49.99 to get the site live: [Pay with Stripe →]
 
 After payment:
 ✓ I'll sort the domain and hosting
@@ -1285,7 +1285,7 @@ After payment:
 ✓ I'll send you the handover doc on the day
 ```
 
-Action button: prominent "Pay £199 with Stripe" linking to {stripe_link}.
+Action button: prominent "Pay £49.99 with Stripe" linking to {stripe_link}.
 
 ---
 

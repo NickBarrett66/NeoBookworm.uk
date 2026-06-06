@@ -215,7 +215,7 @@ Bulleted change list. Same three options on portal."
 
 **C3 notes (stub):** Three domain variants (domain confirmed / not yet registered /
 still unresolved). Select the right variant and delete the others before sending.
-Payment is £199. Portal stage: `awaiting_payment`.
+Payment is £49.99. Portal stage: `awaiting_payment`.
 
 **C4 body summary:** "No problem — thanks for looking. Preview stays up a month at
 {preview_url}. All the best with {business}."

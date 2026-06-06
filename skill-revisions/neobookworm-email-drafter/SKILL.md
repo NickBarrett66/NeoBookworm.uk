@@ -12,7 +12,7 @@ Produces two brand-consistent, objection-aware email variants for a NeoBookworm 
 Emails do NOT reference a bespoke demo site built for the prospect. Instead:
 - The CTA is a landing page URL (e.g. `neobookworm.uk/plumbers`) that shows **example sites** and explains the service
 - The primary hook is **"you don't pay until you're happy with it"** — this eliminates risk and is the single biggest differentiator
-- Pricing is stated clearly: **£199 fixed build, £9.99/month hosting**
+- Pricing is stated clearly: **£49.99 fixed build, £9.99/month hosting**
 - The email's job is to get them curious enough to click the landing page — not to sell the whole service in the email
 
 **Always read both reference files before drafting:**
@@ -137,7 +137,7 @@ Structure for Email 1:
 2. One argument — the single most compelling reason to click, for this segment
 3. Landing page link — prominently, on its own line
 4. Risk reversal — "you don't pay until you're happy with it" or equivalent
-5. Pricing — £199 fixed, £9.99/month (one sentence, matter-of-fact). Use the templates skill's pricing framing — by default name the offer (the site shows £299; because they've come across it directly, it's £199). Never imply the price is time-limited.
+5. Pricing — £49.99 fixed, £9.99/month (one sentence, matter-of-fact). Use the templates skill's pricing framing. Never imply the price is time-limited.
 6. Autonomy-preserving close — easy to say no without losing face
 7. Sign-off and footer
 
@@ -170,7 +170,7 @@ These imply a bespoke site exists for this prospect, which is false. The landing
 - ✅ One argument only — no lists, no multiple benefit claims
 - ✅ Landing page URL on its own line, plain text (no Markdown link syntax)
 - ✅ Risk reversal explicit — "you don't pay until you're happy" or equivalent
-- ✅ Pricing stated clearly — £199 fixed, £9.99/month. Never "from" or "around"
+- ✅ Pricing stated clearly — £49.99 fixed, £9.99/month. Never "from" or "around"
 - ✅ Autonomy-preserving close in every email
 - ✅ Sign-off: `Nick | NeoBookworm.uk` — nothing else
 - ✅ First-person singular throughout — "I build," never "we"
@@ -232,7 +232,7 @@ neobookworm.uk/plumbers
 
 [Risk reversal sentence — "you don't pay until you're happy with it" or equivalent.]
 
-[Pricing sentence — "A full 5-page site is £199 fixed, £9.99/month after that." Email 1 only.]
+[Pricing sentence — "A full 5-page site is £49.99 fixed, £9.99/month after that." Email 1 only.]
 
 [Autonomy-preserving close — one short sentence.]
 

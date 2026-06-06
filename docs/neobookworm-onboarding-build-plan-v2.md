@@ -695,7 +695,7 @@ Test the happy path (J1), the revisions path, the kind close, and both handover 
 
 **Decisions to confirm:**
 
-1. **`api/stripe-webhook.js`** (Vercel function), signature-verified. Two Stripe Payment Links: £199 build fee (one-off), £9.99/mo care plan (subscription).
+1. **`api/stripe-webhook.js`** (Vercel function), signature-verified. Two Stripe Payment Links: £49.99 build fee (one-off), £9.99/mo care plan (subscription).
 2. **Link payment to client** via `client_reference_id={slug}` on the Payment Link URL.
 3. **Events:** `checkout.session.completed` → `payment_status='paid'`, stage → `preparing_live`, pick Convergence-5 domain variant from `clients.domain_status`, send. `invoice.payment_succeeded` → `last_payment_at`, `plan='care'`, no client email. `invoice.payment_failed` → alert you, no state change. `customer.subscription.deleted` → `plan=NULL`, kind email.
 4. **Idempotency:** a `stripe_events` table recording processed `event_id`s.

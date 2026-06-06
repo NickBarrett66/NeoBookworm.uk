@@ -83,7 +83,7 @@ You have a private page at **neobookworm.uk/c/{your-slug}/** that shows where yo
 This matters, because some web designers get this wrong. With NeoBookworm:
 
 - **Your web address is registered in your name from day one.** Not mine. Even if you stop working with me tomorrow, you keep it.
-- **The site itself is yours.** You paid for it once at £299. Nothing about that changes month to month.
+- **The site itself is yours.** You paid for it once at £49.99. Nothing about that changes month to month.
 - **You can leave at any time and take it with you.** A month's notice, no exit fee, no "release fee," no last-minute hidden cost. You get a copy of every file in the site sent to you in a zip, and your web address gets moved to wherever you want it.
 
 That's not a slogan. It's how it works.

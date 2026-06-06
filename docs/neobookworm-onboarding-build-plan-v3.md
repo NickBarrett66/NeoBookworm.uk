@@ -851,7 +851,7 @@ Test the happy path (J1), the revisions path, the kind close, both handover vari
 
 ### Manual prerequisites
 
-- [ ] Stripe in test mode; create **two Payment Links**: £199 build fee (one-off), £9.99/mo care plan (subscription).
+- [ ] Stripe in test mode; create **two Payment Links**: £49.99 build fee (one-off), £9.99/mo care plan (subscription).
 - [ ] Create a webhook endpoint in Stripe pointing at `/api/stripe-webhook`; copy its signing secret.
 - [ ] Set `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` in Vercel.
 

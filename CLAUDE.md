@@ -1,7 +1,7 @@
 # NeoBookworm.uk — Claude Code Instructions
 
 This is the NeoBookworm.uk project — a web design business that builds sites for
-local tradespeople at a fixed price of £299. This file tells Claude Code how the
+local tradespeople at a fixed price of £49.99. This file tells Claude Code how the
 project is structured and what conventions to follow when building or editing files.
 
 ---
@@ -386,7 +386,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Page | Status | Notes |
 |---|---|---|
 | index.html | Complete | Accreditation badges + example thumbs; aftercare copy aligned with client handover (self-managed: Netlify basic + annual web address renewal). Site-wide header/footer link order standardised (nav: Home → How it works → Pricing → Examples → About → Contact; footer: Privacy → Terms). Footer matches About page (inner max-width, muted copy/links, amber border and link hover, vertical sep between legal links). |
-| how-it-works.html | Complete | Stage 1: £299 scoped in sub-box; aftercare matches handover (renewal in £9.99; self-managed Netlify + renewal). |
+| how-it-works.html | Complete | Stage 1: £49.99 scoped in sub-box; aftercare matches handover (renewal in £9.99; self-managed Netlify + renewal). |
 | pricing.html | Complete | FAQ + aftercare cards aligned with handover (four inclusions in £9.99; Netlify transfer on cancel; ad-hoc £25/hr FAQ). |
 | examples.html | Complete | Header/nav aligned with Home / How it works / Pricing (fixed bar, typography, CTA). Complete — accreditation badges upgraded; Hartley Plumbing card uses same browser-frame + JPG crop as index; real Midjourney images not yet integrated. Footer matches About page. |
 | about.html | Complete | Header/nav aligned with Home / How it works / Pricing. Monthly maintenance shown as £9.99 (optional). |

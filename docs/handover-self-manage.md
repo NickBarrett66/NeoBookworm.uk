@@ -106,7 +106,7 @@ For most tradespeople, paying me £12.50 for the occasional small tweak ends up 
 This matters, because some web designers get this wrong. With NeoBookworm:
 
 - **Your web address is registered in your name.** Not mine. It's been that way from day one.
-- **The site itself is yours.** You paid for it once at £299. You own every page, every image, every line of code outright.
+- **The site itself is yours.** You paid for it once at £49.99. You own every page, every image, every line of code outright.
 - **Your Netlify account is yours.** I have no access to it unless you specifically add me as a collaborator for a one-off change (and you can remove me again immediately afterwards).
 
 You're not tied to me for anything. If you ever want to use a different web designer down the line, the whole site is in standard code anyone can read. I'll help the next builder pick up where I left off if you ever need that.

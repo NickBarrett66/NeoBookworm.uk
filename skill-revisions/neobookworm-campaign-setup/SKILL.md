@@ -22,7 +22,7 @@ Emails link to a **trade-specific landing page** (e.g. `neobookworm.uk/plumbers`
 
 > **"You don't pay until you're happy with it."**
 
-This is the single biggest differentiator and must appear in every email. Pricing is stated clearly: **£199 fixed build, £9.99/month hosting**.
+This is the single biggest differentiator and must appear in every email. Pricing is stated clearly: **£49.99 fixed build, £9.99/month hosting**.
 
 ---
 
@@ -132,7 +132,7 @@ Read `website_sub_segment` from D1 (populated by `neobookworm-website-audit`). M
 | `website_sub_segment` value | Email segment | Primary hook |
 |-----------------------------|---------------|--------------|
 | `Parked/Dead` | C1 — Dead Domain | Loss-aversion: "Your old domain now shows a parking page when people search you." Treat like no-website but with the ghost of the previous site as the opening. |
-| `DIY Template` | C2 — DIY Template | Cost + ownership: "You're paying monthly for something you built. £199 once, you own it, £9.99/month to host. Don't pay until it's better than what you've got." |
+| `DIY Template` | C2 — DIY Template | Cost + ownership: "You're paying monthly for something you built. £49.99 once, you own it, £9.99/month to host. Don't pay until it's better than what you've got." |
 | `Agency-managed` | C3 — Agency | Independence: no lock-in, no contract, you keep your domain. Softest tone — there is likely an existing third-party relationship. Lowest priority; do not lead on price. |
 | `Functional but weak` | C4 — Weak Site | One specific factual observation from the audit `Problem:` line, stated without judgement. No opinion words ("dated", "unprofessional"). |
 | `Out of scope` | — | **Skip — do not email.** Site is adequate; no pitch angle. |
@@ -201,7 +201,7 @@ These figures are conservative — actual volume may be higher. Full methodology
    - *Has-website campaigns:* the lead-in into the link must use **"here's the standard I build to:"** or **"examples of what I build for [trade]s:"** — never "here's what a rebuilt/updated/new site looks like." See the **Email ↔ landing-page seam** section of `neobookworm-email-templates/SKILL.md`.
 4. Risk reversal — "you don't pay until you're happy with it" or equivalent. Mandatory.
    - *Has-website campaigns:* frame as "don't pay until it's better than what you've got."
-5. Pricing — "£199 fixed, £9.99/month after that." One sentence, matter-of-fact. **Email 1 only.**
+5. Pricing — "£49.99 fixed, £9.99/month after that." One sentence, matter-of-fact. **Email 1 only.**
 6. Autonomy-preserving close — easy to say no without losing face.
 7. Sign-off: `Nick | NeoBookworm.uk`
 8. PECR footer (verbatim — see below)
