@@ -477,6 +477,9 @@ module.exports = async (req, res) => {
 
         const prospectsParams = seqNum === 1 ? [id, id] : [id];
 
+        const notionId = outboxRows[0].notion_id;
+        const campaignId = outboxRows[0].campaign_id;
+
         await Promise.all([
           queryD1(prospectsDb(),
             `UPDATE outbox SET sent = 1, sent_at = datetime('now') WHERE id = ?`,
@@ -487,8 +490,31 @@ module.exports = async (req, res) => {
              WHERE id = (SELECT campaign_id FROM outbox WHERE id = ?)`,
             [id]),
         ]);
-        const cid = outboxRows[0].campaign_id;
-        if (cid) await syncCampaignCompleteStatus(cid);
+
+        // When E1 is sent, slide the E2/E3 embargo dates forward from the actual send
+        // date rather than campaign creation date. This ensures the gap between emails
+        // is preserved even if E1 was sent late.
+        // When E1 is sent, slide E2/E3 embargo dates to preserve the 5/12-day gap,
+        // but only if their current embargo date has already passed (or was never set).
+        // If a date is already in the future the operator set it deliberately — don't overwrite.
+        if (seqNum === 1 && notionId && campaignId) {
+          await Promise.all([
+            queryD1(prospectsDb(),
+              `UPDATE outbox
+               SET scheduled_not_before = date(datetime('now'), '+5 days')
+               WHERE campaign_id = ? AND notion_id = ? AND seq_num = 2 AND sent = 0
+                 AND (scheduled_not_before IS NULL OR scheduled_not_before <= date('now'))`,
+              [campaignId, notionId]),
+            queryD1(prospectsDb(),
+              `UPDATE outbox
+               SET scheduled_not_before = date(datetime('now'), '+12 days')
+               WHERE campaign_id = ? AND notion_id = ? AND seq_num = 3 AND sent = 0
+                 AND (scheduled_not_before IS NULL OR scheduled_not_before <= date('now'))`,
+              [campaignId, notionId]),
+          ]);
+        }
+
+        if (campaignId) await syncCampaignCompleteStatus(campaignId);
         return res.status(200).json({ ok: true });
       } catch (err) {
         console.error('[dashboard outbox_confirm]', err.message);

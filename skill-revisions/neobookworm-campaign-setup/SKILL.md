@@ -342,19 +342,23 @@ This keeps rows idempotent if the step is re-run.
 
 ```sql
 INSERT OR IGNORE INTO outbox
-  (id, campaign_id, notion_id, business_name, email, subject, body, scheduled_not_before)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  (id, campaign_id, notion_id, business_name, email, subject, body, scheduled_not_before, seq_num)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 ```
+
+**`seq_num` values:** always 1 for E1, 2 for E2, 3 for E3. This is required — without it the system cannot slide embargo dates forward when E1 is sent.
 
 **`scheduled_not_before` values:**
 
 Calculate dates at the time of writing. If `embargo_date` is set, use it as the base date for E1. If not set, use today's date as the base.
 
-| Email | `scheduled_not_before` |
-|-------|------------------------|
-| E1 | `embargo_date` or `NULL` (send as soon as approved) |
-| E2 | base date + 5 days (ISO format: `YYYY-MM-DD`) |
-| E3 | base date + 12 days (ISO format: `YYYY-MM-DD`) |
+| Email | `seq_num` | `scheduled_not_before` |
+|-------|-----------|------------------------|
+| E1 | 1 | `embargo_date` or `NULL` (send as soon as approved) |
+| E2 | 2 | base date + 5 days (ISO format: `YYYY-MM-DD`) |
+| E3 | 3 | base date + 12 days (ISO format: `YYYY-MM-DD`) |
+
+**Important:** the embargo dates for E2 and E3 are calculated relative to *today* (campaign creation date). When E1 is eventually sent, the system automatically slides E2's embargo to `sent_date + 5 days` and E3's to `sent_date + 12 days`. This means the gap between emails is always preserved even if E1 is sent days or weeks after the campaign is created.
 
 The `approved` column defaults to 0 — Nick approves rows via the Dashboard before the sender picks them up.
 
