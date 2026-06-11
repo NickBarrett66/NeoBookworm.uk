@@ -949,7 +949,7 @@
 // ── State ────────────────────────────────────────────────────────────────────
 const EMPTY_COL_FILTERS = () => ({
   q_business: '', q_contact: '', q_trade: '', q_town: '',
-  q_campaign: '',
+  q_campaign: '', q_phone: '', q_email: '',
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
 });
 
@@ -1053,6 +1053,17 @@ const PROSPECT_COLS_DISQUALIFIED = [
   { label: 'Company type', col: 'company_type'    },
 ];
 
+const PROSPECT_COLS_DISCOVERED = [
+  { label: 'Business',    col: 'business_name'   },
+  { label: 'Contact',     col: 'contact_name'    },
+  { label: 'Trade',       col: 'trade_category'  },
+  { label: 'Town',        col: 'town'            },
+  { label: 'Website',     col: 'has_website'     },
+  { label: 'Date added',  col: 'date_added'      },
+  { label: 'Phone',       col: 'phone'           },
+  { label: 'Email',       col: 'email_address'   },
+];
+
 function getProspectCols(status) {
   if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
   if (status === 'Emailed') return PROSPECT_COLS_EMAILED;
@@ -1060,6 +1071,7 @@ function getProspectCols(status) {
     return PROSPECT_COLS_SALVAGE_WEBSITE;
   }
   if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
+  if (status === 'Discovered') return PROSPECT_COLS_DISCOVERED;
   return PROSPECT_COLS;
 }
 
@@ -1067,6 +1079,7 @@ function getProspectCols(status) {
 function defaultProspectSorts(status) {
   if (status === 'In Campaign') return [{ col: 'campaign_priority', dir: 'desc' }];
   if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
+  if (status === 'Discovered') return [{ col: 'date_added', dir: 'desc' }];
   return [];
 }
 
@@ -1099,6 +1112,12 @@ function prospectFilterCell(col, cf) {
         <option value="emailed" ${cf.emailed_filter === 'emailed' ? 'selected' : ''}>Emailed</option>
         <option value="never"   ${cf.emailed_filter === 'never'   ? 'selected' : ''}>Never</option>
       </select>`;
+    case 'date_added':
+      return '';
+    case 'phone':
+      return `<input type="search" class="col-filter" data-col="q_phone" placeholder="Filter…" value="${escAttr(cf.q_phone)}">`;
+    case 'email_address':
+      return `<input type="search" class="col-filter" data-col="q_email" placeholder="Filter…" value="${escAttr(cf.q_email)}">`;
     case 'website_platform':
     case 'website_agency':
     case 'website_url':
@@ -1345,6 +1364,12 @@ function prospectDataCell(col, row) {
         : '<span class="muted">—</span>';
     case 'last_email_sent':
       return `<span class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</span>`;
+    case 'date_added':
+      return `<span class="muted">${fmtUtc(row.date_added, 'date')}</span>`;
+    case 'phone':
+      return `<span class="muted">${escHtml(row.phone || '—')}</span>`;
+    case 'email_address':
+      return `<span class="muted">${escHtml(row.email_address || '—')}</span>`;
     case 'website_platform':
       return `<span class="muted">${escHtml(row.website_platform || '—')}</span>`;
     case 'website_agency':
@@ -1815,6 +1840,8 @@ async function loadList(status, page = 1, { soft = false } = {}) {
     if (cf.q_trade)         params.q_trade        = cf.q_trade;
     if (cf.q_town)          params.q_town         = cf.q_town;
     if (cf.q_campaign)      params.q_campaign     = cf.q_campaign;
+    if (cf.q_phone)         params.q_phone        = cf.q_phone;
+    if (cf.q_email)         params.q_email        = cf.q_email;
     if (cf.has_website !== '') params.has_website  = cf.has_website;
     if (cf.min_rating)      params.min_rating     = cf.min_rating;
     if (cf.max_rating)      params.max_rating     = cf.max_rating;
