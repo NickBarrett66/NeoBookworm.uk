@@ -1125,7 +1125,7 @@ module.exports = async (req, res) => {
         ...(inCampaign ? ['campaign_priority'] : []),
         ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
         ...(salvageWebsite ? ['website_platform', 'website_agency', 'website_url'] : []),
-        ...(contactDetailList ? ['date_added', 'phone', 'email_address'] : []),
+        ...(contactDetailList ? ['phone', 'email_address'] : []),
       ]);
       const orderClauses = [];
       for (const [col, dir] of [[sort1_col, sort1_dir], [sort2_col, sort2_dir], [sort3_col, sort3_dir]]) {
@@ -1140,7 +1140,7 @@ module.exports = async (req, res) => {
           : inCampaign
           ? `${campaignPriorityExpr} DESC NULLS LAST, business_name ASC`
           : contactDetailList
-          ? 'date_added DESC NULLS LAST, business_name ASC'
+          ? 'created_at DESC NULLS LAST, business_name ASC'
           : 'business_name ASC');
 
       const listSelectCore = `notion_id, business_name, contact_name, trade_category, town,
@@ -1163,7 +1163,7 @@ module.exports = async (req, res) => {
                   website_platform, website_agency, website_url`
         : contactDetailList
         ? `SELECT ${listSelectCore},
-                  phone, date_added`
+                  phone`
         : `SELECT ${listSelectCore}`;
 
       const [rows, countRows] = await Promise.all([

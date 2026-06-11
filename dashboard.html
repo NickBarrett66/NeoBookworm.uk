@@ -1081,7 +1081,6 @@ const PROSPECT_COLS_CONTACT_DETAIL = [
   { label: 'Trade',       col: 'trade_category'  },
   { label: 'Town',        col: 'town'            },
   { label: 'Website',     col: 'has_website'     },
-  { label: 'Date added',  col: 'date_added'      },
   { label: 'Phone',       col: 'phone'           },
   { label: 'Email',       col: 'email_address'   },
 ];
@@ -1111,7 +1110,7 @@ function getProspectCols(status) {
 function defaultProspectSorts(status) {
   if (status === 'In Campaign') return [{ col: 'campaign_priority', dir: 'desc' }];
   if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
-  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return [{ col: 'date_added', dir: 'desc' }];
+  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return [{ col: 'created_at', dir: 'desc' }];
   return [];
 }
 
