@@ -1065,6 +1065,8 @@ const PROSPECT_COLS_SALVAGE_WEBSITE = [
   { label: 'Website URL',       col: 'website_url'      },
 ];
 
+const PROSPECT_COL_CREATED = { label: 'Created', col: 'created_at' };
+
 const PROSPECT_COLS_DISQUALIFIED = [
   { label: 'Business',     col: 'business_name'   },
   { label: 'Trade',        col: 'trade_category'  },
@@ -1073,6 +1075,7 @@ const PROSPECT_COLS_DISQUALIFIED = [
   { label: 'CH number',    col: 'ch_number'       },
   { label: 'CH status',    col: 'ch_status'       },
   { label: 'Company type', col: 'company_type'    },
+  PROSPECT_COL_CREATED,
 ];
 
 const PROSPECT_COLS_CONTACT_DETAIL = [
@@ -1089,8 +1092,6 @@ const PROSPECT_STATUSES_CONTACT_DETAIL = new Set([
   'Discovered', 'Researched', 'Qualified', 'Dedup Passed',
 ]);
 
-const PROSPECT_COL_CREATED = { label: 'Created', col: 'created_at' };
-
 function prospectColsWithCreated(cols) {
   const emailCol = cols.find(c => c.col === 'email_address');
   const withoutEmail = cols.filter(c => c.col !== 'email_address');
@@ -1104,7 +1105,7 @@ function getProspectCols(status) {
   if (status === 'Salvage - Website' || status === 'Researched with website') {
     return prospectColsWithCreated(PROSPECT_COLS_SALVAGE_WEBSITE);
   }
-  if (status === 'Disqualified') return prospectColsWithCreated(PROSPECT_COLS_DISQUALIFIED);
+  if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
   if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return prospectColsWithCreated(PROSPECT_COLS_CONTACT_DETAIL);
   return prospectColsWithCreated(PROSPECT_COLS);
 }
@@ -1114,6 +1115,7 @@ function defaultProspectSorts(status) {
   if (status === 'In Campaign') return [{ col: 'campaign_priority', dir: 'desc' }];
   if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
   if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return [{ col: 'created_at', dir: 'desc' }];
+  if (status === 'Disqualified') return [{ col: 'created_at', dir: 'desc' }];
   return [];
 }
 

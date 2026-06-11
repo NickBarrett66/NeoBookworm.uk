@@ -1139,7 +1139,7 @@ module.exports = async (req, res) => {
           ? 'last_email_sent DESC NULLS LAST, business_name ASC'
           : inCampaign
           ? `${campaignPriorityExpr} DESC NULLS LAST, business_name ASC`
-          : contactDetailList
+          : contactDetailList || disqualified
           ? 'created_at DESC NULLS LAST, business_name ASC'
           : 'business_name ASC');
 
