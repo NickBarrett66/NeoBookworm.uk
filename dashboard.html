@@ -165,6 +165,26 @@
   }
   .summary-header.is-refreshing .summary-refreshed { opacity: .55; }
 
+  .summary-search-bar { margin-bottom: 1.25rem; }
+  #summary-business-search {
+    width: min(360px, 100%);
+    padding: .55rem .9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--navy-card);
+    color: var(--white);
+    font-size: .9rem;
+    outline: none;
+  }
+  #summary-business-search:focus { border-color: var(--amber); }
+  .summary-search-results { margin-bottom: 1.5rem; }
+  .summary-search-results.is-loading { opacity: .55; pointer-events: none; }
+  .summary-search-results .search-meta {
+    font-size: .8rem;
+    color: var(--muted);
+    margin-bottom: .6rem;
+  }
+
   .total-badge {
     background: var(--navy-card); border: 1px solid var(--border);
     border-radius: 20px; padding: .25rem .85rem;
@@ -1407,6 +1427,8 @@ const state = {
   focusFilterCol: null,
   filterTimer:    null,
   summaryData:    null,
+  summarySearch:  '',
+  summarySearchTimer: null,
   // enquiries (unified landing + intake + contact)
   submissionsPage:     1,
   submissionsSearch:   '',
@@ -1656,6 +1678,7 @@ function goToTabRoot(tab) {
   document.getElementById('btn-back').style.display = 'none';
   if (tab === 'prospects') {
     state.view = 'summary';
+    state.summarySearch = '';
     loadSummary();
   } else if (tab === 'enquiries') {
     state.submissionsPage = 1;
@@ -1750,7 +1773,11 @@ async function loadSummary({ soft = false } = {}) {
   try {
     const data = await apiFetch({ action: 'summary' });
     applySummaryResponse(data);
-    if (isSummaryViewActive()) renderSummary(data.data);
+    if (isSummaryViewActive()) {
+      const savedSearch = state.summarySearch;
+      renderSummary(data.data);
+      if (savedSearch.trim()) runSummarySearch({ soft: true });
+    }
   } catch (err) {
     if (!soft && isSummaryViewActive()) {
       main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
@@ -1792,6 +1819,10 @@ function renderSummary(rows) {
         <span class="summary-refreshed" id="summary-refreshed" aria-live="polite"></span>
       </div>
     </div>
+    <div class="summary-search-bar">
+      <input type="search" id="summary-business-search" placeholder="Search by business…" aria-label="Search by business" value="${escAttr(state.summarySearch)}" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="summary-search-results" hidden></div>
     <div class="section-label">Active pipeline</div>
     <div class="cards" id="pipeline-cards"></div>
     <div class="section-label">Filtered / archived</div>
@@ -1800,8 +1831,109 @@ function renderSummary(rows) {
 
   renderCards('pipeline-cards', pipelineRows, { showZero: true });
   renderCards('filtered-cards', filteredRows);
+  wireSummarySearch();
   touchSummaryRefreshedAt();
   startSummaryRefresh();
+}
+
+function wireSummarySearch() {
+  const input = document.getElementById('summary-business-search');
+  if (!input) return;
+
+  input.addEventListener('input', () => {
+    state.summarySearch = input.value;
+    clearTimeout(state.summarySearchTimer);
+    state.summarySearchTimer = setTimeout(() => runSummarySearch({ soft: true }), FILTER_DEBOUNCE_MS);
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      state.summarySearch = '';
+      input.value = '';
+      clearSummarySearchResults();
+    }
+  });
+
+  if (state.summarySearch.trim()) runSummarySearch({ soft: true });
+}
+
+function clearSummarySearchResults() {
+  const container = document.getElementById('summary-search-results');
+  if (!container) return;
+  container.innerHTML = '';
+  container.hidden = true;
+}
+
+async function runSummarySearch({ soft = false } = {}) {
+  const q = state.summarySearch.trim();
+  const container = document.getElementById('summary-search-results');
+  if (!container) return;
+
+  if (!q) {
+    clearSummarySearchResults();
+    return;
+  }
+
+  container.hidden = false;
+  if (!soft) {
+    container.innerHTML = '<div class="state-msg" style="padding:1.25rem">Searching…</div>';
+  } else {
+    container.classList.add('is-loading');
+  }
+
+  try {
+    const data = await apiFetch({ action: 'prospect_search', q, page: 1 });
+    renderSummarySearchResults(data);
+  } catch (err) {
+    container.innerHTML = `<div class="state-msg" style="color:var(--red);padding:1rem">${escHtml(err.message)}</div>`;
+  } finally {
+    container.classList.remove('is-loading');
+  }
+}
+
+function renderSummarySearchResults({ data: rows, total, pageSize }) {
+  const container = document.getElementById('summary-search-results');
+  if (!container) return;
+
+  if (!rows.length) {
+    container.innerHTML = `<div class="search-meta">No businesses matching “${escHtml(state.summarySearch.trim())}”</div>`;
+    return;
+  }
+
+  const capped = total > pageSize;
+  const meta = capped
+    ? `${total.toLocaleString()} matches — showing first ${pageSize}`
+    : `${total.toLocaleString()} match${total === 1 ? '' : 'es'}`;
+
+  container.innerHTML = `
+    <div class="search-meta">${escHtml(meta)}</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Business</th>
+            <th>Status</th>
+            <th>Trade</th>
+            <th>Town</th>
+          </tr>
+        </thead>
+        <tbody id="summary-search-tbody"></tbody>
+      </table>
+    </div>
+  `;
+
+  const tbody = document.getElementById('summary-search-tbody');
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escHtml(row.business_name || '—')}</td>
+      <td class="muted">${escHtml(row.status || '—')}</td>
+      <td class="muted">${escHtml(row.trade_category || '—')}</td>
+      <td class="muted">${escHtml(row.town || '—')}</td>
+    `;
+    tr.addEventListener('click', () => loadRecord(row.notion_id));
+    tbody.appendChild(tr);
+  });
 }
 
 function renderCards(containerId, rows, { showZero = false } = {}) {
@@ -1825,6 +1957,7 @@ function renderCards(containerId, rows, { showZero = false } = {}) {
 // ── Prospects: list view ──────────────────────────────────────────────────────
 async function loadList(status, page = 1, { soft = false } = {}) {
   stopSummaryRefresh();
+  state.summarySearch = '';
   state.view = 'list'; state.currentStatus = status;
   state.currentPage = page;
 

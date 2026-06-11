@@ -5,6 +5,7 @@
 // ALTER TABLE prospects ADD COLUMN sequence_suppressed INTEGER NOT NULL DEFAULT 0; -- mirrors suppressed state at prospect level
 
 // GET  /api/dashboard?action=summary
+// GET  /api/dashboard?action=prospect_search&q=business&page=N
 // GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=submissions_list&page=N&q=search&handled=0|1|all&source=all|enquiry|intake|contact
@@ -1015,6 +1016,36 @@ module.exports = async (req, res) => {
         enquiries: enquiryRows[0] || { total: 0, handled: 0 },
         intake:    intakeRows[0]  || { total: 0, handled: 0 },
         contact:   contactRows[0] || { total: 0, handled: 0 },
+      });
+    }
+
+    // ── Prospects: business name search (overview) ───────────────────────────
+    if (action === 'prospect_search') {
+      const q = (req.query.q || '').trim();
+      if (!q) {
+        return res.status(200).json({ ok: true, data: [], total: 0, page: pageNum, pageSize });
+      }
+      const pct = `%${q}%`;
+      const [rows, countRows] = await Promise.all([
+        queryD1(prospectsDb(),
+          `SELECT notion_id, business_name, status, trade_category, town, contact_name
+           FROM prospects
+           WHERE business_name LIKE ?
+           ORDER BY business_name ASC
+           LIMIT ? OFFSET ?`,
+          [pct, pageSize, offset]
+        ),
+        queryD1(prospectsDb(),
+          `SELECT COUNT(*) AS total FROM prospects WHERE business_name LIKE ?`,
+          [pct]
+        ),
+      ]);
+      return res.status(200).json({
+        ok: true,
+        data:  rows,
+        total: countRows[0]?.total || 0,
+        page:  pageNum,
+        pageSize,
       });
     }
 
