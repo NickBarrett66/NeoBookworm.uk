@@ -6,7 +6,7 @@
 
 // GET  /api/dashboard?action=summary
 // GET  /api/dashboard?action=prospect_search&q=business&page=N
-// GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
+// GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&created_from=YYYY-MM-DD&created_to=YYYY-MM-DD&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=submissions_list&page=N&q=search&handled=0|1|all&source=all|enquiry|intake|contact
 // GET  /api/dashboard?action=submissions_record&source_type=enquiry|intake|contact&id=X
@@ -992,7 +992,7 @@ module.exports = async (req, res) => {
     q_business = '', q_contact = '', q_trade = '', q_town = '',
     q_campaign = '', q_phone = '', q_email = '',
     has_website = '', min_rating = '', max_rating = '',
-    emailed_filter = '',
+    emailed_filter = '', created_from = '', created_to = '',
     sort1_col = '', sort1_dir = 'asc',
     sort2_col = '', sort2_dir = 'asc',
     sort3_col = '', sort3_dir = 'asc',
@@ -1094,6 +1094,14 @@ module.exports = async (req, res) => {
       }
       if (q_phone.trim()) { conditions.push('phone LIKE ?'); filterParams.push(`%${q_phone.trim()}%`); }
       if (q_email.trim()) { conditions.push('email_address LIKE ?'); filterParams.push(`%${q_email.trim()}%`); }
+      if (created_from.trim()) {
+        conditions.push('date(created_at) >= date(?)');
+        filterParams.push(created_from.trim());
+      }
+      if (created_to.trim()) {
+        conditions.push('date(created_at) <= date(?)');
+        filterParams.push(created_to.trim());
+      }
       // Legacy global search (q) — kept for backward compatibility
       if (q.trim()) {
         conditions.push('(business_name LIKE ? OR contact_name LIKE ? OR town LIKE ? OR email_address LIKE ?)');
@@ -1112,7 +1120,7 @@ module.exports = async (req, res) => {
 
       const SORT_COLS_ALLOWED = new Set([
         'business_name', 'contact_name', 'trade_category', 'town',
-        'has_website', 'rating', 'last_email_sent',
+        'has_website', 'rating', 'last_email_sent', 'created_at',
         ...(withCampaignId ? ['campaign_id'] : []),
         ...(inCampaign ? ['campaign_priority'] : []),
         ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
@@ -1135,35 +1143,28 @@ module.exports = async (req, res) => {
           ? 'date_added DESC NULLS LAST, business_name ASC'
           : 'business_name ASC');
 
-      const listSelect = inCampaign
-        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
+      const listSelectCore = `notion_id, business_name, contact_name, trade_category, town,
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
+                  created_at`;
+
+      const listSelect = inCampaign
+        ? `SELECT ${listSelectCore},
                   ${campaignIdExpr} AS campaign_id,
                   ${campaignPriorityExpr} AS campaign_priority`
         : withCampaignId
-        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
-                  email_address, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+        ? `SELECT ${listSelectCore},
                   ${campaignIdExpr} AS campaign_id`
         : disqualified
-        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
-                  email_address, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+        ? `SELECT ${listSelectCore},
                   ch_number, ch_status, company_type`
         : salvageWebsite
-        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
-                  email_address, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
+        ? `SELECT ${listSelectCore},
                   website_platform, website_agency, website_url`
         : contactDetailList
-        ? `SELECT notion_id, business_name, contact_name, trade_category, town,
-                  email_address, phone, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment,
-                  date_added`
-        : `SELECT notion_id, business_name, contact_name, trade_category, town,
-                  email_address, has_website, rating, postcard_score,
-                  last_email_sent, date_first_contacted, demo_url, prospect_segment`;
+        ? `SELECT ${listSelectCore},
+                  phone, date_added`
+        : `SELECT ${listSelectCore}`;
 
       const [rows, countRows] = await Promise.all([
         queryD1(prospectsDb(),

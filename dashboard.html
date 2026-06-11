@@ -972,6 +972,7 @@ const EMPTY_COL_FILTERS = () => ({
   q_business: '', q_contact: '', q_trade: '', q_town: '',
   q_campaign: '', q_phone: '', q_email: '',
   has_website: '', min_rating: '', max_rating: '', emailed_filter: '',
+  created_from: '', created_to: '',
 });
 
 const EMPTY_CAMP_COL_FILTERS = () => ({
@@ -1089,15 +1090,21 @@ const PROSPECT_STATUSES_CONTACT_DETAIL = new Set([
   'Discovered', 'Researched', 'Qualified', 'Dedup Passed',
 ]);
 
+const PROSPECT_COL_CREATED = { label: 'Created', col: 'created_at' };
+
+function prospectColsWithCreated(cols) {
+  return [...cols, PROSPECT_COL_CREATED];
+}
+
 function getProspectCols(status) {
-  if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
-  if (status === 'Emailed') return PROSPECT_COLS_EMAILED;
+  if (status === 'In Campaign') return prospectColsWithCreated(PROSPECT_COLS_IN_CAMPAIGN);
+  if (status === 'Emailed') return prospectColsWithCreated(PROSPECT_COLS_EMAILED);
   if (status === 'Salvage - Website' || status === 'Researched with website') {
-    return PROSPECT_COLS_SALVAGE_WEBSITE;
+    return prospectColsWithCreated(PROSPECT_COLS_SALVAGE_WEBSITE);
   }
-  if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
-  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return PROSPECT_COLS_CONTACT_DETAIL;
-  return PROSPECT_COLS;
+  if (status === 'Disqualified') return prospectColsWithCreated(PROSPECT_COLS_DISQUALIFIED);
+  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return prospectColsWithCreated(PROSPECT_COLS_CONTACT_DETAIL);
+  return prospectColsWithCreated(PROSPECT_COLS);
 }
 
 /** Default column sorts when opening a status list (cleared when switching status). */
@@ -1139,6 +1146,11 @@ function prospectFilterCell(col, cf) {
       </select>`;
     case 'date_added':
       return '';
+    case 'created_at':
+      return `<div class="rating-filter-wrap">
+        <input type="date" class="col-filter" data-col="created_from" title="From" value="${escAttr(cf.created_from)}">
+        <input type="date" class="col-filter" data-col="created_to" title="To" value="${escAttr(cf.created_to)}">
+      </div>`;
     case 'phone':
       return `<input type="search" class="col-filter" data-col="q_phone" placeholder="Filter…" value="${escAttr(cf.q_phone)}">`;
     case 'email_address':
@@ -1329,11 +1341,12 @@ function wireColFilterSort(main, {
 
   main.querySelectorAll('.col-filter').forEach(input => {
     input.addEventListener('focus', () => { state[focusKey] = input.dataset.col; });
-    const evt = input.tagName === 'SELECT' ? 'change' : 'input';
+    const instant = input.tagName === 'SELECT' || input.type === 'date';
+    const evt = instant ? 'change' : 'input';
     input.addEventListener(evt, () => {
       filters[input.dataset.col] = input.value;
       clearTimeout(state[timerKey]);
-      if (input.tagName === 'SELECT') {
+      if (instant) {
         onReload({ soft: true });
         return;
       }
@@ -1391,6 +1404,8 @@ function prospectDataCell(col, row) {
       return `<span class="muted">${row.last_email_sent ? row.last_email_sent.slice(0, 10) : '—'}</span>`;
     case 'date_added':
       return `<span class="muted">${fmtUtc(row.date_added, 'date')}</span>`;
+    case 'created_at':
+      return `<span class="muted">${fmtUtc(row.created_at)}</span>`;
     case 'phone':
       return `<span class="muted">${escHtml(row.phone || '—')}</span>`;
     case 'email_address':
@@ -1988,6 +2003,8 @@ async function loadList(status, page = 1, { soft = false } = {}) {
     if (cf.min_rating)      params.min_rating     = cf.min_rating;
     if (cf.max_rating)      params.max_rating     = cf.max_rating;
     if (cf.emailed_filter)  params.emailed_filter = cf.emailed_filter;
+    if (cf.created_from)     params.created_from   = cf.created_from;
+    if (cf.created_to)       params.created_to     = cf.created_to;
     state.colSorts.forEach((s, i) => {
       params[`sort${i + 1}_col`] = s.col;
       params[`sort${i + 1}_dir`] = s.dir;
@@ -2118,14 +2135,15 @@ function renderList({ data: rows, total, page, pageSize }) {
     });
   });
 
-  // Filter inputs: debounced for text, immediate for selects
+  // Filter inputs: debounced for text, immediate for selects and dates
   main.querySelectorAll('.col-filter').forEach(input => {
     input.addEventListener('focus', () => { state.focusFilterCol = input.dataset.col; });
-    const evt = input.tagName === 'SELECT' ? 'change' : 'input';
+    const instant = input.tagName === 'SELECT' || input.type === 'date';
+    const evt = instant ? 'change' : 'input';
     input.addEventListener(evt, () => {
       state.colFilters[input.dataset.col] = input.value;
       clearTimeout(state.filterTimer);
-      if (input.tagName === 'SELECT') {
+      if (instant) {
         loadList(status, 1, { soft: true });
         return;
       }
@@ -2182,6 +2200,8 @@ const PROSPECT_DETAIL_SECTIONS = [
   },
   {
     fields: [
+      { key: 'date_added', label: 'Date added', readOnly: true },
+      { key: 'created_at', label: 'Created at', readOnly: true },
       { key: 'company_type', label: 'Company type' },
       { key: 'ch_number', label: 'CH number' },
       { key: 'ch_status', label: 'CH status' },
@@ -2215,6 +2235,16 @@ function prospectRecordValue(r, key) {
 }
 
 function prospectFieldView(f, r) {
+  if (f.key === 'created_at') {
+    return r.created_at
+      ? `<span class="field-value">${escHtml(fmtUtc(r.created_at))}</span>`
+      : '<span class="field-value empty">—</span>';
+  }
+  if (f.key === 'date_added') {
+    return r.date_added
+      ? `<span class="field-value">${escHtml(fmtUtc(r.date_added, 'date'))}</span>`
+      : '<span class="field-value empty">—</span>';
+  }
   const v = prospectRecordValue(r, f.key);
   if (v === null) return '<span class="field-value empty">—</span>';
   const safe = escHtml(String(v));
@@ -2268,6 +2298,9 @@ function prospectSectionsHtml(r, editing) {
     const grid = editing ? 'field-grid record-edit-grid' : 'field-grid';
     const cells = visibleFields.map(f => {
       const full = f.full ? ' style="grid-column:1/-1"' : '';
+      if (editing && f.readOnly) {
+        return `<div class="field-group"${full}><span class="field-label">${escHtml(f.label)}</span>${prospectFieldView(f, r)}</div>`;
+      }
       if (editing) {
         const disqCls = f.disqualifyOnly
           ? ' disqualify-row' + (r.status === 'Disqualified' ? ' visible' : '')
