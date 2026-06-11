@@ -198,6 +198,7 @@
   }
   .card:hover { border-color: var(--card-color, var(--muted)); transform: translateY(-1px); }
   .card-count { font-size: 2rem; font-weight: 700; line-height: 1; color: var(--card-color, var(--white)); margin-bottom: .4rem; }
+  .card.is-zero .card-count { opacity: .4; }
   .card-label { font-size: .82rem; color: var(--muted); line-height: 1.35; }
 
   /* ── List view ─────────────────────────────────────────────────────────── */
@@ -1446,8 +1447,11 @@ const state = {
 // ── Status metadata ──────────────────────────────────────────────────────────
 const PIPELINE_STATUSES = [
   'Discovered',
-  'Pending CH Validation',
+  'Dedup Passed',
+  'Qualified',
+  'CH Checked - Ltd',
   'Researched',
+  'Pending CH Validation',
   'Researched with website',
   'In Campaign',
   'Emailed',
@@ -1794,18 +1798,19 @@ function renderSummary(rows) {
     <div class="cards" id="filtered-cards"></div>
   `;
 
-  renderCards('pipeline-cards', pipelineRows);
+  renderCards('pipeline-cards', pipelineRows, { showZero: true });
   renderCards('filtered-cards', filteredRows);
   touchSummaryRefreshedAt();
   startSummaryRefresh();
 }
 
-function renderCards(containerId, rows) {
+function renderCards(containerId, rows, { showZero = false } = {}) {
   const container = document.getElementById(containerId);
   rows.forEach(({ status, count }) => {
+    if (!showZero && count === 0) return;
     const colour = STATUS_COLOURS[status] || '#607090';
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = 'card' + (count === 0 ? ' is-zero' : '');
     card.style.setProperty('--card-color', colour);
     card.innerHTML = `<div class="card-count">${count.toLocaleString()}</div><div class="card-label">${escHtml(status)}</div>`;
     card.addEventListener('click', () => {
