@@ -156,6 +156,15 @@
   }
   .summary-header h2 { font-size: 1.4rem; font-weight: 700; }
 
+  .summary-header-meta {
+    display: flex; align-items: center;
+    gap: .75rem; flex-wrap: wrap;
+  }
+  .summary-refreshed {
+    font-size: .75rem; color: var(--muted);
+  }
+  .summary-header.is-refreshing .summary-refreshed { opacity: .55; }
+
   .total-badge {
     background: var(--navy-card); border: 1px solid var(--border);
     border-radius: 20px; padding: .25rem .85rem;
@@ -988,6 +997,11 @@ const OUTBOX_COLS = [
 /** Wait for a full word before column-filter API refresh (ms). */
 const FILTER_DEBOUNCE_MS = 700;
 
+/** Prospects Overview auto-refresh interval (ms). */
+const SUMMARY_REFRESH_MS = 60_000;
+
+let summaryRefreshTimer = null;
+
 // Column config for the Prospects list — order matches table column order
 const PROSPECT_COLS = [
   { label: 'Business',     col: 'business_name'   },
@@ -1532,28 +1546,10 @@ async function tryLogin() {
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
 
-    state.token       = token;
-    state.summaryData = data.data;
-    state.enqUnhandled     = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
-    state.intakeUnhandled  = (data.intake?.total  || 0) - (data.intake?.handled  || 0);
-    state.contactUnhandled = (data.contact?.total || 0) - (data.contact?.handled || 0);
-    state.submissionsCounts = {
-      enquiry: {
-        total:     data.enquiries?.total || 0,
-        unhandled: state.enqUnhandled,
-      },
-      intake: {
-        total:     data.intake?.total || 0,
-        unhandled: state.intakeUnhandled,
-      },
-      contact: {
-        total:     data.contact?.total || 0,
-        unhandled: state.contactUnhandled,
-      },
-    };
+    state.token = token;
+    applySummaryResponse(data);
     sessionStorage.setItem('dash_token', token);
 
-    updateSubmissionsBadge();
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderSummary(data.data);
@@ -1627,7 +1623,7 @@ function goToTabRoot(tab) {
   document.getElementById('btn-back').style.display = 'none';
   if (tab === 'prospects') {
     state.view = 'summary';
-    renderSummary(state.summaryData);
+    loadSummary();
   } else if (tab === 'enquiries') {
     state.submissionsPage = 1;
     state.submissionsSearch = '';
@@ -1655,10 +1651,91 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       if (!isTabAtRoot(tab)) goToTabRoot(tab);
       return;
     }
+    if (state.tab === 'prospects' && tab !== 'prospects') stopSummaryRefresh();
     state.tab = tab;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     goToTabRoot(tab);
   });
+});
+
+function isSummaryViewActive() {
+  return state.tab === 'prospects' && state.view === 'summary';
+}
+
+function stopSummaryRefresh() {
+  if (summaryRefreshTimer) {
+    clearInterval(summaryRefreshTimer);
+    summaryRefreshTimer = null;
+  }
+}
+
+function startSummaryRefresh() {
+  stopSummaryRefresh();
+  if (!isSummaryViewActive() || document.hidden) return;
+  summaryRefreshTimer = setInterval(() => {
+    if (isSummaryViewActive() && !document.hidden) loadSummary({ soft: true });
+  }, SUMMARY_REFRESH_MS);
+}
+
+function applySummaryResponse(data) {
+  state.summaryData = data.data;
+  state.enqUnhandled     = (data.enquiries?.total || 0) - (data.enquiries?.handled || 0);
+  state.intakeUnhandled  = (data.intake?.total  || 0) - (data.intake?.handled  || 0);
+  state.contactUnhandled = (data.contact?.total || 0) - (data.contact?.handled || 0);
+  state.submissionsCounts = {
+    enquiry: {
+      total:     data.enquiries?.total || 0,
+      unhandled: state.enqUnhandled,
+    },
+    intake: {
+      total:     data.intake?.total || 0,
+      unhandled: state.intakeUnhandled,
+    },
+    contact: {
+      total:     data.contact?.total || 0,
+      unhandled: state.contactUnhandled,
+    },
+  };
+  updateSubmissionsBadge();
+}
+
+function touchSummaryRefreshedAt() {
+  const el = document.getElementById('summary-refreshed');
+  if (!el) return;
+  const t = new Date();
+  el.textContent = `Updated ${t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+async function loadSummary({ soft = false } = {}) {
+  if (!state.token) return;
+
+  const main = document.getElementById('main-content');
+  const header = main.querySelector('.summary-header');
+  if (soft && header) header.classList.add('is-refreshing');
+  else if (!soft && !header) main.innerHTML = '<div class="state-msg">Loading…</div>';
+
+  try {
+    const data = await apiFetch({ action: 'summary' });
+    applySummaryResponse(data);
+    if (isSummaryViewActive()) renderSummary(data.data);
+  } catch (err) {
+    if (!soft && isSummaryViewActive()) {
+      main.innerHTML = `<div class="state-msg" style="color:var(--red)">${escHtml(err.message)}</div>`;
+    }
+  } finally {
+    header?.classList.remove('is-refreshing');
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stopSummaryRefresh();
+    return;
+  }
+  if (isSummaryViewActive()) {
+    loadSummary({ soft: true });
+    startSummaryRefresh();
+  }
 });
 
 // ── Prospects: summary view ───────────────────────────────────────────────────
@@ -1677,7 +1754,10 @@ function renderSummary(rows) {
   main.innerHTML = `
     <div class="summary-header">
       <h2>Prospects Overview</h2>
-      <div class="total-badge"><strong>${total.toLocaleString()}</strong> total records</div>
+      <div class="summary-header-meta">
+        <div class="total-badge"><strong>${total.toLocaleString()}</strong> total records</div>
+        <span class="summary-refreshed" id="summary-refreshed" aria-live="polite"></span>
+      </div>
     </div>
     <div class="section-label">Active pipeline</div>
     <div class="cards" id="pipeline-cards"></div>
@@ -1687,6 +1767,8 @@ function renderSummary(rows) {
 
   renderCards('pipeline-cards', pipelineRows);
   renderCards('filtered-cards', filteredRows);
+  touchSummaryRefreshedAt();
+  startSummaryRefresh();
 }
 
 function renderCards(containerId, rows) {
@@ -1708,6 +1790,7 @@ function renderCards(containerId, rows) {
 
 // ── Prospects: list view ──────────────────────────────────────────────────────
 async function loadList(status, page = 1, { soft = false } = {}) {
+  stopSummaryRefresh();
   state.view = 'list'; state.currentStatus = status;
   state.currentPage = page;
 
@@ -1719,7 +1802,7 @@ async function loadList(status, page = 1, { soft = false } = {}) {
     main.querySelector('.table-wrap')?.classList.add('is-loading');
   }
   setBreadcrumb([
-    { label: 'Prospects', action: () => renderSummary(state.summaryData) },
+    { label: 'Prospects', action: () => loadSummary() },
     { label: status },
   ]);
   document.getElementById('btn-back').style.display = '';
@@ -4349,7 +4432,7 @@ function closeModal() {
 
 // ── Back button ───────────────────────────────────────────────────────────────
 document.getElementById('btn-back').addEventListener('click', () => {
-  if (state.tab === 'prospects' && state.view === 'list') renderSummary(state.summaryData);
+  if (state.tab === 'prospects' && state.view === 'list') loadSummary();
   if (state.tab === 'campaigns' && state.campView === 'detail') loadCampaignsList();
   if (state.tab === 'clients'   && state.clientsView === 'detail') {
     state.clientsView = 'list';
