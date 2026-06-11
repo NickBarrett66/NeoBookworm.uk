@@ -1025,7 +1025,7 @@ module.exports = async (req, res) => {
       const inCampaign = status === 'In Campaign';
       const withCampaignId = inCampaign || status === 'Emailed';
       const disqualified = status === 'Disqualified';
-      const discovered = status === 'Discovered';
+      const contactDetailList = ['Discovered', 'Researched', 'Qualified', 'Dedup Passed'].includes(status);
       const salvageWebsite =
         status === 'Salvage - Website' || status === 'Researched with website';
       const campaignIdExpr = `COALESCE(
@@ -1086,7 +1086,7 @@ module.exports = async (req, res) => {
         ...(inCampaign ? ['campaign_priority'] : []),
         ...(disqualified ? ['ch_number', 'ch_status', 'company_type'] : []),
         ...(salvageWebsite ? ['website_platform', 'website_agency', 'website_url'] : []),
-        ...(discovered ? ['date_added', 'phone', 'email_address'] : []),
+        ...(contactDetailList ? ['date_added', 'phone', 'email_address'] : []),
       ]);
       const orderClauses = [];
       for (const [col, dir] of [[sort1_col, sort1_dir], [sort2_col, sort2_dir], [sort3_col, sort3_dir]]) {
@@ -1100,7 +1100,7 @@ module.exports = async (req, res) => {
           ? 'last_email_sent DESC NULLS LAST, business_name ASC'
           : inCampaign
           ? `${campaignPriorityExpr} DESC NULLS LAST, business_name ASC`
-          : discovered
+          : contactDetailList
           ? 'date_added DESC NULLS LAST, business_name ASC'
           : 'business_name ASC');
 
@@ -1125,7 +1125,7 @@ module.exports = async (req, res) => {
                   email_address, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,
                   website_platform, website_agency, website_url`
-        : discovered
+        : contactDetailList
         ? `SELECT notion_id, business_name, contact_name, trade_category, town,
                   email_address, phone, has_website, rating, postcard_score,
                   last_email_sent, date_first_contacted, demo_url, prospect_segment,

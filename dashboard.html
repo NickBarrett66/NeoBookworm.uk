@@ -1053,7 +1053,7 @@ const PROSPECT_COLS_DISQUALIFIED = [
   { label: 'Company type', col: 'company_type'    },
 ];
 
-const PROSPECT_COLS_DISCOVERED = [
+const PROSPECT_COLS_CONTACT_DETAIL = [
   { label: 'Business',    col: 'business_name'   },
   { label: 'Contact',     col: 'contact_name'    },
   { label: 'Trade',       col: 'trade_category'  },
@@ -1064,6 +1064,10 @@ const PROSPECT_COLS_DISCOVERED = [
   { label: 'Email',       col: 'email_address'   },
 ];
 
+const PROSPECT_STATUSES_CONTACT_DETAIL = new Set([
+  'Discovered', 'Researched', 'Qualified', 'Dedup Passed',
+]);
+
 function getProspectCols(status) {
   if (status === 'In Campaign') return PROSPECT_COLS_IN_CAMPAIGN;
   if (status === 'Emailed') return PROSPECT_COLS_EMAILED;
@@ -1071,7 +1075,7 @@ function getProspectCols(status) {
     return PROSPECT_COLS_SALVAGE_WEBSITE;
   }
   if (status === 'Disqualified') return PROSPECT_COLS_DISQUALIFIED;
-  if (status === 'Discovered') return PROSPECT_COLS_DISCOVERED;
+  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return PROSPECT_COLS_CONTACT_DETAIL;
   return PROSPECT_COLS;
 }
 
@@ -1079,7 +1083,7 @@ function getProspectCols(status) {
 function defaultProspectSorts(status) {
   if (status === 'In Campaign') return [{ col: 'campaign_priority', dir: 'desc' }];
   if (status === 'Emailed') return [{ col: 'last_email_sent', dir: 'desc' }];
-  if (status === 'Discovered') return [{ col: 'date_added', dir: 'desc' }];
+  if (PROSPECT_STATUSES_CONTACT_DETAIL.has(status)) return [{ col: 'date_added', dir: 'desc' }];
   return [];
 }
 
