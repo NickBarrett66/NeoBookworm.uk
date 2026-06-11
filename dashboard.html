@@ -1092,7 +1092,10 @@ const PROSPECT_STATUSES_CONTACT_DETAIL = new Set([
 const PROSPECT_COL_CREATED = { label: 'Created', col: 'created_at' };
 
 function prospectColsWithCreated(cols) {
-  return [...cols, PROSPECT_COL_CREATED];
+  const emailCol = cols.find(c => c.col === 'email_address');
+  const withoutEmail = cols.filter(c => c.col !== 'email_address');
+  if (emailCol) return [...withoutEmail, PROSPECT_COL_CREATED, emailCol];
+  return [...withoutEmail, PROSPECT_COL_CREATED];
 }
 
 function getProspectCols(status) {
