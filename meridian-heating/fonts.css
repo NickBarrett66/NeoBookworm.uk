@@ -1,0 +1,33 @@
+/* Meridian Heating (demo) — self-hosted fonts (woff2) */
+
+/* Oswald — condensed technical headings */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/meridian-heating/fonts/oswald-latin-700.woff2') format('woff2');
+}
+
+/* Open Sans (variable) — body + UI */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/meridian-heating/fonts/opensans-latin-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/meridian-heating/fonts/opensans-latin-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/meridian-heating/fonts/opensans-latin-var.woff2') format('woff2');
+}

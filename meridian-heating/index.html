@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meridian Heating | Boiler Installs, Servicing &amp; Gas Safety — Wiltshire</title>
+  <meta name="description" content="Meridian Heating — Gas Safe registered boiler installers in Wiltshire. Fixed-price new boilers, servicing, landlord certificates and heating systems. Get a fixed price today.">
+  <!-- Fictional demo business — keep out of search -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://neobookworm.uk/meridian-heating">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://neobookworm.uk/meridian-heating">
+  <meta property="og:title" content="Meridian Heating | Boiler Installs &amp; Servicing — Wiltshire">
+  <meta property="og:description" content="Gas Safe registered boiler installers in Wiltshire. Fixed prices, manufacturer-accredited installs, up to 12-year guarantees.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/meridian-heating/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/meridian-heating/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/meridian-heating/favicon-16x16.png">
+
+  <!-- Self-hosted fonts: preload woff2 first, then load CSS non-blocking -->
+  <link rel="preload" href="/meridian-heating/fonts/oswald-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/meridian-heating/fonts/opensans-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/meridian-heating/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/meridian-heating/fonts.css"></noscript>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HVACBusiness",
+    "name": "Meridian Heating",
+    "description": "Gas Safe registered boiler installers and heating engineers covering Wiltshire.",
+    "url": "https://neobookworm.uk/meridian-heating",
+    "telephone": "+441380550148",
+    "email": "hello@meridianheating.co.uk",
+    "areaServed": { "@type": "AdministrativeArea", "name": "Wiltshire" },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Devizes",
+      "addressRegion": "Wiltshire",
+      "postalCode": "SN10",
+      "addressCountry": "GB"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "18:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "13:00" }
+    ],
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "183" }
+  }
+  </script>
+
+  <style>
+    :root {
+      --ink: #0b1626;          /* deep navy base */
+      --ink-2: #11233b;        /* panel navy */
+      --ink-3: #16304f;        /* raised panel */
+      --steel: #1a6db5;        /* gas-flame blue */
+      --steel-2: #2f8fd6;      /* lighter blue */
+      --flame: #f5a623;        /* amber accent */
+      --flame-2: #ffbe4d;
+      --line: rgba(255,255,255,0.10);
+      --line-2: rgba(255,255,255,0.16);
+      --paper: #eef3f8;        /* light section bg */
+      --paper-2: #ffffff;
+      --text-d: #0b1626;       /* text on light */
+      --text-l: #e8eef6;       /* text on dark */
+      --muted-l: #9fb2c9;      /* muted on dark */
+      --muted-d: #4b5c72;      /* muted on light */
+      --ok: #2bb673;
+      --head: 'Oswald', 'Arial Narrow', sans-serif;
+      --body: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono: ui-monospace, 'SFMono-Regular', 'Roboto Mono', monospace;
+      --maxw: 1180px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      color: var(--text-d);
+      background: var(--paper);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .h { font-family: var(--head); font-weight: 700; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.01em; }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .skip-link {
+      position: absolute; left: -999px; top: 0; z-index: 200;
+      background: var(--flame); color: var(--ink); padding: 10px 16px; font-weight: 700;
+    }
+    .skip-link:focus { left: 8px; top: 8px; }
+
+    .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* ── Demo banner ── */
+    .demo-banner {
+      background: var(--flame);
+      color: var(--ink);
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      letter-spacing: 0.01em;
+    }
+    .demo-banner a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,22,38,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      display: flex; align-items: center; gap: 20px;
+      height: 68px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; flex-shrink: 0; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 7px;
+      background: linear-gradient(150deg, var(--steel-2), var(--steel));
+      display: grid; place-items: center; flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+    }
+    .brand-mark svg { width: 22px; height: 22px; }
+    .brand-name { font-family: var(--head); color: #fff; font-size: 1.18rem; letter-spacing: 0.04em; line-height: 1; }
+    .brand-name span { display: block; font-family: var(--body); font-size: 0.6rem; letter-spacing: 0.22em; color: var(--steel-2); text-transform: uppercase; margin-top: 3px; font-weight: 700; }
+    .nav-links { display: flex; gap: 26px; margin-left: auto; }
+    .nav-links a {
+      color: var(--muted-l); text-decoration: none; font-size: 0.84rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 0; border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+    }
+    .nav-links a:hover { color: #fff; border-color: var(--flame); }
+    .nav-cta {
+      background: var(--flame); color: var(--ink); text-decoration: none;
+      font-family: var(--head); text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 11px 18px; border-radius: 6px; font-size: 0.9rem; white-space: nowrap;
+      transition: background .15s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--flame-2); transform: translateY(-1px); }
+    .nav-toggle { display: none; background: none; border: 0; cursor: pointer; flex-direction: column; gap: 5px; padding: 8px; margin-left: auto; }
+    .nav-toggle span { width: 24px; height: 2px; background: #fff; display: block; transition: .2s; }
+
+    /* ── Hero / control panel ── */
+    .hero { background:
+        radial-gradient(1100px 500px at 80% -10%, rgba(47,143,214,0.22), transparent 60%),
+        linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+      color: var(--text-l);
+      position: relative; overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(900px 480px at 75% 0%, #000 30%, transparent 75%);
+      opacity: 0.5; pointer-events: none;
+    }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; padding: 64px 0 72px; }
+    .hero-kicker {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--head); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.78rem;
+      color: var(--steel-2); border: 1px solid var(--line-2); border-radius: 100px; padding: 7px 14px; margin-bottom: 22px;
+    }
+    .hero-kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px rgba(43,182,115,0.18); }
+    .hero h1 { font-size: clamp(2.5rem, 5.5vw, 4rem); color: #fff; }
+    .hero h1 em { color: var(--flame); font-style: normal; }
+    .hero-sub { color: var(--muted-l); font-size: 1.08rem; max-width: 33ch; margin: 20px 0 28px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      background: var(--flame); color: var(--ink); text-decoration: none;
+      font-family: var(--head); text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.02rem;
+      padding: 15px 26px; border-radius: 7px; transition: background .15s, transform .15s; border: 0; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--flame-2); transform: translateY(-2px); }
+    .btn-ghost {
+      color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+      padding: 14px 22px; border: 1px solid var(--line-2); border-radius: 7px; transition: border-color .15s, background .15s;
+    }
+    .btn-ghost:hover { border-color: var(--steel-2); background: rgba(47,143,214,0.1); }
+
+    /* spec panel */
+    .spec {
+      background: linear-gradient(180deg, var(--ink-3), var(--ink-2));
+      border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+    }
+    .spec-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); background: rgba(0,0,0,0.18); }
+    .spec-top-l { font-family: var(--head); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.74rem; color: var(--muted-l); }
+    .spec-reg { font-family: var(--mono); font-size: 0.78rem; color: var(--steel-2); }
+    .spec-rows { display: grid; grid-template-columns: 1fr 1fr; }
+    .spec-cell { padding: 22px 20px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+    .spec-cell:nth-child(2n) { border-right: 0; }
+    .spec-cell:nth-last-child(-n+2) { border-bottom: 0; }
+    .spec-num { font-family: var(--head); font-size: 2.3rem; color: #fff; line-height: 1; }
+    .spec-num small { font-size: 1rem; color: var(--steel-2); }
+    .spec-label { font-size: 0.78rem; color: var(--muted-l); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+    .spec-foot { display: flex; gap: 8px; padding: 14px 18px; background: rgba(0,0,0,0.22); flex-wrap: wrap; }
+
+    /* ── badges (from NeoBookworm badge library, trimmed) ── */
+    .nb-badge { display: inline-flex; align-items: center; height: 34px; border-radius: 5px; overflow: hidden; font-family: var(--body); }
+    .nb-badge .nb-mark { height: 100%; width: 30px; display: grid; place-items: center; }
+    .nb-badge .nb-text { padding: 0 9px; }
+    .nb-badge .nb-top { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.04em; line-height: 1.1; }
+    .nb-badge .nb-bot { font-size: 0.54rem; line-height: 1.15; }
+    .nb-gassafe { background: #fff; border: 1.5px solid #ffb81c; }
+    .nb-gassafe .nb-mark { background: #ffb81c; }
+    .nb-gassafe .nb-top { color: #1a1a1a; }
+    .nb-gassafe .nb-bot { color: #555; }
+    .nb-gassafe.dk { background: #16304f; border-color: rgba(255,184,28,0.5); }
+    .nb-gassafe.dk .nb-top { color: #fff; }
+    .nb-gassafe.dk .nb-bot { color: var(--muted-l); }
+    .nb-insured { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 5px; background: #fff; border: 1.5px solid #cfd6df; }
+    .nb-insured.dk { background: #16304f; border-color: var(--line-2); }
+    .nb-insured svg { width: 16px; height: 16px; }
+    .nb-insured .nb-top { font-size: 0.62rem; font-weight: 800; color: #1a1a1a; line-height: 1.1; }
+    .nb-insured.dk .nb-top { color: #fff; }
+    .nb-insured .nb-bot { font-size: 0.54rem; color: #666; }
+    .nb-insured.dk .nb-bot { color: var(--muted-l); }
+
+    /* ── generic section ── */
+    section { padding: 76px 0; }
+    .eyebrow { font-family: var(--head); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.8rem; color: var(--steel); display: inline-block; margin-bottom: 12px; }
+    .section-title { font-size: clamp(1.9rem, 3.6vw, 2.8rem); color: var(--ink); }
+    .section-sub { color: var(--muted-d); max-width: 56ch; margin-top: 14px; font-size: 1.04rem; }
+    .section-head { margin-bottom: 44px; }
+
+    /* ── by the numbers band ── */
+    .numbers { background: var(--ink); color: var(--text-l); padding: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .num-cell { padding: 40px 24px; text-align: center; border-right: 1px solid var(--line); }
+    .num-cell:last-child { border-right: 0; }
+    .num-big { font-family: var(--head); font-size: clamp(2.4rem, 4vw, 3.2rem); color: #fff; line-height: 1; }
+    .num-big span { color: var(--flame); }
+    .num-cap { font-size: 0.82rem; color: var(--muted-l); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 10px; }
+
+    /* ── services tile grid ── */
+    .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .svc-tile {
+      background: var(--paper-2); border: 1px solid #e0e7ef; border-radius: 12px; padding: 26px 24px;
+      position: relative; transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .svc-tile:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(11,22,38,0.1); border-color: var(--steel-2); }
+    .svc-ico { width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(150deg, #e8f1fa, #d3e6f7); display: grid; place-items: center; margin-bottom: 16px; }
+    .svc-ico svg { width: 24px; height: 24px; stroke: var(--steel); }
+    .svc-tile h3 { font-size: 1.18rem; color: var(--ink); margin-bottom: 8px; }
+    .svc-tile p { font-size: 0.92rem; color: var(--muted-d); margin-bottom: 12px; }
+    .svc-tile ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .svc-tile li { font-size: 0.84rem; color: var(--text-d); padding-left: 18px; position: relative; }
+    .svc-tile li::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--flame); }
+    .svc-num { position: absolute; top: 18px; right: 20px; font-family: var(--head); font-size: 0.95rem; color: #c7d3e0; }
+
+    /* ── quote module (signature) ── */
+    .quote { background: linear-gradient(180deg, var(--ink-2), var(--ink)); color: var(--text-l); }
+    .quote .eyebrow { color: var(--steel-2); }
+    .quote .section-title { color: #fff; }
+    .quote .section-sub { color: var(--muted-l); }
+    .quote-card {
+      margin-top: 38px; background: linear-gradient(180deg, var(--ink-3), var(--ink-2));
+      border: 1px solid var(--line-2); border-radius: 16px; overflow: hidden;
+      display: grid; grid-template-columns: 1.2fr 1fr;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+    }
+    .quote-controls { padding: 34px; border-right: 1px solid var(--line); }
+    .q-step { margin-bottom: 26px; }
+    .q-step-label { font-family: var(--head); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.82rem; color: var(--muted-l); margin-bottom: 12px; display: flex; align-items: center; gap: 9px; }
+    .q-step-label b { width: 22px; height: 22px; border-radius: 50%; background: var(--steel); color: #fff; display: grid; place-items: center; font-size: 0.72rem; font-family: var(--body); }
+    .q-opts { display: flex; gap: 10px; flex-wrap: wrap; }
+    .q-opt {
+      flex: 1; min-width: 90px; text-align: center; cursor: pointer;
+      background: rgba(255,255,255,0.04); border: 1.5px solid var(--line-2); border-radius: 9px; padding: 14px 10px;
+      transition: border-color .15s, background .15s; color: var(--text-l);
+    }
+    .q-opt:hover { border-color: var(--steel-2); }
+    .q-opt.active { border-color: var(--flame); background: rgba(245,166,35,0.12); }
+    .q-opt .q-opt-t { font-family: var(--head); text-transform: uppercase; font-size: 0.96rem; color: #fff; letter-spacing: 0.02em; }
+    .q-opt .q-opt-d { font-size: 0.72rem; color: var(--muted-l); margin-top: 3px; }
+    .quote-result { padding: 34px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: rgba(0,0,0,0.18); }
+    .quote-result .qr-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-l); }
+    .qr-price { font-family: var(--head); font-size: 3.4rem; color: #fff; line-height: 1; margin: 10px 0 4px; }
+    .qr-price span { color: var(--flame); }
+    .qr-note { font-size: 0.82rem; color: var(--muted-l); max-width: 26ch; margin-bottom: 20px; }
+    .qr-includes { font-size: 0.78rem; color: var(--steel-2); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── accreditation wall ── */
+    .accred { background: var(--paper-2); }
+    .accred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; }
+    .accred-badges { display: flex; flex-wrap: wrap; gap: 12px; }
+    .mfr {
+      font-family: var(--head); text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.92rem;
+      color: var(--ink); background: #fff; border: 2px solid #dbe3ec; border-radius: 8px; padding: 14px 18px;
+      display: flex; flex-direction: column; line-height: 1.15;
+    }
+    .mfr small { font-family: var(--body); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--steel); font-weight: 700; margin-top: 3px; }
+    .mfr.flame { border-color: var(--flame); }
+    .accred-note { font-size: 0.8rem; color: var(--muted-d); font-style: italic; margin-top: 14px; }
+    .guarantee-card { background: linear-gradient(150deg, var(--steel), #145a96); color: #fff; border-radius: 16px; padding: 36px; }
+    .guarantee-card .g-big { font-family: var(--head); font-size: 4.2rem; line-height: 0.9; }
+    .guarantee-card .g-big span { font-size: 1.4rem; color: var(--flame-2); }
+    .guarantee-card h3 { font-size: 1.3rem; margin: 8px 0 10px; }
+    .guarantee-card p { color: rgba(255,255,255,0.85); font-size: 0.94rem; }
+
+    /* ── why ── */
+    .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .why-item { background: var(--paper-2); border: 1px solid #e0e7ef; border-radius: 12px; padding: 26px 22px; border-top: 3px solid var(--steel); }
+    .why-item h3 { font-size: 1.05rem; color: var(--ink); margin-bottom: 8px; }
+    .why-item p { font-size: 0.9rem; color: var(--muted-d); }
+
+    /* ── gallery ── */
+    .gallery { background: var(--ink); color: var(--text-l); }
+    .gallery .section-title { color: #fff; }
+    .gallery .section-sub { color: var(--muted-l); }
+    .gal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .gal-tile { position: relative; aspect-ratio: 3/4; border-radius: 12px; overflow: hidden; border: 1px solid var(--line-2); }
+    .gal-tile img { width: 100%; height: 100%; object-fit: cover; }
+    .gal-ph { width: 100%; height: 100%; display: grid; place-items: end start; padding: 16px; }
+    .gal-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.78)); font-family: var(--head); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.92rem; }
+    .gal-cap span { display: block; font-family: var(--body); font-size: 0.72rem; text-transform: none; letter-spacing: 0; color: var(--muted-l); margin-top: 2px; }
+
+    /* ── reviews ── */
+    .rev-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
+    .rev-score { text-align: right; flex-shrink: 0; }
+    .rev-score .rs-big { font-family: var(--head); font-size: 3rem; color: var(--ink); line-height: 1; }
+    .rev-score .rs-stars { color: var(--flame); letter-spacing: 3px; }
+    .rev-score .rs-cap { font-size: 0.8rem; color: var(--muted-d); }
+    .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .rev-card { background: var(--paper-2); border: 1px solid #e0e7ef; border-radius: 12px; padding: 26px 24px; }
+    .rev-stars { color: var(--flame); letter-spacing: 2px; margin-bottom: 12px; }
+    .rev-card p { font-size: 0.94rem; color: var(--text-d); margin-bottom: 16px; }
+    .rev-who { font-weight: 700; font-size: 0.9rem; color: var(--ink); }
+    .rev-where { font-size: 0.8rem; color: var(--muted-d); }
+
+    /* ── coverage ── */
+    .coverage { background: var(--paper-2); }
+    .cov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; }
+    .cov-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .cov-pill { font-family: var(--head); text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.86rem; color: var(--ink); background: var(--paper); border: 1px solid #dbe3ec; border-radius: 100px; padding: 8px 16px; }
+    .cov-postcodes { font-family: var(--mono); font-size: 0.86rem; color: var(--steel); margin-top: 18px; }
+    .cov-map { aspect-ratio: 4/3; border-radius: 16px; background:
+        radial-gradient(circle at 50% 45%, rgba(47,143,214,0.35), transparent 58%),
+        repeating-linear-gradient(0deg, rgba(11,22,38,0.05) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(90deg, rgba(11,22,38,0.05) 0 1px, transparent 1px 28px),
+        var(--paper);
+      border: 1px solid #dbe3ec; position: relative; display: grid; place-items: center; }
+    .cov-map .pin { width: 18px; height: 18px; border-radius: 50% 50% 50% 0; background: var(--flame); transform: rotate(-45deg); box-shadow: 0 0 0 6px rgba(245,166,35,0.25); }
+    .cov-map .ring { position: absolute; width: 60%; height: 60%; border: 2px dashed var(--steel); border-radius: 50%; opacity: 0.5; }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
+    details.faq-item { background: var(--paper-2); border: 1px solid #e0e7ef; border-radius: 10px; overflow: hidden; }
+    details.faq-item summary { cursor: pointer; padding: 18px 22px; font-family: var(--head); text-transform: uppercase; letter-spacing: 0.02em; font-size: 1rem; color: var(--ink); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after { content: "+"; font-size: 1.4rem; color: var(--steel); flex-shrink: 0; }
+    details.faq-item[open] summary::after { content: "\2013"; }
+    details.faq-item p { padding: 0 22px 20px; color: var(--muted-d); font-size: 0.94rem; }
+
+    /* ── contact ── */
+    .contact { background: linear-gradient(180deg, var(--ink-2), var(--ink)); color: var(--text-l); }
+    .contact .section-title { color: #fff; }
+    .contact-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; }
+    .contact-info h3 { font-family: var(--head); text-transform: uppercase; color: #fff; font-size: 1.1rem; margin-bottom: 6px; }
+    .contact-info .ci-row { display: flex; gap: 12px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .contact-info .ci-row svg { width: 20px; height: 20px; stroke: var(--steel-2); flex-shrink: 0; margin-top: 2px; }
+    .contact-info .ci-k { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-l); }
+    .contact-info .ci-v { color: #fff; font-weight: 600; }
+    .contact-info .ci-v a { text-decoration: none; }
+    .form-card { background: var(--paper-2); border-radius: 16px; padding: 32px; color: var(--text-d); }
+    .form-card label { display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); margin: 0 0 6px; }
+    .form-row { margin-bottom: 16px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-card input, .form-card select, .form-card textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #cfd6df; border-radius: 8px; font: inherit; color: var(--text-d); background: #fff;
+    }
+    .form-card input:focus, .form-card select:focus, .form-card textarea:focus { outline: 0; border-color: var(--steel); box-shadow: 0 0 0 3px rgba(26,109,181,0.15); }
+    .form-card textarea { resize: vertical; min-height: 96px; }
+    .form-card .btn-primary { width: 100%; margin-top: 4px; }
+    .form-success { display: none; text-align: center; padding: 28px 10px; }
+    .form-success.show { display: block; }
+    .form-success .fs-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--ok); display: grid; place-items: center; margin: 0 auto 16px; }
+    .form-success .fs-ico svg { width: 28px; height: 28px; stroke: #fff; }
+    .form-success h3 { font-family: var(--head); text-transform: uppercase; color: var(--ink); margin-bottom: 8px; }
+    .form-success p { color: var(--muted-d); }
+    .hp { position: absolute; left: -9999px; }
+
+    /* ── footer ── */
+    footer { background: var(--ink); color: var(--muted-l); border-top: 1px solid var(--line); padding: 44px 0; }
+    .foot-grid { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .foot-brand { font-family: var(--head); color: #fff; font-size: 1.3rem; letter-spacing: 0.04em; }
+    .foot-meta { font-size: 0.82rem; }
+    .foot-meta a { color: var(--steel-2); }
+
+    /* ── reveal ── */
+    .js-reveal .rv { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .js-reveal .rv.in { opacity: 1; transform: none; }
+
+    /* ── responsive ── */
+    @media (max-width: 940px) {
+      .hero-grid, .quote-card, .accred-grid, .cov-grid, .contact-grid { grid-template-columns: 1fr; }
+      .quote-controls { border-right: 0; border-bottom: 1px solid var(--line); }
+      .numbers-grid { grid-template-columns: 1fr 1fr; }
+      .num-cell:nth-child(2n) { border-right: 0; }
+      .num-cell { border-bottom: 1px solid var(--line); }
+      .svc-grid, .why-grid, .rev-grid { grid-template-columns: 1fr 1fr; }
+      .gal-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-toggle { display: flex; }
+      header.open .nav { flex-wrap: wrap; height: auto; padding-bottom: 18px; }
+      header.open .nav-links { display: flex; order: 3; width: 100%; flex-direction: column; gap: 4px; margin-left: 0; padding-top: 10px; }
+      header.open .nav-links a { padding: 12px 0; border-bottom: 1px solid var(--line); }
+      header.open .nav-cta { display: block; order: 4; width: 100%; text-align: center; margin-top: 12px; }
+      .spec-rows { grid-template-columns: 1fr 1fr; }
+      .svc-grid, .why-grid, .rev-grid, .gal-grid, .form-grid-2 { grid-template-columns: 1fr; }
+      .numbers-grid { grid-template-columns: 1fr 1fr; }
+      section { padding: 56px 0; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  This is a free demo site built for Meridian Heating. Like what you see? Get your own → <a href="https://neobookworm.uk">neobookworm.uk</a>
+</div>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Meridian Heating home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C9 6 6 9 6 13a6 6 0 0 0 12 0c0-4-3-7-6-11z" fill="#fff" opacity="0.92"/><path d="M12 20c-2 0-3.5-1.5-3.5-3.5 0-2 1.5-3.2 2.5-4.5 0 1.3.8 1.8 1.5 1 .7-.8.5-2-.5-3 2 .9 3.5 2.8 3.5 5C15 18.5 13.6 20 12 20z" fill="#f5a623"/></svg>
+      </span>
+      <span class="brand-name">Meridian Heating<span>Gas Safe · Wiltshire</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#quote">Fixed price</a>
+      <a href="#accred">Guarantees</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="nav-cta" href="#quote">Get a fixed price</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+<a id="top"></a>
+
+<!-- ══ HERO / CONTROL PANEL ══ -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="hero-kicker"><span class="dot" aria-hidden="true"></span> Booking installs now · Wiltshire</span>
+        <h1 id="hero-heading">A new boiler,<br><em>priced to the penny</em><br>before we start</h1>
+        <p class="hero-sub">Gas Safe registered installs, servicing and heating systems across Wiltshire — fixed prices, manufacturer-accredited fitting, no surprises.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#quote">Get a fixed price →</a>
+          <a class="btn-ghost" href="tel:01380550148">01380 550 148</a>
+        </div>
+      </div>
+
+      <!-- spec / control panel -->
+      <aside class="spec" aria-label="Meridian Heating at a glance">
+        <div class="spec-top">
+          <span class="spec-top-l">Meridian Heating — at a glance</span>
+          <span class="spec-reg">GAS&nbsp;SAFE&nbsp;004412</span>
+        </div>
+        <div class="spec-rows">
+          <div class="spec-cell"><div class="spec-num">12<small>yr</small></div><div class="spec-label">Max guarantee</div></div>
+          <div class="spec-cell"><div class="spec-num">60<small>min</small></div><div class="spec-label">Avg response</div></div>
+          <div class="spec-cell"><div class="spec-num">1.2<small>k+</small></div><div class="spec-label">Boilers fitted</div></div>
+          <div class="spec-cell"><div class="spec-num">4.9<small>★</small></div><div class="spec-label">183 reviews</div></div>
+        </div>
+        <div class="spec-foot">
+          <span class="nb-badge nb-gassafe dk"><span class="nb-mark"><svg width="14" height="17" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28C7 28 3 24 3 18.5C3 14 6 11 8 8C8 12 10 13 12 11C14 9 13 5 11 2C16 4 21 9 21 16C21 22.5 17 28 12 28Z" fill="#16304f"/></svg></span><span class="nb-text"><span class="nb-top">GAS SAFE</span><span class="nb-bot">Reg. 004412</span></span></span>
+          <span class="nb-insured dk"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#a0b4cc" stroke-width="1.5"/><path d="M9 12L11 14L15 10" stroke="#a0b4cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="nb-top">Fully Insured</span><span class="nb-bot">£5m public liability</span></span></span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BY THE NUMBERS ══ -->
+<section class="numbers" aria-label="Meridian Heating by the numbers" style="padding:0;">
+  <div class="numbers-grid">
+    <div class="num-cell rv"><div class="num-big">1,200<span>+</span></div><div class="num-cap">Boilers installed</div></div>
+    <div class="num-cell rv"><div class="num-big">14<span>yrs</span></div><div class="num-cap">On the tools</div></div>
+    <div class="num-cell rv"><div class="num-big">98<span>%</span></div><div class="num-cap">Fixed first visit</div></div>
+    <div class="num-cell rv"><div class="num-big">0</div><div class="num-cap">Surprise charges</div></div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services" aria-labelledby="services-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">What we do</span>
+      <h2 class="section-title" id="services-heading">Heating work, broken down clearly</h2>
+      <p class="section-sub">Every job is scoped and priced before we lift a spanner. Here's the work we take on day to day.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-tile rv">
+        <span class="svc-num">01</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1.6"/></svg></div>
+        <h3>New boiler installation</h3>
+        <p>Combi, system or regular — supplied and fitted, usually in a day.</p>
+        <ul><li>Fixed price in writing</li><li>Old boiler removed &amp; recycled</li><li>Registered for guarantee</li></ul>
+      </div>
+      <div class="svc-tile rv">
+        <span class="svc-num">02</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M14.7 6.3a3 3 0 0 0 3.9 3.9l2.4 2.4a8 8 0 0 1-10.8-10.8l2.4 2.4a3 3 0 0 0 .1 2.1z" stroke-linejoin="round"/></svg></div>
+        <h3>Servicing &amp; repair</h3>
+        <p>Annual Gas Safe service to keep you safe and your warranty valid.</p>
+        <ul><li>All makes &amp; models</li><li>Fault-find &amp; fix</li><li>Same-week slots</li></ul>
+      </div>
+      <div class="svc-tile rv">
+        <span class="svc-num">03</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M9 11l3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+        <h3>Landlord gas safety</h3>
+        <p>CP12 certificates and annual checks, issued promptly for new tenancies.</p>
+        <ul><li>CP12 same day</li><li>Multi-property rates</li><li>Renewal reminders</li></ul>
+      </div>
+      <div class="svc-tile rv">
+        <span class="svc-num">04</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M5 10v9h14v-9M7 10V6a5 5 0 0 1 10 0v4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Central heating systems</h3>
+        <p>Full installs and upgrades — new pipework, radiators and controls.</p>
+        <ul><li>System design</li><li>Radiators &amp; TRVs</li><li>Priced before we start</li></ul>
+      </div>
+      <div class="svc-tile rv">
+        <span class="svc-num">05</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Smart heating controls</h3>
+        <p>Nest and Hive supplied, fitted and set up so you actually use them.</p>
+        <ul><li>Cut your bills</li><li>Control from your phone</li><li>Full handover</li></ul>
+      </div>
+      <div class="svc-tile rv">
+        <span class="svc-num">06</span>
+        <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-1.5.6-3 1.5-4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Power flushing</h3>
+        <p>Clears sludge, warms cold radiators and protects your new boiler.</p>
+        <ul><li>Full system clean</li><li>Inhibitor added</li><li>Before/after readings</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ QUOTE MODULE (signature) ══ -->
+<section class="quote" id="quote" aria-labelledby="quote-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">Fixed-price estimator</span>
+      <h2 class="section-title" id="quote-heading">See your boiler price in seconds</h2>
+      <p class="section-sub">Pick what fits your home for an instant guide price. We confirm it exactly on a free home or video survey — and it never goes up after.</p>
+    </div>
+    <div class="quote-card rv">
+      <div class="quote-controls">
+        <div class="q-step">
+          <div class="q-step-label"><b>1</b> Boiler type</div>
+          <div class="q-opts" id="qType" role="group" aria-label="Boiler type">
+            <button class="q-opt active" data-val="combi" type="button"><span class="q-opt-t">Combi</span><span class="q-opt-d">Most homes</span></button>
+            <button class="q-opt" data-val="system" type="button"><span class="q-opt-t">System</span><span class="q-opt-d">With cylinder</span></button>
+            <button class="q-opt" data-val="regular" type="button"><span class="q-opt-t">Regular</span><span class="q-opt-d">Tanks in loft</span></button>
+          </div>
+        </div>
+        <div class="q-step">
+          <div class="q-step-label"><b>2</b> Home size</div>
+          <div class="q-opts" id="qSize" role="group" aria-label="Home size">
+            <button class="q-opt active" data-val="small" type="button"><span class="q-opt-t">1–2 bed</span><span class="q-opt-d">Flat / terrace</span></button>
+            <button class="q-opt" data-val="medium" type="button"><span class="q-opt-t">3 bed</span><span class="q-opt-d">Semi / detached</span></button>
+            <button class="q-opt" data-val="large" type="button"><span class="q-opt-t">4+ bed</span><span class="q-opt-d">Larger home</span></button>
+          </div>
+        </div>
+        <div class="q-step" style="margin-bottom:0;">
+          <div class="q-step-label"><b>3</b> Same spot, or moving it?</div>
+          <div class="q-opts" id="qMove" role="group" aria-label="Boiler position">
+            <button class="q-opt active" data-val="same" type="button"><span class="q-opt-t">Same spot</span><span class="q-opt-d">Straight swap</span></button>
+            <button class="q-opt" data-val="move" type="button"><span class="q-opt-t">Relocate</span><span class="q-opt-d">New position</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="quote-result" aria-live="polite">
+        <div class="qr-label">Guide price from</div>
+        <div class="qr-price" id="qrPrice">£<span id="qrNum">1,995</span></div>
+        <p class="qr-note">Supplied, fitted &amp; registered. Confirmed exactly on a free survey — fixed before any work starts.</p>
+        <div class="qr-includes">✓ Boiler ✓ Fitting ✓ Guarantee ✓ Old unit removed</div>
+        <a class="btn-primary" href="#contact" style="margin-top:22px;">Lock in this price →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ACCREDITATION WALL ══ -->
+<section class="accred" id="accred" aria-labelledby="accred-heading">
+  <div class="wrap">
+    <div class="accred-grid">
+      <div class="rv">
+        <span class="eyebrow">Accredited installer</span>
+        <h2 class="section-title" id="accred-heading">The badges that mean a longer guarantee</h2>
+        <p class="section-sub" style="color:var(--muted-d);">We're accredited to register extended manufacturer guarantees most installers can't — so your boiler is covered for far longer.</p>
+        <div class="accred-badges" style="margin-top:24px;">
+          <span class="mfr flame">Worcester Bosch<small>Accredited Installer</small></span>
+          <span class="mfr">Vaillant<small>Advance Installer</small></span>
+          <span class="mfr">Baxi<small>Approved</small></span>
+          <span class="mfr">Which?<small>Trusted Trader</small></span>
+        </div>
+        <p class="accred-note">Demo site — accreditation names shown are illustrative examples.</p>
+      </div>
+      <div class="guarantee-card rv">
+        <div class="g-big">12<span>year</span></div>
+        <h3>Guarantee, in writing</h3>
+        <p>Because we're a manufacturer-accredited installer, your new boiler can carry up to a 12-year parts-and-labour guarantee — registered for you on the day, nothing for you to chase.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY MERIDIAN ══ -->
+<section aria-labelledby="why-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">Why Meridian</span>
+      <h2 class="section-title" id="why-heading">No surprises, start to finish</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-item rv"><h3>Fixed before we start</h3><p>The price you agree is the price you pay. We don't add extras once the boiler's out.</p></div>
+      <div class="why-item rv"><h3>One engineer, your job</h3><p>The person who quotes is the person who fits it. No call-centre, no subcontractors.</p></div>
+      <div class="why-item rv"><h3>Tidy, every time</h3><p>Dust sheets down, old boiler taken away, floors left as we found them.</p></div>
+      <div class="why-item rv"><h3>Looked after after</h3><p>Annual service reminders and priority slots for boilers we've installed.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══ -->
+<section class="gallery" id="gallery" aria-labelledby="gallery-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">Recent work</span>
+      <h2 class="section-title" id="gallery-heading">A few jobs from around Wiltshire</h2>
+      <p class="section-sub">Real installs, photographed on the day they were finished.</p>
+    </div>
+    <div class="gal-grid">
+      <div class="gal-tile rv">
+        <img src="/meridian-heating/images/boiler-replacement.webp" width="600" height="800" alt="New combi boiler installed in a utility room" loading="lazy" decoding="async">
+        <div class="gal-cap">Combi swap<span>Devizes · Worcester Bosch</span></div>
+      </div>
+      <!-- MIDJOURNEY SLOT 1: replace gradient with real boiler-service photo (600×800) -->
+      <div class="gal-tile rv">
+        <div class="gal-ph" style="background:linear-gradient(150deg,#1a3a5c,#0b1626);"></div>
+        <div class="gal-cap">Annual service<span>Marlborough · Vaillant</span></div>
+      </div>
+      <!-- MIDJOURNEY SLOT 2: replace gradient with real heating-system photo (600×800) -->
+      <div class="gal-tile rv">
+        <div class="gal-ph" style="background:linear-gradient(150deg,#15507f,#10243b);"></div>
+        <div class="gal-cap">Full system<span>Calne · 8 radiators</span></div>
+      </div>
+      <!-- MIDJOURNEY SLOT 3: replace gradient with real smart-thermostat photo (600×800) -->
+      <div class="gal-tile rv">
+        <div class="gal-ph" style="background:linear-gradient(150deg,#1a3a5c,#0b1626);"></div>
+        <div class="gal-cap">Smart controls<span>Chippenham · Nest install</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ REVIEWS ══ -->
+<section id="reviews" aria-labelledby="reviews-heading">
+  <div class="wrap">
+    <div class="rev-head rv">
+      <div>
+        <span class="eyebrow">Customer reviews</span>
+        <h2 class="section-title" id="reviews-heading">What people say</h2>
+      </div>
+      <div class="rev-score">
+        <div class="rs-big">4.9</div>
+        <div class="rs-stars" aria-hidden="true">★★★★★</div>
+        <div class="rs-cap">183 Google reviews</div>
+      </div>
+    </div>
+    <div class="rev-grid">
+      <div class="rev-card rv">
+        <div class="rev-stars" aria-hidden="true">★★★★★</div>
+        <p>"Quoted a fixed price, fitted the new combi the next week and it came to exactly what they said. Spotless job."</p>
+        <div class="rev-who">Sarah T.</div>
+        <div class="rev-where">Devizes</div>
+      </div>
+      <div class="rev-card rv">
+        <div class="rev-stars" aria-hidden="true">★★★★★</div>
+        <p>"Sorted our landlord certificates for three properties in one morning. Reminders every year now too — brilliant."</p>
+        <div class="rev-who">Mark R.</div>
+        <div class="rev-where">Calne</div>
+      </div>
+      <div class="rev-card rv">
+        <div class="rev-stars" aria-hidden="true">★★★★★</div>
+        <p>"Boiler died on a Sunday with two kids in the house. Out same day, diagnosed it, back running by Monday lunchtime."</p>
+        <div class="rev-who">Priya N.</div>
+        <div class="rev-where">Marlborough</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COVERAGE ══ -->
+<section class="coverage" id="coverage" aria-labelledby="coverage-heading">
+  <div class="wrap">
+    <div class="cov-grid">
+      <div class="rv">
+        <span class="eyebrow">Where we cover</span>
+        <h2 class="section-title" id="coverage-heading">Across Wiltshire, from our Devizes base</h2>
+        <p class="section-sub" style="color:var(--muted-d);">Local engineers who know the area — most jobs within 20 miles of Devizes.</p>
+        <div class="cov-pills">
+          <span class="cov-pill">Devizes</span><span class="cov-pill">Marlborough</span><span class="cov-pill">Calne</span>
+          <span class="cov-pill">Chippenham</span><span class="cov-pill">Melksham</span><span class="cov-pill">Trowbridge</span>
+          <span class="cov-pill">Royal Wootton Bassett</span><span class="cov-pill">Pewsey</span>
+        </div>
+        <div class="cov-postcodes">SN8 · SN9 · SN10 · SN11 · SN15 · BA13 · BA14</div>
+      </div>
+      <div class="cov-map rv" role="img" aria-label="Map showing Meridian Heating's coverage area around Devizes, Wiltshire">
+        <div class="ring" aria-hidden="true"></div>
+        <div class="pin" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section aria-labelledby="faq-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">Common questions</span>
+      <h2 class="section-title" id="faq-heading">Good to know</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item rv"><summary>How does the fixed price work?</summary><p>We give you a guide price from the estimator above, then confirm it exactly on a free home or video survey. Once you've agreed it, that's the price — it doesn't change once the work starts.</p></details>
+      <details class="faq-item rv"><summary>Can I spread the cost?</summary><p>Yes — we offer interest-bearing finance on new boiler installations, subject to status. We'll show you the options with your quote.</p></details>
+      <details class="faq-item rv"><summary>How long does a boiler swap take?</summary><p>A straight combi swap is usually done in a day. System changes or relocations can take a little longer — we'll tell you exactly when we quote.</p></details>
+      <details class="faq-item rv"><summary>Are you Gas Safe registered?</summary><p>Yes — registration 004412. You can check any engineer on the official Gas Safe Register before they work on your gas.</p></details>
+      <details class="faq-item rv"><summary>What guarantee do I get?</summary><p>Because we're a manufacturer-accredited installer, eligible boilers can carry up to a 12-year parts-and-labour guarantee, which we register for you on the day.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="contact" id="contact" aria-labelledby="contact-heading">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow">Get in touch</span>
+      <h2 class="section-title" id="contact-heading">Get your fixed price</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info rv">
+        <div class="ci-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" stroke-linejoin="round"/></svg>
+          <div><div class="ci-k">Call us</div><div class="ci-v"><a href="tel:01380550148">01380 550 148</a></div></div>
+        </div>
+        <div class="ci-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><div class="ci-k">Email</div><div class="ci-v"><a href="mailto:hello@meridianheating.co.uk">hello@meridianheating.co.uk</a></div></div>
+        </div>
+        <div class="ci-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z" stroke-linejoin="round"/></svg>
+          <div><div class="ci-k">Based in</div><div class="ci-v">Devizes, Wiltshire SN10</div></div>
+        </div>
+        <div class="ci-row" style="border-bottom:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><div class="ci-k">Hours</div><div class="ci-v">Mon–Fri 8–6 · Sat 9–1</div></div>
+        </div>
+      </div>
+
+      <div class="form-card rv">
+        <form id="quoteForm" novalidate>
+          <input type="text" class="hp" id="company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cf-name">Your name</label>
+              <input type="text" id="cf-name" name="name" autocomplete="name" required placeholder="Jane Smith">
+            </div>
+            <div class="form-row">
+              <label for="cf-phone">Phone</label>
+              <input type="tel" id="cf-phone" name="phone" autocomplete="tel" required placeholder="07700 900000">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="cf-email">Email</label>
+            <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="form-row">
+            <label for="cf-job">What do you need?</label>
+            <select id="cf-job" name="job">
+              <option>New boiler — fixed price</option>
+              <option>Boiler service or repair</option>
+              <option>Landlord gas safety (CP12)</option>
+              <option>Central heating / radiators</option>
+              <option>Smart controls</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="cf-msg">Anything else? (optional)</label>
+            <textarea id="cf-msg" name="message" placeholder="Make/age of your current boiler, postcode, best time to call…"></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Request my fixed price →</button>
+        </form>
+        <div class="form-success" id="formSuccess" aria-live="polite">
+          <div class="fs-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Thanks — that's with us</h3>
+          <p>We'll be in touch within one working day with your fixed price. <br><em>(This is a demo — no message was actually sent.)</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="foot-brand">Meridian Heating</div>
+      <div class="foot-meta" style="margin-top:6px;">Gas Safe 004412 · Devizes, Wiltshire · Covering SN &amp; BA postcodes</div>
+    </div>
+    <div class="foot-meta" style="text-align:right;">
+      Demo site built by <a href="https://neobookworm.uk">NeoBookworm</a><br>
+      <a href="tel:01380550148">01380 550 148</a> · <a href="mailto:hello@meridianheating.co.uk">hello@meridianheating.co.uk</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js-reveal');
+
+  /* nav toggle */
+  (function(){
+    var t = document.getElementById('navToggle'), h = document.getElementById('siteHeader');
+    if (!t || !h) return;
+    t.addEventListener('click', function(){
+      var open = h.classList.toggle('open');
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    h.querySelectorAll('.nav-links a, .nav-cta').forEach(function(a){
+      a.addEventListener('click', function(){ h.classList.remove('open'); t.setAttribute('aria-expanded','false'); });
+    });
+  })();
+
+  /* fixed-price estimator */
+  (function(){
+    var base = { combi: 1995, system: 2450, regular: 2650 };
+    var sizeAdd = { small: 0, medium: 350, large: 750 };
+    var moveAdd = { same: 0, move: 600 };
+    var sel = { type: 'combi', size: 'small', move: 'same' };
+    var numEl = document.getElementById('qrNum');
+
+    function fmt(n){ return n.toLocaleString('en-GB'); }
+    function recalc(){
+      var total = base[sel.type] + sizeAdd[sel.size] + moveAdd[sel.move];
+      numEl.textContent = fmt(total);
+    }
+    function wire(groupId, key){
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.addEventListener('click', function(e){
+        var btn = e.target.closest('.q-opt');
+        if (!btn) return;
+        group.querySelectorAll('.q-opt').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        sel[key] = btn.dataset.val;
+        recalc();
+      });
+    }
+    wire('qType', 'type'); wire('qSize', 'size'); wire('qMove', 'move');
+    recalc();
+  })();
+
+  /* contact form — static demo success */
+  (function(){
+    var form = document.getElementById('quoteForm'), ok = document.getElementById('formSuccess');
+    if (!form || !ok) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (form.company && form.company.value) return; /* honeypot */
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      form.style.display = 'none';
+      ok.classList.add('show');
+      ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  })();
+
+  /* scroll reveal */
+  (function(){
+    var els = Array.prototype.slice.call(document.querySelectorAll('.rv'));
+    if (!('IntersectionObserver' in window)) { els.forEach(function(el){ el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(el){ io.observe(el); });
+    requestAnimationFrame(function(){
+      var vh = window.innerHeight, rects = els.map(function(el){ return el.getBoundingClientRect(); });
+      els.forEach(function(el, i){ if (rects[i].top < vh) el.classList.add('in'); });
+    });
+  })();
+</script>
+</body>
+</html>
