@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ridgecoat monogram">
+  <rect width="64" height="64" rx="12" fill="#F6F1E8"/>
+  <path d="M12 46h40" stroke="#D07A2D" stroke-width="6" stroke-linecap="round"/>
+  <text x="32" y="34" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800" fill="#0E1B2A" letter-spacing="0.5">
+    RC
+  </text>
+</svg>

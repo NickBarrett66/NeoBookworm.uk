@@ -235,4 +235,40 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- Demo sites hosted on neobookworm.uk -->
+  <url>
+    <loc>https://neobookworm.uk/ridgecoat-decorators/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://neobookworm.uk/ridgecoat-decorators/about</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://neobookworm.uk/ridgecoat-decorators/services</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://neobookworm.uk/ridgecoat-decorators/gallery</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://neobookworm.uk/ridgecoat-decorators/contact</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
