@@ -342,14 +342,11 @@
     .cov-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
     .cov-pill { font-family: var(--head); text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.86rem; color: var(--ink); background: var(--paper); border: 1px solid #dbe3ec; border-radius: 100px; padding: 8px 16px; }
     .cov-postcodes { font-family: var(--mono); font-size: 0.86rem; color: var(--steel); margin-top: 18px; }
-    .cov-map { aspect-ratio: 4/3; border-radius: 16px; background:
-        radial-gradient(circle at 50% 45%, rgba(47,143,214,0.35), transparent 58%),
-        repeating-linear-gradient(0deg, rgba(11,22,38,0.05) 0 1px, transparent 1px 28px),
-        repeating-linear-gradient(90deg, rgba(11,22,38,0.05) 0 1px, transparent 1px 28px),
-        var(--paper);
-      border: 1px solid #dbe3ec; position: relative; display: grid; place-items: center; }
-    .cov-map .pin { width: 18px; height: 18px; border-radius: 50% 50% 50% 0; background: var(--flame); transform: rotate(-45deg); box-shadow: 0 0 0 6px rgba(245,166,35,0.25); }
-    .cov-map .ring { position: absolute; width: 60%; height: 60%; border: 2px dashed var(--steel); border-radius: 50%; opacity: 0.5; }
+    .cov-map { height: 380px; border-radius: 16px; border: 1px solid #dbe3ec; overflow: hidden; }
+    .cov-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-family: var(--body); font-size: 0.78rem; }
+    .cov-legend__item { display: inline-flex; align-items: center; gap: 5px; }
+    .cov-legend__dot { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-weight: 700; font-size: 8px; flex-shrink: 0; }
+    .cov-legend__name { color: var(--muted-d); }
 
     /* ── FAQ ── */
     .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
@@ -420,6 +417,7 @@
       .svc-grid, .why-grid, .rev-grid, .gal-grid, .form-grid-2 { grid-template-columns: 1fr; }
       .numbers-grid { grid-template-columns: 1fr 1fr; }
       section { padding: 56px 0; }
+      .cov-map { height: 280px; }
     }
   </style>
 </head>
@@ -724,12 +722,90 @@
         </div>
         <div class="cov-postcodes">SN8 · SN9 · SN10 · SN11 · SN15 · BA13 · BA14</div>
       </div>
-      <div class="cov-map rv" role="img" aria-label="Map showing Meridian Heating's coverage area around Devizes, Wiltshire">
-        <div class="ring" aria-hidden="true"></div>
-        <div class="pin" aria-hidden="true"></div>
+      <div>
+        <div class="cov-map rv" id="covMap"
+             aria-label="Map showing Meridian Heating's coverage area around Devizes, Wiltshire">
+        </div>
+        <div id="covLegend" class="cov-legend" aria-label="Key for map markers"></div>
       </div>
     </div>
   </div>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+  <script>
+    (function() {
+      function initCovMap() {
+        var mapEl = document.getElementById('covMap');
+        if (!mapEl || typeof L === 'undefined') return;
+
+        var devizes = [51.3560, -1.9958];
+        var map = L.map('covMap', { zoomControl: true, scrollWheelZoom: false, zoomSnap: 0.5 }).setView(devizes, 9);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19
+        }).addTo(map);
+
+        var blue = '#1a6db5';
+        var white = '#ffffff';
+
+        var circle = L.circle(devizes, {
+          radius: 32187,
+          color: blue,
+          weight: 2,
+          opacity: 0.7,
+          fillColor: blue,
+          fillOpacity: 0.08
+        }).addTo(map);
+
+        map.setZoom(9.5);
+
+        var locations = [
+          { pos: [51.3560, -1.9958], label: 'D',   title: 'Devizes (base)' },
+          { pos: [51.4201, -1.7281], label: 'M',   title: 'Marlborough' },
+          { pos: [51.4382, -1.9928], label: 'C',   title: 'Calne' },
+          { pos: [51.4579, -2.1164], label: 'Ch',  title: 'Chippenham' },
+          { pos: [51.3729, -2.1354], label: 'Me',  title: 'Melksham' },
+          { pos: [51.3198, -2.2083], label: 'T',   title: 'Trowbridge' },
+          { pos: [51.5288, -1.9033], label: 'RWB', title: 'Royal Wootton Bassett' },
+          { pos: [51.3413, -1.7702], label: 'P',   title: 'Pewsey' }
+        ];
+
+        locations.forEach(function(loc) {
+          var fs = loc.label.length > 2 ? 8 : loc.label.length > 1 ? 10 : 11;
+          var svg =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34">' +
+            '<circle cx="17" cy="17" r="15" fill="' + blue + '" stroke="' + white + '" stroke-width="2"/>' +
+            '<text x="17" y="17" text-anchor="middle" dominant-baseline="central" ' +
+            'font-family="system-ui,sans-serif" font-size="' + fs + '" font-weight="700" fill="' + white + '">' +
+            loc.label + '</text></svg>';
+          var icon = L.divIcon({ html: svg, className: '', iconSize: [34, 34], iconAnchor: [17, 17] });
+          L.marker(loc.pos, { icon: icon, title: loc.title }).addTo(map);
+        });
+
+        var legendEl = document.getElementById('covLegend');
+        if (legendEl) {
+          legendEl.innerHTML = locations.map(function(loc) {
+            return '<span class="cov-legend__item">' +
+              '<span class="cov-legend__dot" style="background:' + blue + ';color:' + white + '">' + loc.label + '</span>' +
+              '<span class="cov-legend__name">' + loc.title + '</span></span>';
+          }).join('');
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          var check = setInterval(function() {
+            if (typeof L !== 'undefined') { clearInterval(check); initCovMap(); }
+          }, 50);
+        });
+      } else {
+        var check = setInterval(function() {
+          if (typeof L !== 'undefined') { clearInterval(check); initCovMap(); }
+        }, 50);
+      }
+    })();
+  </script>
 </section>
 
 <!-- ══ FAQ ══ -->
