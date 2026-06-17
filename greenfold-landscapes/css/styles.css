@@ -142,180 +142,56 @@ select:focus-visible {
   color: var(--color-text-muted);
 }
 
-/* Decorative paint swatch rhythm (shared site motif — hero + section heads / key breaks) */
-.paint-swatches-wrap {
+/* Decorative leaf sprig rhythm (section separators / hero accent) */
+.leaf-sprigs-wrap {
   margin: 0.35rem 0 0.85rem;
+  overflow: visible;
 }
 
-.paint-swatches-wrap--section {
+.leaf-sprigs-wrap--section {
   margin: 0 0 0.65rem;
 }
 
-.paint-swatches-wrap--delay-1 {
+.leaf-sprigs-wrap--delay-1 {
   animation-delay: 110ms;
 }
 
-.paint-swatches-wrap--delay-2 {
+.leaf-sprigs-wrap--delay-2 {
   animation-delay: 210ms;
 }
 
-.paint-swatches-wrap--delay-3 {
+.leaf-sprigs-wrap--delay-3 {
   animation-delay: 300ms;
 }
 
-.paint-swatches {
+.leaf-sprigs {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  gap: 0.18rem;
+  height: 2rem;
 }
 
-.paint-swatches li {
+.leaf-sprigs li {
   margin: 0;
-  position: relative;
+  display: flex;
+  align-items: flex-end;
 }
 
-.paint-swatches li + li {
-  margin-left: -0.38rem;
-}
-
-.paint-swatches--dense li + li {
-  margin-left: -0.34rem;
-}
-
-/* Overlap stack: earlier chips sit above the next (long strips supported) */
-.paint-swatches li:nth-child(1) {
-  z-index: 12;
-}
-.paint-swatches li:nth-child(2) {
-  z-index: 11;
-}
-.paint-swatches li:nth-child(3) {
-  z-index: 10;
-}
-.paint-swatches li:nth-child(4) {
-  z-index: 9;
-}
-.paint-swatches li:nth-child(5) {
-  z-index: 8;
-}
-.paint-swatches li:nth-child(6) {
-  z-index: 7;
-}
-.paint-swatches li:nth-child(7) {
-  z-index: 6;
-}
-.paint-swatches li:nth-child(8) {
-  z-index: 5;
-}
-.paint-swatches li:nth-child(9) {
-  z-index: 4;
-}
-.paint-swatches li:nth-child(10) {
-  z-index: 3;
-}
-.paint-swatches li:nth-child(11) {
-  z-index: 2;
-}
-.paint-swatches li:nth-child(12) {
-  z-index: 1;
-}
-
-.paint-swatch {
+.leaf-sprig {
   display: block;
-  width: 1.45rem;
-  height: 1.45rem;
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.12),
-    inset 0 0 0 1px rgba(16, 20, 24, 0.12);
-}
-
-.paint-swatches--dense .paint-swatch {
-  width: 1.28rem;
-  height: 1.28rem;
-}
-
-.paint-swatch--primary {
-  background: var(--color-primary);
-}
-
-.paint-swatch--secondary {
-  background: var(--color-secondary);
-}
-
-.paint-swatch--accent {
-  background: var(--color-accent);
-}
-
-.paint-swatch--paper {
-  background: var(--color-bg-alt);
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.1),
-    inset 0 0 0 1px rgba(216, 208, 196, 0.95);
-}
-
-.paint-swatch--stone {
-  background: var(--color-text-muted);
-}
-
-.paint-swatch--bridge {
-  background: var(--palette-bridge);
-}
-
-.paint-swatch--slate-wash {
-  background: var(--palette-slate-wash);
-}
-
-.paint-swatch--navy-wash {
-  background: var(--palette-navy-wash);
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.08),
-    inset 0 0 0 1px rgba(30, 58, 43, 0.08);
-}
-
-.paint-swatch--honey {
-  background: var(--palette-honey);
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.1),
-    inset 0 0 0 1px rgba(193, 126, 58, 0.22);
-}
-
-.paint-swatch--apricot {
-  background: var(--palette-apricot);
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.1),
-    inset 0 0 0 1px rgba(193, 126, 58, 0.18);
-}
-
-.paint-swatch--rust {
-  background: var(--palette-rust);
-}
-
-.paint-swatch--putty {
-  background: var(--color-border);
-  box-shadow:
-    0 0 0 2px rgba(246, 241, 232, 0.95),
-    0 2px 6px rgba(16, 20, 24, 0.08),
-    inset 0 0 0 1px rgba(85, 96, 106, 0.12);
-}
-
-.paint-swatch--ink-mist {
-  background: var(--palette-ink-mist);
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(16, 20, 24, 0.18));
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .paint-swatches-wrap {
-    animation: paint-swatches-in 720ms ease-out both;
+  .leaf-sprigs-wrap {
+    animation: leaf-sprigs-in 720ms ease-out both;
   }
 
-  @keyframes paint-swatches-in {
+  @keyframes leaf-sprigs-in {
     from {
       opacity: 0;
       transform: translateX(-6px);
@@ -626,7 +502,7 @@ p {
   }
 }
 
-.hero-stack .paint-swatches-wrap {
+.hero-stack .leaf-sprigs-wrap {
   margin-bottom: 0.5rem;
 }
 
