@@ -1,7 +1,8 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true }
+    { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true },
+    { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/c/:slug/guides/", "destination": "/api/portal?slug=:slug&section=guides" },
