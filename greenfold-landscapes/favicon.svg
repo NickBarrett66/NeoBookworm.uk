@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Greenfold monogram">
+  <rect width="64" height="64" rx="12" fill="#1E3A2B"/>
+  <path d="M14 50h36" stroke="#C17E3A" stroke-width="6" stroke-linecap="round"/>
+  <path d="M32 44c0-9 0-15 0-18" stroke="#F4F1E9" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M32 30c-2-7-8-10-14-10 0 6.5 4 12 14 12.5z" fill="#7FB069"/>
+  <path d="M32 26c2-6.5 7.5-9 12.5-9 0 6-4 11-12.5 11.2z" fill="#A7C957"/>
+</svg>
