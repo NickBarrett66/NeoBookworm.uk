@@ -26,6 +26,7 @@
 // POST /api/dashboard  body: { action:"client_send",       slug, templateId, extra_vars:{...}, subject?, body? }
 // POST /api/dashboard  body: { action:"client_set_fields", slug, fields:{...} }
 // POST /api/dashboard  body: { action:"client_delete",     slug, confirm_slug }
+// POST /api/dashboard  body: { action:"prospect_add_dnc", id, reason? }
 //
 // Protected by Authorization: Bearer <DASHBOARD_SECRET>
 // Proxies queries to D1 via the Cloudflare REST API.
@@ -119,6 +120,108 @@ async function syncAllCompleteCampaigns() {
             AND SUM(CASE WHEN sent = 0 AND skipped = 0 THEN 1 ELSE 0 END) = 0
        )`
   );
+}
+
+/** Match Agent 3 normalise.js — used for DNC lookup keys. */
+function normalisePhone(raw) {
+  if (!raw) return null;
+  let n = String(raw).replace(/[\s\-().+]/g, '');
+  if (n.startsWith('44') && n.length >= 12) n = '0' + n.slice(2);
+  if (n.startsWith('0044')) n = '0' + n.slice(4);
+  if (!/^0\d{9,10}$/.test(n)) return null;
+  return n;
+}
+
+function normaliseName(raw) {
+  if (!raw) return null;
+  const result = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return result || null;
+}
+
+function normalisePostcode(raw) {
+  if (!raw) return null;
+  const cleaned = raw.toUpperCase().replace(/\s+/g, '');
+  if (cleaned.length < 5) return null;
+  return cleaned.slice(0, -3) + ' ' + cleaned.slice(-3);
+}
+
+async function loadDncLookupMaps() {
+  const rows = await queryD1(prospectsDb(),
+    'SELECT id, phone, business_name, postcode FROM dnc'
+  );
+  const phoneMap = new Map();
+  const namePostcodeMap = new Map();
+  for (const row of rows) {
+    const normPhone = normalisePhone(row.phone);
+    const normName = normaliseName(row.business_name);
+    const normPostcode = normalisePostcode(row.postcode);
+    if (normPhone) phoneMap.set(normPhone, row.id);
+    if (normName && normPostcode) namePostcodeMap.set(`${normName}|${normPostcode}`, row.id);
+  }
+  return { phoneMap, namePostcodeMap };
+}
+
+function checkProspectDnc(maps, phone, businessName, postcode) {
+  const normPhone = normalisePhone(phone);
+  if (normPhone && maps.phoneMap.has(normPhone)) {
+    return { isDNC: true, reason: `DNC: phone match (${normPhone})` };
+  }
+  const normName = normaliseName(businessName);
+  const normPostcode = normalisePostcode(postcode);
+  if (normName && normPostcode && maps.namePostcodeMap.has(`${normName}|${normPostcode}`)) {
+    return { isDNC: true, reason: 'DNC: name+postcode match' };
+  }
+  return { isDNC: false, reason: null };
+}
+
+async function prospectOnDncList(prospect) {
+  if (prospect.do_not_contact) return true;
+  const maps = await loadDncLookupMaps();
+  return checkProspectDnc(maps, prospect.phone, prospect.business_name, prospect.postcode).isDNC;
+}
+
+/** Insert into D1 dnc table, disqualify prospect, stop pending outreach. */
+async function addProspectToDnc(notionId, sourceReason = 'DNC: manual dashboard add') {
+  const rows = await queryD1(prospectsDb(), 'SELECT * FROM prospects WHERE notion_id = ?', [notionId]);
+  if (!rows.length) throw new Error('Prospect not found');
+  const p = rows[0];
+
+  const maps = await loadDncLookupMaps();
+  const existing = checkProspectDnc(maps, p.phone, p.business_name, p.postcode);
+
+  let dncInserted = false;
+  if (!existing.isDNC) {
+    await queryD1(prospectsDb(),
+      `INSERT INTO dnc (id, phone, business_name, postcode) VALUES (?, ?, ?, ?)`,
+      [`manual-${notionId}`, p.phone || null, p.business_name || null, p.postcode || null]
+    );
+    dncInserted = true;
+  }
+
+  const disqualifyReason = existing.isDNC ? existing.reason : sourceReason;
+
+  await Promise.all([
+    queryD1(prospectsDb(),
+      `UPDATE prospects SET
+         status = 'Disqualified',
+         do_not_contact = 1,
+         disqualify_reason = ?,
+         sequence_suppressed = 1
+       WHERE notion_id = ?`,
+      [disqualifyReason, notionId]
+    ),
+    queryD1(prospectsDb(),
+      `UPDATE outbox SET suppressed = 1, approved = 0, approved_at = NULL
+       WHERE notion_id = ? AND sent = 0`,
+      [notionId]
+    ),
+  ]);
+
+  return { dncInserted, alreadyOnDnc: existing.isDNC, disqualifyReason };
 }
 
 function buildSortOrder(sortPairs, allowedCols, colExpr, { pinCompleteLast = false, completeExpr = null } = {}) {
@@ -847,6 +950,20 @@ module.exports = async (req, res) => {
     }
 
     // ── client_delete ───────────────────────────────────────────────────────
+    if (action === 'prospect_add_dnc') {
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      const reason = typeof body.reason === 'string' && body.reason.trim()
+        ? body.reason.trim()
+        : 'DNC: manual dashboard add';
+      try {
+        const result = await addProspectToDnc(id, reason);
+        return res.status(200).json({ ok: true, ...result });
+      } catch (err) {
+        console.error('[dashboard prospect_add_dnc]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (action === 'client_delete') {
       const { slug, confirm_slug } = body;
       if (!slug) {
@@ -1194,7 +1311,8 @@ module.exports = async (req, res) => {
       const rows = await queryD1(prospectsDb(), `SELECT * FROM prospects WHERE notion_id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
       const client = await findLinkedClient('prospect', id);
-      return res.status(200).json({ ok: true, data: rows[0], client });
+      const on_dnc_list = await prospectOnDncList(rows[0]);
+      return res.status(200).json({ ok: true, data: rows[0], client, on_dnc_list });
     }
 
     // ── Unified submissions list (landing + intake + contact) ───────────────

@@ -404,6 +404,17 @@
     font-weight: 600; cursor: pointer; transition: background .15s, color .15s;
   }
   .btn-edit:hover { background: var(--amber); color: var(--navy); }
+  .btn-dnc {
+    padding: .5rem 1.1rem; background: none; color: var(--red);
+    border: 1px solid var(--red); border-radius: 7px; font-size: .85rem;
+    font-weight: 600; cursor: pointer; transition: background .15s;
+  }
+  .btn-dnc:hover { background: rgba(224,80,80,.1); }
+  .btn-dnc:disabled { opacity: .45; cursor: default; }
+  .dnc-badge {
+    font-size: .85rem; color: var(--red); font-weight: 600;
+    padding: .45rem .85rem; border: 1px solid var(--red); border-radius: 7px;
+  }
   .btn-cancel-edit {
     padding: .5rem 1.1rem; background: transparent; color: var(--muted);
     border: 1px solid var(--border); border-radius: 7px; font-size: .85rem;
@@ -2327,25 +2338,31 @@ async function loadRecord(id) {
   overlay.classList.add('open');
 
   try {
-    const { data: r, client } = await apiFetch({ action: 'record', id });
-    body.innerHTML = renderRecordHtml(r, false, client);
-    wireProspectEdit(r, false, client);
+    const { data: r, client, on_dnc_list } = await apiFetch({ action: 'record', id });
+    body.innerHTML = renderRecordHtml(r, false, client, on_dnc_list);
+    wireProspectEdit(r, false, client, on_dnc_list);
   } catch (err) {
     body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
   }
 }
 
-function renderRecordHtml(r, editing, client = null) {
+function renderRecordHtml(r, editing, client = null, onDncList = false) {
   const title = editing ? 'Edit record' : escHtml(r.business_name || 'Unknown');
   const subtitle = editing
     ? escHtml(r.status || '') + (r.trade_category ? ' · ' + escHtml(r.trade_category) : '')
     : escHtml(r.status || '') + (r.trade_category ? ' · ' + escHtml(r.trade_category) : '');
 
+  const dncAction = onDncList || r.do_not_contact
+    ? `<span class="dnc-badge">On DNC list</span>`
+    : `<button type="button" class="btn-dnc" id="btn-prospect-dnc">Add to DNC</button>`;
+
   const actions = editing
     ? `<button type="button" class="btn-save" id="btn-save">Save changes</button>
        <button type="button" class="btn-cancel-edit" id="btn-cancel-edit">Cancel</button>
        <span class="save-status" id="save-status"></span>`
-    : `<button type="button" class="btn-edit" id="btn-prospect-edit">Edit record</button>`;
+    : `<button type="button" class="btn-edit" id="btn-prospect-edit">Edit record</button>
+       ${dncAction}
+       <span class="save-status" id="dnc-status"></span>`;
 
   const promoteBlock = editing ? '' : renderPromoteSection({
     client,
@@ -2402,7 +2419,70 @@ function applyProspectFieldUpdates(r, fields) {
   }
 }
 
-function wireProspectEdit(r, editing, client = null) {
+function wireProspectDnc(r, client) {
+  const btn = document.getElementById('btn-prospect-dnc');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const parent = btn.parentElement;
+    btn.remove();
+
+    const confirm = document.createElement('div');
+    confirm.className = 'delete-confirm';
+    confirm.innerHTML = `
+      <span>Add to DNC? Stops all outreach and disqualifies this prospect.</span>
+      <button type="button" class="btn-confirm-yes">Yes, add to DNC</button>
+      <button type="button" class="btn-confirm-no">Cancel</button>
+    `;
+    parent.appendChild(confirm);
+
+    confirm.querySelector('.btn-confirm-no').addEventListener('click', () => {
+      confirm.remove();
+      parent.insertBefore(btn, parent.querySelector('#dnc-status'));
+    });
+
+    confirm.querySelector('.btn-confirm-yes').addEventListener('click', async () => {
+      const yesBtn = confirm.querySelector('.btn-confirm-yes');
+      const statusEl = document.getElementById('dnc-status');
+      yesBtn.disabled = true;
+      yesBtn.textContent = 'Adding…';
+      if (statusEl) statusEl.textContent = '';
+
+      try {
+        const result = await apiPost({ action: 'prospect_add_dnc', id: r.notion_id });
+        r.status = 'Disqualified';
+        r.do_not_contact = 1;
+        r.disqualify_reason = result.disqualifyReason || 'DNC: manual dashboard add';
+        r.sequence_suppressed = 1;
+
+        const body = document.getElementById('modal-body');
+        body.innerHTML = renderRecordHtml(r, false, client, true);
+        wireProspectEdit(r, false, client, true);
+
+        if (statusEl) {
+          statusEl.textContent = result.dncInserted
+            ? 'Added to DNC list'
+            : 'Already on DNC — prospect updated';
+          statusEl.className = 'save-status ok';
+        }
+
+        if (state.view === 'list' && state.currentStatus !== 'Disqualified') {
+          loadList(state.currentStatus, state.currentPage, { soft: true });
+        }
+      } catch (err) {
+        confirm.remove();
+        parent.insertBefore(btn, parent.querySelector('#dnc-status'));
+        const statusEl = document.getElementById('dnc-status');
+        if (statusEl) {
+          statusEl.textContent = err.message;
+          statusEl.className = 'save-status err';
+        }
+      }
+    });
+  });
+}
+
+function wireProspectEdit(r, editing, client = null, onDncList = false) {
   if (!editing) {
     wirePromoteSection({
       client,
@@ -2415,9 +2495,10 @@ function wireProspectEdit(r, editing, client = null) {
     });
     document.getElementById('btn-prospect-edit')?.addEventListener('click', () => {
       const body = document.getElementById('modal-body');
-      body.innerHTML = renderRecordHtml(r, true, client);
-      wireProspectEdit(r, true, client);
+      body.innerHTML = renderRecordHtml(r, true, client, onDncList);
+      wireProspectEdit(r, true, client, onDncList);
     });
+    wireProspectDnc(r, client);
     return;
   }
 
@@ -2437,8 +2518,8 @@ function wireProspectEdit(r, editing, client = null) {
 
   cancelBtn?.addEventListener('click', () => {
     const body = document.getElementById('modal-body');
-    body.innerHTML = renderRecordHtml(r, false, client);
-    wireProspectEdit(r, false, client);
+    body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact);
+    wireProspectEdit(r, false, client, onDncList || r.do_not_contact);
   });
 
   saveBtn?.addEventListener('click', async () => {
@@ -2458,8 +2539,8 @@ function wireProspectEdit(r, editing, client = null) {
       applyProspectFieldUpdates(r, fields);
 
       const body = document.getElementById('modal-body');
-      body.innerHTML = renderRecordHtml(r, false);
-      wireProspectEdit(r, false);
+      body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact);
+      wireProspectEdit(r, false, client, onDncList || r.do_not_contact);
 
       if (state.view === 'list' && fields.status !== undefined && state.currentStatus !== r.status) {
         loadList(state.currentStatus, state.currentPage);
