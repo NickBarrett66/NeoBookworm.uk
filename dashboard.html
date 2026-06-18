@@ -4914,12 +4914,11 @@ function journeyFromStartOption(startOption) {
 
 function renderPromoteSection({ client, dashboardSource, sourceId, defaultJourney, pickJourney, email }) {
   if (client) {
-    const portalUrl   = `/c/${encodeURIComponent(client.slug)}/`;
-    const stageLabel  = STAGE_LABELS[client.stage] || client.stage;
+    const portalUrl = `/c/${encodeURIComponent(client.slug)}/`;
     return `
       <div class="promote-section promote-linked" id="promote-section">
         <h3>Client</h3>
-        <p>Already promoted · Journey <strong>${escHtml(client.journey || '—')}</strong> · ${escHtml(stageLabel)}</p>
+        <p>Already promoted · Journey <strong>${escHtml(client.journey || '—')}</strong></p>
         <div class="promote-actions">
           <button type="button" class="btn-promote-secondary" id="btn-promote-view-client" data-slug="${escAttr(client.slug)}">View in Clients tab</button>
           <a href="${escAttr(portalUrl)}" target="_blank" rel="noopener" class="btn-promote-secondary">Open portal ↗</a>
