@@ -415,6 +415,38 @@
     font-size: .85rem; color: var(--red); font-weight: 600;
     padding: .45rem .85rem; border: 1px solid var(--red); border-radius: 7px;
   }
+  .prospect-campaigns-section {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.15rem;
+    background: rgba(59, 130, 246, .06);
+    border: 1px solid rgba(59, 130, 246, .25);
+    border-radius: 10px;
+  }
+  .prospect-campaigns-section h3 {
+    margin: 0 0 .5rem;
+    font-size: .95rem;
+    color: #3b82f6;
+    font-weight: 700;
+  }
+  .campaign-link-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .35rem .5rem;
+    margin-bottom: .4rem;
+  }
+  .campaign-link-row:last-child { margin-bottom: 0; }
+  .campaign-open-link {
+    padding: 0;
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-weight: 600;
+    font-size: .88rem;
+    cursor: pointer;
+    text-align: left;
+  }
+  .campaign-open-link:hover { text-decoration: underline; }
   .btn-cancel-edit {
     padding: .5rem 1.1rem; background: transparent; color: var(--muted);
     border: 1px solid var(--border); border-radius: 7px; font-size: .85rem;
@@ -647,6 +679,12 @@
     white-space: nowrap;
     min-width: 35ch;
     display: inline-block;
+    padding: 0;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    text-align: left;
   }
   .camp-id-cell:hover { color: var(--amber); border-color: var(--amber); }
 
@@ -1409,7 +1447,7 @@ function prospectDataCell(col, row) {
       const id = row.campaign_id;
       if (!id) return '<span class="muted">—</span>';
       const short = id.length > 35 ? id.slice(0, 35) + '…' : id;
-      return `<span class="camp-id-cell" data-id="${escAttr(id)}" title="${escAttr(id)}">${escHtml(short)}</span>`;
+      return `<button type="button" class="camp-id-cell campaign-open-link" data-id="${escAttr(id)}" title="Open campaign">${escHtml(short)}</button>`;
     }
     case 'campaign_priority':
       return row.campaign_priority != null
@@ -1943,6 +1981,7 @@ function renderSummarySearchResults({ data: rows, total, pageSize }) {
           <tr>
             <th>Business</th>
             <th>Status</th>
+            <th>Campaign</th>
             <th>Trade</th>
             <th>Town</th>
           </tr>
@@ -1955,13 +1994,24 @@ function renderSummarySearchResults({ data: rows, total, pageSize }) {
   const tbody = document.getElementById('summary-search-tbody');
   rows.forEach(row => {
     const tr = document.createElement('tr');
+    const campCell = row.campaign_id
+      ? `<button type="button" class="campaign-open-link summary-camp-link" data-campaign-id="${escAttr(row.campaign_id)}">${escHtml(row.campaign_id.length > 28 ? row.campaign_id.slice(0, 28) + '…' : row.campaign_id)}</button>`
+      : '<span class="muted">—</span>';
     tr.innerHTML = `
       <td>${escHtml(row.business_name || '—')}</td>
       <td class="muted">${escHtml(row.status || '—')}</td>
+      <td>${campCell}</td>
       <td class="muted">${escHtml(row.trade_category || '—')}</td>
       <td class="muted">${escHtml(row.town || '—')}</td>
     `;
-    tr.addEventListener('click', () => loadRecord(row.notion_id));
+    tr.addEventListener('click', e => {
+      if (e.target.closest('.summary-camp-link')) return;
+      loadRecord(row.notion_id);
+    });
+    tr.querySelector('.summary-camp-link')?.addEventListener('click', e => {
+      e.stopPropagation();
+      openCampaignFromProspect(row.campaign_id);
+    });
     tbody.appendChild(tr);
   });
 }
@@ -2118,14 +2168,9 @@ function renderList({ data: rows, total, page, pageSize }) {
       });
       const campCell = tr.querySelector('.camp-id-cell');
       if (campCell) {
-        campCell.addEventListener('click', async e => {
+        campCell.addEventListener('click', e => {
           e.stopPropagation();
-          try {
-            await navigator.clipboard.writeText(campCell.dataset.id);
-            const prev = campCell.textContent;
-            campCell.textContent = 'Copied!';
-            setTimeout(() => { campCell.textContent = prev; }, 1200);
-          } catch { /* clipboard not available */ }
+          openCampaignFromProspect(campCell.dataset.id);
         });
       }
       tbody.appendChild(tr);
@@ -2338,15 +2383,56 @@ async function loadRecord(id) {
   overlay.classList.add('open');
 
   try {
-    const { data: r, client, on_dnc_list } = await apiFetch({ action: 'record', id });
-    body.innerHTML = renderRecordHtml(r, false, client, on_dnc_list);
-    wireProspectEdit(r, false, client, on_dnc_list);
+    const { data: r, client, on_dnc_list, campaigns } = await apiFetch({ action: 'record', id });
+    body.innerHTML = renderRecordHtml(r, false, client, on_dnc_list, campaigns);
+    wireProspectEdit(r, false, client, on_dnc_list, campaigns);
   } catch (err) {
     body.innerHTML = `<p style="color:var(--red)">${escHtml(err.message)}</p>`;
   }
 }
 
-function renderRecordHtml(r, editing, client = null, onDncList = false) {
+function renderProspectCampaignsSection(campaigns) {
+  if (!campaigns?.length) return '';
+  const rows = campaigns.map(c => {
+    const meta = [
+      c.trade,
+      c.status,
+      c.priority != null ? `priority ${c.priority}` : null,
+      c.pending_emails > 0 ? `${c.pending_emails} pending` : null,
+      c.suppressed ? 'suppressed' : null,
+    ].filter(Boolean).join(' · ');
+    const shortId = c.id.length > 40 ? c.id.slice(0, 40) + '…' : c.id;
+    return `<div class="campaign-link-row">
+      <button type="button" class="campaign-open-link" data-campaign-id="${escAttr(c.id)}" data-campaign-trade="${escAttr(c.trade || '')}">${escHtml(shortId)}</button>
+      ${meta ? `<span class="muted" style="font-size:.82rem">${escHtml(meta)}</span>` : ''}
+    </div>`;
+  }).join('');
+  return `<div class="prospect-campaigns-section">
+    <h3>${campaigns.length === 1 ? 'Campaign' : 'Campaigns'}</h3>
+    ${rows}
+  </div>`;
+}
+
+function openCampaignFromProspect(campaignId, trade) {
+  if (!campaignId) return;
+  closeModal();
+  stopSummaryRefresh();
+  state.tab = 'campaigns';
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === 'campaigns');
+  });
+  loadCampaignDetail(campaignId, trade ? { trade } : null);
+}
+
+function wireProspectCampaignLinks() {
+  document.querySelectorAll('#modal-body .campaign-open-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openCampaignFromProspect(btn.dataset.campaignId, btn.dataset.campaignTrade || '');
+    });
+  });
+}
+
+function renderRecordHtml(r, editing, client = null, onDncList = false, campaigns = []) {
   const title = editing ? 'Edit record' : escHtml(r.business_name || 'Unknown');
   const subtitle = editing
     ? escHtml(r.status || '') + (r.trade_category ? ' · ' + escHtml(r.trade_category) : '')
@@ -2373,11 +2459,14 @@ function renderRecordHtml(r, editing, client = null, onDncList = false) {
     email:           r.email_address,
   });
 
+  const campaignsBlock = editing ? '' : renderProspectCampaignsSection(campaigns);
+
   return `
     <h2 id="record-title">${title}</h2>
     <div class="modal-status" id="record-subtitle">${subtitle}</div>
     <div class="modal-actions">${actions}</div>
     ${promoteBlock}
+    ${campaignsBlock}
     ${prospectSectionsHtml(r, editing)}
   `;
 }
@@ -2419,7 +2508,7 @@ function applyProspectFieldUpdates(r, fields) {
   }
 }
 
-function wireProspectDnc(r, client) {
+function wireProspectDnc(r, client, campaigns = []) {
   const btn = document.getElementById('btn-prospect-dnc');
   if (!btn) return;
 
@@ -2456,8 +2545,8 @@ function wireProspectDnc(r, client) {
         r.sequence_suppressed = 1;
 
         const body = document.getElementById('modal-body');
-        body.innerHTML = renderRecordHtml(r, false, client, true);
-        wireProspectEdit(r, false, client, true);
+        body.innerHTML = renderRecordHtml(r, false, client, true, campaigns);
+        wireProspectEdit(r, false, client, true, campaigns);
 
         if (statusEl) {
           statusEl.textContent = result.dncInserted
@@ -2482,7 +2571,7 @@ function wireProspectDnc(r, client) {
   });
 }
 
-function wireProspectEdit(r, editing, client = null, onDncList = false) {
+function wireProspectEdit(r, editing, client = null, onDncList = false, campaigns = []) {
   if (!editing) {
     wirePromoteSection({
       client,
@@ -2495,10 +2584,11 @@ function wireProspectEdit(r, editing, client = null, onDncList = false) {
     });
     document.getElementById('btn-prospect-edit')?.addEventListener('click', () => {
       const body = document.getElementById('modal-body');
-      body.innerHTML = renderRecordHtml(r, true, client, onDncList);
-      wireProspectEdit(r, true, client, onDncList);
+      body.innerHTML = renderRecordHtml(r, true, client, onDncList, campaigns);
+      wireProspectEdit(r, true, client, onDncList, campaigns);
     });
-    wireProspectDnc(r, client);
+    wireProspectDnc(r, client, campaigns);
+    wireProspectCampaignLinks();
     return;
   }
 
@@ -2518,8 +2608,8 @@ function wireProspectEdit(r, editing, client = null, onDncList = false) {
 
   cancelBtn?.addEventListener('click', () => {
     const body = document.getElementById('modal-body');
-    body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact);
-    wireProspectEdit(r, false, client, onDncList || r.do_not_contact);
+    body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact, campaigns);
+    wireProspectEdit(r, false, client, onDncList || r.do_not_contact, campaigns);
   });
 
   saveBtn?.addEventListener('click', async () => {
@@ -2539,8 +2629,8 @@ function wireProspectEdit(r, editing, client = null, onDncList = false) {
       applyProspectFieldUpdates(r, fields);
 
       const body = document.getElementById('modal-body');
-      body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact);
-      wireProspectEdit(r, false, client, onDncList || r.do_not_contact);
+      body.innerHTML = renderRecordHtml(r, false, client, onDncList || r.do_not_contact, campaigns);
+      wireProspectEdit(r, false, client, onDncList || r.do_not_contact, campaigns);
 
       if (state.view === 'list' && fields.status !== undefined && state.currentStatus !== r.status) {
         loadList(state.currentStatus, state.currentPage);

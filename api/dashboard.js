@@ -224,6 +224,35 @@ async function addProspectToDnc(notionId, sourceReason = 'DNC: manual dashboard 
   return { dncInserted, alreadyOnDnc: existing.isDNC, disqualifyReason };
 }
 
+/** Campaigns this prospect appears in (outbox rows and/or email_campaign_id). */
+async function fetchProspectCampaigns(notionId) {
+  return queryD1(prospectsDb(),
+    `WITH prospect_campaigns AS (
+       SELECT campaign_id AS id FROM outbox WHERE notion_id = ?
+       UNION
+       SELECT NULLIF(TRIM(email_campaign_id), '') AS id FROM prospects WHERE notion_id = ?
+     )
+     SELECT c.id, c.trade, c.status, c.priority, c.count_sent, c.count_total,
+            COALESCE(agg.outbox_rows, 0) AS outbox_rows,
+            COALESCE(agg.pending_emails, 0) AS pending_emails,
+            COALESCE(agg.suppressed, 0) AS suppressed
+     FROM prospect_campaigns pc
+     JOIN campaigns c ON c.id = pc.id
+     LEFT JOIN (
+       SELECT campaign_id,
+              COUNT(*) AS outbox_rows,
+              SUM(CASE WHEN sent = 0 AND skipped = 0 THEN 1 ELSE 0 END) AS pending_emails,
+              MAX(suppressed) AS suppressed
+       FROM outbox
+       WHERE notion_id = ?
+       GROUP BY campaign_id
+     ) agg ON agg.campaign_id = c.id
+     WHERE pc.id IS NOT NULL
+     ORDER BY c.priority DESC, c.created_at DESC`,
+    [notionId, notionId, notionId]
+  );
+}
+
 function buildSortOrder(sortPairs, allowedCols, colExpr, { pinCompleteLast = false, completeExpr = null } = {}) {
   const orderClauses = [];
   for (const [col, dir] of sortPairs) {
@@ -1143,9 +1172,18 @@ module.exports = async (req, res) => {
         return res.status(200).json({ ok: true, data: [], total: 0, page: pageNum, pageSize });
       }
       const pct = `%${q}%`;
+      const campaignIdExpr = `COALESCE(
+        NULLIF(TRIM(prospects.email_campaign_id), ''),
+        (SELECT o.campaign_id
+         FROM outbox o
+         WHERE o.notion_id = prospects.notion_id
+         ORDER BY o.created_at ASC, o.campaign_id ASC
+         LIMIT 1)
+      )`;
       const [rows, countRows] = await Promise.all([
         queryD1(prospectsDb(),
-          `SELECT notion_id, business_name, status, trade_category, town, contact_name
+          `SELECT notion_id, business_name, status, trade_category, town, contact_name,
+                  ${campaignIdExpr} AS campaign_id
            FROM prospects
            WHERE business_name LIKE ?
            ORDER BY business_name ASC
@@ -1310,9 +1348,12 @@ module.exports = async (req, res) => {
       if (!id) return res.status(400).json({ error: 'id parameter required' });
       const rows = await queryD1(prospectsDb(), `SELECT * FROM prospects WHERE notion_id = ?`, [id]);
       if (!rows.length) return res.status(404).json({ error: 'Record not found' });
-      const client = await findLinkedClient('prospect', id);
-      const on_dnc_list = await prospectOnDncList(rows[0]);
-      return res.status(200).json({ ok: true, data: rows[0], client, on_dnc_list });
+      const [client, on_dnc_list, campaigns] = await Promise.all([
+        findLinkedClient('prospect', id),
+        prospectOnDncList(rows[0]),
+        fetchProspectCampaigns(id),
+      ]);
+      return res.status(200).json({ ok: true, data: rows[0], client, on_dnc_list, campaigns });
     }
 
     // ── Unified submissions list (landing + intake + contact) ───────────────
