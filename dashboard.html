@@ -4953,7 +4953,7 @@ function renderPromoteSection({ client, dashboardSource, sourceId, defaultJourne
   return `
     <div class="promote-section" id="promote-section">
       <h3>Promote to client</h3>
-      <p>${journeyNote} Creates a client row, sends the first acknowledgement email, and opens their portal.</p>
+      <p>${journeyNote} Creates a client row and their portal — send the acknowledgement email from the Clients tab when you are ready.</p>
       ${journeySelect}
       <div class="promote-actions">
         <button type="button" class="btn-promote" id="btn-promote-client">Promote to client</button>
@@ -4982,7 +4982,7 @@ function wirePromoteSection({ client, dashboardSource, sourceId, defaultJourney,
 
   btn.addEventListener('click', async () => {
     const journey = pickJourney ? (sel?.value || defaultJourney) : (sel?.value || defaultJourney || 'J1');
-    if (!confirm(`Promote to client on journey ${journey}? This sends the acknowledgement email.`)) return;
+    if (!confirm(`Promote to client on journey ${journey}? This creates the client record and portal only — no email is sent.`)) return;
 
     btn.disabled = true;
     if (status) { status.textContent = 'Promoting…'; status.className = 'promote-status'; }
@@ -4995,18 +4995,7 @@ function wirePromoteSection({ client, dashboardSource, sourceId, defaultJourney,
         journey,
       });
 
-      let msg = `Client created: ${result.slug}`;
-      if (result.acknowledged) {
-        msg += ' · Acknowledgement sent';
-      } else if (result.ack_reason === 'already_acknowledged') {
-        msg += ' · Acknowledgement already sent';
-      } else if (result.ack_reason === 'missing_current_url') {
-        msg += ' · No ack (set current URL in Clients, then send J2-E1 or J3-E1 manually)';
-      } else if (result.ack_error) {
-        msg += ` · Ack failed: ${result.ack_error}`;
-      } else if (result.ack_reason) {
-        msg += ` · No ack (${result.ack_reason})`;
-      }
+      const msg = `Client created: ${result.slug} · Portal ready — send acknowledgement from Clients tab when ready`;
 
       if (status) { status.textContent = msg; status.className = 'promote-status ok'; }
 

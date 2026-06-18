@@ -2,7 +2,7 @@
 //
 // Shared by:
 //   api/onboarding-intake.js  — auto-path for J1–J4 inbound enquiries
-//   api/dashboard.js          — manual promote (J5, cold prospects)
+// Dashboard manual promote does not call this — send acknowledgement from Clients tab.
 //
 // Dedup contract:
 //   Checks email_log for a prior acknowledgement row (template LIKE '%-E1%', status='sent')
