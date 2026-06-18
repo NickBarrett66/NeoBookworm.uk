@@ -195,9 +195,15 @@ async function addProspectToDnc(notionId, sourceReason = 'DNC: manual dashboard 
 
   let dncInserted = false;
   if (!existing.isDNC) {
+    // dnc.id is INTEGER PRIMARY KEY (autoincrement) — do not bind a text id.
     await queryD1(prospectsDb(),
-      `INSERT INTO dnc (id, phone, business_name, postcode) VALUES (?, ?, ?, ?)`,
-      [`manual-${notionId}`, p.phone || null, p.business_name || null, p.postcode || null]
+      `INSERT INTO dnc (phone, business_name, postcode, reason) VALUES (?, ?, ?, ?)`,
+      [
+        p.phone != null && String(p.phone).trim() !== '' ? String(p.phone) : null,
+        p.business_name ? String(p.business_name) : null,
+        p.postcode ? String(p.postcode) : null,
+        sourceReason,
+      ]
     );
     dncInserted = true;
   }

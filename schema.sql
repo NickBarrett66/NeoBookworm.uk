@@ -3,7 +3,7 @@
 -- Database: neobookworm-enquiries (771b3047-f977-485e-9cfb-736815931998)
 --   Tables: clients, contact_enquiries, email_log, feedback, intake_submissions, landing_enquiries
 -- Database: neobookworm-prospects (0ae32598-1680-4995-a010-96b647eacabd)
---   Tables: prospects
+--   Tables: prospects, dnc, campaigns, outbox, …
 
 CREATE TABLE clients (
   slug                TEXT PRIMARY KEY,
@@ -226,4 +226,13 @@ CREATE TABLE prospects (
   website_sub_segment      TEXT,
   email_campaign_id        TEXT,
   sequence_suppressed      INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE dnc (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  phone         TEXT,
+  business_name TEXT,
+  postcode      TEXT,
+  reason        TEXT,
+  added_at      TEXT NOT NULL DEFAULT (datetime('now'))
 );
