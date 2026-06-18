@@ -1,25 +1,11 @@
 ---
 name: neobookworm-email-templates
-description: "Defines the structure, tone, angle, and constraints for all NeoBookworm cold-email sequences across every segment (A, B, C1–C4, D). Covers initial outreach, follow-ups, and final emails for both no-website and has-website campaigns. All prospects are Ltd companies — sole trader variants have been removed. Includes pricing context (£49.99 launch-phase founder rate, £199 direct-approach rate, £299 public price) and universal rules. Read this file before drafting any NeoBookworm outreach email."
+description: "Defines the structure, tone, angle, and constraints for all NeoBookworm cold-email sequences across every segment (A, B, C1–C4, D). Covers initial outreach, follow-ups, and final emails for both no-website and has-website campaigns. All prospects are Ltd companies — sole trader variants have been removed. Includes pricing context (£49.99 fixed build) and universal rules. Read this file before drafting any NeoBookworm outreach email."
 ---
 
 This file defines the email templates for all NeoBookworm cold-email campaigns. It covers all four segments (A, B, C, D) with initial emails and follow-ups. All prospects targeted are Ltd companies — sole trader variants have been removed.
 
 All templates are written as **guidance for Claude**, not to be pasted verbatim. Claude fills in the personalisation blanks from the prospect's research_summary and D1 fields. What these templates define is the **structure, tone, angle, and constraints** for each segment.
-
----
-
-## ⛔ CARDINAL RULE — never criticise the prospect, however tangentially
-
-No NeoBookworm email ever says, implies, or "softly notes" anything negative about the prospect's current website, setup, or absence of one. No flaws. No gaps. No "one thing a customer might notice." No "your site scores low / shows a parking page / has no SSL / isn't finding you." No expired-domain, no Wix-branding, no missing-accreditation observations. **Nothing that could make the reader feel judged, behind, or got-at.**
-
-This is non-negotiable and overrides every other instruction in this file. Where an older example below still names a flaw, the CARDINAL RULE wins — rewrite it positively.
-
-The pull always comes from **what I offer**, never from **what they lack**: "here's the standard I build to," "you own it outright," "you don't pay until you're happy with it." If selling the new site's strengths, describe *my* build ("every site I build shows your accreditation number and loads in under a second") — never by contrast with theirs.
-
-**The test before any email goes out:** read it back as the recipient. *Could a single sentence make them feel their current site (or having none) is wrong, dated, broken, or embarrassing?* If yes — even slightly, even factually — rewrite it. This rule exists because a real prospect called an earlier "factual" critique *"unhinged, untrue and frankly bullshit"* and told us never to lead with it. He was right.
-
----
 
 ## How to read this document
 
@@ -46,76 +32,26 @@ For each segment you'll find:
 
 **The word "demo" is retired — do not reintroduce it.** The earlier model sent a bespoke demo built for each prospect; that model no longer exists. Never write "here's a demo site for you to look at," "the demo I built for you," "your demo," or any phrasing that implies a site was made specifically for this prospect. The much older objections-research document (`docs/NeoBookworm-Objections-Research.md`) is written entirely around that retired demo-first model — read it for the *psychology* of each objection, but ignore every piece of its example copy, all of which says "I've mocked one up for you" / "here's yours." If a draft starts to sound like that, it has drifted to the old model — rewrite it.
 
-**Has-website (Segment C): NEVER say anything about the prospect's own site — not a flaw, not a gap, not a "thing a customer might notice", not even softly.** This is the single most damaging failure for has-website emails, and it is the reason this rule exists. A real prospect replied to one of these emails: *"This is an opinion that is unhinged, untrue and frankly bullshit … when you want someone's money you don't send an unsolicited email with the hyper critical approach."* He was right. Telling a stranger their site is empty/expired/insecure/missing something — however politely, however factually — reads as an insult dressed as help, triggers the sunk-cost defence, and loses the sale before it starts.
-
-The old "affirm first, gap softly" model is **retired**. There is no acceptable way to mention their site's shortcomings. The email never inspects, evaluates, or comments on their existing site at all. It only ever: (1) affirms that they have a site (a genuine positive — most don't), (2) offers the standard *I* build to, and (3) removes all risk with pay-when-happy. The pull comes from what the new site *is*, never from what the old one *lacks*.
-
-The `-switch` landing page works the same way — it affirms the prospect ("You've already taken the website step. Most plumbers haven't.") and calls the examples "the standard I build to," and it never tells anyone their site needs rebuilding. The email must match that register exactly.
-
-**Approved link lead-ins for Segment C:** "here's the standard I build to:" / "examples of what I build for [trade]s:" / "here's what I build, if it's ever useful:".
-**Banned (presume their site is inadequate):** "here's what a rebuilt site would look like," "what an updated site looks like," "your new site," "what your site could be" — and, now, *any* sentence that describes, rates, or points at something on their current site.
+**Has-website (Segment C): never imply their site needs rebuilding at the point of the link.** This is the single most common failure for has-website emails. Phrases like "here's what a rebuilt site would look like," "what an updated site looks like," "your new site," or "what your site could be" presume the prospect's existing site is inadequate — exactly at the moment you hand them the link. That breaks voice principle #1 (aspirational, never critical) and triggers the sunk-cost defence in someone who paid for what they have. The `-switch` landing page itself never says "rebuild" — it affirms the prospect ("You've already taken the website step. Most plumbers haven't.") and calls the examples "the standard I build to." The email must match that register. **Affirm first, mention any gap softly, then frame the link positively.** Approved link lead-ins for Segment C: "here's the standard I build to:" / "examples of what I build for [trade]s:" / "here's what I build, if it's ever useful:". See the **Email ↔ landing-page seam** section near the end of this file for the exact lead-in to use per campaign.
 
 ---
 
-## Pricing context — direct-approach offer
+## Pricing context
 
-**The website (neobookworm.uk) shows £299.** The £199 price in these emails is a direct-approach rate offered exclusively to prospects contacted by email — it is not advertised publicly and does not appear on the landing page.
+**The build price is £49.99 fixed** — the same on neobookworm.uk, trade landing pages, and in outreach emails. £9.99/month hosting is separate and optional.
 
-This is a genuine exclusive, not a coupon-style discount. The framing options:
+**Default framing (Email 1):**
+> A full 5-page site is £49.99 fixed, £9.99/month after that.
 
-**Option B — name the offer explicitly (DEFAULT for all segments except A and C3):**
-> The site shows £299 — because you've come across this directly, it's £199.
-
-Use this in Email 1 for Segments B, C1, C2, C4, and D. It is the standard framing — the price difference is a genuine exclusive and should always be explained. Never use it in Segment A (too salesy for that audience) or Segment C3 Agency (wrong register entirely).
-
-**Option A — state it plainly without explanation (fallback only):**
-> It's £199 for a full 5-page site, £9.99/month after that.
-
-Use this only when the email is genuinely full and adding the £299 explanation would tip it over the word count target. This should be the exception, not the rule. If in doubt, use Option B.
-
-**Option C — anchor it against the public price in a follow-up:**
-> For context: the public rate is £299 — I offer £199 to people I contact directly, because there's no middleman.
-
-Use this sparingly — E2 only, for Segment B or D, where the prospect hasn't responded and a concrete new reason to engage is needed.
-
----
-
-### Founder rate (launch-phase offer) — £49.99 build
-
-**Status: this is a toggle Nick controls.** While the founder phase is active, this offer **replaces** the £199 direct-approach line in Email 1 across all segments. When Nick says the founder phase is over (enough sites live, enough reviews gathered), revert to the standard £199/£299 framing above. If you're unsure whether the founder phase is currently on, ask Nick before drafting — do not assume.
-
-**The offer:** £49.99 to build (instead of the £299 public / £199 direct rate), £9.99/month after that to keep the site live. The £9.99/month never changes.
-
-**Why it exists — and why this framing is non-negotiable.** £49.99 is far below the real value of the work. Stated as a bare number it reads as a fire-sale and damages trust ("what's the catch / this can't be any good") — which is the *opposite* of what a brand-new, review-less business needs. The number only works when it is paired, every single time, with the genuine reason: **Nick is just starting out and is building his first few sites at a founder rate in exchange for an honest review and permission to show the finished site as an example of his work.** That reframes a low price as a deliberate, generous, time-of-launch exchange rather than desperation. Never present the £49.99 without that reason in the same breath.
-
-**Honesty-as-strength.** Being new is acknowledged openly, not hidden — for this audience candour reads as trustworthy, and it's the honest explanation for the price. A line like "I'm new, so I don't have a wall of reviews yet — that's exactly why the first few sites are £49.99" turns the weakness into the rationale.
-
-**Genuine, bounded scarcity — never false urgency.** Always frame the founder rate as a *small, deliberate number* ("the first few", "the first five local [trade]s") so it reads as intentional, not flailing. This is the line between *exclusive* and *desperate*. Do **not** attach an expiry date or countdown unless Nick has explicitly set a real one — invented deadlines damage trust and (per universal rule 11) "urgent" is a banned word anyway.
-
-**Risk reversal still leads.** The founder rate sits *alongside* "you don't pay until you're happy with it" — it never replaces it. The pay-when-happy promise is what actually removes the prospect's risk (it's already nil); the founder rate is about portfolio-building and goodwill, not about reducing their risk. Keep both.
-
-**Approved founder-rate lines (adapt, don't paste verbatim):**
-
-> I'm just getting NeoBookworm off the ground, so I'm building the first few sites for local [trade]s at £49.99 instead of the usual £299 — all I ask in return is an honest opinion once it's done. £9.99/month after that to keep it live, and no deposit: you don't pay a penny until you're happy with it.
-
-> I'll be straight — I'm new, so I don't have a wall of reviews yet. That's exactly why the first few sites are £49.99 rather than £299, and why you don't pay until it's built and you're happy. You see the finished thing first; if it's not right, you've lost nothing.
-
-> There's nothing to pay up front. I build it, you see it live, and only if you're happy does the £49.99 apply — then £9.99/month to keep it running. I'm taking on just a few local [trade]s at this rate while I'm starting out.
-
-**Founder-rate rules:**
-- Never state £49.99 without the founder reason (first clients / building a portfolio / in exchange for an honest review) in the same sentence or the one beside it
-- Never call it a "discount", "deal", or "offer that expires" — it is a founder rate
-- Keep "you don't pay until you're happy with it" in every Email 1 — the founder rate is in addition to it, not instead of it
-- Bound it to a small number; never imply unlimited availability and never invent a deadline
-- £9.99/month is unchanged — never vary it
-- In follow-ups (E2/E3), the founder rate can be restated briefly but the reason must still travel with it
-- Not for Segment C3 (Agency-managed) — that register stays soft and ownership-focused; a founder price is too salesy there. Confirm with Nick before using the founder rate for any Segment C prospect.
+**Shorter fallback (when word count is tight):**
+> It's £49.99 for a full 5-page site, £9.99/month after that.
 
 **Rules:**
-- Never imply the offer expires or is time-limited unless Nick explicitly sets a deadline — false urgency damages trust
-- Never use the word "discount" — it cheapens the service and implies the £299 is the real price paid by suckers
+- Never imply the price expires or is time-limited unless Nick explicitly sets a deadline
+- Never use "starting from", "around", or "typically" for the build price
+- Never use the word "discount"
 - The £9.99/month hosting is the same regardless — never vary it
-- If a prospect replies asking whether the £199 is correct, confirm it and explain it's the direct-approach rate
+- If a prospect asks about price, confirm £49.99 fixed for the build
 
 ---
 
@@ -327,7 +263,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 > 
 > 
 
-> If you like it, a full 5-page site is £199 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
+> If you like it, a full 5-page site is £49.99 fixed, £9.99/month after that, and I handle everything. No deposit — you only pay once you're happy with it.
 > 
 
 > 
@@ -358,7 +294,7 @@ The **specific niche or differentiator** from their research is the most powerfu
 
 **Angle:** Switch from the examples-page angle to the **platform cost comparison** angle — the most effective rational argument for this segment.
 
-**Checkatrade variant** (use when the prospect is a Checkatrade member): most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £199 once, then £9.99/month — and unlike Checkatrade, they own it.
+**Checkatrade variant** (use when the prospect is a Checkatrade member): most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £49.99 once, then £9.99/month — and unlike Checkatrade, they own it.
 
 **Generic variant** (use when the prospect is not on Checkatrade, or their platform is unknown): frame around whatever platform they were found on (Rated People, TrustATrader, Facebook ads, etc.), or use "lead generation platforms" generically. The key point is ownership: they're paying indefinitely for visibility on someone else's platform.
 
@@ -370,9 +306,9 @@ Optionally include a local search volume data point if it's strong enough to be 
 >
 > Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 >
-> One thing worth knowing: most tradespeople pay hundreds of pounds a year for lead generation platforms. This site costs £199 once, then £9.99 a month — and unlike any platform, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
+> One thing worth knowing: most tradespeople pay hundreds of pounds a year for lead generation platforms. This site costs £49.99 once, then £9.99 a month — and unlike any platform, you own it. No price hikes, no shared leads, no algorithm deciding how visible you are.
 >
-> [Checkatrade variant: "Most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £199 once, then £9.99 a month — and unlike Checkatrade, you own it."]
+> [Checkatrade variant: "Most tradespeople in Wiltshire are paying £800–£1,500 a year for Checkatrade. This site costs £49.99 once, then £9.99 a month — and unlike Checkatrade, you own it."]
 >
 > [Optional: Around [X] people search Google for a [trade] in Swindon every month. Right now that's not finding you.]
 >
@@ -421,13 +357,11 @@ Segment C covers all `has-website` campaign prospects. It splits into four sub-s
 
 **Important — landing page vs demo URL:** Has-website campaigns point to a trade landing page (e.g. `neobookworm.uk/plumbers-switch`), not a bespoke demo built for this prospect. The landing page shows example sites and explains the switch process. Never frame the link as "a demo I built for you" — it is a page showing what I build for others. Approved link lead-ins: "here's the standard I build to:" / "examples of what I build for [trade]s:" / "here's what I build, if it's ever useful:" — followed by the plain URL on its own line. **Banned link lead-ins** (they presume their site is inadequate): "here's what a rebuilt site would look like", "what an updated one looks like", "your new site", "what your site could be".
 
-**Affirm only — never reference anything specific about their site (CARDINAL RULE).** The `-switch` landing page leads by affirming the prospect ("You've already taken the website step. Most [trade]s haven't."). Every Segment C email opens in exactly that spirit and stays there: acknowledge that they have a site (a genuine positive), then move straight to what I build and the no-risk offer. **Do not mention, describe, rate, or hint at any gap, flaw, or detail of their existing site** — no parking page, no Wix fee, no missing accreditation, no SSL, no copyright year, nothing. The `website_sub_segment` from the audit tells *you* internally which prospects are worth approaching and shapes only the tone — it never surfaces as a comment about their site in the email.
+**Affirm first, gap softly — the C-segment opening order.** The `-switch` landing page leads by affirming the prospect ("You've already taken the website step. Most [trade]s haven't."). Every Segment C email must open in that spirit: acknowledge what they've already got before mentioning any gap. Where the sub-segment has a concrete factual observation (a parking page, a Wix fee, a missing Gas Safe number), state it *softly and without judgement* and only after the affirmation — never as the opening blow. The aim is "one professional pointing something out to another," not "your site is wrong."
 
-**Why the sub-segment data no longer becomes a sentence in the email:** naming a concrete flaw was the whole basis of the old C-segment pitch, and it is precisely what drew the complaint. The audit is now an internal targeting/tone signal only.
+**Risk reversal for all C sub-segments:** The standard "you don't pay until you're happy with it" framing is even stronger here — reframe it as: *"you don't pay until it's better than what you've got."* The prospect has something to compare against. This removes the only real objection.
 
-**Risk reversal for all C sub-segments:** use the standard *"you don't pay until you're happy with it."* (Do **not** use "until it's better than what you've got" — it implies what they've got is worse, which is a comparison/criticism. Drop it.)
-
-**Review-count modifiers:** review count and years still inform tone and personalisation within each sub-segment (an established prospect with 80 reviews gets a warmer, more deferential opening than one with 8), but personalisation draws only on *positive* facts about the business — never on anything about their website.
+**Review-count modifiers:** The C sub-segment determines the email angle. The A/B/D review-count logic still informs tone and personalisation within each sub-segment — an established C2 prospect with 80 reviews gets a different opening than a C2 with 8 — but the website state drives the argument.
 
 ---
 
@@ -443,38 +377,39 @@ Had a website; the domain has lapsed. Now serves a registrar parking page or fai
 
 ### Psychological approach
 
-**Lead with the opportunity, never the lapse.** Internally we know their old domain isn't serving — but the CARDINAL RULE means we never say so. They already proved they value a website by building one before; lean on that, not on the fact it's gone. The argument is simply: getting a site live is quick and risk-free, and you already know the value of having one.
+**Lead with the damage, not the opportunity.** The parking page is a concrete, verifiable, existing problem — not a theoretical future benefit. They don't need convincing that websites have value; they already demonstrated that when they built the first one. The argument is: you're losing something you used to have, and fixing it is less effort than you think.
 
-The tone is warm and forward-looking. Do not mention parking pages, dead ends, domains being unreachable, lapsing, or anything that points at the gap. Never imply they let something slip.
+The tone should be matter-of-fact, not alarming. State the fact ("your old domain now shows a parking page"), then move immediately to the solution. Do not dwell on the negative.
 
-Frame it as "having a site live again is easy and there's nothing to lose" — never "your old one is broken."
+Do not frame this as "you need a new website" — frame it as "you need your old one back, but better."
 
 ### Email 1 — Initial Outreach
 
 **Subject line options:**
-- `[Business Name] — worth a look`
-- `[Business Name] — something that might help`
-- `A site for [Business Name]`
+- `[Business Name] — your old site`
+- `[Business Name] — noticed your domain`
+- `Quick thing about [businessname.co.uk]`
 
 **Structure:**
-1. Affirm — they've had a site before, so they already know what it does for a business
-2. Move straight to the offer: getting one live is quick, here's the standard I build to — "here's the standard I build to:"
-3. Risk reversal: "you don't pay until you're happy with it"
-4. Pricing — one sentence
-5. Autonomy-preserving close
-6. Sign-off and footer
+1. Affirm first — they had a site once, so they already know its value
+2. State the parking-page fact softly — one sentence, no judgement
+3. Reassure it's less effort than the first time, then the landing page link — "here's the standard I build to:"
+4. Risk reversal: "don't pay until it's better than what you had"
+5. Pricing — one sentence
+6. Autonomy-preserving close
+7. Sign-off and footer
 
 **Example output:**
 
 > Hi [Name],
 >
-> You've had a website before, so you already know what it does for a business when someone looks you up. If it's ever worth having one live again, getting it done is quick and there's nothing to sort on your side — I handle all of it.
+> You had a site once, so you already know what it does for a business when someone looks you up. The only snag: your old domain, [domain], now shows a registrar parking page — so anyone who types it in lands on a dead end.
 >
-> Here's the standard I build to:
+> Getting it back is less effort than the first time round. Here's the standard I build to:
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until you're happy with it. A full 5-page site is £199 fixed, £9.99/month after that.
+> You don't pay until it's better than what you had. Full 5-page site is £49.99 fixed, £9.99/month after that.
 >
 > Worth a look, or not — no pressure either way.
 >
@@ -483,16 +418,16 @@ Frame it as "having a site live again is easy and there's nothing to lose" — n
 **Word count target:** 85–105 words.
 
 **What NOT to write:**
-- ❌ Anything about a parking page, dead end, lapsed/expired domain, or a site being down — CARDINAL RULE
-- ❌ "You need a website"
+- ❌ "You need a website" — they know; they had one
 - ❌ "In today's digital world..." — generic, eye-rolling
-- ❌ Any hint they were negligent for letting it lapse
+- ❌ Implying they were negligent for letting it lapse
+- ❌ Multiple problems — the parking page is enough
 
 ### Email 2 — Follow-up
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** Switch to the **ownership and continuity** angle, framed positively — never as a fix for what went wrong before. Set-and-forget hosting: a flat £9.99/month, once it's live it stays live, nothing to remember to renew.
+**Angle:** Switch to the **ownership and continuity** angle. The first site lapsed because it was tied to a hosting contract they forgot about or stopped paying. This one is set-and-forget: £9.99/month, no annual renewal trap, no domain expiry surprises.
 
 **Example output:**
 
@@ -502,7 +437,7 @@ Frame it as "having a site live again is easy and there's nothing to lose" — n
 >
 > neobookworm.uk/plumbers-switch
 >
-> One thing worth knowing: my hosting is a flat £9.99/month with nothing to renew each year — once it's live, it stays live, and I keep an eye on it. Set-and-forget.
+> One thing worth knowing: the main reason domains lapse is annual renewal reminders getting buried. My hosting is a flat £9.99/month — no yearly renewal, no surprise expiry. Once it's live, it stays live.
 >
 > Nick | NeoBookworm.uk
 
@@ -540,24 +475,24 @@ Has a live website on Wix, GoDaddy, Squarespace, or Google Sites — built by th
 
 ### Psychological approach
 
-**Sell ownership, never inspect their site.** The legitimate, non-critical pull here is ownership and cost: a site you own outright instead of renting a platform forever. Make that case in general, positive terms — "lots of trades start on a builder like Wix or Squarespace, and they're a fine way to get going" — never by examining or knocking *their* specific site, its look, or its branding. Naming "your Wix site" and what's "on it" is a comment about their site and breaks the CARDINAL RULE.
+**Lead with cost and control, not quality.** Criticising the site's appearance triggers the sunk-cost defence immediately. Instead, make it a purely economic and ownership argument: they are renting someone else's platform indefinitely, paying monthly for something they built, with Wix/GoDaddy branding on it. The switch is financially rational regardless of aesthetics.
 
-Use the standard "you don't pay until you're happy with it." Do **not** use "better than what you've got" — it's a comparison that implies theirs is worse.
+The "you don't pay until it's better than what you've got" framing is strongest here — the prospect can do a direct side-by-side comparison between their Wix site and the landing page examples.
 
-Do not mention SEO, rankings, or design quality. The argument is ownership and cost, framed as a positive alternative.
+Do not mention SEO, rankings, or design quality. The argument is ownership and cost only.
 
 ### Email 1 — Initial Outreach
 
 **Subject line options:**
+- `[Business Name] — paying for Wix?`
 - `[Business Name] — own your site outright`
-- `[Business Name] — a site that's yours`
-- `Worth a look, [Business Name]`
+- `Quick thing about your website`
 
 **Structure:**
-1. Affirm — they've already got a site up, which puts them ahead of most
-2. The ownership offer in general terms — a clean 5-page site you own outright, no platform fee (no reference to what their current site is or what's on it)
+1. Affirm first — they've already got a working site up, which puts them ahead of most
+2. State the platform fact softly, then the ownership argument — £49.99 once vs paying Wix forever, no branding
 3. Landing page link
-4. Risk reversal: "you don't pay until you're happy with it"
+4. Risk reversal: "don't pay until it's better than what you've got"
 5. Pricing — one sentence
 6. Autonomy-preserving close
 7. Sign-off and footer
@@ -566,13 +501,13 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 
 > Hi [Name],
 >
-> You've already got a site up and running, which puts you ahead of most [trade]s. If it's ever useful, here's something worth knowing about: for £199 I build a clean 5-page site you own outright — no platform fees, just £9.99/month to host, and it's yours to keep.
+> You've already got a site up and running, which puts you ahead of most [trade]s. Yours is on Wix, which means a monthly fee to them for a site that carries their branding. That's fine — but there's an alternative: for £49.99 I build a clean 5-page site you own outright, no platform fee, £9.99/month to host.
 >
 > Examples of what I build for plumbers:
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until you're happy with it — so there's nothing to lose in having a look.
+> You don't pay until it's better than what you've got — so there's nothing to lose in having a look.
 >
 > Worth a glance?
 >
@@ -581,10 +516,10 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 **Word count target:** 90–110 words.
 
 **What NOT to write:**
-- ❌ Anything describing their current site — "yours is on Wix", "carries their branding", how it looks — CARDINAL RULE
+- ❌ "Your Wix site looks basic/unprofessional" — opinion, triggers defensiveness
 - ❌ Anything about SEO, rankings, or Google
 - ❌ "You need a proper website" — condescending
-- ❌ Multiple arguments — ownership and cost is the single point
+- ❌ Multiple arguments — cost and ownership is the single point
 
 ### Email 2 — Follow-up
 
@@ -600,7 +535,7 @@ Do not mention SEO, rankings, or design quality. The argument is ownership and c
 >
 > neobookworm.uk/plumbers-switch
 >
-> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £199 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
+> Quick comparison: Wix's standard plan runs around £150–£200/year. In three years that's £450–£600, and you still don't own anything. NeoBookworm is £49.99 once, then £120/year hosting — and after year one you're saving money every year on a site you actually own.
 >
 > Nick | NeoBookworm.uk
 
@@ -724,44 +659,47 @@ Has a live website with evidence of a third-party agency in the relationship —
 
 ### Profile
 
-Has a live website on a real domain, built with some care. The audit may have flagged a specific weakness — but under the CARDINAL RULE that weakness is **never named in the email**. It stays an internal signal that tells us this prospect is worth approaching; the email itself is purely positive.
+Has a live website on a real domain, no obvious platform branding, appears to have been built with some care — but has one concrete, verifiable flaw identified in the audit (no Gas Safe number, no contact form, no SSL, no mobile viewport, empty copyright year, etc.). The site is real but has a specific gap that a potential customer would notice.
 
 ### Primary objection
 
-"It works fine for me." We are not here to convince them otherwise by pointing at faults. The pull is the standard I build to and the no-risk offer — let the examples page do the comparing, in their own head, without us ever saying a word about their site.
+"It works fine for me." They don't see the gap because they're not approaching the site as a customer would. They need to see the specific problem from the outside.
 
 ### Psychological approach
 
-**Sell the standard I build to — never name anything about their site.** The old model led with the one audit finding ("your Gas Safe number isn't on there", "your site scores X/100"). That is exactly the criticism that drew the complaint and is now banned. Instead, describe positively what *every* site I build includes — fast loading, accreditation shown clearly, easy to contact from a phone — as the standard, without ever implying theirs lacks it.
+**Lead with the one audit finding, stated as a customer experience fact.** Not "your site is missing X" — that's a technical critique they'll dismiss. Instead: "someone searching for you at 9pm on their phone can't find a way to contact you." Frame the problem in terms of a lost job or missed call, not a technical deficiency.
 
-Use the standard "you don't pay until you're happy with it." Do **not** use "better than what you've got."
+The `Problem:` line from the audit block in `research_summary` is the opening. Use it verbatim or very close to it. Do not add extra problems. Do not editorialize.
+
+The risk reversal is the strongest it has been since the prospect has a working site to compare against: "you don't pay until it's better than what you've got."
 
 ### Email 1 — Initial Outreach
 
 **Subject line options:**
-- `[Business Name] — worth a look`
-- `[Business Name] — the standard I build to`
-- `Something that might be useful, [Business Name]`
+- `[Business Name] — one thing I noticed`
+- `[Business Name] — quick thing about your site`
+- `[specific issue, e.g. "your Gas Safe number"]`
 
 **Structure:**
-1. Affirm — they've done the hard bit; they've got a real site up, which is more than most [trade]s
-2. Offer the standard I build to, described in positive terms (what my sites include), then the landing page link — "here's the standard I build to:"
-3. Risk reversal: "you don't pay until you're happy with it"
-4. Pricing — one sentence
-5. Autonomy-preserving close
-6. Sign-off and footer
+1. Affirm first — they've done the hard bit; they have a site and the work on it looks good
+2. State the single audit gap *softly*, as a customer-experience note — one sentence, no judgement
+3. "Easy to put right", then the landing page link — "here's the standard I build to:"
+4. Risk reversal: "don't pay until it's better than what you've got"
+5. Pricing — one sentence
+6. Autonomy-preserving close
+7. Sign-off and footer
 
-**Example output:**
+**Example output (no Gas Safe number):**
 
 > Hi [Name],
 >
-> You've already done the hard bit — you've got a real website up, which is more than most [trade]s manage. If you ever fancy a look at how I do it, every site I build loads fast, puts your accreditations and phone number front and centre, and works cleanly on a phone.
+> You've already done the hard bit — you've got a site, and the work on it looks good. One small thing a customer might notice: your Gas Safe registration number isn't on there, and it's one of the first things a homeowner checks before calling a gas engineer they don't know.
 >
-> Here's the standard I build to:
+> Easy to put right. Here's the standard I build to:
 >
 > neobookworm.uk/plumbers-switch
 >
-> You don't pay until you're happy with it. The site shows £299 — because you've come across this directly, it's £199. £9.99/month after that.
+> You don't pay until it's better than what you've got. A full 5-page site is £49.99 fixed, £9.99/month after that.
 >
 > Worth a look, or not — up to you.
 >
@@ -770,16 +708,16 @@ Use the standard "you don't pay until you're happy with it." Do **not** use "bet
 **Word count target:** 90–110 words.
 
 **What NOT to write:**
-- ❌ Anything naming a fault, gap, or detail of their site — Gas Safe/NICEIC number missing, no contact form, no SSL, slow speed, old copyright year, etc. — CARDINAL RULE
-- ❌ "One thing a customer might notice…" — this exact construction triggered the complaint; never use it
 - ❌ "Your website looks outdated/unprofessional" — opinion
-- ❌ A PageSpeed score or any rating of their site
+- ❌ Listing multiple problems — one only
+- ❌ "Nobody's going to contact you with a site like that" — too harsh
+- ❌ Generic website pitch — it must be grounded in the specific audit finding
 
 ### Email 2 — Follow-up
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** Reinforce the **standard I build to** positively — speed, clarity, easy contact — as what my sites deliver, never as a contrast against theirs. No scores, no audit findings, no "your site does X."
+**Angle:** Switch to a **concrete performance signal** — PageSpeed score, mobile test result, or a second specific gap found in the audit (if one exists). Slightly more technical, because they've shown they're tech-adjacent by having a built site.
 
 **Example output:**
 
@@ -789,7 +727,7 @@ Use the standard "you don't pay until you're happy with it." Do **not** use "bet
 >
 > neobookworm.uk/plumbers-switch
 >
-> One thing worth knowing: the sites I build load in under a second and are built so a customer can call or message you in one tap from their phone. Same trade, same job — just made to make picking up the phone easy.
+> One concrete thing worth knowing: your site scores around [X]/100 on Google's mobile speed test, and Google uses that as a ranking signal in local search. The sites I build score well into the 90s — same trade, same job, just quicker to load.
 >
 > If not the right time, no problem.
 >
@@ -797,7 +735,7 @@ Use the standard "you don't pay until you're happy with it." Do **not** use "bet
 
 **Word count target:** 65–85 words.
 
-**Note:** Never reference the prospect's own site's speed, score, or any audit finding — describe only what my build delivers.
+**Note:** If no PageSpeed score is available, fall back to a second specific observation from the audit, or use the mobile-responsiveness point. Do not invent a score.
 
 ### Email 3 — Final follow-up
 
@@ -809,7 +747,7 @@ Use the standard "you don't pay until you're happy with it." Do **not** use "bet
 
 > Hi [Name],
 >
-> Last one from me. The main thing: switching doesn't mean starting over. I take your existing content across and build the new one around it, so there's nothing to redo on your side. Usually a one-week turnaround.
+> Last one from me. The main thing: switching doesn't mean starting over. I take what's on your current site, fix the gaps, and build the new one around your existing content. Usually a one-week turnaround.
 >
 > neobookworm.uk/plumbers-switch
 >
@@ -835,7 +773,7 @@ The tone should be **warm and peer-to-peer** — acknowledging that starting out
 
 **Never:** imply they're struggling, mention competitors, talk about growth or scaling, or use business-development language. These all feel overwhelming to someone in their first two years.
 
-The **cost framing** is important for this segment. £199 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
+The **cost framing** is important for this segment. £49.99 should be anchored against something tangible from their world — not web agency prices (they don't have context for that), but a single job's materials or a month's van insurance.
 
 ## Email 1 — Initial Outreach
 
@@ -877,7 +815,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 > 
 > 
 
-> It's £199 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
+> It's £49.99 for a full 5-page site, £9.99/month after that. You only pay once you're happy with it. Costs less than a week's materials on most jobs.
 > 
 
 > 
@@ -906,7 +844,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 
 **Timing:** 5–7 days after Email 1.
 
-**Angle:** The cost anchor — make the £199 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
+**Angle:** The cost anchor — make the £49.99 feel proportionate by comparing it to something concrete and trade-relevant. Also lean on the no-risk model.
 
 **Example output:**
 
@@ -914,7 +852,7 @@ The **cost framing** is important for this segment. £199 should be anchored aga
 >
 > Quick follow-up — examples of what I build are here: neobookworm.uk/[trade]
 >
-> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £199, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
+> The main thing I'd want you to know: you don't pay a penny until you're happy with it. So there's no risk in having a look and deciding later. At £49.99, it costs roughly the same as a couple of days of materials on a typical job — and it works for you 24 hours a day after that.
 >
 > Nick | [NeoBookworm.uk](http://NeoBookworm.uk)
 
@@ -985,22 +923,22 @@ Use these when drafting emails. Each brief is a compact version of the full segm
 
 ## Segment C1 — Dead Domain
 
-**PROFILE:** Had a website before; already demonstrated they value having a site. (Internally we know it isn't serving — but we never say so.)
-**APPROACH:** Affirm they've had a site before, so they know its value. Move straight to: getting one live is quick and I handle everything. Positive and forward-looking. Use Option B pricing.
-**NEVER say (CARDINAL RULE):** parking page, dead end, lapsed/expired/unreachable domain, site being down — anything about the state of their old site. Also: 'you need a website', any hint of negligence.
-**ALWAYS include:** Affirmation they've had a site. Risk reversal as 'you don't pay until you're happy with it.' Option B pricing line. Landing page URL.
-**TONE:** Warm, forward-looking. No alarm, no reference to the gap.
+**PROFILE:** Had a website; domain has lapsed. Now shows a registrar parking page. Already demonstrated they value having a site.
+**APPROACH:** State the parking page fact plainly — one sentence, no judgement. Acknowledge they've done this before. Frame the fix as getting it back, not starting fresh. Use Option B pricing.
+**NEVER say:** 'you need a website', imply negligence, or list multiple problems.
+**ALWAYS include:** The specific domain and what it shows. Risk reversal as 'don't pay until it's better than what you had.' Option B pricing line. Landing page URL.
+**TONE:** Matter-of-fact. Informational. No alarm.
 **LENGTH:** E1: 85–105 words. E2: 70–90 words. E3: 30–45 words.
 
 ---
 
 ## Segment C2 — DIY Template
 
-**PROFILE:** Live site on a builder platform (Wix, GoDaddy, Squarespace, Google Sites). (Internal signal only — never named in the email.)
-**APPROACH:** Sell ownership as a positive alternative — a clean site you own outright, no platform fee. Make the case in general terms ("lots of trades start on a builder, and they're a fine way to get going"), never by inspecting or naming their site. Use Option B pricing.
-**NEVER say (CARDINAL RULE):** 'your Wix site', 'carries their branding', anything describing their current site or how it looks; anything about SEO or rankings; 'you need a proper website'.
-**ALWAYS include:** Affirmation they're ahead of most by having a site. Ownership angle in general terms. General platform-vs-ownership cost point in E2 (about platforms generally, not their site). Risk reversal as 'you don't pay until you're happy with it.' Option B pricing line. Landing page URL.
-**TONE:** Positive, peer-to-peer, ownership-focused.
+**PROFILE:** Live site on Wix, GoDaddy, Squarespace, or Google Sites. Built by the owner. Paying a monthly/annual platform fee.
+**APPROACH:** Lead with cost and control — not quality. Make it a purely economic and ownership argument. They are renting a platform indefinitely for something they built. Use Option B pricing.
+**NEVER say:** 'your Wix site looks basic', anything about SEO or rankings, 'you need a proper website'.
+**ALWAYS include:** The specific platform identified in the audit. Long-term cost comparison in E2. Risk reversal as 'don't pay until it's better than what you've got.' Option B pricing line. Landing page URL.
+**TONE:** Economic, factual, peer-to-peer.
 **LENGTH:** E1: 90–110 words. E2: 75–95 words. E3: 25–40 words.
 
 ---
@@ -1018,11 +956,11 @@ Use these when drafting emails. Each brief is a compact version of the full segm
 
 ## Segment C4 — Functional but Weak
 
-**PROFILE:** Live site on a real domain, built with some care. The audit may have flagged a weakness — internal targeting signal only, NEVER named in the email.
-**APPROACH:** Sell the standard I build to in positive terms — fast loading, accreditations and phone number front and centre, easy to contact from a phone — as what every site I build includes. Never imply theirs lacks any of it. Use Option B pricing.
-**NEVER say (CARDINAL RULE):** the audit Problem line or any fault/gap/detail of their site; 'one thing a customer might notice'; a PageSpeed score or any rating of their site; 'your site looks outdated/unprofessional'.
-**ALWAYS include:** Affirmation they've got a real site (more than most manage). The standard I build to, described positively. Risk reversal as 'you don't pay until you're happy with it.' Option B pricing line. Content-migration reassurance in E3 (no flaw language). Landing page URL.
-**TONE:** Positive, accessible, peer-to-peer.
+**PROFILE:** Live site on a real domain, built with some care, but with one concrete verifiable flaw from the audit (no Gas Safe number, no contact form, no SSL, no mobile viewport, etc.).
+**APPROACH:** Lead with the ONE audit Problem: line, stated as a customer experience observation — not a technical critique. Frame in terms of a lost job or missed call. Use the exact Problem: wording from research_summary. Use Option B pricing.
+**NEVER say:** 'your site looks outdated/unprofessional', list multiple problems, invent a PageSpeed score.
+**ALWAYS include:** The specific audit finding, verbatim or very close. Risk reversal as 'don't pay until it's better than what you've got.' Option B pricing line. Content migration angle in E3 (switching doesn't mean starting over). Landing page URL.
+**TONE:** Technical but accessible. Specific and factual.
 **LENGTH:** E1: 90–110 words. E2: 65–85 words. E3: 45–65 words.
 
 ---
@@ -1030,7 +968,7 @@ Use these when drafting emails. Each brief is a compact version of the full segm
 ## Segment D — New Entrant
 
 **PROFILE:** New tradesperson (0–5 reviews or equivalent signals, under 2 years trading). Cash-aware, time-stretched, open-minded. Found via [platform] — use the actual source when personalising, do not assume Checkatrade.
-**APPROACH:** Open with a warm acknowledgement that they're new and building something — positive, not sympathetic. Frame the website as credibility infrastructure — it makes them look established when someone searches their name. Cost anchor: compare £199 to something trade-relevant. Use Option B pricing.
+**APPROACH:** Open with a warm acknowledgement that they're new and building something — positive, not sympathetic. Frame the website as credibility infrastructure — it makes them look established when someone searches their name. Cost anchor: compare £49.99 to something trade-relevant. Use Option B pricing.
 **NEVER say:** 'you're missing out', 'competitors', 'grow your business', anything about SEO or rankings. Never frame the landing page as a demo built for them.
 **ALWAYS include:** The trade landing page URL framed as 'here's an example of the kind of site I'd build'. Risk reversal in Email 1. A trade-relevant cost anchor. Option B pricing line.
 **TONE:** Warm, encouraging, peer-to-peer. Not corporate.
@@ -1047,21 +985,9 @@ These apply regardless of segment. Claude must follow all of them:
 3. **One URL appears once, prominently** — the landing page URL (or `-switch` variant for has-website segments) appears once per email, not buried and not repeated. Never frame it as "the demo I built for you" or "a demo site for you to look at" — there is no bespoke demo; it is a page showing examples of what I build. For Segment C (has-website), the link lead-in must never imply their site is being replaced: banned lead-ins include "a rebuilt site", "an updated site", "your new site", "what your site could be". Use "here's the standard I build to:" or "examples of what I build for [trade]s:" instead.
 4. **No jargon** — no 'SEO', 'digital presence', 'online visibility', 'responsive design', 'CMS', 'conversion rate'. Plain English throughout.
 5. **No calls to action other than 'look at the examples page'** — no 'book a call', 'reply to discuss', 'fill in the form'. One CTA only.
-6. **Pricing mentioned clearly** — £199 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide. The website shows £299 — £199 is the direct-approach rate for prospects contacted by email. See **Pricing context — direct-approach offer** above for when and how to name this explicitly. **While the launch-phase founder rate is active, the build price in Email 1 is £49.99, not £199 — see the Founder rate section above; it must always travel with its reason (first clients / in exchange for an honest review) and never replaces the pay-when-happy promise.** Never use the word "discount".
+6. **Pricing mentioned clearly** — £49.99 fixed, £9.99/month. Never 'starting from' or 'typically around'. The fixed price is a feature, not something to hide. See **Pricing context** above. Never use the word "discount".
 7. **Autonomy-preserving close** — every email needs a low-pressure way to say no. The closer the email is to the contact cap, the more prominent this must be.
-8. **Compliance footer** — appended in code, not written by Claude. Never write the footer as part of the email body. The exact footer text to append to every email body is:
-
-   ```
-   
-
----
-To opt out of further emails from NeoBookworm, simply reply with the word UNSUBSCRIBE.
-NeoBookworm.uk | Nick Barrett | Swindon
-You are receiving this email because your company appears on a public business directory and we believe you may benefit from our services (UK GDPR Art. 6(1)(f) — Legitimate Interests).
-Privacy policy can be found on neobookworm's privacy page
-   ```
-
-   Important: never include a URL for the privacy policy — Gmail auto-linkifies any `domain.com/path` pattern, which creates a second hyperlink and violates the one-link rule. The plain-English version `Privacy policy can be found on neobookworm's privacy page` is the correct and final format.
+8. **Compliance footer** — appended in code, not written by Claude. Use the short PECR/Ltd variant. Never write the footer as part of the email body.
 9. **Sign-off** — always 'Nick | [NeoBookworm.uk](http://NeoBookworm.uk)'. Nothing else.
 10. **Never mention the word 'marketing'** — tradespeople associate this with desperation and pushy salespeople.
 11. **Never use spam trigger words** — the following words and phrases are banned from all subject lines and email body copy, without exception. They damage deliverability regardless of context:
@@ -1071,7 +997,6 @@ Privacy policy can be found on neobookworm's privacy page
     - *Financial schemes:* invoice, PayPal, Visa, Mastercard, FedEx, $$$, beneficiary, cash, claims, quote, save big money, one hundred percent free, collect your prize, check or money order, stock alert, social security number, unsecured debt, cash bonus, refinance, investment, mortgage, million dollars
     - *Marketing:* lead generation, search engine optimization, web traffic, email harvest, increase sales, internet marketing, marketing solutions, month trial offer, increase traffic, direct marketing, sign up free today
     - *Pharmaceutical:* cure baldness, Viagra, lose weight, online pharmacy, stop snoring, removes wrinkles, reverses aging, perform in bed
-12. **Never criticise the prospect — see the CARDINAL RULE at the top of this file.** No email states, implies, or softly notes anything negative about their current website, setup, or lack of one — no flaws, no gaps, no "one thing a customer might notice", no scores, no missing-this-or-that. The pull is always what *I* offer, never what they lack. This overrides every other instruction. Read every email back as the recipient: if any sentence could make them feel judged, dated, broken, or behind, rewrite it.
 
 ---
 
@@ -1089,7 +1014,7 @@ The email and the page it links to must read as one continuous thought. When the
 - Page eyebrow: "For [trade]s who already have a website"
 - Page hero: *"You've already taken the website step. Most [trade]s haven't."* — affirming, never critical.
 - Key section heading: *"The standard I build to — interactive demos, not promises."* The page also includes an honest *"When you probably shouldn't switch"* section and a plain cost comparison. It does **not** tell anyone their site needs rebuilding — so neither should the email.
-- Because the page opens by affirming the prospect, the email must too — and, like the page, it never comments on their site at all. An email that mentions any flaw collides with a page that congratulates them for having one. Affirm only (CARDINAL RULE).
+- Because the page opens by affirming the prospect, the email must too. An email that opens by criticising their site collides with a page that congratulates them for having one. Affirm first, gap softly.
 - Approved link lead-in: **"here's the standard I build to:"** (echoes the page's own section heading, so arrival is seamless).
 
 If a future trade landing page changes its hero or section wording, update this section so the email lead-ins still echo the page.
@@ -1119,4 +1044,4 @@ Use when drafting E2 and E3 follow-ups — include the relevant figure for the p
 
 ---
 
-*Templates updated: 18 Jun 2026 — **CARDINAL RULE added: never criticise the prospect, however tangentially.** Prompted by a prospect who called an earlier "factual" critique of his site "unhinged, untrue and frankly bullshit" and told us never to lead with it. The old has-website model ("affirm first, gap softly") is retired: emails now never mention, describe, rate, or hint at anything about the prospect's existing site (or lack of one) — no parking pages, Wix branding, missing accreditations, SSL, speed scores, or "one thing a customer might notice". Segment C (C1–C4) rewritten to a purely positive model — affirm they have a site, sell the standard I build to, remove risk with pay-when-happy; the `website_sub_segment` audit is now an internal targeting/tone signal only. Risk reversal reverted from "better than what you've got" to "you don't pay until you're happy with it" (the comparison implied theirs was worse). New universal rule 12; new top-of-file CARDINAL RULE banner. Previous update: 03 Jun 2026 — added the launch-phase **Founder rate (£49.99 build)** as a Nick-controlled toggle in the Pricing context section: while active it replaces the £199 line in Email 1 across segments (except C3, and confirm before any Segment C use), must always travel with its reason (first clients / in exchange for an honest review), keeps the pay-when-happy promise, uses genuine bounded scarcity with no invented deadlines, and reverts to £199/£299 when Nick ends the founder phase. Universal rule 6 and the frontmatter updated to flag it. Previous update: 21 May 2026 — has-website (Segment C) reworked to "affirm first, gap softly": every C example now opens by acknowledging the prospect's existing site before any gap is mentioned; "rebuilt site / updated one / your new site" link lead-ins banned and replaced with "here's the standard I build to:" (echoing the -switch page); explicit "demo is retired" guidance added so drafts stop reverting to demo-first language; new "Email ↔ landing-page seam" section added mapping each campaign to its destination page's hero/section wording. Previous update: 20 May 2026. Simplified for direct Claude use: sole trader variants removed throughout (all prospects are Ltd); all Agent 2/3/6 references removed; Agent 3/6 JS prompt blocks converted to plain Claude briefs and moved inline; Email 2/3 headings cleaned up; E2 farewell language removed (E3 is the final contact); universal rule 8 simplified to PECR/Ltd footer only; local search volume converted from JS object to plain reference table. Previous update: 20 May 2026 — Option B pricing made default for all segments except A and C3. Previous update: 20 May 2026 — pricing context added, £199 direct-approach rate documented.*
+*Templates updated: 21 May 2026 — has-website (Segment C) reworked to "affirm first, gap softly": every C example now opens by acknowledging the prospect's existing site before any gap is mentioned; "rebuilt site / updated one / your new site" link lead-ins banned and replaced with "here's the standard I build to:" (echoing the -switch page); explicit "demo is retired" guidance added so drafts stop reverting to demo-first language; new "Email ↔ landing-page seam" section added mapping each campaign to its destination page's hero/section wording. Previous update: 20 May 2026. Simplified for direct Claude use: sole trader variants removed throughout (all prospects are Ltd); all Agent 2/3/6 references removed; Agent 3/6 JS prompt blocks converted to plain Claude briefs and moved inline; Email 2/3 headings cleaned up; E2 farewell language removed (E3 is the final contact); universal rule 8 simplified to PECR/Ltd footer only; local search volume converted from JS object to plain reference table. Previous update: 20 May 2026 — Option B pricing made default for all segments except A and C3. Previous update: 20 May 2026 — pricing context added, £49.99 direct-approach rate documented.*

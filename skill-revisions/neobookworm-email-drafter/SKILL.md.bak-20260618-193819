@@ -12,7 +12,7 @@ Produces two brand-consistent, objection-aware email variants for a NeoBookworm 
 Emails do NOT reference a bespoke demo site built for the prospect. Instead:
 - The CTA is a landing page URL (e.g. `neobookworm.uk/plumbers`) that shows **example sites** and explains the service
 - The primary hook is **"you don't pay until you're happy with it"** — this eliminates risk and is the single biggest differentiator
-- Pricing is stated clearly: **£199 fixed build, £9.99/month hosting** — or **£49.99 build** while the launch-phase founder rate is active (see the `neobookworm-email-templates` skill's Founder rate section for the full rules; always pair it with its reason and keep "you don't pay until you're happy")
+- Pricing is stated clearly: **£49.99 fixed build, £9.99/month hosting**
 - The email's job is to get them curious enough to click the landing page — not to sell the whole service in the email
 
 **Always read both reference files before drafting:**
@@ -20,14 +20,6 @@ Emails do NOT reference a bespoke demo site built for the prospect. Instead:
 - The **`neobookworm-email-templates` skill (`SKILL.md`)** — the single source of truth for segment-by-segment structure, psychological approach, word counts, the Segment C sub-segments (C1–C4), pricing framing, the banned link lead-ins, and the **Email ↔ landing-page seam** mapping. (The old `docs/Email Templates.md` is deprecated — it now just points here. Do not draft from it.)
 
 ---
-
-**⛔ CARDINAL RULE — never criticise the prospect, however tangentially.**
-No email states, implies, or "softly notes" anything negative about the prospect's current website, setup, or absence of one. No flaws, no gaps, no "one thing a customer might notice", no scores, no parking pages, no missing accreditations, no Wix-branding observations. **Nothing that could make the reader feel judged, dated, broken, or behind.** This overrides every other instruction in this skill.
-
-The pull is always **what I offer**, never **what they lack** — "here's the standard I build to", "you own it outright", "you don't pay until you're happy with it". If selling the new site's strengths, describe *my* build ("every site I build shows your accreditation number and loads fast") — never by contrast with theirs.
-
-This rule exists because a real prospect called an earlier "factual" critique of his site *"unhinged, untrue and frankly bullshit"* and told us never to lead with it. He was right. **The test before drafting is done:** read the email back as the recipient — could any sentence make them feel their site (or having none) is wrong? If yes, rewrite it.
-
 
 ## ⚠️ Contact Cap — Non-Negotiable
 
@@ -116,19 +108,19 @@ Refer to the **`neobookworm-email-templates` skill** for the full psychological 
 |---------|---------|-------------------|-------------|
 | **A — Established** | 15+ reviews, 7+ yrs | "Don't need it — fully booked" | Referral amplification: happy customers can't send a link |
 | **B — Growth Phase** | 5–15 reviews, 2–7 yrs | "Haven't got round to it" | Landing page: see examples of what I build, no effort required |
-| **C — Has website** | Has a live/lapsed site | "Already got one" | **Affirm only — never mention their site (CARDINAL RULE).** Splits into C1–C4 (see below) |
+| **C — Has website** | Has a live/lapsed site | "Already got one" | **Affirm first, gap softly.** Splits into C1–C4 (see below) |
 | **D — New Entrant** | 0–5 reviews, under 2 yrs | "Too early / can't afford" | Credibility infrastructure: look established from day one |
 
 **Segment C is not one segment — it has four sub-segments** (set by `neobookworm-website-audit` in `website_sub_segment`). Read the templates skill for the full angle on each; never collapse them into a generic "bad website" pitch:
 
 | Sub-segment | Site state | Angle |
 |---|---|---|
-| **C1 — Dead Domain** | (internal: domain lapsed) | They had one before, so they know its value; getting one live is quick. Never mention the lapse. |
-| **C2 — DIY Template** | (internal: builder platform) | Ownership as a positive alternative — never describe or knock their current site |
-| **C3 — Agency-managed** | (internal: third-party built) | Softest pitch; neutral domain-ownership question only; never criticise the agency or site |
-| **C4 — Functional but Weak** | (internal: audit flagged a weakness) | Sell the standard I build to, in positive terms. **Never name the audit finding** |
+| **C1 — Dead Domain** | Domain lapsed, parking page | They had one before; getting it back, less effort than first time |
+| **C2 — DIY Template** | Wix/GoDaddy/Squarespace | Cost + ownership — never criticise the look |
+| **C3 — Agency-managed** | Built by a third party | Softest pitch; domain-ownership question only; do not criticise the agency |
+| **C4 — Functional but Weak** | Real site, one concrete gap | The single audit `Problem:` line, stated softly as a customer-experience note |
 
-**For every C sub-segment (CARDINAL RULE): affirm only that they have a site, then sell the standard I build to and the no-risk offer. NEVER mention, describe, rate, or hint at anything about their existing site** — no parking page, no platform, no missing accreditation, no audit `Problem:` line. The `website_sub_segment` is an internal targeting/tone signal; it never becomes a sentence in the email. Link lead-in: "here's the standard I build to:" — never "here's what a rebuilt/updated site looks like." Has-website prospects go to the `-switch` landing page (e.g. `neobookworm.uk/plumbers-switch`).
+**For every C sub-segment: affirm the prospect's existing site first, mention any gap softly, and frame the link as "here's the standard I build to:" — never "here's what a rebuilt/updated site looks like."** Has-website prospects go to the `-switch` landing page (e.g. `neobookworm.uk/plumbers-switch`).
 
 ---
 
@@ -145,7 +137,7 @@ Structure for Email 1:
 2. One argument — the single most compelling reason to click, for this segment
 3. Landing page link — prominently, on its own line
 4. Risk reversal — "you don't pay until you're happy with it" or equivalent
-5. Pricing — stated clearly in one sentence, matter-of-fact. **Email 1 only.** If the launch-phase founder rate is active: £49.99 build, £9.99/month — and the reason must travel with it in the same sentence or the one beside it (first clients / in exchange for an honest review). Standard rate: £199 fixed, £9.99/month (the site shows £299; because they've come across it directly, it's £199). Use the templates skill's pricing framing to confirm which is current. Never imply the price is time-limited; never use the word "discount".
+5. Pricing — £49.99 fixed, £9.99/month (one sentence, matter-of-fact). Use the templates skill's pricing framing. Never imply the price is time-limited.
 6. Autonomy-preserving close — easy to say no without losing face
 7. Sign-off and footer
 
@@ -178,7 +170,7 @@ These imply a bespoke site exists for this prospect, which is false. The landing
 - ✅ One argument only — no lists, no multiple benefit claims
 - ✅ Landing page URL on its own line, plain text (no Markdown link syntax)
 - ✅ Risk reversal explicit — "you don't pay until you're happy" or equivalent
-- ✅ Pricing stated clearly — £199 fixed, £9.99/month. Never "from" or "around"
+- ✅ Pricing stated clearly — £49.99 fixed, £9.99/month. Never "from" or "around"
 - ✅ Autonomy-preserving close in every email
 - ✅ Sign-off: `Nick | NeoBookworm.uk` — nothing else
 - ✅ First-person singular throughout — "I build," never "we"
@@ -206,7 +198,7 @@ These imply a bespoke site exists for this prospect, which is false. The landing
 Follow-up 1 always switches angle from Email 1. See the `neobookworm-email-templates` skill for prescribed angles:
 - Segment A → ownership/dependency (Checkatrade price hikes)
 - Segment B → Checkatrade cost comparison
-- Segment C → the standard I build to, framed positively (speed, clarity, easy contact as what *my* sites deliver) — never the prospect's own site's performance, scores, or any audit finding
+- Segment C → performance data (PageSpeed or mobile issue)
 - Segment D → no-risk + cost anchor
 
 Follow-up 2 (Ltd only):
@@ -240,7 +232,7 @@ neobookworm.uk/plumbers
 
 [Risk reversal sentence — "you don't pay until you're happy with it" or equivalent.]
 
-[Pricing sentence — "A full 5-page site is £199 fixed, £9.99/month after that." Email 1 only. If founder rate active: "I'm just getting started, so the first few sites are £49.99 — [reason]. £9.99/month after that."]
+[Pricing sentence — "A full 5-page site is £49.99 fixed, £9.99/month after that." Email 1 only.]
 
 [Autonomy-preserving close — one short sentence.]
 
@@ -359,10 +351,9 @@ Privacy policy: neobookworm.uk/privacy.html
 - [ ] Landing page URL is plain raw text, on its own line
 - [ ] Landing page framed as "examples of what I build" — NOT as a bespoke site for this prospect
 - [ ] No "demo" anywhere; no "the demo I built for you", "[Business] site is still live"; no "your site" meaning a site I made (referring to a has-website prospect's own existing site is fine)
-- [ ] **CARDINAL RULE check:** read the email back as the recipient — no sentence criticises, rates, or even references anything about their current site (or lack of one). No flaws, gaps, scores, parking pages, platforms, missing accreditations, "one thing a customer might notice"
-- [ ] Has-website: opens by affirming they have a site; says nothing about that site's contents/state; no "rebuilt/updated/new site" link lead-in; uses "here's the standard I build to:"
+- [ ] Has-website: opens by affirming their existing site; no "rebuilt/updated/new site" link lead-in; uses "here's the standard I build to:"
 - [ ] Risk reversal explicit
-- [ ] Pricing stated correctly for current phase (Email 1 only): founder rate (£49.99 + reason) if active; otherwise £199/£299 standard framing
+- [ ] Pricing stated (Email 1 only)
 - [ ] Correct word count for segment and email number
 - [ ] No banned words or jargon
 - [ ] One CTA only — the landing page link
