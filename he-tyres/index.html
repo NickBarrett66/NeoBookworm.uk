@@ -1316,7 +1316,7 @@
             map.invalidateSize();
             map.fitBounds(line.getBounds(), { padding: [40, 40] });
             L.circleMarker(unit5, { radius: 10, color: '#fff', weight: 3, fillColor: ORANGE, fillOpacity: 1 })
-              .addTo(map).bindTooltip('Unit 5 — HEtyres', { permanent: true, direction: 'right', className: 'depot-tip dest', offset: [12, 0] });
+              .addTo(map).bindTooltip('Unit 5 — HEtyres', { permanent: true, direction: 'top', className: 'depot-tip dest', offset: [0, -12] });
             L.circleMarker(route[0], { radius: 6, color: '#fff', weight: 2, fillColor: NAVY, fillOpacity: 1 })
               .addTo(map).bindTooltip('Turn off Mead Way', { permanent: true, direction: 'right', className: 'depot-tip', offset: [8, 0] });
           });
