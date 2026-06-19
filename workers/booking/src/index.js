@@ -15,6 +15,7 @@ import {
   SlotTakenError,
 } from './db.js';
 import { sendConfirmationEmail } from './email.js';
+import { renderBookingPage } from './ui.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -309,6 +310,22 @@ export default {
     const slotsMatch = url.pathname.match(/^\/([^/]+)\/slots$/);
     if (req.method === 'GET' && slotsMatch) {
       return handleSlots(slotsMatch[1], url, env);
+    }
+
+    if (req.method === 'GET' && url.pathname === '/favicon.ico') {
+      return Response.redirect('https://neobookworm.uk/favicon.ico', 302);
+    }
+
+    const pageMatch = url.pathname.match(/^\/([^/]+)$/);
+    if (req.method === 'GET' && pageMatch) {
+      const slug = pageMatch[1];
+      const config = getConfig(slug);
+      if (!config) {
+        return new Response('Not found', { status: 404 });
+      }
+      return new Response(renderBookingPage(config, slug), {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
     }
 
     return new Response(`NeoBookworm Booking — ${url.pathname}`, {
