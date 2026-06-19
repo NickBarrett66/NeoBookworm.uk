@@ -927,6 +927,7 @@ npx wrangler deploy
 ```
 
 Confirm the Worker responds at:
+
 ```
 https://neobookworm-booking.nickbarrett.workers.dev/hetyres/slots?date=YYYY-MM-DD
 ```
@@ -966,16 +967,24 @@ Deploy to Vercel and open `https://neobookworm.uk/booking-test.html`.
 
 ### Gate 6 — production smoke test (all must pass)
 
-- [ ] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres` loads the booking UI
-- [ ] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres/slots?date=YYYY-MM-DD`
-      returns real slot data (use a valid upcoming weekday)
-- [ ] A complete booking via the production URL creates a Google Calendar event
-      and sends a confirmation email to the address entered
-- [ ] The test embed page at `neobookworm.uk/booking-test.html` shows the
-      postMessage received message after a booking
-- [ ] The D1 `bookings` table (remote) has the test booking row:
-      `npx wrangler d1 execute bookings --remote --command "SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5"`
-- [ ] Delete `booking-test.html` from the repo and redeploy
+- [x] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres` loads the booking UI
+- [x] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres/slots?date=YYYY-MM-DD`
+  ```
+  returns real slot data (use a valid upcoming weekday)
+  ```
+- [x] A complete booking via the production URL creates a Google Calendar event
+  ```
+  and sends a confirmation email to the address entered
+  ```
+- [x] The test embed page at `neobookworm.uk/booking-test.html` shows the
+  ```
+  postMessage received message after a booking
+  ```
+- [x] The D1 `bookings` table (remote) has the test booking row:
+  ```
+  `npx wrangler d1 execute bookings --remote --command "SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5"`
+  ```
+- [x] Delete `booking-test.html` from the repo and redeploy
 
 ---
 
