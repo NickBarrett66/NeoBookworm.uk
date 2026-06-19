@@ -150,7 +150,7 @@ async function checkIpRateLimit(env, ip) {
   const current = parseInt((await env.TOKEN_CACHE.get(key)) || '0', 10);
   const next = current + 1;
   await env.TOKEN_CACHE.put(key, String(next), { expirationTtl: 60 });
-  return next > 5;
+  return next > 10;
 }
 
 async function isSlotAvailable(env, slot, config) {

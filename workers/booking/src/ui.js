@@ -17,7 +17,7 @@ export function renderBookingPage(config, slug) {
   const themeCss = `
     :root {
       --bg:         ${t.bg        || '#0f1f3d'};
-      --accent:     ${t.accent    || 'var(--accent)'};
+      --accent:     ${t.accent    || '#f5a623'};
       --accent-h:   ${t.accentH   || '#d4891a'};
       --accent-fg:  ${t.accentFg  || '#0f1f3d'};
       --accent-rgb: ${t.accentRgb || '245, 166, 35'};
@@ -1018,6 +1018,15 @@ export function renderBookingPage(config, slug) {
         successSlotText.textContent = formatSummaryLine(selectedDate, selectedTime);
         try { window.parent.postMessage('booking-confirmed', '*'); } catch (_) {}
         showView('success');
+        return;
+      }
+
+      if (data.error === 'too_many') {
+        formError.hidden = false;
+        formError.textContent = 'Too many attempts — please wait a minute and try again';
+        submitBtn.replaceChildren();
+        submitBtn.textContent = origLabel;
+        submitBtn.disabled = false;
         return;
       }
 
