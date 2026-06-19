@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reg Lookup Test</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 3rem auto; padding: 1rem; background: #f5f5f5; color: #1a1a1a; }
+    h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+    .form-row { display: flex; gap: .75rem; margin-bottom: 1.5rem; }
+    input[type="text"] { flex: 1; padding: .6rem .9rem; font-size: 1.1rem; border: 2px solid #ccc; border-radius: 6px; text-transform: uppercase; letter-spacing: .1em; }
+    button { padding: .6rem 1.4rem; background: #f5a623; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    #result { display: none; }
+    .plate { display: inline-block; background: #f5d000; border: 3px solid #333; border-radius: 6px; padding: .3rem 1rem; font-size: 1.8rem; font-weight: 700; letter-spacing: .12em; margin-bottom: 1rem; font-family: 'UK Number Plate', monospace; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    th, td { padding: .6rem .9rem; text-align: left; border-bottom: 1px solid #eee; }
+    th { width: 40%; color: #666; font-weight: 500; font-size: .9rem; }
+    td { font-weight: 600; }
+    details { margin-top: 1rem; }
+    summary { cursor: pointer; color: #666; font-size: .85rem; }
+    pre { background: #fff; padding: 1rem; border-radius: 6px; font-size: .75rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin-top: .5rem; }
+    .error { background: #fff0f0; border: 1px solid #f5a0a0; border-radius: 6px; padding: 1rem; color: #900; }
+    .spinner { display: inline-block; width: 1.2rem; height: 1.2rem; border: 3px solid #ccc; border-top-color: #333; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: .5rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <h1>Vehicle Reg Lookup — Test Page</h1>
+  <div class="form-row">
+    <input type="text" id="regInput" placeholder="e.g. AB12CDE" maxlength="8" autocomplete="off" spellcheck="false">
+    <button id="lookupBtn" onclick="doLookup()">Look up</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('regInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doLookup();
+    });
+
+    async function doLookup() {
+      const reg = document.getElementById('regInput').value.trim().toUpperCase().replace(/\s+/g, '');
+      if (!reg) return;
+
+      const btn = document.getElementById('lookupBtn');
+      const out = document.getElementById('result');
+      btn.disabled = true;
+      out.style.display = 'block';
+      out.innerHTML = '<span class="spinner"></span> Looking up ' + reg + '…';
+
+      try {
+        const res = await fetch('/api/reg-lookup?reg=' + encodeURIComponent(reg));
+        const data = await res.json();
+
+        if (data.error) {
+          out.innerHTML = '<div class="error"><strong>Error:</strong> ' + esc(data.error) +
+            (data.detail ? '<br><small>' + esc(data.detail) + '</small>' : '') + '</div>';
+          return;
+        }
+
+        const v = data.vehicle || {};
+        const rows = [
+          ['Make',          v.make],
+          ['Model',         v.model],
+          ['Colour',        v.colour],
+          ['Year',          v.year],
+          ['Fuel type',     v.fuelType],
+          ['Engine',        v.engineCapacity ? v.engineCapacity + ' cc' : null],
+          ['Transmission',  v.transmission],
+          ['Body style',    v.bodyStyle],
+          ['Doors',         v.doors],
+          ['MOT expiry',    v.motExpiry],
+          ['Tax expiry',    v.taxExpiry],
+          ['Description',   v.description],
+        ].filter(r => r[1]);
+
+        const tableRows = rows.map(r =>
+          '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'
+        ).join('');
+
+        out.innerHTML =
+          '<div class="plate">' + esc(data.reg) + '</div>' +
+          (rows.length
+            ? '<table><tbody>' + tableRows + '</tbody></table>'
+            : '<p>No vehicle fields returned — check raw response below.</p>') +
+          '<details><summary>Raw API response</summary><pre>' + esc(JSON.stringify(data, null, 2)) + '</pre></details>';
+
+      } catch (err) {
+        out.innerHTML = '<div class="error"><strong>Request failed:</strong> ' + esc(err.message) + '</div>';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function esc(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
