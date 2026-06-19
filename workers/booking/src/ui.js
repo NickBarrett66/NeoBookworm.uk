@@ -9,6 +9,9 @@ function escHtml(str) {
 export function renderBookingPage(config, slug) {
   const displayName = escHtml(config.displayName);
   const slugJson = JSON.stringify(slug);
+  const slotDuration = config.slotDuration || 30;
+  const maxAdvanceDays = config.maxAdvanceDays || 60;
+  const workingDowsJson = JSON.stringify(Object.keys(config.workingHours).map(Number));
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -35,99 +38,207 @@ export function renderBookingPage(config, slug) {
       -webkit-font-smoothing: antialiased;
     }
 
-    .wrap {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 1.25rem 1rem 2rem;
+    /* ── Header band ─────────────────────────────── */
+    .biz-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.25rem;
+      background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap;
     }
 
-    h1 {
-      margin: 0 0 1.25rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      line-height: 1.35;
+    .biz-name {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .biz-sep { opacity: 0.4; }
+
+    .biz-meta {
+      font-size: 0.875rem;
+      opacity: 0.75;
+    }
+
+    /* ── Outer wrap ──────────────────────────────── */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.5rem;
     }
 
     .view[hidden] { display: none !important; }
 
-    /* Day strip */
-    .day-strip {
+    /* ── Two-pane picker layout ──────────────────── */
+    .picker-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .picker-layout {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 2rem;
+      }
+    }
+
+    /* ── Calendar pane ───────────────────────────── */
+    .cal-pane {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .cal-nav {
       display: flex;
-      gap: 0.5rem;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 0.5rem;
-      margin: 0 -1rem 1.25rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.25) transparent;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
     }
 
-    .day-strip::-webkit-scrollbar { height: 4px; }
-    .day-strip::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.25);
-      border-radius: 2px;
+    .cal-month-label {
+      font-weight: 600;
+      font-size: 0.9375rem;
     }
 
-    .day-btn {
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-      min-width: 4.5rem;
-      padding: 0.6rem 0.5rem;
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 8px;
+    .cal-nav-btn {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 6px;
       background: transparent;
       color: #fff;
-      font-family: inherit;
-      font-size: 0.8125rem;
-      line-height: 1.25;
-      text-align: center;
+      font-size: 1.125rem;
+      line-height: 1;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
     }
 
-    .day-btn .dow {
-      display: block;
-      font-weight: 600;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      opacity: 0.85;
+    .cal-nav-btn:hover:not(:disabled) {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.5);
     }
 
-    .day-btn:hover:not(:disabled):not(.selected) {
-      border-color: rgba(255,255,255,0.6);
-      background: rgba(255,255,255,0.06);
+    .cal-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
 
-    .day-btn:focus-visible {
+    .cal-nav-btn:focus-visible {
       outline: 2px solid #f5a623;
       outline-offset: 2px;
     }
 
-    .day-btn.selected {
-      background: #f5a623;
-      border-color: #f5a623;
-      color: #0f1f3d;
-      font-weight: 600;
+    .cal-dow-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 0.25rem;
     }
 
-    .day-btn.selected .dow { opacity: 1; }
+    .cal-dow-row span {
+      text-align: center;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      opacity: 0.5;
+      padding: 0.25rem 0;
+    }
 
-    .day-btn:disabled,
-    .day-btn.disabled {
-      opacity: 0.35;
+    .cal-dow-row .cal-sun { opacity: 0.25; }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s;
+      min-height: 36px;
+    }
+
+    .cal-cell.cal-empty {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .cal-cell:hover:not(.unavailable):not(.selected):not(.cal-empty) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .cal-cell:focus-visible {
+      outline: 2px solid #f5a623;
+      outline-offset: 1px;
+    }
+
+    .cal-cell.cal-today {
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .cal-cell.selected {
+      background: #f5a623;
+      color: #0f1f3d;
+      font-weight: 700;
+    }
+
+    .cal-cell.unavailable {
+      opacity: 0.22;
       cursor: not-allowed;
     }
 
-    /* Slots area */
-    .slots-area { min-height: 5rem; }
+    /* subtle pulse while month data loads */
+    .cal-cell.cal-loading-day {
+      animation: cellpulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes cellpulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.35; }
+    }
+
+    /* ── Slots pane ──────────────────────────────── */
+    .slots-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 10rem;
+    }
+
+    .slots-area { flex: 1; }
+
+    .slots-hint {
+      margin: 0;
+      padding: 1.5rem 0.5rem;
+      text-align: center;
+      font-size: 0.9375rem;
+      opacity: 0.55;
+    }
 
     .slots-loading,
     .slots-empty,
-    .form-error,
     .slot-taken-msg {
       text-align: center;
       padding: 1.5rem 0.5rem;
@@ -137,28 +248,39 @@ export function renderBookingPage(config, slug) {
 
     .slots-loading .spinner {
       display: inline-block;
-      width: 1.25rem;
-      height: 1.25rem;
-      border: 2px solid rgba(255,255,255,0.25);
+      width: 1.125rem;
+      height: 1.125rem;
+      border: 2px solid rgba(255,255,255,0.2);
       border-top-color: #f5a623;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       vertical-align: middle;
-      margin-right: 0.5rem;
+      margin-right: 0.4rem;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    .slot-group-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.5;
+      margin: 0.75rem 0 0.4rem;
+    }
+
+    .slot-group-label:first-child { margin-top: 0; }
+
     .slots-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .time-btn {
       min-height: 44px;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid rgba(255,255,255,0.35);
+      padding: 0.4rem 0.5rem;
+      border: 1px solid rgba(255,255,255,0.3);
       border-radius: 8px;
       background: transparent;
       color: #fff;
@@ -166,11 +288,11 @@ export function renderBookingPage(config, slug) {
       font-size: 0.9375rem;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.12s, border-color 0.12s, transform 0.1s;
     }
 
     .time-btn:hover:not(.selected) {
-      border-color: rgba(255,255,255,0.6);
+      border-color: rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.06);
     }
 
@@ -183,13 +305,13 @@ export function renderBookingPage(config, slug) {
       background: #f5a623;
       border-color: #f5a623;
       color: #0f1f3d;
-      font-weight: 600;
+      font-weight: 700;
+      transform: scale(1.04);
     }
 
     .continue-btn {
       display: block;
       width: 100%;
-      margin-top: 1.25rem;
       min-height: 48px;
       padding: 0.75rem 1rem;
       border: none;
@@ -198,18 +320,24 @@ export function renderBookingPage(config, slug) {
       color: #0f1f3d;
       font-family: inherit;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: opacity 0.15s;
     }
 
-    .continue-btn:hover { opacity: 0.92; }
+    .continue-btn:hover { opacity: 0.9; }
+
     .continue-btn:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 2px;
     }
 
-    /* Form view */
+    /* ── Form view ───────────────────────────────── */
+    .form-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
     .back-btn {
       display: inline-flex;
       align-items: center;
@@ -218,7 +346,7 @@ export function renderBookingPage(config, slug) {
       padding: 0.35rem 0;
       border: none;
       background: none;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.8);
       font-family: inherit;
       font-size: 0.875rem;
       cursor: pointer;
@@ -227,23 +355,39 @@ export function renderBookingPage(config, slug) {
     }
 
     .back-btn:hover { color: #fff; }
-    .back-btn:focus-visible {
-      outline: 2px solid #f5a623;
-      outline-offset: 2px;
+    .back-btn:focus-visible { outline: 2px solid #f5a623; outline-offset: 2px; }
+
+    .booking-summary-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0 0 1.5rem;
+      padding: 1rem 1.125rem;
+      border-radius: 10px;
+      background: rgba(245,166,35,0.12);
+      border: 1px solid rgba(245,166,35,0.3);
     }
 
-    .booking-summary {
-      margin: 0 0 1.25rem;
-      padding: 0.875rem 1rem;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.08);
+    .booking-summary-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .booking-summary-text {
       font-size: 0.9375rem;
-      font-weight: 500;
+      font-weight: 600;
+      line-height: 1.35;
     }
 
-    .field {
-      margin-bottom: 1rem;
+    .booking-summary-sub {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      opacity: 0.75;
+      margin-top: 0.1rem;
     }
+
+    .field { margin-bottom: 1rem; }
 
     .field label {
       display: block;
@@ -257,17 +401,20 @@ export function renderBookingPage(config, slug) {
       display: block;
       width: 100%;
       padding: 0.65rem 0.75rem;
-      border: 1px solid #0f1f3d;
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 6px;
-      background: #fff;
-      color: #1a1a1a;
+      background: rgba(255,255,255,0.07);
+      color: #fff;
       font-family: inherit;
       font-size: 1rem;
       line-height: 1.4;
     }
 
+    .field input::placeholder,
+    .field textarea::placeholder { opacity: 0.45; }
+
     .field textarea {
-      min-height: 5rem;
+      min-height: 4.5rem;
       resize: vertical;
     }
 
@@ -275,6 +422,7 @@ export function renderBookingPage(config, slug) {
     .field textarea:focus {
       outline: 2px solid #f5a623;
       outline-offset: 0;
+      background: rgba(255,255,255,0.1);
     }
 
     .hp-field {
@@ -285,13 +433,23 @@ export function renderBookingPage(config, slug) {
       overflow: hidden;
     }
 
+    .form-error {
+      text-align: center;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border-radius: 6px;
+      background: rgba(220,53,69,0.15);
+      border: 1px solid rgba(220,53,69,0.3);
+      font-size: 0.9375rem;
+    }
+
     .submit-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       width: 100%;
-      min-height: 48px;
+      min-height: 50px;
       margin-top: 0.5rem;
       padding: 0.75rem 1rem;
       border: none;
@@ -300,245 +458,366 @@ export function renderBookingPage(config, slug) {
       color: #0f1f3d;
       font-family: inherit;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.15s, background 0.15s;
+      transition: opacity 0.15s;
     }
 
-    .submit-btn:hover:not(:disabled) { opacity: 0.92; }
+    .submit-btn:hover:not(:disabled) { opacity: 0.9; }
 
     .submit-btn:disabled {
-      background: #8a8a8a;
-      color: #e8e8e8;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.4);
       cursor: not-allowed;
-      opacity: 0.85;
     }
 
-    .submit-btn:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 2px;
-    }
+    .submit-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
     .submit-btn .spinner {
       width: 1.125rem;
       height: 1.125rem;
-      border: 2px solid rgba(15,31,61,0.25);
-      border-top-color: #0f1f3d;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
 
-    .success-msg {
+    /* ── Success view ────────────────────────────── */
+    .success-wrap {
+      max-width: 480px;
+      margin: 0 auto;
       text-align: center;
-      padding: 2.5rem 1rem;
+      padding: 2rem 1rem;
     }
 
-    .success-msg h2 {
+    .success-icon {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .success-wrap h2 {
       margin: 0 0 0.5rem;
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: 1.375rem;
+      font-weight: 700;
       color: #f5a623;
     }
 
-    .success-msg p {
-      margin: 0;
+    .success-slot-card {
+      display: inline-block;
+      margin: 1rem auto;
+      padding: 0.875rem 1.5rem;
+      border-radius: 10px;
+      background: rgba(245,166,35,0.12);
+      border: 1px solid rgba(245,166,35,0.25);
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .success-wrap p {
+      margin: 0.75rem 0 0;
       font-size: 0.9375rem;
-      opacity: 0.9;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
+  <header class="biz-header">
+    <span class="biz-name">${displayName}</span>
+    <span class="biz-sep" aria-hidden="true">·</span>
+    <span class="biz-meta">Book a ${slotDuration}-min slot</span>
+  </header>
+
   <div class="wrap">
+
+    <!-- Picker view -->
     <div id="view-picker" class="view">
-      <h1>Book a slot at ${displayName}</h1>
-      <div class="day-strip" id="day-strip" role="listbox" aria-label="Choose a date"></div>
-      <div class="slots-area">
-        <div class="slots-loading" id="slots-loading" hidden>
-          <span class="spinner" aria-hidden="true"></span>Loading times…
+      <div class="picker-layout">
+
+        <div class="cal-pane">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
+            <span class="cal-month-label" id="cal-month-label"></span>
+            <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="cal-dow-row" aria-hidden="true">
+            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span>
+            <span>Fr</span><span>Sa</span><span class="cal-sun">Su</span>
+          </div>
+          <div class="cal-grid" id="cal-grid" role="listbox" aria-label="Choose a date"></div>
         </div>
-        <div class="slots-empty" id="slots-empty" hidden>No slots available — try another day</div>
-        <div class="slot-taken-msg" id="slot-taken-msg" hidden>Sorry, that slot was just taken. Picking another…</div>
-        <div class="slots-grid" id="slots-grid" role="listbox" aria-label="Choose a time"></div>
+
+        <div class="slots-pane">
+          <div class="slots-area" id="slots-area">
+            <p class="slots-hint" id="slots-hint">Select a date to see available times</p>
+            <div class="slots-loading" id="slots-loading" hidden>
+              <span class="spinner" aria-hidden="true"></span>Loading times…
+            </div>
+            <div class="slots-empty" id="slots-empty" hidden>No slots available — try another day</div>
+            <div class="slot-taken-msg" id="slot-taken-msg" hidden>That slot was just taken — try another</div>
+            <div id="slots-content"></div>
+          </div>
+          <button type="button" class="continue-btn" id="continue-btn" hidden>Continue →</button>
+        </div>
+
       </div>
-      <button type="button" class="continue-btn" id="continue-btn" hidden>Continue →</button>
     </div>
 
+    <!-- Form view -->
     <div id="view-form" class="view" hidden>
-      <button type="button" class="back-btn" id="back-btn">← Back</button>
-      <p class="booking-summary" id="booking-summary"></p>
-      <form id="booking-form" novalidate>
-        <div class="field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required maxlength="80" autocomplete="name">
+      <div class="form-wrap">
+        <button type="button" class="back-btn" id="back-btn">← Back</button>
+        <div class="booking-summary-card" id="booking-summary-card">
+          <div class="booking-summary-icon" aria-hidden="true">&#128197;</div>
+          <div>
+            <div class="booking-summary-text" id="booking-summary-text"></div>
+            <div class="booking-summary-sub">${displayName} · ${slotDuration} min</div>
+          </div>
         </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required autocomplete="email">
-        </div>
-        <div class="field">
-          <label for="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" required maxlength="30" autocomplete="tel">
-        </div>
-        <div class="field">
-          <label for="note">Note <span style="font-weight:400;opacity:0.75">(optional)</span></label>
-          <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size, vehicle reg"></textarea>
-        </div>
-        <div class="hp-field" aria-hidden="true">
-          <label for="company">Company</label>
-          <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
-        </div>
-        <p class="form-error" id="form-error" hidden>Something went wrong — please try again</p>
-        <button type="submit" class="submit-btn" id="submit-btn">Confirm booking</button>
-      </form>
+        <form id="booking-form" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" required maxlength="30" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="note">Note <span style="font-weight:400;opacity:0.6">(optional)</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size, vehicle reg"></textarea>
+          </div>
+          <div class="hp-field" aria-hidden="true">
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+          </div>
+          <p class="form-error" id="form-error" hidden>Something went wrong — please try again</p>
+          <button type="submit" class="submit-btn" id="submit-btn">Confirm booking</button>
+        </form>
+      </div>
     </div>
 
-    <div id="view-success" class="view success-msg" hidden>
-      <h2>Booking confirmed</h2>
-      <p>Check your email for confirmation details.</p>
+    <!-- Success view -->
+    <div id="view-success" class="view" hidden>
+      <div class="success-wrap">
+        <div class="success-icon" aria-hidden="true">&#10003;</div>
+        <h2>Booking confirmed</h2>
+        <div class="success-slot-card" id="success-slot-text"></div>
+        <p>A confirmation has been sent to your email address.</p>
+      </div>
     </div>
+
   </div>
 
   <script>
 (function () {
   var SLUG = ${slugJson};
   var TZ = 'Europe/London';
-  var DAYS_SHOWN = 14;
+  var MAX_ADVANCE_DAYS = ${maxAdvanceDays};
+  var WORKING_DOWS = ${workingDowsJson};
 
-  var viewPicker = document.getElementById('view-picker');
-  var viewForm = document.getElementById('view-form');
-  var viewSuccess = document.getElementById('view-success');
-  var dayStrip = document.getElementById('day-strip');
-  var slotsLoading = document.getElementById('slots-loading');
-  var slotsEmpty = document.getElementById('slots-empty');
-  var slotsGrid = document.getElementById('slots-grid');
-  var continueBtn = document.getElementById('continue-btn');
-  var backBtn = document.getElementById('back-btn');
-  var bookingSummary = document.getElementById('booking-summary');
-  var bookingForm = document.getElementById('booking-form');
-  var formError = document.getElementById('form-error');
-  var submitBtn = document.getElementById('submit-btn');
-  var slotTakenMsg = document.getElementById('slot-taken-msg');
+  // DOM refs
+  var calGrid        = document.getElementById('cal-grid');
+  var calMonthLabel  = document.getElementById('cal-month-label');
+  var calPrev        = document.getElementById('cal-prev');
+  var calNext        = document.getElementById('cal-next');
+  var slotsHint      = document.getElementById('slots-hint');
+  var slotsLoading   = document.getElementById('slots-loading');
+  var slotsEmpty     = document.getElementById('slots-empty');
+  var slotsContent   = document.getElementById('slots-content');
+  var slotTakenMsg   = document.getElementById('slot-taken-msg');
+  var continueBtn    = document.getElementById('continue-btn');
+  var viewPicker     = document.getElementById('view-picker');
+  var viewForm       = document.getElementById('view-form');
+  var viewSuccess    = document.getElementById('view-success');
+  var backBtn        = document.getElementById('back-btn');
+  var bookingSummaryText = document.getElementById('booking-summary-text');
+  var bookingForm    = document.getElementById('booking-form');
+  var formError      = document.getElementById('form-error');
+  var submitBtn      = document.getElementById('submit-btn');
+  var successSlotText = document.getElementById('success-slot-text');
 
-  var days = [];
+  // State
+  var todayIso = londonToday();
+  var currentMonth = todayIso.slice(0, 7);
+  var maxMonth = addDaysIso(todayIso, MAX_ADVANCE_DAYS).slice(0, 7);
+  var monthCache = {};   // 'YYYY-MM' -> { available: [...] } or { error: true }
+  var monthLoading = {}; // 'YYYY-MM' -> true/false
+
   var selectedDate = null;
   var selectedTime = null;
   var selectedSlot = null;
-  var zeroSlotDays = Object.create(null);
   var fetchToken = 0;
+
+  // ── Date helpers ─────────────────────────────────
 
   function londonToday() {
     return new Intl.DateTimeFormat('en-CA', {
-      timeZone: TZ,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+      timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit'
     }).format(new Date());
   }
 
   function addDaysIso(iso, n) {
     var p = iso.split('-').map(Number);
-    var d = new Date(Date.UTC(p[0], p[1] - 1, p[2] + n));
-    return d.toISOString().slice(0, 10);
+    return new Date(Date.UTC(p[0], p[1] - 1, p[2] + n)).toISOString().slice(0, 10);
   }
 
-  function weekdayLondon(iso) {
+  function isoUTCDay(iso) {
     var p = iso.split('-').map(Number);
-    return new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay();
+    return new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay(); // 0=Sun
   }
 
-  function dateFromIso(iso) {
+  function isWorkingDay(iso) {
+    var dow = isoUTCDay(iso); // 0=Sun,1=Mon,...,6=Sat
+    return WORKING_DOWS.indexOf(dow) !== -1;
+  }
+
+  function monthDays(month) {
+    var p = month.split('-').map(Number);
+    var last = new Date(Date.UTC(p[0], p[1], 0)).getUTCDate();
+    var days = [];
+    for (var d = 1; d <= last; d++) {
+      days.push(month + '-' + String(d).padStart(2, '0'));
+    }
+    return days;
+  }
+
+  function monthLabel(month) {
+    var p = month.split('-').map(Number);
+    var d = new Date(Date.UTC(p[0], p[1] - 1, 15));
+    return new Intl.DateTimeFormat('en-GB', {
+      month: 'long', year: 'numeric', timeZone: 'UTC'
+    }).format(d);
+  }
+
+  function formatSummaryLine(iso, time) {
     var p = iso.split('-').map(Number);
-    return new Date(Date.UTC(p[0], p[1] - 1, p[2], 12, 0, 0));
-  }
-
-  function formatDayBtn(iso) {
-    var d = dateFromIso(iso);
-    var dow = new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: TZ }).format(d);
-    var rest = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: TZ }).format(d);
-    return { dow: dow, rest: rest };
-  }
-
-  function formatSummary(iso, time) {
-    var d = dateFromIso(iso);
+    var d = new Date(Date.UTC(p[0], p[1] - 1, p[2], 12));
     var dateStr = new Intl.DateTimeFormat('en-GB', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      timeZone: TZ
+      weekday: 'long', day: 'numeric', month: 'long', timeZone: TZ
     }).format(d);
     return dateStr + ' at ' + time;
   }
 
-  function buildDays() {
-    var start = londonToday();
-    days = [];
-    for (var i = 0; i < DAYS_SHOWN; i++) {
-      var iso = addDaysIso(start, i);
-      days.push({ iso: iso, sunday: weekdayLondon(iso) === 0 });
-    }
+  // ── Month availability ───────────────────────────
+
+  function loadMonthAvailability(month) {
+    if (monthCache[month] || monthLoading[month]) return;
+    monthLoading[month] = true;
+
+    fetch('/' + SLUG + '/month?month=' + encodeURIComponent(month))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        monthLoading[month] = false;
+        monthCache[month] = { available: data.available || [] };
+        if (month === currentMonth) renderCalendar();
+      })
+      .catch(function () {
+        monthLoading[month] = false;
+        monthCache[month] = { error: true };
+        if (month === currentMonth) renderCalendar();
+      });
   }
 
-  function renderDayStrip() {
-    dayStrip.textContent = '';
-    days.forEach(function (day) {
+  // ── Calendar rendering ───────────────────────────
+
+  function renderCalendar() {
+    calMonthLabel.textContent = monthLabel(currentMonth);
+    calPrev.disabled = currentMonth <= todayIso.slice(0, 7);
+    calNext.disabled = currentMonth >= maxMonth;
+
+    var days = monthDays(currentMonth);
+    var firstDow = isoUTCDay(days[0]); // 0=Sun
+    var offset = firstDow === 0 ? 6 : firstDow - 1; // Mon-first padding
+
+    var cacheEntry = monthCache[currentMonth];
+    var isLoading  = monthLoading[currentMonth] && !cacheEntry;
+    var available  = cacheEntry && !cacheEntry.error ? cacheEntry.available : null;
+
+    calGrid.textContent = '';
+
+    // Empty padding cells
+    for (var i = 0; i < offset; i++) {
+      var empty = document.createElement('span');
+      empty.className = 'cal-cell cal-empty';
+      calGrid.appendChild(empty);
+    }
+
+    days.forEach(function (iso) {
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'day-btn';
-      btn.dataset.date = day.iso;
+      btn.className = 'cal-cell';
+      btn.dataset.date = iso;
       btn.setAttribute('role', 'option');
+      btn.textContent = parseInt(iso.split('-')[2], 10);
 
-      var isDisabled = day.sunday || zeroSlotDays[day.iso];
-      if (isDisabled) {
+      var isPast     = iso < todayIso;
+      var notWorking = !isWorkingDay(iso);
+      var notAvail   = available !== null && available.indexOf(iso) === -1;
+      var isUnavail  = isPast || notWorking || notAvail;
+
+      if (iso === todayIso)     btn.classList.add('cal-today');
+      if (iso === selectedDate) btn.classList.add('selected');
+
+      if (isUnavail) {
         btn.disabled = true;
-        if (zeroSlotDays[day.iso]) btn.classList.add('disabled');
+        btn.classList.add('unavailable');
+      } else if (isLoading && !isPast && !notWorking) {
+        btn.classList.add('cal-loading-day');
       }
-      if (day.iso === selectedDate) btn.classList.add('selected');
 
-      var parts = formatDayBtn(day.iso);
-      btn.innerHTML = '<span class="dow">' + parts.dow + '</span>' + parts.rest;
-      btn.addEventListener('click', function () { selectDay(day.iso); });
-      dayStrip.appendChild(btn);
+      if (!isUnavail) {
+        btn.addEventListener('click', function () {
+          selectDay(this.dataset.date);
+        });
+      }
+
+      calGrid.appendChild(btn);
     });
   }
 
-  function clearSlotsUI() {
-    slotsGrid.textContent = '';
-    slotsEmpty.hidden = true;
-    slotTakenMsg.hidden = true;
-    continueBtn.hidden = true;
-    selectedTime = null;
-    selectedSlot = null;
-  }
-
-  function setSlotsLoading(on) {
-    slotsLoading.hidden = !on;
-  }
+  // ── Day / slot selection ─────────────────────────
 
   function selectDay(iso) {
-    if (zeroSlotDays[iso]) return;
-    var day = days.find(function (d) { return d.iso === iso; });
-    if (!day || day.sunday) return;
+    var cacheEntry = monthCache[currentMonth];
+    if (cacheEntry && !cacheEntry.error && cacheEntry.available.indexOf(iso) === -1) return;
 
     selectedDate = iso;
     selectedTime = null;
     selectedSlot = null;
     continueBtn.hidden = true;
     slotTakenMsg.hidden = true;
-    renderDayStrip();
+    renderCalendar();
     loadSlots(iso);
+  }
+
+  function clearSlotsUI() {
+    slotsContent.textContent = '';
+    slotsHint.hidden    = true;
+    slotsLoading.hidden = true;
+    slotsEmpty.hidden   = true;
+    slotTakenMsg.hidden = true;
+    continueBtn.hidden  = true;
+    selectedTime = null;
+    selectedSlot = null;
   }
 
   async function loadSlots(iso) {
     var token = ++fetchToken;
     clearSlotsUI();
-    setSlotsLoading(true);
+    slotsLoading.hidden = false;
 
     try {
-      var res = await fetch('/' + SLUG + '/slots?date=' + encodeURIComponent(iso));
+      var res  = await fetch('/' + SLUG + '/slots?date=' + encodeURIComponent(iso));
       var data = await res.json();
       if (token !== fetchToken) return;
 
-      setSlotsLoading(false);
+      slotsLoading.hidden = true;
 
       if (!res.ok || !data.slots) {
         slotsEmpty.hidden = false;
@@ -547,61 +826,102 @@ export function renderBookingPage(config, slug) {
       }
 
       if (data.slots.length === 0) {
-        zeroSlotDays[iso] = true;
         slotsEmpty.hidden = false;
-        renderDayStrip();
-        if (selectedDate === iso) {
-          var next = days.find(function (d) {
-            return !d.sunday && !zeroSlotDays[d.iso] && d.iso > iso;
-          });
-          if (next) selectDay(next.iso);
+        // Remove this day from cache so calendar dims it
+        var entry = monthCache[currentMonth];
+        if (entry && entry.available) {
+          var idx = entry.available.indexOf(iso);
+          if (idx !== -1) entry.available.splice(idx, 1);
+          renderCalendar();
         }
         return;
       }
 
-      data.slots.forEach(function (label) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'time-btn';
-        btn.textContent = label;
-        btn.dataset.time = label;
-        btn.setAttribute('role', 'option');
-        if (label === selectedTime) btn.classList.add('selected');
-        btn.addEventListener('click', function () { selectTime(label); });
-        slotsGrid.appendChild(btn);
-      });
+      // Group into Morning / Afternoon
+      var morning   = data.slots.filter(function (t) { return t < '12:00'; });
+      var afternoon = data.slots.filter(function (t) { return t >= '12:00'; });
+
+      function renderGroup(label, slots) {
+        if (!slots.length) return;
+        var lbl = document.createElement('p');
+        lbl.className = 'slot-group-label';
+        lbl.textContent = label;
+        slotsContent.appendChild(lbl);
+        var grid = document.createElement('div');
+        grid.className = 'slots-grid';
+        slots.forEach(function (time) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'time-btn';
+          btn.textContent = time;
+          btn.dataset.time = time;
+          btn.setAttribute('role', 'option');
+          if (time === selectedTime) btn.classList.add('selected');
+          btn.addEventListener('click', function () { selectTime(time); });
+          grid.appendChild(btn);
+        });
+        slotsContent.appendChild(grid);
+      }
+
+      renderGroup('Morning', morning);
+      renderGroup('Afternoon', afternoon);
+
     } catch (err) {
       if (token !== fetchToken) return;
-      setSlotsLoading(false);
+      slotsLoading.hidden = true;
       slotsEmpty.hidden = false;
       slotsEmpty.textContent = 'Unable to load times — please try again';
     }
   }
 
-  function selectTime(label) {
-    selectedTime = label;
-    selectedSlot = selectedDate + 'T' + label + ':00';
-    slotsGrid.querySelectorAll('.time-btn').forEach(function (btn) {
-      btn.classList.toggle('selected', btn.dataset.time === label);
+  function selectTime(time) {
+    selectedTime = time;
+    selectedSlot = selectedDate + 'T' + time + ':00';
+    slotsContent.querySelectorAll('.time-btn').forEach(function (btn) {
+      btn.classList.toggle('selected', btn.dataset.time === time);
     });
     continueBtn.hidden = false;
   }
 
+  // ── View switching ───────────────────────────────
+
   function showView(name) {
-    viewPicker.hidden = name !== 'picker';
-    viewForm.hidden = name !== 'form';
+    viewPicker.hidden  = name !== 'picker';
+    viewForm.hidden    = name !== 'form';
     viewSuccess.hidden = name !== 'success';
   }
 
-  function initialDay() {
-    var today = days[0];
-    if (!today.sunday) return today.iso;
-    return days[1] ? days[1].iso : today.iso;
-  }
+  // ── Month navigation ─────────────────────────────
+
+  calPrev.addEventListener('click', function () {
+    var p = currentMonth.split('-').map(Number);
+    var d = new Date(Date.UTC(p[0], p[1] - 2, 1));
+    currentMonth = d.toISOString().slice(0, 7);
+    loadMonthAvailability(currentMonth);
+    renderCalendar();
+    clearSlotsUI();
+    slotsHint.hidden = false;
+    selectedDate = null;
+    selectedTime = null;
+  });
+
+  calNext.addEventListener('click', function () {
+    var p = currentMonth.split('-').map(Number);
+    var d = new Date(Date.UTC(p[0], p[1], 1));
+    currentMonth = d.toISOString().slice(0, 7);
+    loadMonthAvailability(currentMonth);
+    renderCalendar();
+    clearSlotsUI();
+    slotsHint.hidden = false;
+    selectedDate = null;
+    selectedTime = null;
+  });
+
+  // ── Continue / back / submit ─────────────────────
 
   continueBtn.addEventListener('click', function () {
     if (!selectedDate || !selectedTime) return;
-    bookingSummary.textContent = formatSummary(selectedDate, selectedTime);
+    bookingSummaryText.textContent = formatSummaryLine(selectedDate, selectedTime);
     formError.hidden = true;
     showView('form');
   });
@@ -609,18 +929,17 @@ export function renderBookingPage(config, slug) {
   backBtn.addEventListener('click', function () {
     formError.hidden = true;
     showView('picker');
-    renderDayStrip();
+    renderCalendar();
     if (selectedDate) loadSlots(selectedDate);
   });
 
   bookingForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     formError.hidden = true;
-
     if (!bookingForm.reportValidity()) return;
 
     submitBtn.disabled = true;
-    var label = submitBtn.textContent;
+    var origLabel = submitBtn.textContent;
     submitBtn.textContent = '';
     var spin = document.createElement('span');
     spin.className = 'spinner';
@@ -629,23 +948,24 @@ export function renderBookingPage(config, slug) {
     submitBtn.appendChild(document.createTextNode('Booking…'));
 
     var body = {
-      slot: selectedSlot,
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      note: document.getElementById('note').value.trim() || null,
-      company: document.getElementById('company').value
+      slot:    selectedSlot,
+      name:    document.getElementById('name').value.trim(),
+      email:   document.getElementById('email').value.trim(),
+      phone:   document.getElementById('phone').value.trim(),
+      note:    document.getElementById('note').value.trim() || null,
+      company: document.getElementById('company').value,
     };
 
     try {
-      var res = await fetch('/' + SLUG + '/book', {
+      var res  = await fetch('/' + SLUG + '/book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
       var data = await res.json();
 
       if (data.ok) {
+        successSlotText.textContent = formatSummaryLine(selectedDate, selectedTime);
         try { window.parent.postMessage('booking-confirmed', '*'); } catch (_) {}
         showView('success');
         return;
@@ -653,35 +973,39 @@ export function renderBookingPage(config, slug) {
 
       if (data.error === 'slot_taken') {
         submitBtn.replaceChildren();
-        submitBtn.textContent = label;
+        submitBtn.textContent = origLabel;
         submitBtn.disabled = false;
         showView('picker');
         slotTakenMsg.hidden = false;
         selectedTime = null;
         selectedSlot = null;
         continueBtn.hidden = true;
-        renderDayStrip();
-        await loadSlots(selectedDate);
+        renderCalendar();
+        if (selectedDate) await loadSlots(selectedDate);
         return;
       }
 
       formError.hidden = false;
       submitBtn.replaceChildren();
-      submitBtn.textContent = label;
+      submitBtn.textContent = origLabel;
       submitBtn.disabled = false;
     } catch (err) {
       formError.hidden = false;
       submitBtn.replaceChildren();
-      submitBtn.textContent = label;
+      submitBtn.textContent = origLabel;
       submitBtn.disabled = false;
     }
   });
 
-  buildDays();
-  var first = initialDay();
-  selectedDate = first;
-  renderDayStrip();
-  loadSlots(first);
+  // ── Boot ─────────────────────────────────────────
+
+  loadMonthAvailability(currentMonth);
+  renderCalendar();
+  // Prefetch next month in the background
+  var p = currentMonth.split('-').map(Number);
+  var nextMonth = new Date(Date.UTC(p[0], p[1], 1)).toISOString().slice(0, 7);
+  if (nextMonth <= maxMonth) loadMonthAvailability(nextMonth);
+
 })();
   </script>
 </body>

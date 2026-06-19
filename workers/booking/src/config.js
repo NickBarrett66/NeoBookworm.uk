@@ -1,6 +1,7 @@
 export const SLUG_CONFIG = {
   hetyres: {
     displayName: 'HE Tyres',
+    homeUrl: 'https://hetyres.co.uk',
     calendarId: null, // falls back to env.GOOGLE_CALENDAR_ID
     slotDuration: 30,
     minLeadMinutes: 60, // can't book a slot starting within the next hour

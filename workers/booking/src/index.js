@@ -5,6 +5,7 @@ import {
   wallSlotsToLabels,
   createCalendarEvent,
   londonWallToInstant,
+  getAvailableDaysInMonth,
 } from './calendar.js';
 import { getConfig } from './config.js';
 import {
@@ -29,6 +30,7 @@ const BOOK_CORS_HEADERS = {
 };
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_MONTH_RE = /^\d{4}-\d{2}$/;
 const ISO_SLOT_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -161,6 +163,24 @@ async function isSlotAvailable(env, slot, config) {
   const busyPeriods = await getBusyPeriods(env, slotDate, config);
   const availableWall = filterAvailableSlots(workingSlots, busyPeriods, config);
   return availableWall.includes(slot);
+}
+
+async function handleMonth(slug, url, env) {
+  const config = getConfig(slug);
+  if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
+
+  const month = url.searchParams.get('month');
+  if (!month || !ISO_MONTH_RE.test(month)) {
+    return jsonResponse({ error: 'Missing or invalid month — use YYYY-MM' }, 400);
+  }
+
+  try {
+    const available = await getAvailableDaysInMonth(env, month, config);
+    return jsonResponse({ month, available });
+  } catch (err) {
+    console.error('[booking] month error:', err);
+    return jsonResponse({ error: 'Unable to fetch availability' }, 502);
+  }
 }
 
 async function handleSlots(slug, url, env) {
@@ -305,6 +325,11 @@ export default {
 
     if (req.method === 'POST' && bookMatch) {
       return handleBook(bookMatch[1], req, env, ctx);
+    }
+
+    const monthMatch2 = url.pathname.match(/^\/([^/]+)\/month$/);
+    if (req.method === 'GET' && monthMatch2) {
+      return handleMonth(monthMatch2[1], url, env);
     }
 
     const slotsMatch = url.pathname.match(/^\/([^/]+)\/slots$/);

@@ -191,6 +191,64 @@ export function wallSlotsToLabels(wallSlots, timeZone = 'Europe/London') {
   });
 }
 
+async function getBusyPeriodsRange(env, timeMin, timeMax, config) {
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+  const res = await fetch('https://www.googleapis.com/calendar/v3/freeBusy', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ timeMin, timeMax, items: [{ id: calendarId }] }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Google freeBusy failed: ${res.status} ${text}`);
+  }
+  const data = await res.json();
+  const busy = data.calendars?.[calendarId]?.busy ?? [];
+  return busy.map(({ start, end }) => ({ start: new Date(start), end: new Date(end) }));
+}
+
+// Returns array of ISO date strings that have at least one available slot.
+// Makes a single FreeBusy call for the whole month range.
+export async function getAvailableDaysInMonth(env, month, config) {
+  const [y, m] = month.split('-').map(Number);
+  const timeZone = config.timezone;
+  const today = getTodayIso(timeZone);
+  const maxDate = addDays(today, config.maxAdvanceDays);
+
+  const firstDay = `${month}-01`;
+  const lastDay = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+
+  const rangeStart = firstDay > today ? firstDay : today;
+  const rangeEnd = lastDay < maxDate ? lastDay : maxDate;
+  if (rangeStart > rangeEnd) return [];
+
+  const timeMin = londonWallToInstant(`${rangeStart}T00:00:00`, timeZone).toISOString();
+  const timeMax = londonWallToInstant(`${addDays(rangeEnd, 1)}T00:00:00`, timeZone).toISOString();
+
+  const busyPeriods = await getBusyPeriodsRange(env, timeMin, timeMax, config);
+
+  const available = [];
+  let cursor = rangeStart;
+  while (cursor <= rangeEnd) {
+    const workingSlots = getWorkingSlots(cursor, config);
+    if (workingSlots.length > 0) {
+      const dayStartMs = londonWallToInstant(`${cursor}T00:00:00`, timeZone).getTime();
+      const dayEndMs = londonWallToInstant(`${addDays(cursor, 1)}T00:00:00`, timeZone).getTime();
+      const dayBusy = busyPeriods.filter(
+        (bp) => bp.start.getTime() < dayEndMs && bp.end.getTime() > dayStartMs,
+      );
+      const avail = filterAvailableSlots(workingSlots, dayBusy, config);
+      if (avail.length > 0) available.push(cursor);
+    }
+    cursor = addDays(cursor, 1);
+  }
+  return available;
+}
+
 export async function createCalendarEvent(
   env,
   { slotStart, slotEnd, name, email, phone, note },
