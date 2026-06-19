@@ -6,13 +6,14 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-export function renderBookingPage(config, slug) {
+export function renderBookingPage(config, slug, rescheduleToken = null) {
   const displayName = escHtml(config.displayName);
   const slugJson = JSON.stringify(slug);
   const slotDuration = config.slotDuration || 30;
   const maxAdvanceDays = config.maxAdvanceDays || 60;
   const workingDowsJson = JSON.stringify(Object.keys(config.workingHours).map(Number));
   const homeUrl = config.homeUrl ? escHtml(config.homeUrl) : null;
+  const rescheduleTokenJson = JSON.stringify(rescheduleToken);
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -666,6 +667,7 @@ export function renderBookingPage(config, slug) {
   <script>
 (function () {
   var SLUG = ${slugJson};
+  var RESCHEDULE_TOKEN = ${rescheduleTokenJson};
   var TZ = 'Europe/London';
   var MAX_ADVANCE_DAYS = ${maxAdvanceDays};
   var WORKING_DOWS = ${workingDowsJson};
@@ -967,6 +969,26 @@ export function renderBookingPage(config, slug) {
     selectedTime = null;
   });
 
+  // ── Reschedule mode setup ────────────────────────
+
+  if (RESCHEDULE_TOKEN) {
+    continueBtn.textContent = 'Choose this slot →';
+    submitBtn.textContent = 'Confirm reschedule';
+    // Hide personal detail fields — we reuse the original booking's details
+    ['name', 'email', 'phone', 'note'].forEach(function (id) {
+      var field = document.getElementById(id);
+      if (field) {
+        field.removeAttribute('required');
+        var wrap = field.closest('.field');
+        if (wrap) wrap.hidden = true;
+      }
+    });
+    var rescheduleNote = document.createElement('p');
+    rescheduleNote.style.cssText = 'font-size:0.875rem;opacity:0.7;margin:0 0 1rem';
+    rescheduleNote.textContent = "We'll use the contact details from your original booking.";
+    bookingSummaryText.parentNode.insertBefore(rescheduleNote, bookingSummaryText.nextSibling);
+  }
+
   // ── Continue / back / submit ─────────────────────
 
   continueBtn.addEventListener('click', function () {
@@ -986,7 +1008,7 @@ export function renderBookingPage(config, slug) {
   bookingForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     formError.hidden = true;
-    if (!bookingForm.reportValidity()) return;
+    if (!RESCHEDULE_TOKEN && !bookingForm.reportValidity()) return;
 
     submitBtn.disabled = true;
     var origLabel = submitBtn.textContent;
@@ -995,19 +1017,22 @@ export function renderBookingPage(config, slug) {
     spin.className = 'spinner';
     spin.setAttribute('aria-hidden', 'true');
     submitBtn.appendChild(spin);
-    submitBtn.appendChild(document.createTextNode('Booking…'));
+    submitBtn.appendChild(document.createTextNode(RESCHEDULE_TOKEN ? 'Rescheduling…' : 'Booking…'));
 
-    var body = {
-      slot:    selectedSlot,
-      name:    document.getElementById('name').value.trim(),
-      email:   document.getElementById('email').value.trim(),
-      phone:   document.getElementById('phone').value.trim(),
-      note:    document.getElementById('note').value.trim() || null,
-      company: document.getElementById('company').value,
-    };
+    var endpoint = RESCHEDULE_TOKEN ? ('/' + SLUG + '/reschedule') : ('/' + SLUG + '/book');
+    var body = RESCHEDULE_TOKEN
+      ? { token: RESCHEDULE_TOKEN, slot: selectedSlot }
+      : {
+          slot:    selectedSlot,
+          name:    document.getElementById('name').value.trim(),
+          email:   document.getElementById('email').value.trim(),
+          phone:   document.getElementById('phone').value.trim(),
+          note:    document.getElementById('note').value.trim() || null,
+          company: document.getElementById('company').value,
+        };
 
     try {
-      var res  = await fetch('/' + SLUG + '/book', {
+      var res  = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -1016,6 +1041,8 @@ export function renderBookingPage(config, slug) {
 
       if (data.ok) {
         successSlotText.textContent = formatSummaryLine(selectedDate, selectedTime);
+        var successH2 = document.querySelector('#view-success h2');
+        if (successH2) successH2.textContent = RESCHEDULE_TOKEN ? 'Booking rescheduled' : 'Booking confirmed';
         try { window.parent.postMessage('booking-confirmed', '*'); } catch (_) {}
         showView('success');
         return;
@@ -1079,6 +1106,190 @@ export function renderBookingPage(config, slug) {
 
 })();
   </script>
+</body>
+</html>`;
+}
+
+// ── Manage page (cancel / reschedule) ────────────────────────────────────────
+
+export function renderManagePage(booking, state, config, slug) {
+  const displayName = escHtml(config.displayName);
+  const t = config.theme || {};
+  const themeCss = `
+    :root {
+      --bg:         ${t.bg        || '#0f1f3d'};
+      --accent:     ${t.accent    || '#f5a623'};
+      --accent-h:   ${t.accentH   || '#d4891a'};
+      --accent-fg:  ${t.accentFg  || '#0f1f3d'};
+      --accent-rgb: ${t.accentRgb || '245, 166, 35'};
+    }`;
+
+  function fmtSlot(wall) {
+    const [datePart, timePart] = wall.split('T');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d, 12));
+    const dateStr = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+    }).format(dt);
+    const [hh, mm] = timePart.split(':');
+    const h = parseInt(hh, 10);
+    const ampm = h < 12 ? 'am' : 'pm';
+    const h12 = h % 12 || 12;
+    return `${dateStr} at ${h12}:${mm}${ampm}`;
+  }
+
+  let bodyHtml;
+
+  if (state === 'invalid' || state === 'not_found') {
+    bodyHtml = `
+      <div class="msg-card err">
+        <p>Booking not found — the link may have expired or already been used.</p>
+      </div>`;
+  } else if (booking.status === 'cancelled') {
+    bodyHtml = `
+      <div class="msg-card">
+        <p>This booking has been cancelled.</p>
+      </div>`;
+  } else {
+    // Check if slot is in the past or within cutoff
+    const slotMs = new Date(booking.slot_start.replace('T', ' ') + ' UTC').getTime();
+    // Rough wall-time parse — precise enough for UI gating
+    const isPast = slotMs < Date.now();
+    const tooClosed = !isPast && (slotMs <= Date.now() + (config.minLeadMinutes || 60) * 60_000);
+
+    const slotFormatted = escHtml(fmtSlot(booking.slot_start));
+    const tokenJson = JSON.stringify(booking.manage_token);
+    const slugJson = JSON.stringify(slug);
+
+    let actionsHtml;
+    if (isPast) {
+      actionsHtml = `<p class="note">This appointment has already passed.</p>`;
+    } else if (tooClosed) {
+      actionsHtml = `<p class="note">Your appointment is coming up very soon — it's too late to make changes online. Please call ${escHtml(config.displayName)} directly.</p>`;
+    } else {
+      actionsHtml = `
+        <div class="actions">
+          <button type="button" class="btn-reschedule" id="rescheduleBtn">Reschedule</button>
+          <button type="button" class="btn-cancel"     id="cancelBtn">Cancel booking</button>
+        </div>
+        <p class="cancel-msg" id="cancelMsg" hidden></p>`;
+    }
+
+    bodyHtml = `
+      <div class="booking-card">
+        <div class="booking-card-label">Your booking</div>
+        <div class="booking-card-slot">${slotFormatted}</div>
+        <div class="booking-card-biz">${displayName}</div>
+      </div>
+      ${actionsHtml}
+      <script>
+(function () {
+  var SLUG  = ${slugJson};
+  var TOKEN = ${tokenJson};
+  var rescheduleBtn = document.getElementById('rescheduleBtn');
+  var cancelBtn     = document.getElementById('cancelBtn');
+  var cancelMsg     = document.getElementById('cancelMsg');
+
+  if (rescheduleBtn) {
+    rescheduleBtn.addEventListener('click', function () {
+      window.location.href = '/' + SLUG + '?reschedule=' + encodeURIComponent(TOKEN);
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', async function () {
+      if (!confirm('Are you sure you want to cancel this booking?')) return;
+      cancelBtn.disabled = true;
+      cancelBtn.textContent = 'Cancelling…';
+      try {
+        var res  = await fetch('/' + SLUG + '/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: TOKEN }),
+        });
+        var data = await res.json();
+        if (data.ok) {
+          cancelBtn.closest('.actions').hidden = true;
+          cancelMsg.hidden = false;
+          cancelMsg.textContent = 'Your booking has been cancelled. A confirmation has been sent to your email.';
+          document.querySelector('.booking-card').style.opacity = '0.45';
+        } else if (data.error === 'too_late') {
+          cancelMsg.hidden = false;
+          cancelMsg.textContent = 'It is too close to your appointment to cancel online — please call us directly.';
+          cancelBtn.disabled = false;
+          cancelBtn.textContent = 'Cancel booking';
+        } else {
+          cancelMsg.hidden = false;
+          cancelMsg.textContent = 'Something went wrong — please try again.';
+          cancelBtn.disabled = false;
+          cancelBtn.textContent = 'Cancel booking';
+        }
+      } catch (_) {
+        cancelMsg.hidden = false;
+        cancelMsg.textContent = 'Something went wrong — please try again.';
+        cancelBtn.disabled = false;
+        cancelBtn.textContent = 'Cancel booking';
+      }
+    });
+  }
+})();
+      <\/script>`;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage booking | ${displayName}</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/x-icon" href="https://neobookworm.uk/favicon.ico">
+  <link rel="stylesheet" href="https://neobookworm.uk/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://neobookworm.uk/fonts.css"></noscript>
+  <style>
+    ${themeCss}
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+      -webkit-font-smoothing: antialiased; }
+    .biz-header { display: flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.25rem;
+      background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .biz-name { font-weight: 700; font-size: 1rem; }
+    .biz-sep { opacity: 0.4; }
+    .biz-meta { font-size: 0.875rem; opacity: 0.75; }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    .booking-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .booking-card-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; opacity: 0.55; margin-bottom: 0.4rem; }
+    .booking-card-slot { font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+    .booking-card-biz { font-size: 0.875rem; opacity: 0.7; margin-top: 0.25rem; }
+    .actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn-reschedule { min-height: 48px; border: none; border-radius: 8px; background: var(--accent);
+      color: var(--accent-fg); font-family: inherit; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s; }
+    .btn-reschedule:hover { opacity: 0.9; }
+    .btn-cancel { min-height: 44px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px;
+      background: transparent; color: #fff; font-family: inherit; font-size: 0.9375rem;
+      font-weight: 500; cursor: pointer; transition: background 0.15s; }
+    .btn-cancel:hover { background: rgba(255,255,255,0.07); }
+    .btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
+    .cancel-msg { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px;
+      background: rgba(255,255,255,0.07); font-size: 0.9375rem; }
+    .msg-card { background: rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem; }
+    .msg-card.err { border: 1px solid rgba(220,53,69,0.3); }
+    .note { font-size: 0.9375rem; opacity: 0.8; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header class="biz-header">
+    <span class="biz-name">${displayName}</span>
+    <span class="biz-sep" aria-hidden="true">·</span>
+    <span class="biz-meta">Manage booking</span>
+  </header>
+  <div class="wrap">
+    ${bodyHtml}
+  </div>
 </body>
 </html>`;
 }

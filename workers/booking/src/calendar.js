@@ -249,6 +249,23 @@ export async function getAvailableDaysInMonth(env, month, config) {
   return available;
 }
 
+export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.hetyres) {
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+    {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  // 404/410 means already gone — that's fine
+  if (!res.ok && res.status !== 404 && res.status !== 410) {
+    const text = await res.text();
+    throw new Error(`Google Calendar event delete failed: ${res.status} ${text}`);
+  }
+}
+
 export async function createCalendarEvent(
   env,
   { slotStart, slotEnd, name, email, phone, note },
