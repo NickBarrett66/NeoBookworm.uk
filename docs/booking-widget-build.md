@@ -738,9 +738,9 @@ Use the same value as the Vercel env var.
   ```
 - [x] Email subject line matches the template (correct date formatting)
 - [x] `POST /hetyres/book` response time is not delayed by the email send
-  ```
-  (it should return ~200ms; email arrives a second or two later)
-  ```
+  (a booking makes two synchronous Google Calendar API calls before responding,
+  so expect roughly 1–3s total — that is normal; the email is fired via
+  `ctx.waitUntil` *after* the response and must not add to that time)
 - [x] A POST with an invalid `NOTIFY_BOOKING_SECRET` returns 401 from the Vercel route
 - [x] Vercel function logs (Vercel dashboard → Functions tab) show the send
 
