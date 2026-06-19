@@ -14,6 +14,7 @@ import {
   countRecentBookingsByEmail,
   SlotTakenError,
 } from './db.js';
+import { sendConfirmationEmail } from './email.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -269,7 +270,15 @@ async function handleBook(slug, req, env, ctx) {
 
   await updateBookingEvent(env.DB, bookingId, googleEvent.id);
 
-  // Session 4: ctx.waitUntil(sendConfirmationEmail(env, { to: email, name, slotStart, slotEnd, businessName: config.displayName }));
+  ctx.waitUntil(
+    sendConfirmationEmail(env, {
+      to: email,
+      name,
+      slotStart,
+      slotEnd,
+      businessName: config.displayName,
+    }),
+  );
 
   return jsonResponse({ ok: true, name, slotStart, slotEnd });
 }
