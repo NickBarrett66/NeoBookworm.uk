@@ -1,4 +1,4 @@
-function escHtml(str) {
+﻿function escHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -1035,6 +1035,10 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     card.innerHTML = html;
   }
 
+  function safeText(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   async function lookupReg(reg) {
     vehicleSummary = null;
     setVehicleCard('loading', '<span class="vc-spinner" aria-hidden="true"></span> Looking up…');
@@ -1042,7 +1046,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       var res = await fetch('https://neobookworm.uk/api/reg-lookup?reg=' + encodeURIComponent(reg));
       var data = await res.json();
       if (data.error || !data.vehicle) {
-        setVehicleCard('miss', '— Not recognised — we’ll double-check when you arrive');
+        setVehicleCard("miss", "— Not recognised — we'll double-check when you arrive");
         return;
       }
       var v = data.vehicle;
@@ -1052,9 +1056,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       ].filter(Boolean).join(' · ');
       if (!label) { setVehicleCard('hidden', ''); return; }
       vehicleSummary = label;
-      setVehicleCard('found', '🚗️ ' + escHtml(label));
+      setVehicleCard('found', '🚗 ' + safeText(label));
     } catch (e) {
-      setVehicleCard('miss', 'Couldn’t look that up right now');
+      setVehicleCard("miss", "Couldn't look that up right now");
     }
   }
 
@@ -1065,15 +1069,15 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       clearTimeout(regLookupTimer);
       setVehicleCard('hidden', '');
       var val = this.value.replace(/\s+/g, '').toUpperCase();
-      if (val.length >= 2) {
-        regLookupTimer = setTimeout(function () { lookupReg(val); }, 700);
+      if (val.length >= 5) {
+        regLookupTimer = setTimeout(function () { lookupReg(val); }, 1200);
       }
     });
     regInputEl.addEventListener('blur', function () {
       clearTimeout(regLookupTimer);
       var val = this.value.replace(/\s+/g, '').toUpperCase();
       var card = document.getElementById('vehicle-card');
-      if (val.length >= 2 && card && card.hidden) lookupReg(val);
+      if (val.length >= 5 && card && card.hidden) lookupReg(val);
     });
   }
 
