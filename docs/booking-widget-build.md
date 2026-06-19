@@ -41,7 +41,11 @@ These steps require a browser and cannot be automated.
 4. Go to APIs & Services → Credentials → Create Credentials → **OAuth 2.0 Client ID**
 5. Application type: **Desktop app**, name it `booking-worker-dev`
 6. Download the JSON — save it as `workers/booking/oauth-client-secret.json`
-   (this file is gitignored — never commit it)
+   (the root `.gitignore` already has rules for
+   `workers/booking/oauth-client-secret.json` and `workers/booking/.dev.vars`,
+   so git will not track this file — confirm with
+   `git check-ignore workers/booking/oauth-client-secret.json`, which should
+   echo the path back. Never commit it.)
 7. Go to OAuth Consent Screen → set to **Internal**
 
 > ⚠️ **Critical — this determines whether your booking system survives past 7 days.**
@@ -260,13 +264,19 @@ export default {
 };
 ```
 
-**1.6 — Add `workers/booking/` entries to root `.gitignore`**
+**1.6 — Confirm `.gitignore` covers the secrets**
+
+The root `.gitignore` already ignores `workers/booking/oauth-client-secret.json`
+and `workers/booking/.dev.vars` (added when this build doc was written). Add the
+one remaining entry for local deps:
 
 ```
-workers/booking/.dev.vars
-workers/booking/oauth-client-secret.json
 workers/booking/node_modules/
 ```
+
+(`node_modules/` is already ignored repo-wide, so this is belt-and-braces only.)
+Verify nothing sensitive is staged: `git status --short workers/booking/`
+should never list `oauth-client-secret.json` or `.dev.vars`.
 
 ### Gate 1 — criteria to pass before Session 2
 

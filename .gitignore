@@ -6,6 +6,10 @@ node_modules/
 .env.local
 .env.*.local
 
+# Booking widget secrets (see docs/booking-widget-build.md)
+workers/booking/oauth-client-secret.json
+workers/booking/.dev.vars
+
 # OS junk
 .DS_Store
 Thumbs.db
