@@ -732,17 +732,17 @@ Use the same value as the Vercel env var.
 
 ### Gate 4 — criteria to pass before Session 5
 
-- [ ] After a successful `POST /hetyres/book`, a confirmation email arrives in the
+- [x] After a successful `POST /hetyres/book`, a confirmation email arrives in the
   ```
   `to` address inbox within 60 seconds
   ```
-- [ ] Email subject line matches the template (correct date formatting)
-- [ ] `POST /hetyres/book` response time is not delayed by the email send
+- [x] Email subject line matches the template (correct date formatting)
+- [x] `POST /hetyres/book` response time is not delayed by the email send
   ```
   (it should return ~200ms; email arrives a second or two later)
   ```
-- [ ] A POST with an invalid `NOTIFY_BOOKING_SECRET` returns 401 from the Vercel route
-- [ ] Vercel function logs (Vercel dashboard → Functions tab) show the send
+- [x] A POST with an invalid `NOTIFY_BOOKING_SECRET` returns 401 from the Vercel route
+- [x] Vercel function logs (Vercel dashboard → Functions tab) show the send
 
 ---
 
