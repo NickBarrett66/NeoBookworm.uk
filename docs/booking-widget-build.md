@@ -858,16 +858,16 @@ if (pathname === `/${slug}` && method === 'GET') {
 
 ### Gate 5 — criteria to pass before Session 6
 
-- [ ] `GET /hetyres` in a browser renders the booking page without console errors
-- [ ] Clicking a day loads real slots from the `/slots` endpoint (visible in
+- [x] `GET /hetyres` in a browser renders the booking page without console errors
+- [x] Clicking a day loads real slots from the `/slots` endpoint (visible in
   ```
   browser DevTools Network tab)
   ```
-- [ ] Clicking a slot and submitting the details form creates a real Google
+- [x] Clicking a slot and submitting the details form creates a real Google
   ```
   Calendar event and sends a confirmation email
   ```
-- [ ] Submitting the form twice rapidly does NOT create duplicate bookings
+- [x] Submitting the form twice rapidly does NOT create duplicate bookings
   ```
   (the 409 path returns the user to date selection)
   ```
