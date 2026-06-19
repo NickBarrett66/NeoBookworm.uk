@@ -1,3 +1,5 @@
+// Hardcoded fallback — used if D1 is unavailable or slug not yet in DB.
+// New tenants should be added as D1 rows via migrations, not here.
 export const SLUG_CONFIG = {
   hetyres: {
     displayName: 'HE Tyres',
@@ -9,19 +11,19 @@ export const SLUG_CONFIG = {
       accentFg:  '#1a2336',
       accentRgb: '236, 115, 37',
     },
-    calendarId: null, // falls back to env.GOOGLE_CALENDAR_ID
+    calendarId: null,
     slotDuration: 30,
     minLeadMinutes: 60,
     maxAdvanceDays: 60,
     timezone: 'Europe/London',
     regLookup: true,
     workingHours: {
-      1: { open: '08:30', close: '17:00' }, // Mon
+      1: { open: '08:30', close: '17:00' },
       2: { open: '08:30', close: '17:00' },
       3: { open: '08:30', close: '17:00' },
       4: { open: '08:30', close: '17:00' },
-      5: { open: '08:30', close: '17:00' }, // Fri
-      6: { open: '08:30', close: '12:30' }, // Sat
+      5: { open: '08:30', close: '17:00' },
+      6: { open: '08:30', close: '12:30' },
     },
   },
 
@@ -37,20 +39,49 @@ export const SLUG_CONFIG = {
     },
     calendarId: 'c_44a4cefa0af749692e9941bf12924e253c573b55a6858cbf15c7b4568c2952a4@group.calendar.google.com',
     slotDuration: 30,
-    minLeadMinutes: 120, // 2 hours notice
+    minLeadMinutes: 120,
     maxAdvanceDays: 30,
     timezone: 'Europe/London',
     regLookup: false,
     workingHours: {
-      1: { open: '09:00', close: '17:30' }, // Mon
+      1: { open: '09:00', close: '17:30' },
       2: { open: '09:00', close: '17:30' },
       3: { open: '09:00', close: '17:30' },
       4: { open: '09:00', close: '17:30' },
-      5: { open: '09:00', close: '17:30' }, // Fri
+      5: { open: '09:00', close: '17:30' },
     },
   },
 };
 
-export function getConfig(slug) {
+const KV_TTL = 3600; // 1 hour
+
+export async function getConfig(slug, env) {
+  // 1. KV cache
+  if (env?.TOKEN_CACHE) {
+    try {
+      const cached = await env.TOKEN_CACHE.get(`tenant:${slug}`, 'json');
+      if (cached) return cached;
+    } catch (e) {
+      console.warn('[config] KV read failed:', e.message);
+    }
+  }
+
+  // 2. D1
+  if (env?.DB) {
+    try {
+      const row = await env.DB.prepare('SELECT config_json FROM tenants WHERE slug = ?').bind(slug).first();
+      if (row) {
+        const config = JSON.parse(row.config_json);
+        if (env.TOKEN_CACHE) {
+          await env.TOKEN_CACHE.put(`tenant:${slug}`, row.config_json, { expirationTtl: KV_TTL }).catch(() => {});
+        }
+        return config;
+      }
+    } catch (e) {
+      console.warn('[config] D1 read failed:', e.message);
+    }
+  }
+
+  // 3. Hardcoded fallback
   return SLUG_CONFIG[slug] ?? null;
 }

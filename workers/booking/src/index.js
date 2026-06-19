@@ -8,7 +8,7 @@ import {
   londonWallToInstant,
   getAvailableDaysInMonth,
 } from './calendar.js';
-import { getConfig } from './config.js';
+import { getConfig } from './config.js'; // async — always await getConfig(slug, env)
 import {
   insertBooking,
   updateBookingEvent,
@@ -126,7 +126,7 @@ async function isSlotAvailable(env, slot, config) {
 // ── Route handlers ────────────────────────────────────────────────────────────
 
 async function handleMonth(slug, url, env) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
   const month = url.searchParams.get('month');
   if (!month || !ISO_MONTH_RE.test(month)) return jsonResponse({ error: 'Missing or invalid month — use YYYY-MM' }, 400);
@@ -140,7 +140,7 @@ async function handleMonth(slug, url, env) {
 }
 
 async function handleSlots(slug, url, env) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
   const date = url.searchParams.get('date');
   const validationError = validateDateParam(date, config);
@@ -159,7 +159,7 @@ async function handleSlots(slug, url, env) {
 }
 
 async function handleBook(slug, req, env, ctx) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ ok: false, error: 'Unknown booking slug' }, 404);
 
   let body;
@@ -220,7 +220,7 @@ async function handleBook(slug, req, env, ctx) {
 }
 
 async function handleManage(slug, url, env) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return new Response('Not found', { status: 404 });
 
   const token = url.searchParams.get('token');
@@ -231,7 +231,7 @@ async function handleManage(slug, url, env) {
 }
 
 async function handleCancel(slug, req, env, ctx) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ ok: false, error: 'Unknown slug' }, 404);
 
   let body;
@@ -272,7 +272,7 @@ async function handleCancel(slug, req, env, ctx) {
 }
 
 async function handleReschedule(slug, req, env, ctx) {
-  const config = getConfig(slug);
+  const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ ok: false, error: 'Unknown slug' }, 404);
 
   let body;
@@ -410,7 +410,7 @@ export default {
     const pageMatch = url.pathname.match(/^\/([^/]+)$/);
     if (req.method === 'GET' && pageMatch) {
       const slug = pageMatch[1];
-      const config = getConfig(slug);
+      const config = await getConfig(slug, env);
       if (!config) return new Response('Not found', { status: 404 });
       const rescheduleToken = url.searchParams.get('reschedule') || null;
       return htmlResponse(renderBookingPage(config, slug, rescheduleToken));
