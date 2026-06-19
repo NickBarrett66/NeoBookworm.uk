@@ -1,7 +1,7 @@
 export const SLUG_CONFIG = {
   hetyres: {
     displayName: 'HE Tyres',
-    homeUrl: 'https://hetyres.co.uk',
+    homeUrl: 'https://neobookworm.uk/he-tyres/',
     theme: {
       bg:        '#1a2336',
       accent:    '#ec7325',

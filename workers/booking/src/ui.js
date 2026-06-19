@@ -250,7 +250,6 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       opacity: 0.55;
     }
 
-    .slots-loading,
     .slots-empty,
     .slot-taken-msg {
       text-align: center;
@@ -259,16 +258,30 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       opacity: 0.9;
     }
 
-    .slots-loading .spinner {
-      display: inline-block;
-      width: 1.125rem;
-      height: 1.125rem;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 0.4rem;
+    /* Skeleton shimmer for slot buttons */
+    .slots-skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+
+    .slot-skeleton-btn {
+      height: 44px;
+      border-radius: 8px;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.07) 25%,
+        rgba(255,255,255,0.13) 50%,
+        rgba(255,255,255,0.07) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -558,6 +571,25 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     .success-another-btn:hover { opacity: 0.9; }
     .success-another-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
+    .ics-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.55rem 1.25rem;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .ics-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.55); }
+    .ics-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
     .success-home-link {
       font-size: 0.875rem;
       color: rgba(255,255,255,0.7);
@@ -597,9 +629,6 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
         <div class="slots-pane">
           <div class="slots-area" id="slots-area">
             <p class="slots-hint" id="slots-hint">Select a date to see available times</p>
-            <div class="slots-loading" id="slots-loading" hidden>
-              <span class="spinner" aria-hidden="true"></span>Loading times…
-            </div>
             <div class="slots-empty" id="slots-empty" hidden>No slots available — try another day</div>
             <div class="slot-taken-msg" id="slot-taken-msg" hidden>That slot was just taken — try another</div>
             <div id="slots-content"></div>
@@ -656,8 +685,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
         <div class="success-slot-card" id="success-slot-text"></div>
         <p>A confirmation has been sent to your email address.</p>
         <div class="success-actions">
+          <button type="button" class="ics-btn" id="ics-btn">&#128197; Add to calendar</button>
           <button type="button" class="success-another-btn" id="success-another-btn">Book another slot</button>
-          ${homeUrl ? `<a href="${homeUrl}" class="success-home-link">← Back to ${displayName}</a>` : ''}
+          ${homeUrl ? `<a href="${homeUrl}" class="success-home-link" target="_parent">← Back to ${displayName}</a>` : ''}
         </div>
       </div>
     </div>
@@ -678,7 +708,6 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var calPrev        = document.getElementById('cal-prev');
   var calNext        = document.getElementById('cal-next');
   var slotsHint      = document.getElementById('slots-hint');
-  var slotsLoading   = document.getElementById('slots-loading');
   var slotsEmpty     = document.getElementById('slots-empty');
   var slotsContent   = document.getElementById('slots-content');
   var slotTakenMsg   = document.getElementById('slot-taken-msg');
@@ -693,6 +722,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var submitBtn      = document.getElementById('submit-btn');
   var successSlotText  = document.getElementById('success-slot-text');
   var successAnotherBtn = document.getElementById('success-another-btn');
+  var icsBtn           = document.getElementById('ics-btn');
 
   // State
   var todayIso = londonToday();
@@ -705,6 +735,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var selectedTime = null;
   var selectedSlot = null;
   var fetchToken = 0;
+  var hasAutoNudged = false;
 
   // ── Date helpers ─────────────────────────────────
 
@@ -766,8 +797,18 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       .then(function (r) { return r.json(); })
       .then(function (data) {
         monthLoading[month] = false;
-        monthCache[month] = { available: data.available || [] };
-        if (month === currentMonth) renderCalendar();
+        var available = data.available || [];
+        monthCache[month] = { available: available };
+        if (month === currentMonth) {
+          // Auto-nudge: if this is the opening view and there are no slots, advance once
+          if (!hasAutoNudged && available.length === 0 && currentMonth < maxMonth) {
+            hasAutoNudged = true;
+            var p2 = currentMonth.split('-').map(Number);
+            currentMonth = new Date(Date.UTC(p2[0], p2[1], 1)).toISOString().slice(0, 7);
+            loadMonthAvailability(currentMonth);
+          }
+          renderCalendar();
+        }
       })
       .catch(function () {
         monthLoading[month] = false;
@@ -851,7 +892,6 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   function clearSlotsUI() {
     slotsContent.textContent = '';
     slotsHint.hidden    = true;
-    slotsLoading.hidden = true;
     slotsEmpty.hidden   = true;
     slotTakenMsg.hidden = true;
     continueBtn.hidden  = true;
@@ -859,17 +899,29 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     selectedSlot = null;
   }
 
+  function showSlotsSkeleton() {
+    slotsContent.textContent = '';
+    var grid = document.createElement('div');
+    grid.className = 'slots-skeleton-grid';
+    for (var i = 0; i < 8; i++) {
+      var skel = document.createElement('div');
+      skel.className = 'slot-skeleton-btn';
+      skel.style.animationDelay = (i * 0.07) + 's';
+      grid.appendChild(skel);
+    }
+    slotsContent.appendChild(grid);
+  }
+
   async function loadSlots(iso) {
     var token = ++fetchToken;
     clearSlotsUI();
-    slotsLoading.hidden = false;
+    showSlotsSkeleton();
 
     try {
       var res  = await fetch('/' + SLUG + '/slots?date=' + encodeURIComponent(iso));
       var data = await res.json();
       if (token !== fetchToken) return;
-
-      slotsLoading.hidden = true;
+      slotsContent.textContent = '';
 
       if (!res.ok || !data.slots) {
         slotsEmpty.hidden = false;
@@ -920,7 +972,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 
     } catch (err) {
       if (token !== fetchToken) return;
-      slotsLoading.hidden = true;
+      slotsContent.textContent = '';
       slotsEmpty.hidden = false;
       slotsEmpty.textContent = 'Unable to load times — please try again';
     }
@@ -1092,6 +1144,60 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       slotsHint.hidden = false;
       renderCalendar();
       showView('picker');
+    });
+  }
+
+  // ── ICS download ────────────────────────────────
+
+  // Convert a London wall-time string (e.g. "2026-06-23T09:00:00") to UTC ms.
+  // Uses the same Intl offset trick as the server-side londonWallToInstant.
+  function wallToUtcMs(wall) {
+    var guess = new Date(wall + 'Z');
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: TZ, timeZoneName: 'shortOffset',
+    }).formatToParts(guess);
+    var tzPart = '';
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === 'timeZoneName') { tzPart = parts[i].value; break; }
+    }
+    var m = tzPart.match(/GMT([+-])(\\d+)/);
+    if (!m) return guess.getTime();
+    var sign = m[1] === '+' ? 1 : -1;
+    return guess.getTime() - sign * parseInt(m[2], 10) * 3600000;
+  }
+
+  function makeIcs(wallStart, durationMins, summary) {
+    function toZ(ms) {
+      return new Date(ms).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    }
+    var startMs = wallToUtcMs(wallStart);
+    var uid = Date.now().toString(36) + Math.random().toString(36).slice(2) + '@neobookworm.uk';
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//NeoBookworm//Booking//EN',
+      'BEGIN:VEVENT',
+      'UID:' + uid,
+      'DTSTART:' + toZ(startMs),
+      'DTEND:' + toZ(startMs + durationMins * 60000),
+      'SUMMARY:' + summary,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\\r\\n');
+  }
+
+  if (icsBtn) {
+    icsBtn.addEventListener('click', function () {
+      if (!selectedSlot) return;
+      var ics = makeIcs(selectedSlot, ${slotDuration}, 'Booking at ${displayName}');
+      var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'booking.ics';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
     });
   }
 
