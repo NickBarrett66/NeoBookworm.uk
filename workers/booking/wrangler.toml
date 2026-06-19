@@ -1,0 +1,15 @@
+name = "neobookworm-booking"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bookings"
+database_id = "cd064320-d5b6-435c-8767-d50a4d3513a0"
+
+[[kv_namespaces]]
+binding = "TOKEN_CACHE"
+id = "aac53ca10b1e4c2aa6d2e407404f50c7"
+
+[vars]
+ENVIRONMENT = "development"

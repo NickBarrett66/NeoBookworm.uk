@@ -1,0 +1,17 @@
+{
+  "name": "neobookworm-booking",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}

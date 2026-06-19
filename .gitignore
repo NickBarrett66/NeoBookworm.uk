@@ -9,6 +9,7 @@ node_modules/
 # Booking widget secrets (see docs/booking-widget-build.md)
 workers/booking/oauth-client-secret.json
 workers/booking/.dev.vars
+workers/booking/node_modules/
 
 # OS junk
 .DS_Store
