@@ -32,3 +32,7 @@ export async function sendConfirmationEmail(env, { to, name, slotStart, slotEnd,
 export async function sendCancellationEmail(env, { to, name, slotStart, businessName }) {
   await postNotify(env, { type: 'cancellation', to, name, slotStart, businessName });
 }
+
+export async function sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary }) {
+  await postNotify(env, { type: 'business_notification', name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary });
+}

@@ -10,17 +10,17 @@ function isUniqueConstraintError(err) {
   return msg.includes('UNIQUE');
 }
 
-export async function insertBooking(db, { slug, slotStart, slotEnd, name, email, phone, note }) {
+export async function insertBooking(db, { slug, slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }) {
   const id = crypto.randomUUID();
   const manageToken = crypto.randomUUID();
   try {
     await db
       .prepare(
         `INSERT INTO bookings
-           (id, slug, slot_start, slot_end, name, email, phone, note, google_event_id, status, manage_token)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, 'confirmed', ?)`,
+           (id, slug, slot_start, slot_end, name, email, phone, note, reg, vehicle_summary, google_event_id, status, manage_token)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'confirmed', ?)`,
       )
-      .bind(id, slug, slotStart, slotEnd, name, email, phone, note ?? null, manageToken)
+      .bind(id, slug, slotStart, slotEnd, name, email, phone, note ?? null, reg ?? null, vehicleSummary ?? null, manageToken)
       .run();
     return { id, manageToken };
   } catch (err) {

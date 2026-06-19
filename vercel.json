@@ -1,5 +1,14 @@
 {
   "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/api/reg-lookup",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
+      ]
+    }
+  ],
   "redirects": [
     { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true },
     { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true }

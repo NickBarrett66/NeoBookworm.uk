@@ -76,6 +76,27 @@ function renderConfirmationEmail({ name, slotStart, slotEnd, businessName, manag
   return { subject, body: lines.join('\n') };
 }
 
+function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary }) {
+  const { dateLine, timeRange, subjectDay, startTime } = formatTimes(slotStart, slotEnd);
+  const subject = `New booking — ${subjectDay} at ${startTime}${reg ? ' — ' + reg : ''}`;
+  const lines = [
+    `New booking at ${businessName}`,
+    '',
+    `  ${dateLine}`,
+    `  ${timeRange}`,
+    '',
+    `Customer: ${name}`,
+    `Email:    ${email}`,
+    phone ? `Phone:    ${phone}` : null,
+  ];
+  if (reg) {
+    lines.push('');
+    lines.push(`Reg:      ${reg}`);
+    if (vehicleSummary) lines.push(`Vehicle:  ${vehicleSummary}`);
+  }
+  return { subject, body: lines.filter((l) => l !== null).join('\n') };
+}
+
 function renderCancellationEmail({ name, slotStart, businessName }) {
   const { dateLine, timeRange, subjectDay, startTime } = formatTimes(slotStart, null);
   const subject = `Booking cancelled — ${subjectDay} at ${startTime}`;
@@ -141,6 +162,17 @@ module.exports = async (req, res) => {
       if (!to || !name || !slotStart || !businessName) return res.status(400).json({ ok: false, error: 'Missing fields' });
       const { subject, body: text } = renderCancellationEmail({ name, slotStart: String(slotStart), businessName: String(businessName) });
       await sendEmail({ to: String(to), from, subject, body: text, businessName: String(businessName) });
+    } else if (type === 'business_notification') {
+      const { name, email: custEmail, phone, slotStart, slotEnd, businessName, reg, vehicleSummary } = body;
+      if (!name || !custEmail || !slotStart || !slotEnd || !businessName) return res.status(400).json({ ok: false, error: 'Missing fields' });
+      const to = process.env.HE_TYRES_TO_EMAIL || process.env.TO_EMAIL;
+      if (!to) return res.status(500).json({ ok: false, error: 'No business notification email configured' });
+      const { subject, body: text } = renderBusinessNotificationEmail({
+        name: String(name), email: String(custEmail), phone: phone ? String(phone) : null,
+        slotStart: String(slotStart), slotEnd: String(slotEnd), businessName: String(businessName),
+        reg: reg ? String(reg) : null, vehicleSummary: vehicleSummary ? String(vehicleSummary) : null,
+      });
+      await sendEmail({ to, from, subject, body: text, businessName: String(businessName) });
     } else {
       const { to, name, slotStart, slotEnd, businessName, manageUrl, isReschedule } = body;
       if (!to || !name || !slotStart || !slotEnd || !businessName) return res.status(400).json({ ok: false, error: 'Missing fields' });

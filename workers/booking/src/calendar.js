@@ -268,17 +268,19 @@ export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.het
 
 export async function createCalendarEvent(
   env,
-  { slotStart, slotEnd, name, email, phone, note },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
 
-  const summary = `Booking: ${name}`;
+  const summary = reg ? `Booking: ${name} (${reg})` : `Booking: ${name}`;
   const description = [
     `Name: ${name}`,
     `Email: ${email}`,
     phone ? `Phone: ${phone}` : null,
+    reg ? `Reg: ${reg}` : null,
+    vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
     note ? `Note: ${note}` : null,
   ]
     .filter(Boolean)

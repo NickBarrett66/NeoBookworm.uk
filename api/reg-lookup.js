@@ -19,25 +19,52 @@ function buildSoapEnvelope(reg) {
 </soap:Envelope>`;
 }
 
-function extractXmlValue(xml, tag) {
-  const match = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
-  return match ? match[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : null;
-}
-
 function parseVehicleXml(xml) {
+  // RegCheck embeds a JSON object inside <vehicleJson> — richer and cleaner than the XML sibling
+  const jsonMatch = xml.match(/<vehicleJson>([\s\S]*?)<\/vehicleJson>/i);
+  if (jsonMatch) {
+    try {
+      const v = JSON.parse(jsonMatch[1]);
+      // Fields are either plain strings or { CurrentTextValue: "..." } objects
+      const get = (f) => {
+        if (!f) return null;
+        if (typeof f === 'string') return f || null;
+        if (typeof f === 'object' && f.CurrentTextValue !== undefined)
+          return f.CurrentTextValue !== '' ? String(f.CurrentTextValue) : null;
+        return null;
+      };
+      return {
+        make:           get(v.CarMake)    || v.MakeDescription  || null,
+        model:          get(v.CarModel)   || v.ModelDescription || null,
+        colour:         v.Colour          || null,
+        year:           v.RegistrationYear || null,
+        fuelType:       get(v.FuelType),
+        engineSize:     get(v.EngineSize),
+        transmission:   get(v.Transmission),
+        bodyStyle:      get(v.BodyStyle),
+        doors:          get(v.NumberOfDoors),
+        seats:          get(v.NumberOfSeats),
+        vin:            v.VehicleIdentificationNumber || null,
+        insuranceGroup: v.VehicleInsuranceGroup
+                          ? `${v.VehicleInsuranceGroup}/${v.VehicleInsuranceGroupOutOf}`
+                          : null,
+        description:    v.Description || null,
+        imageUrl:       v.ImageUrl     || null,
+      };
+    } catch (e) { /* fall through */ }
+  }
+  // Fallback: plain XML tag extraction
+  const get = (tag) => {
+    const m = xml.match(new RegExp(`<${tag}[^>]*>([^<]*)<\\/${tag}>`, 'i'));
+    return m ? m[1].trim() || null : null;
+  };
   return {
-    make:               extractXmlValue(xml, 'Make'),
-    model:              extractXmlValue(xml, 'Model'),
-    colour:             extractXmlValue(xml, 'Colour'),
-    year:               extractXmlValue(xml, 'YearOfManufacture'),
-    fuelType:           extractXmlValue(xml, 'FuelType'),
-    engineCapacity:     extractXmlValue(xml, 'EngineCapacity'),
-    transmission:       extractXmlValue(xml, 'Transmission'),
-    bodyStyle:          extractXmlValue(xml, 'BodyStyle'),
-    doors:              extractXmlValue(xml, 'NumberOfDoors'),
-    motExpiry:          extractXmlValue(xml, 'MotExpiry'),
-    taxExpiry:          extractXmlValue(xml, 'TaxExpiry'),
-    description:        extractXmlValue(xml, 'VehicleDescription'),
+    make:        get('MakeDescription'),
+    model:       get('ModelDescription'),
+    colour:      get('Colour'),
+    year:        get('RegistrationYear'),
+    fuelType:    get('FuelType'),
+    description: get('Description'),
   };
 }
 

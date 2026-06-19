@@ -459,6 +459,36 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       overflow: hidden;
     }
 
+    .vehicle-card {
+      margin-top: 0.5rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .vehicle-card.vc-found {
+      border-color: rgba(var(--accent-rgb), 0.4);
+      background: rgba(var(--accent-rgb), 0.08);
+    }
+
+    .vehicle-card.vc-miss { opacity: 0.65; }
+
+    .vc-spinner {
+      flex-shrink: 0;
+      width: 0.875rem;
+      height: 0.875rem;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
     .form-error {
       text-align: center;
       padding: 0.75rem;
@@ -664,8 +694,13 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <input type="tel" id="phone" name="phone" required maxlength="30" autocomplete="tel">
           </div>
           <div class="field">
+            <label for="reg">Vehicle registration <span style="font-weight:400;opacity:0.6">(optional)</span></label>
+            <input type="text" id="reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
+            <div class="vehicle-card" id="vehicle-card" hidden></div>
+          </div>
+          <div class="field">
             <label for="note">Note <span style="font-weight:400;opacity:0.6">(optional)</span></label>
-            <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size, vehicle reg"></textarea>
+            <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size or anything else we should know"></textarea>
           </div>
           <div class="hp-field" aria-hidden="true">
             <label for="company">Company</label>
@@ -736,6 +771,8 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var selectedSlot = null;
   var fetchToken = 0;
   var hasAutoNudged = false;
+  var vehicleSummary = null;
+  var regLookupTimer = null;
 
   // ── Date helpers ─────────────────────────────────
 
@@ -987,6 +1024,59 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     continueBtn.hidden = false;
   }
 
+  // ── Reg lookup ───────────────────────────────────
+
+  function setVehicleCard(state, html) {
+    var card = document.getElementById('vehicle-card');
+    if (!card) return;
+    card.hidden = (state === 'hidden');
+    card.className = 'vehicle-card' +
+      (state === 'found' ? ' vc-found' : state === 'miss' ? ' vc-miss' : '');
+    card.innerHTML = html;
+  }
+
+  async function lookupReg(reg) {
+    vehicleSummary = null;
+    setVehicleCard('loading', '<span class="vc-spinner" aria-hidden="true"></span> Looking up…');
+    try {
+      var res = await fetch('https://neobookworm.uk/api/reg-lookup?reg=' + encodeURIComponent(reg));
+      var data = await res.json();
+      if (data.error || !data.vehicle) {
+        setVehicleCard('miss', '— Not recognised — we’ll double-check when you arrive');
+        return;
+      }
+      var v = data.vehicle;
+      var label = [
+        [v.make, v.model].filter(Boolean).join(' '),
+        [v.colour, v.year].filter(Boolean).join(' · '),
+      ].filter(Boolean).join(' · ');
+      if (!label) { setVehicleCard('hidden', ''); return; }
+      vehicleSummary = label;
+      setVehicleCard('found', '🚗️ ' + escHtml(label));
+    } catch (e) {
+      setVehicleCard('miss', 'Couldn’t look that up right now');
+    }
+  }
+
+  var regInputEl = document.getElementById('reg');
+  if (regInputEl) {
+    regInputEl.addEventListener('input', function () {
+      vehicleSummary = null;
+      clearTimeout(regLookupTimer);
+      setVehicleCard('hidden', '');
+      var val = this.value.replace(/\s+/g, '').toUpperCase();
+      if (val.length >= 2) {
+        regLookupTimer = setTimeout(function () { lookupReg(val); }, 700);
+      }
+    });
+    regInputEl.addEventListener('blur', function () {
+      clearTimeout(regLookupTimer);
+      var val = this.value.replace(/\s+/g, '').toUpperCase();
+      var card = document.getElementById('vehicle-card');
+      if (val.length >= 2 && card && card.hidden) lookupReg(val);
+    });
+  }
+
   // ── View switching ───────────────────────────────
 
   function showView(name) {
@@ -1075,12 +1165,14 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     var body = RESCHEDULE_TOKEN
       ? { token: RESCHEDULE_TOKEN, slot: selectedSlot }
       : {
-          slot:    selectedSlot,
-          name:    document.getElementById('name').value.trim(),
-          email:   document.getElementById('email').value.trim(),
-          phone:   document.getElementById('phone').value.trim(),
-          note:    document.getElementById('note').value.trim() || null,
-          company: document.getElementById('company').value,
+          slot:           selectedSlot,
+          name:           document.getElementById('name').value.trim(),
+          email:          document.getElementById('email').value.trim(),
+          phone:          document.getElementById('phone').value.trim(),
+          note:           document.getElementById('note').value.trim() || null,
+          company:        document.getElementById('company').value,
+          reg:            (document.getElementById('reg')?.value.replace(/\s+/g, '').toUpperCase()) || null,
+          vehicleSummary: vehicleSummary || null,
         };
 
     try {
@@ -1140,6 +1232,10 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       selectedDate = null;
       selectedTime = null;
       selectedSlot = null;
+      vehicleSummary = null;
+      var regEl = document.getElementById('reg');
+      if (regEl) regEl.value = '';
+      setVehicleCard('hidden', '');
       clearSlotsUI();
       slotsHint.hidden = false;
       renderCalendar();

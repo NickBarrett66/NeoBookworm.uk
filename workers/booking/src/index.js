@@ -18,7 +18,7 @@ import {
   countRecentBookingsByEmail,
   SlotTakenError,
 } from './db.js';
-import { sendConfirmationEmail, sendCancellationEmail } from './email.js';
+import { sendConfirmationEmail, sendCancellationEmail, sendBusinessNotificationEmail } from './email.js';
 import { renderBookingPage, renderManagePage } from './ui.js';
 
 const CORS_HEADERS = {
@@ -88,7 +88,7 @@ function validateDateParam(date, config) {
 }
 
 function validateBookingBody(body, config) {
-  const { slot, name, email, phone, note } = body;
+  const { slot, name, email, phone, note, reg, vehicleSummary } = body;
   if (!slot || !name || !email || !phone) return { error: 'Missing required fields' };
   if (typeof slot !== 'string' || !ISO_SLOT_RE.test(slot)) return { error: 'Invalid slot format' };
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 80) return { error: 'Invalid name' };
@@ -100,7 +100,9 @@ function validateBookingBody(body, config) {
   if (dateError) return { error: dateError.error === 'Date is in the past' ? 'Slot is in the past' : dateError.error };
   const slotInstant = londonWallToInstant(slot, config.timezone);
   if (slotInstant.getTime() < Date.now() + config.minLeadMinutes * 60_000) return { error: 'Slot is too soon' };
-  return { slot, name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), note: note?.trim() || null, slotDate };
+  const cleanReg = reg ? String(reg).trim().toUpperCase().replace(/\s+/g, '').slice(0, 10) : null;
+  const cleanVehicleSummary = vehicleSummary ? String(vehicleSummary).slice(0, 200) : null;
+  return { slot, name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), note: note?.trim() || null, slotDate, reg: cleanReg, vehicleSummary: cleanVehicleSummary };
 }
 
 async function checkIpRateLimit(env, ip) {
@@ -171,7 +173,7 @@ async function handleBook(slug, req, env, ctx) {
   const validated = validateBookingBody(body, config);
   if (validated.error) return jsonResponse({ ok: false, error: validated.error }, 400);
 
-  const { slot, name, email, phone, note } = validated;
+  const { slot, name, email, phone, note, reg, vehicleSummary } = validated;
   const slotStart = slot;
   const slotEnd = wallEndFromStart(slotStart, config.slotDuration, config.timezone);
 
@@ -188,7 +190,7 @@ async function handleBook(slug, req, env, ctx) {
 
   let bookingId, manageToken;
   try {
-    ({ id: bookingId, manageToken } = await insertBooking(env.DB, { slug, slotStart, slotEnd, name, email, phone, note }));
+    ({ id: bookingId, manageToken } = await insertBooking(env.DB, { slug, slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }));
   } catch (err) {
     if (err instanceof SlotTakenError) return jsonResponse({ ok: false, error: 'slot_taken' }, 409);
     console.error('[booking] insert error:', err);
@@ -197,7 +199,7 @@ async function handleBook(slug, req, env, ctx) {
 
   let googleEvent;
   try {
-    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note }, config);
+    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }, config);
   } catch (err) {
     console.error('[booking] calendar create error:', err);
     await markBookingFailed(env.DB, bookingId);
@@ -209,6 +211,9 @@ async function handleBook(slug, req, env, ctx) {
   const mUrl = manageUrl(req, slug, manageToken);
   ctx.waitUntil(
     sendConfirmationEmail(env, { to: email, name, slotStart, slotEnd, businessName: config.displayName, manageUrl: mUrl }),
+  );
+  ctx.waitUntil(
+    sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName: config.displayName, reg, vehicleSummary }),
   );
 
   return jsonResponse({ ok: true, name, slotStart, slotEnd });
@@ -310,6 +315,8 @@ async function handleReschedule(slug, req, env, ctx) {
       email: booking.email,
       phone: booking.phone,
       note: booking.note,
+      reg: booking.reg,
+      vehicleSummary: booking.vehicle_summary,
     }));
   } catch (err) {
     if (err instanceof SlotTakenError) return jsonResponse({ ok: false, error: 'slot_taken' }, 409);
@@ -331,7 +338,7 @@ async function handleReschedule(slug, req, env, ctx) {
   try {
     googleEvent = await createCalendarEvent(
       env,
-      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note },
+      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note, reg: booking.reg, vehicleSummary: booking.vehicle_summary },
       config,
     );
   } catch (err) {
