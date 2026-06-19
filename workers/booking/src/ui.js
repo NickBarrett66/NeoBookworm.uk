@@ -14,6 +14,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const workingDowsJson = JSON.stringify(Object.keys(config.workingHours).map(Number));
   const homeUrl = config.homeUrl ? escHtml(config.homeUrl) : null;
   const rescheduleTokenJson = JSON.stringify(rescheduleToken);
+  const regEnabled = config.regLookup !== false;
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -459,6 +460,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       overflow: hidden;
     }
 
+    ${regEnabled ? `
     .vehicle-card {
       margin-top: 0.5rem;
       padding: 0.55rem 0.75rem;
@@ -487,7 +489,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-    }
+    }` : ''}
 
     .form-error {
       text-align: center;
@@ -693,11 +695,11 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <label for="phone">Phone</label>
             <input type="tel" id="phone" name="phone" required maxlength="30" autocomplete="tel">
           </div>
-          <div class="field">
+          ${regEnabled ? `<div class="field">
             <label for="reg">Vehicle registration <span style="font-weight:400;opacity:0.6">(optional)</span></label>
             <input type="text" id="reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
             <div class="vehicle-card" id="vehicle-card" hidden></div>
-          </div>
+          </div>` : ''}
           <div class="field">
             <label for="note">Note <span style="font-weight:400;opacity:0.6">(optional)</span></label>
             <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size or anything else we should know"></textarea>
@@ -1035,6 +1037,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     card.innerHTML = html;
   }
 
+  ${regEnabled ? `
   function safeText(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -1068,18 +1071,19 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       vehicleSummary = null;
       clearTimeout(regLookupTimer);
       setVehicleCard('hidden', '');
-      var val = this.value.replace(/\s+/g, '').toUpperCase();
+      var val = this.value.replace(/[\\s]+/g, '').toUpperCase();
       if (val.length >= 5) {
         regLookupTimer = setTimeout(function () { lookupReg(val); }, 1200);
       }
     });
     regInputEl.addEventListener('blur', function () {
       clearTimeout(regLookupTimer);
-      var val = this.value.replace(/\s+/g, '').toUpperCase();
+      var val = this.value.replace(/[\\s]+/g, '').toUpperCase();
       var card = document.getElementById('vehicle-card');
       if (val.length >= 5 && card && card.hidden) lookupReg(val);
     });
   }
+  ` : ''}
 
   // ── View switching ───────────────────────────────
 
