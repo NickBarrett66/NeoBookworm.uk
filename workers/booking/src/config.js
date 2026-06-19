@@ -2,6 +2,13 @@ export const SLUG_CONFIG = {
   hetyres: {
     displayName: 'HE Tyres',
     homeUrl: 'https://hetyres.co.uk',
+    theme: {
+      bg:        '#1a2336',
+      accent:    '#ec7325',
+      accentH:   '#d35f17',
+      accentFg:  '#1a2336',
+      accentRgb: '236, 115, 37',
+    },
     calendarId: null, // falls back to env.GOOGLE_CALENDAR_ID
     slotDuration: 30,
     minLeadMinutes: 60, // can't book a slot starting within the next hour

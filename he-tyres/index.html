@@ -852,9 +852,9 @@
           <button class="book-close-btn" id="bookCloseBtn" aria-label="Close booking calendar">✕ Close booking calendar</button>
           <iframe
             id="bookIframe"
-            title="Booking page powered by Koalendar"
+            title="Book a depot slot"
             src="about:blank"
-            data-src="https://koalendar.com/e/book-depot-slot?embed=true">
+            data-src="https://neobookworm-booking.nickbarrett.workers.dev/hetyres">
           </iframe>
         </div>
         <div class="book-success" id="bookSuccess" aria-live="polite">
@@ -1439,11 +1439,9 @@
         });
       });
 
-      // Koalendar fires a postMessage when a booking is confirmed
+      // Booking widget fires postMessage('booking-confirmed') on success
       window.addEventListener('message', function (e) {
-        if (!String(e.origin).includes('koalendar.com')) return;
-        var data = typeof e.data === 'string' ? e.data : JSON.stringify(e.data || '');
-        if (/booking|confirmed|scheduled|booked|success/i.test(data)) showSuccess();
+        if (e.data === 'booking-confirmed') showSuccess();
       });
     })();
 

@@ -12,6 +12,16 @@ export function renderBookingPage(config, slug) {
   const slotDuration = config.slotDuration || 30;
   const maxAdvanceDays = config.maxAdvanceDays || 60;
   const workingDowsJson = JSON.stringify(Object.keys(config.workingHours).map(Number));
+  const homeUrl = config.homeUrl ? escHtml(config.homeUrl) : null;
+  const t = config.theme || {};
+  const themeCss = `
+    :root {
+      --bg:         ${t.bg        || '#0f1f3d'};
+      --accent:     ${t.accent    || 'var(--accent)'};
+      --accent-h:   ${t.accentH   || '#d4891a'};
+      --accent-fg:  ${t.accentFg  || '#0f1f3d'};
+      --accent-rgb: ${t.accentRgb || '245, 166, 35'};
+    }`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -24,13 +34,15 @@ export function renderBookingPage(config, slug) {
   <link rel="stylesheet" href="https://neobookworm.uk/fonts.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://neobookworm.uk/fonts.css"></noscript>
   <style>
+    ${themeCss}
+
     *, *::before, *::after { box-sizing: border-box; }
 
     html, body {
       margin: 0;
       padding: 0;
       min-height: 100%;
-      background: #0f1f3d;
+      background: var(--bg);
       color: #fff;
       font-family: 'DM Sans', system-ui, sans-serif;
       font-size: 16px;
@@ -133,7 +145,7 @@ export function renderBookingPage(config, slug) {
     }
 
     .cal-nav-btn:focus-visible {
-      outline: 2px solid #f5a623;
+      outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
 
@@ -188,7 +200,7 @@ export function renderBookingPage(config, slug) {
     }
 
     .cal-cell:focus-visible {
-      outline: 2px solid #f5a623;
+      outline: 2px solid var(--accent);
       outline-offset: 1px;
     }
 
@@ -199,8 +211,8 @@ export function renderBookingPage(config, slug) {
     }
 
     .cal-cell.selected {
-      background: #f5a623;
-      color: #0f1f3d;
+      background: var(--accent);
+      color: var(--accent-fg);
       font-weight: 700;
     }
 
@@ -251,7 +263,7 @@ export function renderBookingPage(config, slug) {
       width: 1.125rem;
       height: 1.125rem;
       border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: #f5a623;
+      border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       vertical-align: middle;
@@ -297,14 +309,14 @@ export function renderBookingPage(config, slug) {
     }
 
     .time-btn:focus-visible {
-      outline: 2px solid #f5a623;
+      outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
 
     .time-btn.selected {
-      background: #f5a623;
-      border-color: #f5a623;
-      color: #0f1f3d;
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-fg);
       font-weight: 700;
       transform: scale(1.04);
     }
@@ -316,8 +328,8 @@ export function renderBookingPage(config, slug) {
       padding: 0.75rem 1rem;
       border: none;
       border-radius: 8px;
-      background: #f5a623;
-      color: #0f1f3d;
+      background: var(--accent);
+      color: var(--accent-fg);
       font-family: inherit;
       font-size: 1rem;
       font-weight: 700;
@@ -355,7 +367,7 @@ export function renderBookingPage(config, slug) {
     }
 
     .back-btn:hover { color: #fff; }
-    .back-btn:focus-visible { outline: 2px solid #f5a623; outline-offset: 2px; }
+    .back-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .booking-summary-card {
       display: flex;
@@ -364,8 +376,8 @@ export function renderBookingPage(config, slug) {
       margin: 0 0 1.5rem;
       padding: 1rem 1.125rem;
       border-radius: 10px;
-      background: rgba(245,166,35,0.12);
-      border: 1px solid rgba(245,166,35,0.3);
+      background: rgba(var(--accent-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-rgb), 0.3);
     }
 
     .booking-summary-icon {
@@ -420,7 +432,7 @@ export function renderBookingPage(config, slug) {
 
     .field input:focus,
     .field textarea:focus {
-      outline: 2px solid #f5a623;
+      outline: 2px solid var(--accent);
       outline-offset: 0;
       background: rgba(255,255,255,0.1);
     }
@@ -454,8 +466,8 @@ export function renderBookingPage(config, slug) {
       padding: 0.75rem 1rem;
       border: none;
       border-radius: 8px;
-      background: #f5a623;
-      color: #0f1f3d;
+      background: var(--accent);
+      color: var(--accent-fg);
       font-family: inherit;
       font-size: 1rem;
       font-weight: 700;
@@ -500,7 +512,7 @@ export function renderBookingPage(config, slug) {
       margin: 0 0 0.5rem;
       font-size: 1.375rem;
       font-weight: 700;
-      color: #f5a623;
+      color: var(--accent);
     }
 
     .success-slot-card {
@@ -508,8 +520,8 @@ export function renderBookingPage(config, slug) {
       margin: 1rem auto;
       padding: 0.875rem 1.5rem;
       border-radius: 10px;
-      background: rgba(245,166,35,0.12);
-      border: 1px solid rgba(245,166,35,0.25);
+      background: rgba(var(--accent-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-rgb), 0.25);
       font-weight: 600;
       font-size: 1rem;
       line-height: 1.4;
@@ -520,6 +532,39 @@ export function renderBookingPage(config, slug) {
       font-size: 0.9375rem;
       opacity: 0.8;
     }
+
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      align-items: center;
+    }
+
+    .success-another-btn {
+      padding: 0.65rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .success-another-btn:hover { opacity: 0.9; }
+    .success-another-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+    .success-home-link {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .success-home-link:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -609,6 +654,10 @@ export function renderBookingPage(config, slug) {
         <h2>Booking confirmed</h2>
         <div class="success-slot-card" id="success-slot-text"></div>
         <p>A confirmation has been sent to your email address.</p>
+        <div class="success-actions">
+          <button type="button" class="success-another-btn" id="success-another-btn">Book another slot</button>
+          ${homeUrl ? `<a href="${homeUrl}" class="success-home-link">← Back to ${displayName}</a>` : ''}
+        </div>
       </div>
     </div>
 
@@ -640,7 +689,8 @@ export function renderBookingPage(config, slug) {
   var bookingForm    = document.getElementById('booking-form');
   var formError      = document.getElementById('form-error');
   var submitBtn      = document.getElementById('submit-btn');
-  var successSlotText = document.getElementById('success-slot-text');
+  var successSlotText  = document.getElementById('success-slot-text');
+  var successAnotherBtn = document.getElementById('success-another-btn');
 
   // State
   var todayIso = londonToday();
@@ -996,6 +1046,18 @@ export function renderBookingPage(config, slug) {
       submitBtn.disabled = false;
     }
   });
+
+  if (successAnotherBtn) {
+    successAnotherBtn.addEventListener('click', function () {
+      selectedDate = null;
+      selectedTime = null;
+      selectedSlot = null;
+      clearSlotsUI();
+      slotsHint.hidden = false;
+      renderCalendar();
+      showView('picker');
+    });
+  }
 
   // ── Boot ─────────────────────────────────────────
 
