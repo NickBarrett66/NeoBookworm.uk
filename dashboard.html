@@ -784,6 +784,12 @@
   .btn-outbox-hdr.approve-all { color: #22c55e; border-color: #22c55e; }
   .btn-outbox-hdr.approve-all:not(:disabled):hover { background: rgba(34,197,94,.12); }
 
+  .camp-detail-actions {
+    display: flex; justify-content: flex-end; align-items: center;
+    margin-top: .75rem; padding-top: .75rem;
+    border-top: 1px solid var(--border);
+  }
+
   .outbox-cell-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
   .btn-ob {
     padding: .22rem .55rem; border-radius: 5px;
@@ -1510,6 +1516,7 @@ const state = {
   // campaigns
   campView:        'list',
   campCampaignId:  '',
+  campCampaignStatus: '',
   campColFilters:     EMPTY_CAMP_COL_FILTERS(),
   campColSorts:       [],
   campFocusFilterCol: null,
@@ -3491,6 +3498,13 @@ function renderCampaignsList(rows) {
   });
 }
 
+function campaignStatusAfterAction(act, currentStatus) {
+  if (act === 'campaign_activate') return 'active';
+  if (act === 'campaign_pause')    return 'paused';
+  if (act === 'campaign_resume')   return 'active';
+  return currentStatus;
+}
+
 function campActionBtnHtml(status) {
   const st = (status || 'draft').toLowerCase();
   if (st === 'complete') return '';
@@ -3498,6 +3512,66 @@ function campActionBtnHtml(status) {
   if (st === 'active') return `<button class="btn-camp-action pause"    data-action="campaign_pause">Pause</button>`;
   if (st === 'paused') return `<button class="btn-camp-action resume"   data-action="campaign_resume">Resume</button>`;
   return '';
+}
+
+function outboxHasPendingApproval(rows) {
+  return rows.some(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
+}
+
+function outboxHasActivatableEmails(rows) {
+  return rows.some(r => !r.sent && !r.skipped && !r.suppressed);
+}
+
+function campDetailActionFooterHtml(status, rows) {
+  const st = (status || 'draft').toLowerCase();
+  if (st === 'complete') return '';
+  if (st === 'draft') {
+    if (!rows.length || !outboxHasActivatableEmails(rows) || outboxHasPendingApproval(rows)) return '';
+    return `<button type="button" class="btn-camp-action activate" data-action="campaign_activate">Activate Campaign</button>`;
+  }
+  if (st === 'active') {
+    return `<button type="button" class="btn-camp-action pause" data-action="campaign_pause">Pause Campaign</button>`;
+  }
+  if (st === 'paused') {
+    return `<button type="button" class="btn-camp-action resume" data-action="campaign_resume">Resume Campaign</button>`;
+  }
+  return '';
+}
+
+function updateCampaignDetailStatusBadge(newStatus) {
+  const badge = document.querySelector('#main-content .list-header .camp-badge');
+  if (!badge) return;
+  badge.className = `camp-badge ${newStatus}`;
+  badge.textContent = newStatus;
+}
+
+function wireCampDetailActionBtn(btn, campaignId, status, rows) {
+  btn.addEventListener('click', async () => {
+    const act = btn.dataset.action;
+    btn.disabled = true;
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span>';
+    try {
+      await apiPost({ action: act, id: campaignId });
+      const newStatus = campaignStatusAfterAction(act, status);
+      state.campCampaignStatus = newStatus;
+      updateCampaignDetailStatusBadge(newStatus);
+      updateCampDetailActionFooter(rows);
+    } catch (err) {
+      btn.innerHTML = origHtml;
+      btn.disabled = false;
+      alert('Error: ' + err.message);
+    }
+  });
+}
+
+function updateCampDetailActionFooter(rows) {
+  const footer = document.getElementById('camp-detail-actions');
+  if (!footer) return;
+  const status = state.campCampaignStatus || 'draft';
+  footer.innerHTML = campDetailActionFooterHtml(status, rows);
+  const btn = footer.querySelector('.btn-camp-action');
+  if (btn) wireCampDetailActionBtn(btn, state.outboxCampaignId, status, rows);
 }
 
 function wireCampActionBtn(cell, row, tr) {
@@ -3513,9 +3587,7 @@ function wireCampActionBtn(cell, row, tr) {
     btn.innerHTML = '<span class="spinner"></span>';
     try {
       await apiPost({ action: act, id: row.id });
-      const newStatus = act === 'campaign_activate' ? 'active'
-                      : act === 'campaign_pause'    ? 'paused'
-                      : act === 'campaign_resume'   ? 'active' : status;
+      const newStatus = campaignStatusAfterAction(act, status);
       row.status = newStatus;
       const badgeEl = tr.querySelector('.camp-badge');
       if (badgeEl) { badgeEl.className = `camp-badge ${newStatus}`; badgeEl.textContent = newStatus; }
@@ -3566,9 +3638,10 @@ async function loadCampaignDetail(id, rowHint, { soft = false, reloadOutboxOnly 
     state.outboxCampaignId = id;
 
     if (reloadOutboxOnly) {
-      renderOutboxSection(outboxRows, id);
+      renderOutboxSection(outboxRows, id, state.campCampaignStatus);
     } else {
       const { campaign, prospects } = results[0];
+      state.campCampaignStatus = (campaign.status || 'draft').toLowerCase();
       renderCampaignDetail(campaign, prospects, outboxRows);
     }
   } catch (err) {
@@ -3616,7 +3689,7 @@ function renderCampaignDetail(c, prospects, outboxRows) {
     </div>
   `;
 
-  renderOutboxSection(outboxRows, c.id);
+  renderOutboxSection(outboxRows, c.id, campSt);
 
   wireColFilterSort(main, {
     cols: pCols, filters: pCf, sorts: pCs,
@@ -3717,23 +3790,22 @@ function updateCampaignDetailBadgeIfComplete(rows) {
   if (!rows.length) return;
   const pending = rows.some(r => !r.sent && !r.skipped);
   if (pending) return;
-  const badge = document.querySelector('#main-content .list-header .camp-badge');
-  if (badge) {
-    badge.className = 'camp-badge complete';
-    badge.textContent = 'complete';
-  }
+  state.campCampaignStatus = 'complete';
+  updateCampaignDetailStatusBadge('complete');
+  updateCampDetailActionFooter(rows);
 }
 
 function rerenderOutboxPreserveScroll(rows, campaignId) {
   const y = window.scrollY;
-  renderOutboxSection(rows, campaignId);
+  renderOutboxSection(rows, campaignId, state.campCampaignStatus);
   updateCampaignDetailBadgeIfComplete(rows);
   requestAnimationFrame(() => window.scrollTo(0, y));
 }
 
-function renderOutboxSection(rows, campaignId) {
+function renderOutboxSection(rows, campaignId, campaignStatus) {
   const section = document.getElementById('outbox-section');
   if (!section) return;
+  if (campaignStatus) state.campCampaignStatus = campaignStatus;
 
   const stats = computeOutboxSummaryStats(rows);
   const hasPending = rows.some(r => !r.approved && !r.sent && !r.skipped && !r.suppressed);
@@ -3795,6 +3867,7 @@ function renderOutboxSection(rows, campaignId) {
         <tbody id="outbox-tbody"></tbody>
       </table>
     </div>
+    <div class="camp-detail-actions" id="camp-detail-actions"></div>
   `;
 
   wireColFilterSort(section, {
@@ -3810,6 +3883,8 @@ function renderOutboxSection(rows, campaignId) {
   } else {
     renderOutboxRows(rows, campaignId, groups, isGrouped);
   }
+
+  updateCampDetailActionFooter(rows);
 
   document.getElementById('btn-approve-all')?.addEventListener('click', async e => {
     const btn = e.currentTarget;
@@ -4342,6 +4417,7 @@ function updateOutboxSummaryBar(rows) {
   const btnA = bar.querySelector('#btn-approve-all');
   if (btnR) btnR.disabled = !hasPending;
   if (btnA) btnA.disabled = !hasPending;
+  updateCampDetailActionFooter(rows);
 }
 
 // ── Email preview modal ───────────────────────────────────────────────────────
