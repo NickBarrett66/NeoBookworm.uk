@@ -482,19 +482,19 @@ and `09:30` slots and nothing else.
 
 ### Gate 2 — criteria to pass before Session 3
 
-- [ ] `npx vitest run` passes all cases in 2.4 (run this before the manual checks)
+- [x] `npx vitest run` passes all cases in 2.4 (run this before the manual checks)
 
-- [ ] `GET /hetyres/slots?date=2026-06-23` (a Monday) returns JSON with slots
+- [x] `GET /hetyres/slots?date=2026-06-23` (a Monday) returns JSON with slots
   ```
   `["08:30","09:00","09:30",...,"16:30"]` (17 slots if calendar is empty)
   ```
-- [ ] `GET /hetyres/slots?date=2026-06-22` (a Sunday) returns `{ slots: [] }`
-- [ ] `GET /hetyres/slots?date=2025-01-01` (past) returns HTTP 400
-- [ ] Creating a test event manually in your Google Calendar for a Monday
+- [x] `GET /hetyres/slots?date=2026-06-22` (a Sunday) returns `{ slots: [] }`
+- [x] `GET /hetyres/slots?date=2025-01-01` (past) returns HTTP 400
+- [x] Creating a test event manually in your Google Calendar for a Monday
   ```
   09:00–10:00 causes the slots endpoint to return that hour's slots as missing
   ```
-- [ ] KV cache is used on second call: add a `console.log` before the token
+- [x] KV cache is used on second call: add a `console.log` before the token
   ```
   fetch and confirm it only fires once in two rapid requests (`wrangler dev` logs)
   ```
@@ -626,19 +626,19 @@ Access-Control-Allow-Headers: Content-Type
 
 ### Gate 3 — criteria to pass before Session 4
 
-- [ ] `POST /hetyres/book` with a valid free slot returns `{ ok: true }` and a
+- [x] `POST /hetyres/book` with a valid free slot returns `{ ok: true }` and a
   ```
   new event appears in your Google Calendar
   ```
-- [ ] The event in Google Calendar has the visitor's email as an attendee
+- [x] The event in Google Calendar has the visitor's email as an attendee
   ```
   (with `sendUpdates: "none"`, Google does NOT email them — our own
   confirmation email from Session 4 is the single customer-facing message)
   ```
-- [ ] `POST /hetyres/book` with the same slot a second time returns `409`
-- [ ] `POST /hetyres/book` with a missing `email` field returns `400`
-- [ ] `POST /hetyres/book` with a past slot returns `400`
-- [ ] D1 local: `npx wrangler d1 execute bookings --local --command "SELECT * FROM bookings"` shows the test row
+- [x] `POST /hetyres/book` with the same slot a second time returns `409`
+- [x] `POST /hetyres/book` with a missing `email` field returns `400`
+- [x] `POST /hetyres/book` with a past slot returns `400`
+- [x] D1 local: `npx wrangler d1 execute bookings --local --command "SELECT * FROM bookings"` shows the test row
 - [ ] D1 remote: same command without `--local` shows the row (deploy first:
   ```
   `npx wrangler deploy`)
@@ -759,7 +759,7 @@ docs/booking-widget-build.md
 Also tell Cursor:
 
 > The UI is an HTML page served by the Worker at GET /hetyres.
-> It will be loaded inside an </body> on client sites.
+> It will be loaded inside an  on client sites.
 > Design system: navy #0f1f3d background, amber #f5a623 accent, white text,
 > DM Sans font (self-hosted on neobookworm.uk — load from /fonts/dm-sans-400.woff2
 > etc via a  to [https://neobookworm.uk/fonts.css](https://neobookworm.uk/fonts.css)).

@@ -10,6 +10,7 @@ node_modules/
 workers/booking/oauth-client-secret.json
 workers/booking/.dev.vars
 workers/booking/node_modules/
+workers/booking/.wrangler/
 
 # OS junk
 .DS_Store
