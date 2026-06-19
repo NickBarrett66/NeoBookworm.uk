@@ -13,9 +13,11 @@ session until every Gate criterion passes.
 ## Architecture overview
 
 ```
-booking.neobookworm.uk/hetyres          ← GET  — serves booking UI (iframe page)
-booking.neobookworm.uk/hetyres/slots    ← GET  — returns available slot times as JSON
-booking.neobookworm.uk/hetyres/book     ← POST — creates Google Cal event + sends email
+neobookworm-booking.nickbarrett.workers.dev/hetyres          ← GET  — serves booking UI (iframe page)
+neobookworm-booking.nickbarrett.workers.dev/hetyres/slots    ← GET  — returns available slot times as JSON
+neobookworm-booking.nickbarrett.workers.dev/hetyres/book     ← POST — creates Google Cal event + sends email
+
+(booking.neobookworm.uk will replace the above once DNS moves to Cloudflare)
 ```
 
 Stack:
@@ -896,8 +898,24 @@ docs/booking-widget-build.md
 Also tell Cursor:
 
 > This is a deployment and verification session — no new features.
-> The goal is to get booking.neobookworm.uk live and verify the full
-> end-to-end flow in production.
+> The production URL for the Worker is
+> `https://neobookworm-booking.nickbarrett.workers.dev` — use this throughout.
+> `booking.neobookworm.uk` is deferred until DNS is moved to Cloudflare (see
+> note below).
+
+### Note on `booking.neobookworm.uk`
+
+The custom domain requires `neobookworm.uk` nameservers to be managed by
+Cloudflare. They are currently at Krystal, so Cloudflare cannot issue a
+certificate or route requests for the subdomain. The CNAME record added in
+Krystal resolves correctly but there is nothing on the Cloudflare side to
+receive the requests.
+
+**For Phase 1, use the `workers.dev` URL throughout** — it is fully functional
+and there is no user-facing difference. Moving DNS to Cloudflare is a separate
+task tracked in the outstanding items table in CLAUDE.md; once done, add
+`routes = [{ pattern = "booking.neobookworm.uk", custom_domain = true }]` to
+`wrangler.toml` and redeploy.
 
 ### Tasks
 
@@ -908,28 +926,18 @@ cd workers/booking
 npx wrangler deploy
 ```
 
-Confirm the Worker appears at `https://neobookworm-booking.nickbarrett.workers.dev/hetyres`.
-
-**6.2 — Add custom domain in Cloudflare**
-
-In the Cloudflare dashboard:
-
-- Workers & Pages → neobookworm-booking → Settings → Domains & Routes
-- Add custom domain: `booking.neobookworm.uk`
-
-Or add a DNS CNAME record:
-
+Confirm the Worker responds at:
 ```
-booking  CNAME  neobookworm-booking.nickbarrett.workers.dev
+https://neobookworm-booking.nickbarrett.workers.dev/hetyres/slots?date=YYYY-MM-DD
 ```
 
-**6.3 — Apply D1 migration to remote**
+**6.2 — Apply D1 migration to remote**
 
 ```bash
 npx wrangler d1 migrations apply bookings --remote
 ```
 
-**6.4 — Create a test embed page** at `booking-test.html` in the root of
+**6.3 — Create a test embed page** at `booking-test.html` in the root of
 NeoBookworm.uk (not linked from nav — for testing only, delete after
 Session 6 is complete):
 
@@ -939,7 +947,7 @@ Session 6 is complete):
 <head><title>Booking test</title></head>
 <body style="margin:0;background:#111">
   <iframe
-    src="https://booking.neobookworm.uk/hetyres"
+    src="https://neobookworm-booking.nickbarrett.workers.dev/hetyres"
     style="width:100%;height:70vh;border:0;display:block"
     title="Booking test">
   </iframe>
@@ -958,23 +966,15 @@ Deploy to Vercel and open `https://neobookworm.uk/booking-test.html`.
 
 ### Gate 6 — production smoke test (all must pass)
 
-- [ ] `https://booking.neobookworm.uk/hetyres` loads the booking UI
-- [ ] `https://booking.neobookworm.uk/hetyres/slots?date=YYYY-MM-DD` returns
-  ```
-  real slot data (use a valid upcoming weekday)
-  ```
+- [ ] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres` loads the booking UI
+- [ ] `https://neobookworm-booking.nickbarrett.workers.dev/hetyres/slots?date=YYYY-MM-DD`
+      returns real slot data (use a valid upcoming weekday)
 - [ ] A complete booking via the production URL creates a Google Calendar event
-  ```
-  AND sends a confirmation email to the address entered
-  ```
+      and sends a confirmation email to the address entered
 - [ ] The test embed page at `neobookworm.uk/booking-test.html` shows the
-  ```
-  postMessage received message after a booking
-  ```
+      postMessage received message after a booking
 - [ ] The D1 `bookings` table (remote) has the test booking row:
-  ```
-  `npx wrangler d1 execute bookings --remote --command "SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5"`
-  ```
+      `npx wrangler d1 execute bookings --remote --command "SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5"`
 - [ ] Delete `booking-test.html` from the repo and redeploy
 
 ---
@@ -983,11 +983,12 @@ Deploy to Vercel and open `https://neobookworm.uk/booking-test.html`.
 
 At the end of Session 6 you have:
 
-- A live booking widget at `booking.neobookworm.uk/hetyres`
+- A live booking widget at `https://neobookworm-booking.nickbarrett.workers.dev/hetyres`
 - It reads real calendar availability from your Google Calendar
 - Bookings create calendar events and send confirmation emails
 - It embeds in any site as a single `<iframe src="...">`
 - Every booking is recorded in D1
+- Custom domain `booking.neobookworm.uk` ready to activate once DNS moves to Cloudflare
 
 ---
 
