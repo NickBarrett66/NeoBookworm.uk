@@ -60,52 +60,89 @@ success overlay.
 
 ---
 
-## Step 1 — DVLA API key (do this first — can take a day or two)
+## Step 1 — Get an API key
 
-1. Go to: https://developer-portal.driver-vehicle-licensing.api.gov.uk/
-2. Create an account and register a new application.
-3. Subscribe to the **Vehicle Enquiry Service (VES)** API — it is free.
-   Direct link to the VES API page: https://developer-portal.driver-vehicle-licensing.api.gov.uk/apis/vehicle-enquiry-service/vehicle-enquiry-service-description.html
-4. Click the **Apply** button on that page and fill in the web form.
-5. You will receive an API key (a long string). Keep it safe.
-6. Add it as a Vercel environment variable:
-   - Variable name: `DVLA_API_KEY`
-   - Value: your key
-   - Set it on the Vercel project for NeoBookworm.uk (same project as the other
-     `HE_TYRES_*` env vars).
+### Option A — DVLA VES (free, but registrations currently closed)
 
-Support email for new enquiries: serviceenquiries@dvla.gov.uk
-Technical support (once registered): dvlaapiaccess@dvla.gov.uk (subject: "VES API technical query")
+As of June 2026, **DVLA VES new registrations are closed** while they do system
+upgrades. There is no apply button or form available.
 
-DVLA VES API endpoints:
+- Developer portal: https://developer-portal.driver-vehicle-licensing.api.gov.uk/
+- VES API page: https://developer-portal.driver-vehicle-licensing.api.gov.uk/apis/vehicle-enquiry-service/vehicle-enquiry-service-description.html
+- **Email to join the waitlist:** dvlaapiaccess@dvla.gov.uk (subject: "VES API technical query")
+- General enquiries: serviceenquiries@dvla.gov.uk
+
+When registrations reopen and you receive a key, the endpoints are:
 ```
 POST https://driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles        ← production
 POST https://uat.driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles    ← UAT / testing
 ```
-Headers:
+Note: DVLA returns `make` but **not** `model`.
+
+---
+
+### Option B — UK Vehicle Data (recommended to use now)
+
+Sign up at: https://ukvehicledata.co.uk/
+
+- Free trial with no time limit and instant access — no waitlist
+- Returns up to 142 fields per vehicle including **make, model, colour, fuel type,
+  MOT history, engine, gearbox, VIN** — more data than DVLA
+- JSON API, straightforward integration
+
+Registration: https://panel.ukvehicledata.co.uk/ (30-second signup, key issued instantly)
+
+Check their pricing page for costs beyond the free trial:
+https://ukvehicledata.co.uk/pricing
+
+---
+
+### Option C — Check Car Details (pay-per-use, start immediately)
+
+Sign up at: https://www.checkcardetails.co.uk/api/vehicledata
+
+- Test API key issued automatically on signup
+- £0.02 per registration lookup
+- **Note: £20/month minimum charge even at zero usage** — only worth it if
+  you expect consistent volume (roughly 1,000+ lookups/month to justify it)
+- Returns make, model, colour, fuel type, MOT status, year, CO2
+
+---
+
+### Recommended path
+
+Use **Option B (UK Vehicle Data)** to build and test — free, instant, more data.
+If DVLA VES registrations reopen and you want the official free source, switch
+later by changing one constant in `api/he-tyres-dvla.js`.
+
+Set the chosen API key as a Vercel environment variable:
+- Variable name: `VES_API_KEY`
+- Set it on the NeoBookworm.uk Vercel project alongside the other `HE_TYRES_*` vars
+
+---
+
+### UK Vehicle Data API call format
+
+The exact endpoint structure varies slightly — check the docs after signup at:
+https://ukvehicledata.co.uk/ApiDocumentation
+
+The general pattern is a GET request:
 ```
-x-api-key: YOUR_DVLA_API_KEY
-Content-Type: application/json
+GET https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData?v=2&api_nullitems=1&auth_apikey=YOUR_KEY&user_tag=&key_VRM=AB12CDE
 ```
-Body:
-```json
-{ "registrationNumber": "AB12CDE" }
-```
-Example response fields you care about:
+Response includes fields such as:
 ```json
 {
-  "make": "FORD",
-  "colour": "BLUE",
-  "yearOfManufacture": 2019,
-  "fuelType": "PETROL",
-  "engineCapacity": 1497,
-  "motExpiryDate": "2025-09-14",
-  "taxDueDate": "2025-10-01"
+  "VehicleRegistration": {
+    "Make": "FORD",
+    "Model": "FOCUS",
+    "Colour": "BLUE",
+    "YearOfManufacture": "2019",
+    "FuelType": "Petrol",
+    "EngineCapacity": "1497"
+  }
 }
 ```
-Note: `model` is not returned by the DVLA — only `make`. The plate check services
-(like checkcardetails.co.uk) add model from their own databases. For the purpose of
-briefing a tyre fitter, make + colour + year is usually sufficient.
 
 ---
 
@@ -210,7 +247,7 @@ async function dvlaLookup(reg) {
   const res = await fetch(DVLA_URL, {
     method: 'POST',
     headers: {
-      'x-api-key': process.env.DVLA_API_KEY,
+      'x-api-key': process.env.VES_API_KEY,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ registrationNumber: reg }),
@@ -324,7 +361,7 @@ Environment Variables):
 
 | Variable | Value | Notes |
 |---|---|---|
-| `DVLA_API_KEY` | Your DVLA VES key | From DVLA developer portal |
+| `VES_API_KEY` | Your API key | From UK Vehicle Data (or DVLA when available) |
 | `HE_TYRES_TO_EMAIL` | `nickbarrett@me.com` (or HE Tyres email when known) | Already set for enquiry form |
 | `SMTP_HOST` | `smtp.mail.me.com` | Already set site-wide |
 | `SMTP_PORT` | `587` | Already set |
