@@ -14,6 +14,9 @@
     { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/api/intake-upload-session", "destination": "/api/intake?action=upload-session" },
+    { "source": "/api/intake-finalize",       "destination": "/api/intake?action=finalize" },
+    { "source": "/api/onboarding-intake",      "destination": "/api/intake?action=onboarding" },
     { "source": "/c/:slug/guides/", "destination": "/api/portal?slug=:slug&section=guides" },
     { "source": "/c/:slug/guides",  "destination": "/api/portal?slug=:slug&section=guides" },
     { "source": "/c/:slug/google-business/", "destination": "/api/portal?slug=:slug&section=google-business" },
