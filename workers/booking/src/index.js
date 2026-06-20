@@ -250,9 +250,10 @@ async function handleCancel(slug, req, env, ctx) {
   if (!booking || booking.slug !== slug) return jsonResponse({ ok: false, error: 'not_found' }, 404);
   if (booking.status === 'cancelled') return jsonResponse({ ok: false, error: 'already_cancelled' }, 409);
 
+  const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
   const slotInstant = londonWallToInstant(booking.slot_start, config.timezone);
   if (slotInstant.getTime() < Date.now()) return jsonResponse({ ok: false, error: 'already_past' }, 409);
-  if (slotInstant.getTime() <= Date.now() + config.minLeadMinutes * 60_000) {
+  if (slotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
     return jsonResponse({ ok: false, error: 'too_late' }, 409);
   }
 
@@ -291,6 +292,13 @@ async function handleReschedule(slug, req, env, ctx) {
   const booking = await getBookingByToken(env.DB, token);
   if (!booking || booking.slug !== slug) return jsonResponse({ ok: false, error: 'not_found' }, 404);
   if (booking.status === 'cancelled') return jsonResponse({ ok: false, error: 'already_cancelled' }, 409);
+
+  // The existing booking must still be inside its change window (cancellation cutoff).
+  const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
+  const oldSlotInstant = londonWallToInstant(booking.slot_start, config.timezone);
+  if (oldSlotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
+    return jsonResponse({ ok: false, error: 'too_late' }, 409);
+  }
 
   const slotDate = slot.slice(0, 10);
   const dateError = validateDateParam(slotDate, config);

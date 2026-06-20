@@ -5414,6 +5414,20 @@ function tenantFieldRow(field, value) {
     </div>`;
   }
 
+  if (field.type === 'timerange') {
+    const tr = value || null;
+    const enabled = !!(tr && tr.start && tr.end);
+    const tInput = 'padding:.3rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--navy-card);color:var(--white);font-size:.82rem';
+    return `<div style="margin-bottom:1.1rem">
+      <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
+      <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+        <label style="font-size:.8rem;color:var(--muted);cursor:pointer"><input type="checkbox" class="tr-enabled" data-key="${escAttr(field.key)}" style="accent-color:var(--amber);vertical-align:middle"${enabled ? ' checked' : ''}> enabled</label>
+        <input type="time" id="tf-${field.key}-start" value="${escAttr(tr && tr.start ? tr.start : '12:30')}"${enabled ? '' : ' disabled'} style="${tInput}">
+        to <input type="time" id="tf-${field.key}-end" value="${escAttr(tr && tr.end ? tr.end : '13:30')}"${enabled ? '' : ' disabled'} style="${tInput}">
+      </div>${hint}
+    </div>`;
+  }
+
   // scalar
   return `<div style="margin-bottom:1.1rem">
     <label for="${id}" style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
@@ -5466,6 +5480,16 @@ function renderTenantDetail(slug, config, schema) {
       if (lbl && lbl.tagName === 'SPAN') lbl.textContent = inp.value;
     });
   });
+  // Time-range fields (e.g. lunch break): toggle the time inputs with "enabled"
+  main.querySelectorAll('.tr-enabled').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const key = cb.dataset.key;
+      const s = document.getElementById(`tf-${key}-start`);
+      const e = document.getElementById(`tf-${key}-end`);
+      if (s) s.disabled = !cb.checked;
+      if (e) e.disabled = !cb.checked;
+    });
+  });
   // Image fields: upload on pick, clear on remove
   main.querySelectorAll('.img-file').forEach(inp => {
     inp.addEventListener('change', () => uploadTenantAsset(inp));
@@ -5509,6 +5533,13 @@ function gatherTenantConfig(schema) {
         if (open && close && open.value && close.value) obj[d.key] = { open: open.value, close: close.value };
       });
       config[field.key] = obj;
+    } else if (field.type === 'timerange') {
+      const en = main.querySelector(`.tr-enabled[data-key="${field.key}"]`);
+      const s = document.getElementById(`tf-${field.key}-start`);
+      const e = document.getElementById(`tf-${field.key}-end`);
+      config[field.key] = (en && en.checked && s && e && s.value && e.value)
+        ? { start: s.value, end: e.value }
+        : null;
     } else {
       const el = document.getElementById(`tf-${field.key}`);
       if (!el) continue;

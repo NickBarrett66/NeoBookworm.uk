@@ -169,16 +169,30 @@ export function getWorkingSlots(isoDate, config = SLUG_CONFIG.hetyres) {
     cursor = end;
   }
 
+  // Phase 5 — daily lunch/midday gap: drop any slot overlapping the break window.
+  const lb = config.lunchBreak;
+  if (lb && lb.start && lb.end) {
+    const lunchStart = londonWallToInstant(`${isoDate}T${lb.start}:00`, timeZone).getTime();
+    const lunchEnd = londonWallToInstant(`${isoDate}T${lb.end}:00`, timeZone).getTime();
+    return slots.filter((s) => !(s.start.getTime() < lunchEnd && s.end.getTime() > lunchStart));
+  }
+
   return slots;
 }
 
 export function filterAvailableSlots(workingSlots, busyPeriods, config = SLUG_CONFIG.hetyres) {
   const timeZone = config.timezone;
+  // Phase 5 — buffer between appointments: pad each busy period on both sides so
+  // back-to-back bookings leave a gap. Applies to our own events and external
+  // calendar events alike (both come through freebusy).
+  const bufferMs = (config.bufferMinutes || 0) * 60_000;
   return workingSlots
     .filter(
       (slot) =>
         !busyPeriods.some(
-          (busy) => slot.start < busy.end && slot.end > busy.start,
+          (busy) =>
+            slot.start.getTime() < busy.end.getTime() + bufferMs &&
+            slot.end.getTime() > busy.start.getTime() - bufferMs,
         ),
     )
     .map((slot) => instantToWallString(slot.start, timeZone));

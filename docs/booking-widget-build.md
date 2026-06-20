@@ -1292,6 +1292,31 @@ The image-upload path is intentionally generic: a future gallery/content image
 is the same field type + the same endpoint, which is what turns the portal into
 a light client CMS later.
 
+### Phase 5 — scheduling depth, built (June 2026)
+
+Three scheduling controls, all schema-driven and consumed at the existing slot
+chokepoints (so the slots endpoint, month-availability dots, and the server-side
+booking validity check all honour them automatically).
+
+- **`src/schema.js`** — `int` validator now supports `nullable`; new `timerange`
+  validator (optional `{start, end}` HH:MM window, null = none). New fields:
+  `bufferMinutes` (int, client, default 0), `lunchBreak` (timerange, client,
+  nullable), `cancellationCutoffMinutes` (int, client, nullable).
+- **`src/calendar.js`** — `getWorkingSlots` drops any slot overlapping
+  `lunchBreak`; `filterAvailableSlots` pads each busy period by `bufferMinutes`
+  on both sides (applies to our own events and external calendar events alike,
+  since both arrive via freebusy). Buffer rounds to the slot grid.
+- **`src/index.js`** — cancel **and** reschedule now gate on
+  `cancellationCutoffMinutes ?? minLeadMinutes` (falls back to the booking lead
+  time when unset, so existing tenants are unchanged). Reschedule previously had
+  no change-window gate on the existing booking — it does now.
+- **`dashboard.html`** — `timerange` widget (enabled toggle + two time inputs);
+  buffer/cutoff use the existing number input (blank cutoff → null → falls back).
+
+Defaults preserve current behaviour exactly: buffer 0, no lunch, cutoff = lead
+time. **Deploy:** `cd workers/booking && npx wrangler deploy` (slot maths +
+cancel/reschedule); Vercel redeploys the dashboard widget on push. No secrets.
+
 ---
 
 ## Appendix — useful test commands

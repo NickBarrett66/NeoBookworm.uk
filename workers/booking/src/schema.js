@@ -65,6 +65,12 @@ export const CONFIG_SCHEMA = [
       hint: 'Comma-separated, must match the accent colour.' },
   ] },
   { key: 'workingHours', label: 'Opening hours', type: 'hours', scope: 'client', phase: 1, required: true, days: DOW },
+  { key: 'bufferMinutes', label: 'Buffer between appointments (minutes)', type: 'int', scope: 'client', phase: 5, min: 0, max: 120, default: 0,
+    hint: 'Gap kept free around each booking. 0 = back-to-back allowed.' },
+  { key: 'lunchBreak', label: 'Daily break', type: 'timerange', scope: 'client', phase: 5, nullable: true,
+    hint: 'A midday gap with no bookable slots, e.g. 12:30–13:30. Leave off for none.' },
+  { key: 'cancellationCutoffMinutes', label: 'Cancellation cutoff (minutes)', type: 'int', scope: 'client', phase: 5, min: 0, max: 10080, nullable: true,
+    hint: 'How close to the appointment a customer can still cancel/reschedule online. Leave blank to use the minimum-notice value.' },
 ];
 
 const FIELD_BY_KEY = new Map(CONFIG_SCHEMA.map((f) => [f.key, f]));
@@ -104,6 +110,7 @@ const TYPE_VALIDATORS = {
 
   int(value, field) {
     if (value == null || value === '') {
+      if (field.nullable) return { value: null };
       if (field.default != null) return { value: field.default };
       return { error: `${field.label} is required` };
     }
@@ -140,6 +147,20 @@ const TYPE_VALIDATORS = {
       out[sub.key] = r.value;
     }
     return { value: out };
+  },
+
+  // An optional daily time window (e.g. a lunch break). null = no window.
+  timerange(value, field) {
+    const empty = value == null || value === '' ||
+      (typeof value === 'object' && !value.start && !value.end);
+    if (empty) return { value: null };
+    if (typeof value !== 'object') return { error: `${field.label} is malformed` };
+    const { start, end } = value;
+    if (!TIME_RE.test(start || '') || !TIME_RE.test(end || '')) {
+      return { error: `${field.label} must be HH:MM times` };
+    }
+    if (start >= end) return { error: `${field.label}: start must be before end` };
+    return { value: { start, end } };
   },
 
   hours(value, field) {
