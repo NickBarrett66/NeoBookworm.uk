@@ -97,7 +97,8 @@ module.exports = async function handler(req, res) {
 
   // Surface SOAP faults clearly
   if (soapResponse.includes('<faultstring>')) {
-    const fault = extractXmlValue(soapResponse, 'faultstring');
+    const faultMatch = soapResponse.match(/<faultstring[^>]*>([^<]*)<\/faultstring>/i);
+    const fault = faultMatch ? faultMatch[1].trim() : 'Unknown fault';
     return res.status(400).json({ error: 'RegCheck fault', detail: fault, raw: soapResponse });
   }
 
