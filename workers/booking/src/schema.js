@@ -83,6 +83,12 @@ export const CONFIG_SCHEMA = [
   { key: 'addressEnabled', label: 'Ask for address', type: 'bool', scope: 'client', phase: 4, default: false,
     hint: 'Shows an address + postcode field (postcode checked via postcodes.io). Useful for home visits.' },
   { key: 'addressRequired', label: 'Address required', type: 'bool', scope: 'client', phase: 4, default: false },
+  { key: 'addressLookup', label: 'Address lookup', type: 'select', scope: 'nick', phase: 4, default: 'postcode',
+    options: [
+      { value: 'postcode', label: 'Postcode check (free)' },
+      { value: 'full', label: 'Full address finder (Ideal Postcodes — paid)' },
+    ],
+    hint: 'Free: validates the postcode and shows the area. Full: customers pick their exact address (~4.5p/lookup; needs IDEAL_POSTCODES_KEY secret).' },
   { key: 'customQuestions', label: 'Custom questions', type: 'questions', scope: 'client', phase: 4, default: [],
     hint: 'Extra questions shown on the booking form. Answers appear in the calendar event and your email.' },
 ];

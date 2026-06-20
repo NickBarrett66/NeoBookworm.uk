@@ -21,7 +21,8 @@ export async function insertBooking(db, { slug, slotStart, slotEnd, name, email,
            (id, slug, slot_start, slot_end, name, email, phone, note, reg, vehicle_summary, address, postcode, custom_answers, google_event_id, status, manage_token)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'confirmed', ?)`,
       )
-      .bind(id, slug, slotStart, slotEnd, name, email, phone ?? null, note ?? null, reg ?? null, vehicleSummary ?? null, address ?? null, postcode ?? null, customAnswersJson, manageToken)
+      // phone column is NOT NULL (legacy schema); store '' when phone is disabled/blank.
+      .bind(id, slug, slotStart, slotEnd, name, email, phone ?? '', note ?? null, reg ?? null, vehicleSummary ?? null, address ?? null, postcode ?? null, customAnswersJson, manageToken)
       .run();
     return { id, manageToken };
   } catch (err) {

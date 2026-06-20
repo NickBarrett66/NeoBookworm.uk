@@ -60,6 +60,8 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const noteRequired = noteEnabled && config.noteRequired === true;
   const addressEnabled = config.addressEnabled === true;
   const addressRequired = addressEnabled && config.addressRequired === true;
+  const addressLookup = config.addressLookup === 'full' ? 'full' : 'postcode';
+  const addressLookupJson = JSON.stringify(addressLookup);
   const locationType = config.locationType || 'in_person';
   const locationDetail = config.locationDetail ? escHtml(config.locationDetail) : null;
   const customQuestions = Array.isArray(config.customQuestions) ? config.customQuestions : [];
@@ -71,6 +73,22 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     : locationType === 'video'
       ? (config.locationDetail ? 'This is a video appointment. Joining details: ' + locationDetail : 'This is a video appointment — a joining link will be emailed to you.')
       : (config.locationDetail ? 'Location: ' + locationDetail : null);
+  let addressBlock = '';
+  if (addressEnabled) {
+    const addrField = `<div class="field">
+            <label for="address">Address${addressRequired ? '' : optionalTag}</label>
+            <textarea id="address" name="address" maxlength="300" ${addressRequired ? 'required' : ''} autocomplete="street-address"></textarea>
+          </div>`;
+    const findBtn = addressLookup === 'full' ? `<button type="button" id="address-find" class="pc-find-btn">Find address</button>` : '';
+    const picker = addressLookup === 'full' ? `<select id="address-picker" class="address-picker" hidden></select>` : '';
+    const pcField = `<div class="field">
+            <label for="postcode">Postcode${addressRequired ? '' : optionalTag}</label>
+            <div class="pc-row"><input type="text" id="postcode" name="postcode" maxlength="10" ${addressRequired ? 'required' : ''} autocomplete="postal-code" style="text-transform:uppercase">${findBtn}</div>
+            ${picker}
+            <div class="postcode-msg" id="postcode-msg" hidden></div>
+          </div>`;
+    addressBlock = addressLookup === 'full' ? (pcField + addrField) : (addrField + pcField);
+  }
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -518,6 +536,24 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     .postcode-msg.bad { color: #ffb3b3; }
     .postcode-msg.ok { color: #9ff0c0; }
 
+    .pc-row { display: flex; gap: 0.5rem; align-items: stretch; }
+    .pc-row input { flex: 1; }
+    .pc-find-btn {
+      flex: 0 0 auto;
+      padding: 0 0.9rem;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      background: var(--accent);
+      color: var(--accent-fg, #0f1f3d);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .pc-find-btn:disabled { opacity: 0.6; cursor: default; }
+    .address-picker { margin-top: 0.5rem; }
+
     .location-note {
       margin: 0 0 1rem;
       padding: 0.6rem 0.8rem;
@@ -793,15 +829,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <input type="text" id="reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
             <div class="vehicle-card" id="vehicle-card" hidden></div>
           </div>` : ''}
-          ${addressEnabled ? `<div class="field">
-            <label for="address">Address${addressRequired ? '' : optionalTag}</label>
-            <textarea id="address" name="address" maxlength="300" ${addressRequired ? 'required' : ''} autocomplete="street-address"></textarea>
-          </div>
-          <div class="field">
-            <label for="postcode">Postcode${addressRequired ? '' : optionalTag}</label>
-            <input type="text" id="postcode" name="postcode" maxlength="10" ${addressRequired ? 'required' : ''} autocomplete="postal-code" style="text-transform:uppercase">
-            <div class="postcode-msg" id="postcode-msg" hidden></div>
-          </div>` : ''}
+          ${addressBlock}
           ${customQuestions.map((q) => renderCustomQuestionField(q)).join('')}
           ${noteEnabled ? `<div class="field">
             <label for="note">${noteLabel}${noteRequired ? '' : optionalTag}</label>
@@ -843,6 +871,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var WORKING_DOWS = ${workingDowsJson};
   var CUSTOM_QUESTIONS = ${customQuestionsJson};
   var ADDRESS_ENABLED = ${addressEnabledJson};
+  var ADDRESS_LOOKUP = ${addressLookupJson};
   var UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/i;
 
   // DOM refs
@@ -1261,14 +1290,75 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     if (selectedDate) loadSlots(selectedDate);
   });
 
-  async function validatePostcode(pc) {
-    try {
-      var r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/[\\s]+/g, '')) + '/validate');
-      if (!r.ok) return true; // service down — don't block the booking (server still checks format)
-      var d = await r.json();
-      return d && d.result === true;
-    } catch (e) { return true; }
+  function setPostcodeMsg(kind, text) {
+    var m = document.getElementById('postcode-msg');
+    if (!m) return;
+    if (!text) { m.hidden = true; return; }
+    m.hidden = false; m.className = 'postcode-msg ' + kind; m.textContent = text;
   }
+
+  // Free postcodes.io lookup — returns { valid, area }. Fails open on network error.
+  async function postcodeArea(pc) {
+    try {
+      var r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/[\\s]+/g, '')));
+      if (r.status === 404) return { valid: false, area: null };
+      if (!r.ok) return { valid: true, area: null };
+      var d = await r.json();
+      if (!d || !d.result) return { valid: false, area: null };
+      var parts = [d.result.admin_district, d.result.region].filter(function (x) { return x; });
+      return { valid: true, area: parts.join(', ') };
+    } catch (e) { return { valid: true, area: null }; }
+  }
+
+  // Postcode UX: free area-confirmation on blur, or full Ideal Postcodes finder.
+  (function wireAddress() {
+    var pcEl = document.getElementById('postcode');
+    if (!pcEl || !ADDRESS_ENABLED) return;
+    if (ADDRESS_LOOKUP !== 'full') {
+      pcEl.addEventListener('blur', async function () {
+        var pc = pcEl.value.trim();
+        if (!pc) { setPostcodeMsg('', ''); return; }
+        if (!UK_POSTCODE_RE.test(pc)) { setPostcodeMsg('bad', 'Please enter a valid UK postcode'); return; }
+        var a = await postcodeArea(pc);
+        if (!a.valid) setPostcodeMsg('bad', 'We could not find that postcode');
+        else setPostcodeMsg('ok', a.area ? '✓ ' + a.area : '');
+      });
+      return;
+    }
+    var findBtn = document.getElementById('address-find');
+    var picker = document.getElementById('address-picker');
+    var found = [];
+    if (findBtn) findBtn.addEventListener('click', async function () {
+      var pc = pcEl.value.trim();
+      if (!UK_POSTCODE_RE.test(pc)) { setPostcodeMsg('bad', 'Please enter a valid UK postcode'); return; }
+      findBtn.disabled = true;
+      var orig = findBtn.textContent;
+      findBtn.textContent = 'Searching…';
+      try {
+        var r = await fetch('/' + SLUG + '/address-lookup?postcode=' + encodeURIComponent(pc));
+        var d = await r.json();
+        found = (d && d.addresses) || [];
+        if (!found.length) { setPostcodeMsg('bad', 'No addresses found — please type yours'); if (picker) picker.hidden = true; return; }
+        if (picker) {
+          var opts = '<option value="">' + found.length + ' found — choose yours…</option>';
+          for (var i = 0; i < found.length; i++) opts += '<option value="' + i + '">' + found[i].summary.replace(/</g, '&lt;') + '</option>';
+          picker.innerHTML = opts;
+          picker.hidden = false;
+        }
+        setPostcodeMsg('ok', 'Select your address below');
+      } catch (e) { setPostcodeMsg('bad', 'Lookup failed — please type your address'); }
+      finally { findBtn.disabled = false; findBtn.textContent = orig; }
+    });
+    if (picker) picker.addEventListener('change', function () {
+      if (picker.value === '') return;
+      var a = found[picker.value];
+      if (!a) return;
+      var addrEl = document.getElementById('address');
+      if (addrEl) addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\\n');
+      if (a.postcode) pcEl.value = a.postcode;
+      setPostcodeMsg('ok', '✓ Address selected');
+    });
+  })();
 
   bookingForm.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -1277,21 +1367,20 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 
     if (!RESCHEDULE_TOKEN && ADDRESS_ENABLED) {
       var pcEl = document.getElementById('postcode');
-      var pcMsg = document.getElementById('postcode-msg');
       var pc = pcEl ? pcEl.value.trim() : '';
       if (pc) {
         if (!UK_POSTCODE_RE.test(pc)) {
-          if (pcMsg) { pcMsg.hidden = false; pcMsg.className = 'postcode-msg bad'; pcMsg.textContent = 'Please enter a valid UK postcode'; }
+          setPostcodeMsg('bad', 'Please enter a valid UK postcode');
           if (pcEl) pcEl.focus();
           return;
         }
-        var pcOk = await validatePostcode(pc);
-        if (!pcOk) {
-          if (pcMsg) { pcMsg.hidden = false; pcMsg.className = 'postcode-msg bad'; pcMsg.textContent = 'We could not find that postcode — please check it'; }
+        var area = await postcodeArea(pc);
+        if (!area.valid) {
+          setPostcodeMsg('bad', 'We could not find that postcode — please check it');
           if (pcEl) pcEl.focus();
           return;
         }
-        if (pcMsg) pcMsg.hidden = true;
+        setPostcodeMsg('ok', area.area ? '✓ ' + area.area : '');
       }
     }
 

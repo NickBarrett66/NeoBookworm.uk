@@ -1347,12 +1347,24 @@ All four sub-features. Touches 8 files; the booking form is now config-driven.
   (add/remove rows, per-row label/type/required/options); location + toggle
   fields render via the existing schema machinery.
 
+**Address lookup (free default + paid opt-in).** Config `addressLookup` (select,
+Nick-scope, default `postcode`):
+- **`postcode` (free, default)** — postcodes.io `/postcodes/{pc}`: validates the
+  postcode and shows the area (`✓ admin_district, region`) on blur and submit.
+  Fails open if the service is down. No key, no cost.
+- **`full` (opt-in, paid)** — a "Find address" button + address-picker dropdown.
+  The Worker route `GET /:slug/address-lookup?postcode=` proxies **Ideal
+  Postcodes** so the API key stays server-side; gated to `full`-mode tenants and
+  IP rate-limited to protect credits (~4.5p/lookup). Needs Worker secret
+  **`IDEAL_POSTCODES_KEY`**; lookups only fire on the button (never per keystroke).
+
 Defaults preserve current behaviour (phone on+required, note on+optional,
-address off, in_person, no custom questions). **Deploy order matters:**
+address off, in_person, no custom questions, postcode-only lookup). **Deploy order matters:**
 1. Apply the migration: `cd workers/booking && npx wrangler d1 migrations apply
    bookings --remote` (and `--local` for dev) — **before** deploying the Worker.
 2. `npx wrangler deploy`; Vercel redeploys `notify-booking` + dashboard on push.
-No new secrets.
+No new secrets *unless* a tenant uses `addressLookup: 'full'`, which needs
+`npx wrangler secret put IDEAL_POSTCODES_KEY` on the Worker.
 
 ---
 

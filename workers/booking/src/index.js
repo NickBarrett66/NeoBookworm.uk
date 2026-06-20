@@ -230,6 +230,48 @@ async function handleSlots(slug, url, env) {
   }
 }
 
+// Full house-level address finder — proxies Ideal Postcodes so the API key stays
+// server-side. Gated to tenants on addressLookup:'full' and rate-limited to
+// protect paid credits.
+async function handleAddressLookup(slug, url, req, env) {
+  const config = await getConfig(slug, env);
+  if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
+  if (!config.addressEnabled || config.addressLookup !== 'full') {
+    return jsonResponse({ error: 'Address lookup not enabled' }, 400);
+  }
+  const key = env.IDEAL_POSTCODES_KEY;
+  if (!key) return jsonResponse({ error: 'Address lookup not configured' }, 500);
+
+  const postcode = (url.searchParams.get('postcode') || '').trim();
+  if (!UK_POSTCODE_RE.test(postcode)) return jsonResponse({ error: 'Invalid postcode' }, 400);
+
+  const ip = req.headers.get('CF-Connecting-IP');
+  if (await checkIpRateLimit(env, ip)) return jsonResponse({ error: 'too_many' }, 429);
+
+  try {
+    const pc = encodeURIComponent(postcode.replace(/\s+/g, '').toUpperCase());
+    const res = await fetch(`https://api.ideal-postcodes.co.uk/v1/postcodes/${pc}?api_key=${encodeURIComponent(key)}`);
+    const data = await res.json().catch(() => null);
+    if (!data) return jsonResponse({ error: 'lookup_failed' }, 502);
+    if (res.status === 404 || data.code === 4040) return jsonResponse({ addresses: [] });
+    if (!Array.isArray(data.result)) {
+      console.error('[booking] ideal-postcodes error:', res.status, data.message || '');
+      return jsonResponse({ error: 'lookup_failed' }, 502);
+    }
+    const addresses = data.result.map((a) => ({
+      line1: a.line_1 || '',
+      line2: [a.line_2, a.line_3].filter(Boolean).join(', '),
+      town: a.post_town || '',
+      postcode: a.postcode || postcode.toUpperCase(),
+      summary: [a.line_1, a.line_2, a.line_3, a.post_town].filter(Boolean).join(', '),
+    }));
+    return jsonResponse({ addresses });
+  } catch (err) {
+    console.error('[booking] address lookup error:', err);
+    return jsonResponse({ error: 'lookup_failed' }, 502);
+  }
+}
+
 async function handleBook(slug, req, env, ctx) {
   const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ ok: false, error: 'Unknown booking slug' }, 404);
@@ -507,6 +549,9 @@ export default {
 
     const slotsMatch = url.pathname.match(/^\/([^/]+)\/slots$/);
     if (req.method === 'GET' && slotsMatch) return handleSlots(slotsMatch[1], url, env);
+
+    const addressMatch = url.pathname.match(/^\/([^/]+)\/address-lookup$/);
+    if (req.method === 'GET' && addressMatch) return handleAddressLookup(addressMatch[1], url, req, env);
 
     if (req.method === 'GET' && url.pathname === '/favicon.ico') {
       return Response.redirect('https://neobookworm.uk/favicon.ico', 302);

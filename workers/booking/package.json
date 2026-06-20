@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "vitest": "^3.0.0",
-    "wrangler": "^3.0.0"
+    "wrangler": "^4.103.0"
   },
   "dependencies": {
     "nodemailer": "^6.9.0"
