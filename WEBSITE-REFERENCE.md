@@ -155,7 +155,14 @@ Project documentation describes **separate Netlify sites** per trade demo; they 
 
 ### 6.2 Intake: `POST /api/intake-upload-session`
 
-**File:** `api/intake-upload-session.js`  
+**File:** `api/intake.js` (`action=upload-session`)  
+
+> **Routing note:** As of the function-count consolidation, the three intake
+> endpoints (`intake-upload-session`, `intake-finalize`, `onboarding-intake`)
+> live in a single `api/intake.js` dispatcher to stay under Vercel's Hobby-plan
+> 12-function limit. The original URLs are preserved via rewrites in
+> `vercel.json` (`/api/intake-upload-session` → `/api/intake?action=upload-session`,
+> etc.), so callers are unchanged.
 
 **Purpose:** Start a **direct-to-R2** upload session; returns **presigned PUT URLs** and a signed **`session`** object for finalize.
 
@@ -205,7 +212,7 @@ Official context: [Cloudflare R2 CORS](https://developers.cloudflare.com/r2/buck
 
 ### 6.4 Intake: `POST /api/intake-finalize`
 
-**File:** `api/intake-finalize.js`  
+**File:** `api/intake.js` (`action=finalize`) — see routing note in §6.2.  
 
 **Purpose:** Verify objects exist in R2, then create/update **Notion** row; idempotent per `uploadId` via marker object `intake/{uploadId}/_submitted.json`.
 
