@@ -48,6 +48,14 @@ export const CONFIG_SCHEMA = [
     hint: 'The label above the free-text box on the details form.' },
   { key: 'notePlaceholder', label: 'Note field placeholder', type: 'text', scope: 'client', phase: 4, nullable: true, max: 120,
     default: 'Anything else we should know', hint: 'Greyed-out example text inside the box.' },
+  { key: 'logoUrl', label: 'Logo', type: 'image', scope: 'nick', phase: 3, nullable: true,
+    hint: 'Shown in the widget header. PNG/SVG/WebP, ideally transparent.' },
+  { key: 'introLine', label: 'Intro line', type: 'text', scope: 'client', phase: 3, nullable: true, max: 120,
+    hint: 'Optional tagline shown under the header, e.g. "Same-day fitting available".' },
+  { key: 'successHeading', label: 'Confirmation heading', type: 'text', scope: 'client', phase: 3, nullable: true, max: 60,
+    default: 'Booking confirmed', hint: 'Shown after a successful booking.' },
+  { key: 'successMessage', label: 'Confirmation message', type: 'text', scope: 'client', phase: 3, nullable: true, max: 160,
+    default: 'A confirmation has been sent to your email address.', hint: 'The line under the confirmation heading.' },
   { key: 'theme', label: 'Theme colours', type: 'group', scope: 'nick', phase: 3, fields: [
     { key: 'bg', label: 'Background', type: 'color', default: '#0f1f3d' },
     { key: 'accent', label: 'Accent', type: 'color', default: '#f5a623' },
@@ -83,6 +91,14 @@ const TYPE_VALIDATORS = {
   url(value, field) {
     if (value == null || value === '') return field.nullable ? { value: null } : { error: `${field.label} is required` };
     if (typeof value !== 'string' || !URL_RE.test(value.trim())) return { error: `${field.label} must start with http:// or https://` };
+    return { value: value.trim() };
+  },
+
+  // An uploaded asset URL (logo, and later gallery/content images). Stored as a
+  // plain URL string; the dashboard uploads the file to R2 and sets this value.
+  image(value, field) {
+    if (value == null || value === '') return { value: null };
+    if (typeof value !== 'string' || !URL_RE.test(value.trim())) return { error: `${field.label} must be an uploaded image URL` };
     return { value: value.trim() };
   },
 

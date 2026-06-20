@@ -17,6 +17,10 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const regEnabled = config.regLookup !== false;
   const noteLabel = escHtml(config.noteLabel || 'Note');
   const notePlaceholder = escHtml(config.notePlaceholder || 'Anything else we should know');
+  const logoUrl = config.logoUrl ? escHtml(config.logoUrl) : null;
+  const introLine = config.introLine ? escHtml(config.introLine) : null;
+  const successHeading = escHtml(config.successHeading || 'Booking confirmed');
+  const successMessage = escHtml(config.successMessage || 'A confirmation has been sent to your email address.');
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -76,6 +80,21 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     .biz-meta {
       font-size: 0.875rem;
       opacity: 0.75;
+    }
+
+    .biz-logo {
+      height: 28px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .biz-tagline {
+      margin: 0;
+      padding: 0.6rem 1.25rem 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
     }
 
     /* ── Outer wrap ──────────────────────────────── */
@@ -636,10 +655,12 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 </head>
 <body>
   <header class="biz-header">
+    ${logoUrl ? `<img class="biz-logo" src="${logoUrl}" alt="${displayName}">` : ''}
     <span class="biz-name">${displayName}</span>
     <span class="biz-sep" aria-hidden="true">·</span>
     <span class="biz-meta">Book a ${slotDuration}-min slot</span>
   </header>
+  ${introLine ? `<p class="biz-tagline">${introLine}</p>` : ''}
 
   <div class="wrap">
 
@@ -720,9 +741,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     <div id="view-success" class="view" hidden>
       <div class="success-wrap">
         <div class="success-icon" aria-hidden="true">&#10003;</div>
-        <h2>Booking confirmed</h2>
+        <h2>${successHeading}</h2>
         <div class="success-slot-card" id="success-slot-text"></div>
-        <p>A confirmation has been sent to your email address.</p>
+        <p>${successMessage}</p>
         <div class="success-actions">
           <button type="button" class="ics-btn" id="ics-btn">&#128197; Add to calendar</button>
           <button type="button" class="success-another-btn" id="success-another-btn">Book another slot</button>

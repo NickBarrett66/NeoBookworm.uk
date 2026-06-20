@@ -5352,6 +5352,17 @@ function tenantScalarInput(field, value, idAttr) {
       return `<select ${common}>${(field.options || []).map(o => `<option value="${escAttr(o)}"${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select>`;
     case 'color':
       return `<input type="color" id="${idAttr}" value="${escAttr(v || '#000000')}" style="width:48px;height:34px;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);cursor:pointer;vertical-align:middle"> <span style="font-size:.78rem;color:var(--muted)">${escHtml(v)}</span>`;
+    case 'image': {
+      const has = v && /^https?:/.test(v);
+      return `
+        <input type="hidden" id="${idAttr}" value="${escAttr(v)}">
+        <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+          <img id="${idAttr}-preview" src="${escAttr(v || '')}" alt="" style="height:40px;max-width:160px;object-fit:contain;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;padding:4px;${has ? '' : 'display:none'}">
+          <input type="file" class="img-file" data-target="${idAttr}" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="font-size:.8rem;color:var(--muted);max-width:230px">
+          <button type="button" class="filter-btn img-clear" data-target="${idAttr}" style="font-size:.74rem;padding:.2rem .6rem;${has ? '' : 'display:none'}">Remove</button>
+          <span class="img-status" id="${idAttr}-status" style="font-size:.78rem;color:var(--muted)"></span>
+        </div>`;
+    }
     default: // text, url
       return `<input type="text" ${common} value="${escAttr(v)}"${field.max ? ` maxlength="${field.max}"` : ''} style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none;min-width:280px">`;
   }
@@ -5455,6 +5466,20 @@ function renderTenantDetail(slug, config, schema) {
       if (lbl && lbl.tagName === 'SPAN') lbl.textContent = inp.value;
     });
   });
+  // Image fields: upload on pick, clear on remove
+  main.querySelectorAll('.img-file').forEach(inp => {
+    inp.addEventListener('change', () => uploadTenantAsset(inp));
+  });
+  main.querySelectorAll('.img-clear').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      const hidden = document.getElementById(target);
+      const preview = document.getElementById(`${target}-preview`);
+      if (hidden) hidden.value = '';
+      if (preview) { preview.src = ''; preview.style.display = 'none'; }
+      btn.style.display = 'none';
+    });
+  });
 
   document.getElementById('tenant-cancel')?.addEventListener('click', () => {
     state.tenantsView = 'list';
@@ -5493,6 +5518,54 @@ function gatherTenantConfig(schema) {
     }
   }
   return config;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => { const s = String(r.result); const i = s.indexOf(','); resolve(i >= 0 ? s.slice(i + 1) : s); };
+    r.onerror = () => reject(new Error('Could not read file'));
+    r.readAsDataURL(file);
+  });
+}
+
+async function uploadTenantAsset(inp) {
+  const file = inp.files && inp.files[0];
+  if (!file) return;
+  const target = inp.dataset.target;
+  const status = document.getElementById(`${target}-status`);
+  const preview = document.getElementById(`${target}-preview`);
+  const hidden = document.getElementById(target);
+  const clearBtn = document.querySelector(`.img-clear[data-target="${target}"]`);
+  if (file.size > 2 * 1024 * 1024) {
+    status.style.color = 'var(--red)';
+    status.textContent = 'Too large (max 2 MB)';
+    inp.value = '';
+    return;
+  }
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+  try {
+    const dataBase64 = await fileToBase64(file);
+    const slug = state.tenantsSlug || (document.getElementById('tenant-slug')?.value || '').trim();
+    const res = await fetch('/api/booking-asset', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${state.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug, filename: file.name, contentType: file.type, dataBase64 }),
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Upload failed');
+    if (hidden) hidden.value = data.url;
+    if (preview) { preview.src = data.url; preview.style.display = ''; }
+    if (clearBtn) clearBtn.style.display = '';
+    status.style.color = 'var(--green, #4caf50)';
+    status.textContent = 'Uploaded ✓';
+  } catch (err) {
+    status.style.color = 'var(--red)';
+    status.textContent = err.message;
+  } finally {
+    inp.value = '';
+  }
 }
 
 async function saveTenant(slug, schema) {

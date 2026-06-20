@@ -1260,6 +1260,38 @@ migration is needed.
 tags) and they render automatically. Portal self-service = a Vercel→Worker
 proxy that forwards only `scope: 'client'` fields, scoped to the URL slug.
 
+### Phase 3 — branding, built (June 2026)
+
+Per-tenant branding, and the first **image field type** (the seed of the
+content-CMS direction). All schema-driven through Phase 2.5's machinery.
+
+- **`src/schema.js`** — new `image` validator (URL or null) and four fields:
+  `logoUrl` (image, Nick), `introLine` (text, client), `successHeading` +
+  `successMessage` (text, client, with sensible defaults). Favicon deliberately
+  omitted — the widget is always embedded in an iframe, so a per-tenant favicon
+  never renders.
+- **`src/ui.js`** — header shows `logoUrl` + optional `introLine` tagline;
+  success screen uses `successHeading`/`successMessage` (with `.biz-logo` /
+  `.biz-tagline` CSS).
+- **`api/booking-asset.js`** (new) — auth `DASHBOARD_SECRET`; takes
+  `{ slug, filename, contentType, dataBase64 }`, uploads via the existing
+  `uploadToR2()` helper to `booking-assets/<slug>/…`, returns the public URL.
+  Reuses the **intake R2 env vars** already set on Vercel (`R2_ACCESS_KEY_ID`,
+  `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`, +
+  `R2_ENDPOINT`/`R2_ACCOUNT_ID`) — **no new R2 config or bucket CORS needed**
+  (upload is server-side `PutObject`, not a browser presigned PUT).
+- **`dashboard.html`** — the `image` field renders a live preview + file picker +
+  Remove; picking a file uploads immediately and stores the returned URL in the
+  hidden field that `tenant_save` persists.
+
+**Deploy:** `cd workers/booking && npx wrangler deploy` (logo/intro/success
+rendering); Vercel redeploys on push (the `booking-asset` route + dashboard
+image field). No new secrets — `booking-asset` reuses the intake R2 vars.
+
+The image-upload path is intentionally generic: a future gallery/content image
+is the same field type + the same endpoint, which is what turns the portal into
+a light client CMS later.
+
 ---
 
 ## Appendix — useful test commands
