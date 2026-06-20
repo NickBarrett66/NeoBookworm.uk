@@ -1,0 +1,218 @@
+// Config schema — the single contract that drives:
+//   1. validation of every write to the `tenants` table (Worker, admin.js)
+//   2. the dashboard's tenant-edit form (rendered generically from this metadata)
+//   3. (future) the portal's client-editable subset, and content fields beyond booking
+//
+// Design rule (Phase 2.5): keep this CONTENT-TYPE AGNOSTIC. A field is described
+// by a `type` whose validator lives in TYPE_VALIDATORS. Adding a new capability —
+// a per-tenant headline, a gallery image, a service description — is a matter of
+// adding a field below (and, for a genuinely new shape, a validator), NOT touching
+// the booking logic. That is what lets this generalise into a light client CMS.
+//
+// Each field:
+//   key       — property name in the stored config object
+//   label     — human label for the dashboard/portal form
+//   type      — drives the input widget and the validator
+//   scope     — 'nick' (dashboard only) | 'client' (also portal-editable later)
+//   phase     — which roadmap phase introduced it (documentation only)
+//   required  — must be present in a complete config (validateFull enforces)
+//   nullable  — may be explicitly null/empty
+//   default   — applied to brand-new tenants and when a value is absent
+//   + type-specific metadata (min/max, options, fields, max length, hint)
+
+const DOW = [
+  { key: '1', label: 'Monday' },
+  { key: '2', label: 'Tuesday' },
+  { key: '3', label: 'Wednesday' },
+  { key: '4', label: 'Thursday' },
+  { key: '5', label: 'Friday' },
+  { key: '6', label: 'Saturday' },
+  { key: '0', label: 'Sunday' },
+];
+
+export const CONFIG_SCHEMA = [
+  { key: 'displayName', label: 'Business name', type: 'text', scope: 'nick', phase: 1, required: true, max: 80,
+    hint: 'Shown as "Book a slot at …".' },
+  { key: 'homeUrl', label: 'Website URL', type: 'url', scope: 'nick', phase: 1, nullable: true,
+    hint: 'The "Back to …" link target. Leave blank to hide it.' },
+  { key: 'calendarId', label: 'Google Calendar ID', type: 'text', scope: 'nick', phase: 1, nullable: true, max: 200,
+    hint: 'Leave blank to use the default NeoBookworm calendar.' },
+  { key: 'timezone', label: 'Timezone', type: 'select', scope: 'nick', phase: 1, options: ['Europe/London'], default: 'Europe/London' },
+  { key: 'slotDuration', label: 'Slot length (minutes)', type: 'int', scope: 'nick', phase: 1, min: 5, max: 240, default: 30 },
+  { key: 'minLeadMinutes', label: 'Minimum notice (minutes)', type: 'int', scope: 'client', phase: 1, min: 0, max: 10080, default: 120,
+    hint: 'How far ahead the soonest bookable slot must be (120 = 2 hours).' },
+  { key: 'maxAdvanceDays', label: 'How far ahead bookable (days)', type: 'int', scope: 'client', phase: 1, min: 1, max: 365, default: 30 },
+  { key: 'regLookup', label: 'Vehicle registration lookup', type: 'bool', scope: 'nick', phase: 1, default: false,
+    hint: 'Shows the reg-plate lookup field (tyre/motor trades only).' },
+  { key: 'noteLabel', label: 'Note field label', type: 'text', scope: 'client', phase: 4, nullable: true, max: 60, default: 'Note',
+    hint: 'The label above the free-text box on the details form.' },
+  { key: 'notePlaceholder', label: 'Note field placeholder', type: 'text', scope: 'client', phase: 4, nullable: true, max: 120,
+    default: 'Anything else we should know', hint: 'Greyed-out example text inside the box.' },
+  { key: 'theme', label: 'Theme colours', type: 'group', scope: 'nick', phase: 3, fields: [
+    { key: 'bg', label: 'Background', type: 'color', default: '#0f1f3d' },
+    { key: 'accent', label: 'Accent', type: 'color', default: '#f5a623' },
+    { key: 'accentH', label: 'Accent (hover)', type: 'color', default: '#d4891a' },
+    { key: 'accentFg', label: 'Accent text', type: 'color', default: '#0f1f3d' },
+    { key: 'accentRgb', label: 'Accent RGB', type: 'text', default: '245, 166, 35', max: 20,
+      hint: 'Comma-separated, must match the accent colour.' },
+  ] },
+  { key: 'workingHours', label: 'Opening hours', type: 'hours', scope: 'client', phase: 1, required: true, days: DOW },
+];
+
+const FIELD_BY_KEY = new Map(CONFIG_SCHEMA.map((f) => [f.key, f]));
+
+// ── Type validators ────────────────────────────────────────────────────────────
+// Each returns { value } (cleaned) or { error } (string). They never throw.
+
+const TIME_RE  = /^([01]\d|2[0-3]):[0-5]\d$/;
+const URL_RE   = /^https?:\/\/[^\s]+$/i;
+const COLOR_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+const TYPE_VALIDATORS = {
+  text(value, field) {
+    if (value == null || value === '') {
+      if (field.nullable || !field.required) return { value: field.nullable ? null : (field.default ?? '') };
+      return { error: `${field.label} is required` };
+    }
+    if (typeof value !== 'string') return { error: `${field.label} must be text` };
+    const v = value.trim();
+    if (field.max && v.length > field.max) return { error: `${field.label} must be ${field.max} characters or fewer` };
+    return { value: v };
+  },
+
+  url(value, field) {
+    if (value == null || value === '') return field.nullable ? { value: null } : { error: `${field.label} is required` };
+    if (typeof value !== 'string' || !URL_RE.test(value.trim())) return { error: `${field.label} must start with http:// or https://` };
+    return { value: value.trim() };
+  },
+
+  int(value, field) {
+    if (value == null || value === '') {
+      if (field.default != null) return { value: field.default };
+      return { error: `${field.label} is required` };
+    }
+    const n = Number(value);
+    if (!Number.isInteger(n)) return { error: `${field.label} must be a whole number` };
+    if (field.min != null && n < field.min) return { error: `${field.label} must be at least ${field.min}` };
+    if (field.max != null && n > field.max) return { error: `${field.label} must be at most ${field.max}` };
+    return { value: n };
+  },
+
+  bool(value) {
+    return { value: value === true || value === 'true' || value === 1 || value === '1' };
+  },
+
+  select(value, field) {
+    if (value == null || value === '') return { value: field.default ?? field.options[0] };
+    if (!field.options.includes(value)) return { error: `${field.label} must be one of: ${field.options.join(', ')}` };
+    return { value };
+  },
+
+  color(value, field) {
+    if (value == null || value === '') return { value: field.default };
+    if (typeof value !== 'string' || !COLOR_RE.test(value.trim())) return { error: `${field.label} must be a hex colour like #0f1f3d` };
+    return { value: value.trim().toLowerCase() };
+  },
+
+  group(value, field) {
+    const obj = value && typeof value === 'object' ? value : {};
+    const out = {};
+    for (const sub of field.fields) {
+      const validator = TYPE_VALIDATORS[sub.type];
+      const r = validator(obj[sub.key], sub);
+      if (r.error) return { error: r.error };
+      out[sub.key] = r.value;
+    }
+    return { value: out };
+  },
+
+  hours(value, field) {
+    if (value == null || typeof value !== 'object') return { error: `${field.label} are required` };
+    const allowed = new Set(field.days.map((d) => d.key));
+    const out = {};
+    for (const [day, hrs] of Object.entries(value)) {
+      if (!allowed.has(day)) return { error: `Invalid day in opening hours: ${day}` };
+      if (!hrs || typeof hrs !== 'object') return { error: `Opening hours for day ${day} are malformed` };
+      const { open, close } = hrs;
+      if (!TIME_RE.test(open || '') || !TIME_RE.test(close || '')) {
+        return { error: `Opening hours for day ${day} must be HH:MM times` };
+      }
+      if (open >= close) return { error: `Opening time must be before closing time (day ${day})` };
+      out[day] = { open, close };
+    }
+    if (Object.keys(out).length === 0) return { error: 'At least one open day is required' };
+    return { value: out };
+  },
+};
+
+// ── Public API ──────────────────────────────────────────────────────────────────
+
+/** Field metadata for one scope, safe to send to the browser (no validators). */
+export function schemaForScope(scope) {
+  const fields = scope === 'client'
+    ? CONFIG_SCHEMA.filter((f) => f.scope === 'client')
+    : CONFIG_SCHEMA;
+  // structuredClone-free shallow copy is fine — these are plain data objects.
+  return JSON.parse(JSON.stringify(fields));
+}
+
+/** A complete config object built from schema defaults — the base for a new tenant. */
+export function applyDefaults() {
+  const out = {};
+  for (const field of CONFIG_SCHEMA) {
+    if (field.type === 'group') {
+      out[field.key] = {};
+      for (const sub of field.fields) out[field.key][sub.key] = sub.default ?? null;
+    } else if (field.type === 'hours') {
+      out[field.key] = { 1: { open: '09:00', close: '17:00' }, 2: { open: '09:00', close: '17:00' },
+        3: { open: '09:00', close: '17:00' }, 4: { open: '09:00', close: '17:00' }, 5: { open: '09:00', close: '17:00' } };
+    } else if (field.default !== undefined) {
+      out[field.key] = field.default;
+    } else if (field.nullable) {
+      out[field.key] = null;
+    }
+  }
+  return out;
+}
+
+/**
+ * Validate a partial set of incoming changes for a scope.
+ * Rejects any key not allowed for that scope (whitelist). Returns the cleaned
+ * patch (subset) or an error. Used for both full-object sends (dashboard) and
+ * partial sends (future portal).
+ */
+export function validatePatch(input, scope = 'nick') {
+  if (!input || typeof input !== 'object') return { ok: false, error: 'Config must be an object' };
+  const patch = {};
+  for (const [key, value] of Object.entries(input)) {
+    const field = FIELD_BY_KEY.get(key);
+    if (!field) return { ok: false, error: `Unknown config field: ${key}` };
+    if (scope === 'client' && field.scope !== 'client') {
+      return { ok: false, error: `Field not editable at this level: ${key}` };
+    }
+    const r = TYPE_VALIDATORS[field.type](value, field);
+    if (r.error) return { ok: false, error: r.error };
+    patch[key] = r.value;
+  }
+  return { ok: true, patch };
+}
+
+/**
+ * Validate a complete (merged) config before it is persisted, so we never write
+ * a config that would break the booking page. Fills defaults for absent fields.
+ */
+export function validateFull(config) {
+  if (!config || typeof config !== 'object') return { ok: false, error: 'Config must be an object' };
+  const out = {};
+  for (const field of CONFIG_SCHEMA) {
+    const r = TYPE_VALIDATORS[field.type](config[field.key], field);
+    if (r.error) return { ok: false, error: r.error };
+    out[field.key] = r.value;
+  }
+  return { ok: true, config: out };
+}
+
+const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/;
+export function isValidSlug(slug) {
+  return typeof slug === 'string' && SLUG_RE.test(slug);
+}

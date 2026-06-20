@@ -15,6 +15,8 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const homeUrl = config.homeUrl ? escHtml(config.homeUrl) : null;
   const rescheduleTokenJson = JSON.stringify(rescheduleToken);
   const regEnabled = config.regLookup !== false;
+  const noteLabel = escHtml(config.noteLabel || 'Note');
+  const notePlaceholder = escHtml(config.notePlaceholder || 'Anything else we should know');
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -701,8 +703,8 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <div class="vehicle-card" id="vehicle-card" hidden></div>
           </div>` : ''}
           <div class="field">
-            <label for="note">Note <span style="font-weight:400;opacity:0.6">(optional)</span></label>
-            <textarea id="note" name="note" maxlength="500" placeholder="e.g. tyre size or anything else we should know"></textarea>
+            <label for="note">${noteLabel} <span style="font-weight:400;opacity:0.6">(optional)</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="${notePlaceholder}"></textarea>
           </div>
           <div class="hp-field" aria-hidden="true">
             <label for="company">Company</label>

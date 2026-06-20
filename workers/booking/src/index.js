@@ -20,6 +20,12 @@ import {
 } from './db.js';
 import { sendConfirmationEmail, sendCancellationEmail, sendBusinessNotificationEmail } from './email.js';
 import { renderBookingPage, renderManagePage } from './ui.js';
+import {
+  handleAdminTenantList,
+  handleAdminTenantGet,
+  handleAdminTenantPut,
+  handleAdminOptions,
+} from './admin.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -370,6 +376,23 @@ async function handleReschedule(slug, req, env, ctx) {
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
+
+    // ── Admin tenant-config API (auth via ADMIN_SECRET; see admin.js) ──────────
+    if (url.pathname.startsWith('/admin/')) {
+      if (req.method === 'OPTIONS') return handleAdminOptions();
+      if (req.method === 'GET' && url.pathname === '/admin/tenants') {
+        return handleAdminTenantList(req, env);
+      }
+      const tenantMatch = url.pathname.match(/^\/admin\/tenant\/([^/]+)$/);
+      if (tenantMatch) {
+        const tslug = tenantMatch[1];
+        if (req.method === 'GET') return handleAdminTenantGet(tslug, req, env);
+        if (req.method === 'PUT') return handleAdminTenantPut(tslug, req, env);
+      }
+      return new Response(JSON.stringify({ ok: false, error: 'Not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const bookMatch = url.pathname.match(/^\/([^/]+)\/book$/);
     if (bookMatch && req.method === 'OPTIONS') {

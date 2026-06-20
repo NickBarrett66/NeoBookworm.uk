@@ -40,6 +40,7 @@
 //   D1_ENQUIRIES_ID     — defaults to neobookworm-enquiries DB id
 
 const { queryD1, prospectsDb, enquiriesDb } = require('./_lib/d1');
+const { bookingAdmin }                     = require('./_lib/booking');
 const { promoteToClient }                  = require('./_lib/promote');
 const { sendTemplated, sendRendered }      = require('./_lib/email');
 const { renderTemplate }                   = require('./_lib/templates');
@@ -1014,6 +1015,24 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
+    // ── tenant_save — proxy to booking Worker (validates + busts KV) ───────────
+    if (action === 'tenant_save') {
+      const { slug, config } = body;
+      if (!slug || !config || typeof config !== 'object') {
+        return res.status(400).json({ ok: false, error: 'slug and config object required' });
+      }
+      try {
+        const { status, data } = await bookingAdmin(`/admin/tenant/${encodeURIComponent(slug)}`, {
+          method: 'PUT',
+          body: { config },
+        });
+        return res.status(status).json(data);
+      } catch (err) {
+        console.error('[dashboard tenant_save]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+
     if (!id) return res.status(400).json({ error: 'id required' });
     const isDelete = action && action.endsWith('_delete');
     if (!fields && !isDelete) return res.status(400).json({ error: 'fields object required' });
@@ -1141,6 +1160,19 @@ module.exports = async (req, res) => {
         intake:    intakeRows[0]  || { total: 0, handled: 0 },
         contact:   contactRows[0] || { total: 0, handled: 0 },
       });
+    }
+
+    // ── Booking tenants: list + single config (proxy to booking Worker) ───────
+    if (action === 'tenant_list') {
+      const { status, data } = await bookingAdmin('/admin/tenants');
+      return res.status(status).json(data);
+    }
+
+    if (action === 'tenant_get') {
+      const slug = (req.query.slug || '').trim();
+      if (!slug) return res.status(400).json({ ok: false, error: 'slug required' });
+      const { status, data } = await bookingAdmin(`/admin/tenant/${encodeURIComponent(slug)}`);
+      return res.status(status).json(data);
     }
 
     // ── Prospects: business name search (overview) ───────────────────────────

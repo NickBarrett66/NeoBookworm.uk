@@ -982,6 +982,7 @@
       <button class="tab-btn" data-tab="enquiries" id="enq-tab-btn">Enquiries</button>
       <button class="tab-btn" data-tab="campaigns">Campaigns</button>
       <button class="tab-btn" data-tab="clients">Clients</button>
+      <button class="tab-btn" data-tab="bookings">Bookings</button>
     </nav>
     <div class="breadcrumb" id="breadcrumb">
       <span class="active">Overview</span>
@@ -1539,6 +1540,10 @@ const state = {
   clientsStageFilter:  'active',
   clientsSlug:         null,
   clientsFilterTimer:  null,
+  // bookings (tenant config)
+  tenantsView:         'list',   // 'list' | 'detail'
+  tenantsSlug:         null,
+  tenantsSchema:       null,
 };
 
 // ── Status metadata ──────────────────────────────────────────────────────────
@@ -1745,6 +1750,9 @@ function isTabAtRoot(tab) {
   if (tab === 'clients') {
     return state.clientsView === 'list';
   }
+  if (tab === 'bookings') {
+    return state.tenantsView === 'list';
+  }
   return true;
 }
 
@@ -1772,6 +1780,10 @@ function goToTabRoot(tab) {
     state.clientsStageFilter = 'active';
     state.clientsPage        = 1;
     loadClientsList();
+  } else if (tab === 'bookings') {
+    state.tenantsView = 'list';
+    state.tenantsSlug = null;
+    loadTenantsList();
   }
 }
 
@@ -4891,6 +4903,10 @@ document.getElementById('btn-back').addEventListener('click', () => {
     state.clientsView = 'list';
     loadClientsList({ soft: true });
   }
+  if (state.tab === 'bookings'  && state.tenantsView === 'detail') {
+    state.tenantsView = 'list';
+    loadTenantsList({ soft: true });
+  }
 });
 
 // ── Breadcrumb ────────────────────────────────────────────────────────────────
@@ -5230,6 +5246,283 @@ function syncStageDateUi(stage) {
 }
 
 // ── Clients: list view ────────────────────────────────────────────────────────
+
+// ── Bookings: tenant config ─────────────────────────────────────────────────────
+
+async function loadTenantsList({ soft = false } = {}) {
+  state.tenantsView = 'list';
+  state.tenantsSlug = null;
+  setBreadcrumb([{ label: 'Bookings' }]);
+  document.getElementById('btn-back').style.display = 'none';
+  const main = document.getElementById('main-content');
+  if (!soft) main.innerHTML = '<div class="state-msg">Loading…</div>';
+  try {
+    const data = await apiFetch({ action: 'tenant_list' });
+    state.tenantsSchema = data.schema || null;
+    renderTenantsList(data.tenants || []);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg">Error loading tenants: ${escHtml(err.message)}</div>`;
+  }
+}
+
+function renderTenantsList(tenants) {
+  const main = document.getElementById('main-content');
+  const rows = tenants.length === 0
+    ? `<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--muted)">No booking tenants yet.</td></tr>`
+    : tenants.map(t => {
+        const srcBadge = t.source === 'd1'
+          ? `<span style="display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.7rem;font-weight:700;background:rgba(75,156,245,.18);color:var(--blue)">D1</span>`
+          : `<span style="display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.08);color:var(--muted)">fallback</span>`;
+        const updated = t.updated_at ? escHtml(String(t.updated_at).substring(0, 16).replace('T', ' ')) : '—';
+        const bookUrl = `https://neobookworm-booking.nickbarrett.workers.dev/${encodeURIComponent(t.slug)}`;
+        return `<tr data-slug="${escAttr(t.slug)}" style="cursor:pointer">
+          <td><strong>${escHtml(t.displayName || t.slug)}</strong><br><span style="font-size:.75rem;color:var(--muted)">${escHtml(t.slug)}</span></td>
+          <td>${srcBadge}</td>
+          <td class="muted" style="font-size:.82rem">${updated}</td>
+          <td>
+            <a href="${escAttr(bookUrl)}" target="_blank" rel="noopener" style="color:var(--amber);font-size:.9rem;text-decoration:none;margin-right:.6rem" onclick="event.stopPropagation()">↗ Open</a>
+            <button class="filter-btn" style="font-size:.78rem;padding:.28rem .7rem;border-color:var(--amber);color:var(--amber)"
+                    data-slug="${escAttr(t.slug)}" onclick="event.stopPropagation();loadTenantDetail(this.dataset.slug)">Edit</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+  main.innerHTML = `
+    <div class="list-header">
+      <h2>Booking tenants <span class="count-tag">${tenants.length} total</span></h2>
+      <div class="list-controls">
+        <button class="filter-btn" id="tenant-new" style="border-color:var(--amber);color:var(--amber)">+ New tenant</button>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:.85rem;margin:.2rem 0 1rem">Config is stored in the booking Worker's D1. Saving here validates it and refreshes the live widget immediately. "fallback" rows are hardcoded defaults not yet saved to D1 — edit and save to promote them.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Business / slug</th><th>Source</th><th>Updated</th><th></th></tr></thead>
+        <tbody id="tenants-tbody">${rows}</tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('tenant-new')?.addEventListener('click', () => loadTenantDetail(null));
+  document.querySelectorAll('#tenants-tbody tr[data-slug]').forEach(tr => {
+    tr.addEventListener('click', () => loadTenantDetail(tr.dataset.slug));
+  });
+}
+
+async function loadTenantDetail(slug) {
+  state.tenantsView = 'detail';
+  state.tenantsSlug = slug;
+  const isNew = !slug;
+  setBreadcrumb([
+    { label: 'Bookings', action: () => { state.tenantsView = 'list'; loadTenantsList({ soft: true }); } },
+    { label: isNew ? 'New tenant' : slug },
+  ]);
+  document.getElementById('btn-back').style.display = '';
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div class="state-msg">Loading…</div>';
+  try {
+    let config, schema;
+    if (isNew) {
+      // Any valid, non-existent slug makes the Worker return applyDefaults() + schema.
+      const data = await apiFetch({ action: 'tenant_get', slug: 'template-defaults' });
+      config = data.config || {};
+      schema = data.schema || state.tenantsSchema;
+    } else {
+      const data = await apiFetch({ action: 'tenant_get', slug });
+      config = data.config;
+      schema = data.schema;
+    }
+    state.tenantsSchema = schema;
+    renderTenantDetail(slug, config, schema);
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg">Error: ${escHtml(err.message)}</div>`;
+  }
+}
+
+// Render one scalar field's <input>. idAttr is the element id used by gatherTenantConfig.
+function tenantScalarInput(field, value, idAttr) {
+  const v = value == null ? '' : value;
+  const common = `id="${idAttr}" style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none"`;
+  switch (field.type) {
+    case 'int':
+      return `<input type="number" ${common} value="${escAttr(v)}"${field.min != null ? ` min="${field.min}"` : ''}${field.max != null ? ` max="${field.max}"` : ''}>`;
+    case 'bool':
+      return `<input type="checkbox" id="${idAttr}" style="width:18px;height:18px;accent-color:var(--amber)"${value ? ' checked' : ''}>`;
+    case 'select':
+      return `<select ${common}>${(field.options || []).map(o => `<option value="${escAttr(o)}"${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select>`;
+    case 'color':
+      return `<input type="color" id="${idAttr}" value="${escAttr(v || '#000000')}" style="width:48px;height:34px;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);cursor:pointer;vertical-align:middle"> <span style="font-size:.78rem;color:var(--muted)">${escHtml(v)}</span>`;
+    default: // text, url
+      return `<input type="text" ${common} value="${escAttr(v)}"${field.max ? ` maxlength="${field.max}"` : ''} style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none;min-width:280px">`;
+  }
+}
+
+function tenantScopeBadge(field) {
+  return field.scope === 'client'
+    ? `<span title="The client can edit this in their portal" style="margin-left:.5rem;display:inline-block;padding:.05rem .4rem;border-radius:4px;font-size:.66rem;font-weight:700;background:rgba(75,156,245,.18);color:var(--blue)">client</span>`
+    : `<span title="Nick only — not shown in the client portal" style="margin-left:.5rem;display:inline-block;padding:.05rem .4rem;border-radius:4px;font-size:.66rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--muted)">Nick</span>`;
+}
+
+function tenantFieldRow(field, value) {
+  const id = `tf-${field.key}`;
+  const badge = tenantScopeBadge(field);
+  const hint = field.hint ? `<div style="font-size:.76rem;color:var(--muted);margin-top:.2rem">${escHtml(field.hint)}</div>` : '';
+
+  if (field.type === 'group') {
+    const subs = (field.fields || []).map(sub => {
+      const subVal = (value || {})[sub.key];
+      const subHint = sub.hint ? `<div style="font-size:.74rem;color:var(--muted);margin-top:.2rem">${escHtml(sub.hint)}</div>` : '';
+      return `<div style="margin:.5rem 0">
+        <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.25rem">${escHtml(sub.label)}</label>
+        ${tenantScalarInput(sub, subVal, `tf-${field.key}-${sub.key}`)}${subHint}
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:1.1rem">
+      <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
+      <div style="padding:.6rem .8rem;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.02)">${subs}</div>${hint}
+    </div>`;
+  }
+
+  if (field.type === 'hours') {
+    const days = field.days || [];
+    const rows = days.map(d => {
+      const hrs = (value || {})[d.key];
+      const open = hrs ? hrs.open : '09:00';
+      const close = hrs ? hrs.close : '17:00';
+      const closed = !hrs;
+      return `<tr data-day="${escAttr(d.key)}">
+        <td style="padding:.3rem .6rem .3rem 0">${escHtml(d.label)}</td>
+        <td style="padding:.3rem .6rem"><label style="font-size:.8rem;color:var(--muted);cursor:pointer"><input type="checkbox" class="th-closed" data-day="${escAttr(d.key)}" style="accent-color:var(--amber);vertical-align:middle"${closed ? ' checked' : ''}> closed</label></td>
+        <td style="padding:.3rem .6rem"><input type="time" class="th-open" data-day="${escAttr(d.key)}" value="${escAttr(open)}"${closed ? ' disabled' : ''} style="padding:.3rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--navy-card);color:var(--white);font-size:.82rem"></td>
+        <td style="padding:.3rem .6rem">to <input type="time" class="th-close" data-day="${escAttr(d.key)}" value="${escAttr(close)}"${closed ? ' disabled' : ''} style="padding:.3rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--navy-card);color:var(--white);font-size:.82rem"></td>
+      </tr>`;
+    }).join('');
+    return `<div style="margin-bottom:1.1rem">
+      <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
+      <table style="border-collapse:collapse">${rows}</table>${hint}
+    </div>`;
+  }
+
+  // scalar
+  return `<div style="margin-bottom:1.1rem">
+    <label for="${id}" style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
+    ${tenantScalarInput(field, value, id)}${hint}
+  </div>`;
+}
+
+function renderTenantDetail(slug, config, schema) {
+  const main = document.getElementById('main-content');
+  const isNew = !slug;
+
+  const slugInput = isNew
+    ? `<input type="text" id="tenant-slug" placeholder="e.g. swift-electrical" style="padding:.45rem .7rem;border:1px solid var(--amber);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.9rem;outline:none">
+       <div style="font-size:.76rem;color:var(--muted);margin-top:.25rem">Lowercase letters, numbers and dashes. This becomes the booking URL: /<slug></div>`
+    : `<code style="font-size:.9rem;color:var(--amber)">${escHtml(slug)}</code>`;
+
+  main.innerHTML = `
+    <div class="list-header"><h2>${isNew ? 'New booking tenant' : escHtml(config.displayName || slug)}</h2></div>
+    <div style="max-width:640px">
+      <div style="margin-bottom:1.4rem">
+        <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">Slug (booking URL)</label>
+        ${slugInput}
+      </div>
+
+      <p style="color:var(--muted);font-size:.8rem;margin:.2rem 0 1.2rem"><span style="color:var(--blue);font-weight:700">client</span> fields will be editable by the client in their portal (future); <span style="color:var(--muted);font-weight:700">Nick</span> fields are dashboard-only.</p>
+      ${schema.map(f => tenantFieldRow(f, config[f.key])).join('')}
+
+      <div style="display:flex;gap:.8rem;align-items:center;margin:1.6rem 0 2rem">
+        <button class="filter-btn" id="tenant-save" style="border-color:var(--amber);color:var(--navy);background:var(--amber);font-weight:700;padding:.5rem 1.4rem">Save</button>
+        <button class="filter-btn" id="tenant-cancel" style="padding:.5rem 1.1rem">Cancel</button>
+        <span id="tenant-save-msg" style="font-size:.85rem;color:var(--muted)"></span>
+      </div>
+    </div>
+  `;
+
+  // Enable/disable time inputs when "closed" toggled
+  main.querySelectorAll('.th-closed').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const day = cb.dataset.day;
+      const open = main.querySelector(`.th-open[data-day="${day}"]`);
+      const close = main.querySelector(`.th-close[data-day="${day}"]`);
+      if (open) open.disabled = cb.checked;
+      if (close) close.disabled = cb.checked;
+    });
+  });
+  // Live-update the hex swatch label next to colour pickers
+  main.querySelectorAll('input[type="color"]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const lbl = inp.nextElementSibling;
+      if (lbl && lbl.tagName === 'SPAN') lbl.textContent = inp.value;
+    });
+  });
+
+  document.getElementById('tenant-cancel')?.addEventListener('click', () => {
+    state.tenantsView = 'list';
+    loadTenantsList({ soft: true });
+  });
+  document.getElementById('tenant-save')?.addEventListener('click', () => saveTenant(slug, schema));
+}
+
+function gatherTenantConfig(schema) {
+  const main = document.getElementById('main-content');
+  const config = {};
+  for (const field of schema) {
+    if (field.type === 'group') {
+      const obj = {};
+      for (const sub of field.fields) {
+        const el = document.getElementById(`tf-${field.key}-${sub.key}`);
+        obj[sub.key] = el ? el.value : null;
+      }
+      config[field.key] = obj;
+    } else if (field.type === 'hours') {
+      const obj = {};
+      (field.days || []).forEach(d => {
+        const closed = main.querySelector(`.th-closed[data-day="${d.key}"]`);
+        if (closed && closed.checked) return;
+        const open = main.querySelector(`.th-open[data-day="${d.key}"]`);
+        const close = main.querySelector(`.th-close[data-day="${d.key}"]`);
+        if (open && close && open.value && close.value) obj[d.key] = { open: open.value, close: close.value };
+      });
+      config[field.key] = obj;
+    } else {
+      const el = document.getElementById(`tf-${field.key}`);
+      if (!el) continue;
+      if (field.type === 'bool') config[field.key] = el.checked;
+      else if (field.type === 'int') config[field.key] = el.value === '' ? null : Number(el.value);
+      else config[field.key] = el.value.trim() === '' ? null : el.value.trim();
+    }
+  }
+  return config;
+}
+
+async function saveTenant(slug, schema) {
+  const msg = document.getElementById('tenant-save-msg');
+  const btn = document.getElementById('tenant-save');
+  let targetSlug = slug;
+  if (!targetSlug) {
+    targetSlug = (document.getElementById('tenant-slug')?.value || '').trim().toLowerCase();
+    if (!/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/.test(targetSlug)) {
+      msg.textContent = 'Enter a valid slug (lowercase letters, numbers, dashes).';
+      msg.style.color = 'var(--red)';
+      return;
+    }
+  }
+  const config = gatherTenantConfig(schema);
+  btn.disabled = true;
+  msg.style.color = 'var(--muted)';
+  msg.textContent = 'Saving…';
+  try {
+    await apiPost({ action: 'tenant_save', slug: targetSlug, config });
+    msg.style.color = 'var(--green, #4caf50)';
+    msg.textContent = 'Saved ✓ (live now)';
+    setTimeout(() => { state.tenantsView = 'list'; loadTenantsList({ soft: true }); }, 700);
+  } catch (err) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
 
 async function loadClientsList({ soft = false } = {}) {
   state.clientsView = 'list';

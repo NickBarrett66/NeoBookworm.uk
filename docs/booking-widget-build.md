@@ -1214,6 +1214,52 @@ generalisation is a matter of adding field types, not re-architecting.
 This is a roadmap note, not a commitment — but it's the reason to get the schema
 abstraction right now rather than bolting config editing onto booking alone.
 
+### Phase 2.5 — built (June 2026)
+
+Dashboard config surface is implemented and unit/integration-tested. What shipped:
+
+**Worker (`workers/booking/`):**
+- `src/schema.js` — `CONFIG_SCHEMA` (scope + phase tagged), content-type-agnostic
+  `TYPE_VALIDATORS` (text, url, int, bool, select, color, group, hours — add a
+  type here to extend toward the CMS use), and `validatePatch(input, scope)` /
+  `validateFull(config)` / `applyDefaults()` / `schemaForScope(scope)` /
+  `isValidSlug()`.
+- `src/admin.js` — authenticated admin API (Bearer `env.ADMIN_SECRET`):
+  `GET /admin/tenants` (list + schema), `GET /admin/tenant/:slug` (config +
+  schema; returns `applyDefaults()` for an unknown valid slug), `PUT
+  /admin/tenant/:slug` (validate patch → merge over existing/defaults →
+  `validateFull` → write D1 `INSERT…ON CONFLICT` → **bust KV `tenant:<slug>`**).
+- `src/index.js` — routes `/admin/*` ahead of the public routes.
+- `src/ui.js` — note field now uses `config.noteLabel` / `config.notePlaceholder`
+  (retires the hardcoded "tyre size" placeholder; first schema-driven copy field).
+
+**Vercel:**
+- `api/_lib/booking.js` — `bookingAdmin(path, {method, body})` proxy (holds
+  `BOOKING_ADMIN_SECRET`, never reaches the browser).
+- `api/dashboard.js` — `tenant_list` / `tenant_get` (GET) and `tenant_save`
+  (POST) proxy to the Worker.
+
+**Dashboard (`dashboard.html`):** a **Bookings** tab — tenants list (with D1 vs
+fallback source badge + "Open" link), schema-driven edit form rendered in schema
+order with per-field `client`/`Nick` scope badges, an opening-hours editor
+(closed toggle + open/close per day), colour pickers, and "+ New tenant"
+(creates from defaults). Save validates server-side and the widget updates
+immediately (KV busted).
+
+**Deploy steps (manual — needs CLI/credentials):**
+1. Worker secret: `cd workers/booking && npx wrangler secret put ADMIN_SECRET`
+2. Deploy Worker: `npx wrangler deploy`
+3. Vercel env vars: set `BOOKING_ADMIN_SECRET` (same value as the Worker secret)
+   and optionally `BOOKING_WORKER_URL` (defaults to the production workers.dev
+   URL). Redeploy Vercel.
+
+The `tenants` table already exists (migration `0003_tenants.sql`); no new
+migration is needed.
+
+**Next:** Phases 3–7 append fields to `CONFIG_SCHEMA` (with `scope`/`phase`
+tags) and they render automatically. Portal self-service = a Vercel→Worker
+proxy that forwards only `scope: 'client'` fields, scoped to the URL slug.
+
 ---
 
 ## Appendix — useful test commands
