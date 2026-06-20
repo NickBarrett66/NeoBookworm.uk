@@ -71,6 +71,20 @@ export const CONFIG_SCHEMA = [
     hint: 'A midday gap with no bookable slots, e.g. 12:30–13:30. Leave off for none.' },
   { key: 'cancellationCutoffMinutes', label: 'Cancellation cutoff (minutes)', type: 'int', scope: 'client', phase: 5, min: 0, max: 10080, nullable: true,
     hint: 'How close to the appointment a customer can still cancel/reschedule online. Leave blank to use the minimum-notice value.' },
+  { key: 'locationType', label: 'Appointment type', type: 'select', scope: 'client', phase: 4, default: 'in_person',
+    options: [{ value: 'in_person', label: 'In person' }, { value: 'phone', label: 'Phone call' }, { value: 'video', label: 'Video call' }],
+    hint: 'Changes the wording on the widget, calendar event and emails.' },
+  { key: 'locationDetail', label: 'Location detail', type: 'text', scope: 'client', phase: 4, nullable: true, max: 200,
+    hint: 'In person: your address. Video: the meeting link. Phone: leave blank (we use the customer number).' },
+  { key: 'phoneEnabled', label: 'Ask for phone number', type: 'bool', scope: 'client', phase: 4, default: true },
+  { key: 'phoneRequired', label: 'Phone required', type: 'bool', scope: 'client', phase: 4, default: true },
+  { key: 'noteEnabled', label: 'Show note field', type: 'bool', scope: 'client', phase: 4, default: true },
+  { key: 'noteRequired', label: 'Note required', type: 'bool', scope: 'client', phase: 4, default: false },
+  { key: 'addressEnabled', label: 'Ask for address', type: 'bool', scope: 'client', phase: 4, default: false,
+    hint: 'Shows an address + postcode field (postcode checked via postcodes.io). Useful for home visits.' },
+  { key: 'addressRequired', label: 'Address required', type: 'bool', scope: 'client', phase: 4, default: false },
+  { key: 'customQuestions', label: 'Custom questions', type: 'questions', scope: 'client', phase: 4, default: [],
+    hint: 'Extra questions shown on the booking form. Answers appear in the calendar event and your email.' },
 ];
 
 const FIELD_BY_KEY = new Map(CONFIG_SCHEMA.map((f) => [f.key, f]));
@@ -126,9 +140,42 @@ const TYPE_VALIDATORS = {
   },
 
   select(value, field) {
-    if (value == null || value === '') return { value: field.default ?? field.options[0] };
-    if (!field.options.includes(value)) return { error: `${field.label} must be one of: ${field.options.join(', ')}` };
+    // options may be plain strings or { value, label } objects.
+    const values = field.options.map((o) => (typeof o === 'object' ? o.value : o));
+    if (value == null || value === '') return { value: field.default ?? values[0] };
+    if (!values.includes(value)) return { error: `${field.label} must be one of: ${values.join(', ')}` };
     return { value };
+  },
+
+  // Tenant-defined extra questions. Array of { id, label, type, required, options? }.
+  questions(value, field) {
+    if (value == null || value === '') return { value: [] };
+    if (!Array.isArray(value)) return { error: `${field.label} must be a list` };
+    if (value.length > 12) return { error: 'Too many custom questions (max 12)' };
+    const types = ['text', 'textarea', 'select', 'checkbox'];
+    const out = [];
+    const seen = new Set();
+    for (const q of value) {
+      if (!q || typeof q !== 'object') return { error: 'A custom question is malformed' };
+      const label = String(q.label || '').trim();
+      if (!label) return { error: 'Every custom question needs a label' };
+      if (label.length > 100) return { error: `Question label too long: "${label.slice(0, 30)}…"` };
+      const type = types.includes(q.type) ? q.type : 'text';
+      let id = String(q.id || q.label || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      if (!id) id = `q${out.length + 1}`;
+      while (seen.has(id)) id += 'x';
+      seen.add(id);
+      const item = { id, label, type, required: q.required === true };
+      if (type === 'select') {
+        const opts = Array.isArray(q.options)
+          ? q.options.map((o) => String(o).trim()).filter(Boolean).slice(0, 20)
+          : [];
+        if (opts.length === 0) return { error: `Dropdown question "${label}" needs at least one option` };
+        item.options = opts;
+      }
+      out.push(item);
+    }
+    return { value: out };
   },
 
   color(value, field) {
@@ -203,6 +250,8 @@ export function applyDefaults() {
     } else if (field.type === 'hours') {
       out[field.key] = { 1: { open: '09:00', close: '17:00' }, 2: { open: '09:00', close: '17:00' },
         3: { open: '09:00', close: '17:00' }, 4: { open: '09:00', close: '17:00' }, 5: { open: '09:00', close: '17:00' } };
+    } else if (field.type === 'questions') {
+      out[field.key] = [];
     } else if (field.default !== undefined) {
       out[field.key] = field.default;
     } else if (field.nullable) {

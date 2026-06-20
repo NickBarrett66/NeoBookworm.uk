@@ -33,6 +33,6 @@ export async function sendCancellationEmail(env, { to, name, slotStart, business
   await postNotify(env, { type: 'cancellation', to, name, slotStart, businessName });
 }
 
-export async function sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary }) {
-  await postNotify(env, { type: 'business_notification', name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary });
+export async function sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType }) {
+  await postNotify(env, { type: 'business_notification', name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType });
 }

@@ -76,7 +76,9 @@ function renderConfirmationEmail({ name, slotStart, slotEnd, businessName, manag
   return { subject, body: lines.join('\n') };
 }
 
-function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary }) {
+const LOCATION_LABELS = { in_person: 'In person', phone: 'Phone call', video: 'Video call' };
+
+function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType }) {
   const { dateLine, timeRange, subjectDay, startTime } = formatTimes(slotStart, slotEnd);
   const subject = `New booking — ${subjectDay} at ${startTime}${reg ? ' — ' + reg : ''}`;
   const lines = [
@@ -84,6 +86,7 @@ function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEn
     '',
     `  ${dateLine}`,
     `  ${timeRange}`,
+    locationType && LOCATION_LABELS[locationType] ? `  ${LOCATION_LABELS[locationType]}` : null,
     '',
     `Customer: ${name}`,
     `Email:    ${email}`,
@@ -93,6 +96,15 @@ function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEn
     lines.push('');
     lines.push(`Reg:      ${reg}`);
     if (vehicleSummary) lines.push(`Vehicle:  ${vehicleSummary}`);
+  }
+  if (address || postcode) {
+    lines.push('');
+    if (address) lines.push(`Address:  ${address}`);
+    if (postcode) lines.push(`Postcode: ${postcode}`);
+  }
+  if (Array.isArray(customAnswers) && customAnswers.length) {
+    lines.push('');
+    for (const a of customAnswers) lines.push(`${a.label}: ${a.value}`);
   }
   return { subject, body: lines.filter((l) => l !== null).join('\n') };
 }
@@ -163,7 +175,7 @@ module.exports = async (req, res) => {
       const { subject, body: text } = renderCancellationEmail({ name, slotStart: String(slotStart), businessName: String(businessName) });
       await sendEmail({ to: String(to), from, subject, body: text, businessName: String(businessName) });
     } else if (type === 'business_notification') {
-      const { name, email: custEmail, phone, slotStart, slotEnd, businessName, reg, vehicleSummary } = body;
+      const { name, email: custEmail, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType } = body;
       if (!name || !custEmail || !slotStart || !slotEnd || !businessName) return res.status(400).json({ ok: false, error: 'Missing fields' });
       const to = process.env.HE_TYRES_TO_EMAIL || process.env.TO_EMAIL;
       if (!to) return res.status(500).json({ ok: false, error: 'No business notification email configured' });
@@ -171,6 +183,9 @@ module.exports = async (req, res) => {
         name: String(name), email: String(custEmail), phone: phone ? String(phone) : null,
         slotStart: String(slotStart), slotEnd: String(slotEnd), businessName: String(businessName),
         reg: reg ? String(reg) : null, vehicleSummary: vehicleSummary ? String(vehicleSummary) : null,
+        address: address ? String(address) : null, postcode: postcode ? String(postcode) : null,
+        customAnswers: Array.isArray(customAnswers) ? customAnswers : null,
+        locationType: locationType ? String(locationType) : null,
       });
       await sendEmail({ to, from, subject, body: text, businessName: String(businessName) });
     } else {

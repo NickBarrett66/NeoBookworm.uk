@@ -282,7 +282,7 @@ export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.het
 
 export async function createCalendarEvent(
   env,
-  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
@@ -295,10 +295,29 @@ export async function createCalendarEvent(
     phone ? `Phone: ${phone}` : null,
     reg ? `Reg: ${reg}` : null,
     vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
+    address ? `Address: ${address}` : null,
+    postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
+    ...(Array.isArray(customAnswers) ? customAnswers.map((a) => `${a.label}: ${a.value}`) : []),
   ]
     .filter(Boolean)
     .join('\n');
+
+  // Location-type-aware event location field.
+  const locationType = config.locationType || 'in_person';
+  let eventLocation = null;
+  if (locationType === 'phone') eventLocation = 'Phone call';
+  else if (locationType === 'video') eventLocation = config.locationDetail || 'Video call';
+  else eventLocation = config.locationDetail || address || null; // in_person
+
+  const event = {
+    summary,
+    description,
+    start: { dateTime: slotStart, timeZone: config.timezone },
+    end: { dateTime: slotEnd, timeZone: config.timezone },
+    attendees: [{ email }],
+  };
+  if (eventLocation) event.location = eventLocation;
 
   const res = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?sendUpdates=none`,
@@ -308,13 +327,7 @@ export async function createCalendarEvent(
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        summary,
-        description,
-        start: { dateTime: slotStart, timeZone: config.timezone },
-        end: { dateTime: slotEnd, timeZone: config.timezone },
-        attendees: [{ email }],
-      }),
+      body: JSON.stringify(event),
     },
   );
 

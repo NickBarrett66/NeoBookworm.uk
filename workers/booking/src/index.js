@@ -42,6 +42,7 @@ const ISO_DATE_RE  = /^\d{4}-\d{2}-\d{2}$/;
 const ISO_MONTH_RE = /^\d{4}-\d{2}$/;
 const ISO_SLOT_RE  = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
 const EMAIL_RE     = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UK_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: CORS_HEADERS });
@@ -93,14 +94,75 @@ function validateDateParam(date, config) {
   return null;
 }
 
-function validateBookingBody(body, config) {
-  const { slot, name, email, phone, note, reg, vehicleSummary } = body;
-  if (!slot || !name || !email || !phone) return { error: 'Missing required fields' };
+export function validateBookingBody(body, config) {
+  const { slot, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers } = body;
+  if (!slot || !name || !email) return { error: 'Missing required fields' };
   if (typeof slot !== 'string' || !ISO_SLOT_RE.test(slot)) return { error: 'Invalid slot format' };
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 80) return { error: 'Invalid name' };
   if (typeof email !== 'string' || !EMAIL_RE.test(email)) return { error: 'Invalid email' };
-  if (typeof phone !== 'string' || phone.trim().length === 0 || phone.length > 30) return { error: 'Invalid phone' };
-  if (note != null && (typeof note !== 'string' || note.length > 500)) return { error: 'Note is too long' };
+
+  // Phone — per-tenant enabled/required (Phase 4)
+  const phoneEnabled = config.phoneEnabled !== false;
+  const phoneRequired = phoneEnabled && config.phoneRequired !== false;
+  let cleanPhone = null;
+  if (phoneEnabled && phone != null && phone !== '') {
+    if (typeof phone !== 'string' || phone.length > 30) return { error: 'Invalid phone' };
+    cleanPhone = phone.trim();
+  }
+  if (phoneRequired && !cleanPhone) return { error: 'Phone number is required' };
+
+  // Note — per-tenant enabled/required
+  const noteEnabled = config.noteEnabled !== false;
+  const noteRequired = noteEnabled && config.noteRequired === true;
+  let cleanNote = null;
+  if (noteEnabled && note != null && note !== '') {
+    if (typeof note !== 'string' || note.length > 500) return { error: 'Note is too long' };
+    cleanNote = note.trim();
+  }
+  if (noteRequired && !cleanNote) return { error: 'Note is required' };
+
+  // Address + postcode — per-tenant enabled/required
+  const addressEnabled = config.addressEnabled === true;
+  const addressRequired = addressEnabled && config.addressRequired === true;
+  let cleanAddress = null;
+  let cleanPostcode = null;
+  if (addressEnabled) {
+    if (address != null && address !== '') {
+      if (typeof address !== 'string' || address.length > 300) return { error: 'Address is too long' };
+      cleanAddress = address.trim();
+    }
+    if (postcode != null && postcode !== '') {
+      if (typeof postcode !== 'string' || postcode.length > 12 || !UK_POSTCODE_RE.test(postcode.trim())) {
+        return { error: 'Please enter a valid UK postcode' };
+      }
+      cleanPostcode = postcode.trim().toUpperCase();
+    }
+    if (addressRequired && (!cleanAddress || !cleanPostcode)) return { error: 'Address and postcode are required' };
+  }
+
+  // Custom questions — validated against the tenant's configured questions
+  const questions = Array.isArray(config.customQuestions) ? config.customQuestions : [];
+  const cleanAnswers = [];
+  if (questions.length) {
+    const provided = customAnswers && typeof customAnswers === 'object' ? customAnswers : {};
+    for (const q of questions) {
+      const raw = provided[q.id];
+      if (q.type === 'checkbox') {
+        const checked = raw === true || raw === 'true' || raw === 1 || raw === '1' || raw === 'on';
+        if (q.required && !checked) return { error: `"${q.label}" is required` };
+        cleanAnswers.push({ label: q.label, value: checked ? 'Yes' : 'No' });
+      } else {
+        let val = raw == null ? '' : String(raw).trim();
+        if (val.length > 500) val = val.slice(0, 500);
+        if (q.type === 'select' && val && Array.isArray(q.options) && !q.options.includes(val)) {
+          return { error: `Invalid choice for "${q.label}"` };
+        }
+        if (q.required && !val) return { error: `"${q.label}" is required` };
+        if (val) cleanAnswers.push({ label: q.label, value: val });
+      }
+    }
+  }
+
   const slotDate = slot.slice(0, 10);
   const dateError = validateDateParam(slotDate, config);
   if (dateError) return { error: dateError.error === 'Date is in the past' ? 'Slot is in the past' : dateError.error };
@@ -108,7 +170,11 @@ function validateBookingBody(body, config) {
   if (slotInstant.getTime() < Date.now() + config.minLeadMinutes * 60_000) return { error: 'Slot is too soon' };
   const cleanReg = reg ? String(reg).trim().toUpperCase().replace(/\s+/g, '').slice(0, 10) : null;
   const cleanVehicleSummary = vehicleSummary ? String(vehicleSummary).slice(0, 200) : null;
-  return { slot, name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), note: note?.trim() || null, slotDate, reg: cleanReg, vehicleSummary: cleanVehicleSummary };
+  return {
+    slot, name: name.trim(), email: email.trim().toLowerCase(), phone: cleanPhone, note: cleanNote, slotDate,
+    reg: cleanReg, vehicleSummary: cleanVehicleSummary,
+    address: cleanAddress, postcode: cleanPostcode, customAnswers: cleanAnswers,
+  };
 }
 
 async function checkIpRateLimit(env, ip) {
@@ -179,7 +245,7 @@ async function handleBook(slug, req, env, ctx) {
   const validated = validateBookingBody(body, config);
   if (validated.error) return jsonResponse({ ok: false, error: validated.error }, 400);
 
-  const { slot, name, email, phone, note, reg, vehicleSummary } = validated;
+  const { slot, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers } = validated;
   const slotStart = slot;
   const slotEnd = wallEndFromStart(slotStart, config.slotDuration, config.timezone);
 
@@ -196,7 +262,7 @@ async function handleBook(slug, req, env, ctx) {
 
   let bookingId, manageToken;
   try {
-    ({ id: bookingId, manageToken } = await insertBooking(env.DB, { slug, slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }));
+    ({ id: bookingId, manageToken } = await insertBooking(env.DB, { slug, slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers }));
   } catch (err) {
     if (err instanceof SlotTakenError) return jsonResponse({ ok: false, error: 'slot_taken' }, 409);
     console.error('[booking] insert error:', err);
@@ -205,7 +271,7 @@ async function handleBook(slug, req, env, ctx) {
 
   let googleEvent;
   try {
-    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }, config);
+    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers }, config);
   } catch (err) {
     console.error('[booking] calendar create error:', err);
     await markBookingFailed(env.DB, bookingId);
@@ -219,7 +285,7 @@ async function handleBook(slug, req, env, ctx) {
     sendConfirmationEmail(env, { to: email, name, slotStart, slotEnd, businessName: config.displayName, manageUrl: mUrl }),
   );
   ctx.waitUntil(
-    sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName: config.displayName, reg, vehicleSummary }),
+    sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName: config.displayName, reg, vehicleSummary, address, postcode, customAnswers, locationType: config.locationType }),
   );
 
   return jsonResponse({ ok: true, name, slotStart, slotEnd });
@@ -319,6 +385,11 @@ async function handleReschedule(slug, req, env, ctx) {
 
   const slotEnd = wallEndFromStart(slot, config.slotDuration, config.timezone);
 
+  let oldCustomAnswers = null;
+  if (booking.custom_answers) {
+    try { oldCustomAnswers = JSON.parse(booking.custom_answers); } catch { oldCustomAnswers = null; }
+  }
+
   let newBookingId, newManageToken;
   try {
     ({ id: newBookingId, manageToken: newManageToken } = await insertBooking(env.DB, {
@@ -331,6 +402,9 @@ async function handleReschedule(slug, req, env, ctx) {
       note: booking.note,
       reg: booking.reg,
       vehicleSummary: booking.vehicle_summary,
+      address: booking.address,
+      postcode: booking.postcode,
+      customAnswers: oldCustomAnswers,
     }));
   } catch (err) {
     if (err instanceof SlotTakenError) return jsonResponse({ ok: false, error: 'slot_taken' }, 409);
@@ -352,7 +426,7 @@ async function handleReschedule(slug, req, env, ctx) {
   try {
     googleEvent = await createCalendarEvent(
       env,
-      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note, reg: booking.reg, vehicleSummary: booking.vehicle_summary },
+      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note, reg: booking.reg, vehicleSummary: booking.vehicle_summary, address: booking.address, postcode: booking.postcode, customAnswers: oldCustomAnswers },
       config,
     );
   } catch (err) {

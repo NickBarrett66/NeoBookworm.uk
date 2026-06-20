@@ -5349,7 +5349,11 @@ function tenantScalarInput(field, value, idAttr) {
     case 'bool':
       return `<input type="checkbox" id="${idAttr}" style="width:18px;height:18px;accent-color:var(--amber)"${value ? ' checked' : ''}>`;
     case 'select':
-      return `<select ${common}>${(field.options || []).map(o => `<option value="${escAttr(o)}"${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select>`;
+      return `<select ${common}>${(field.options || []).map(o => {
+        const ov = typeof o === 'object' ? o.value : o;
+        const ol = typeof o === 'object' ? o.label : o;
+        return `<option value="${escAttr(ov)}"${ov === value ? ' selected' : ''}>${escHtml(ol)}</option>`;
+      }).join('')}</select>`;
     case 'color':
       return `<input type="color" id="${idAttr}" value="${escAttr(v || '#000000')}" style="width:48px;height:34px;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);cursor:pointer;vertical-align:middle"> <span style="font-size:.78rem;color:var(--muted)">${escHtml(v)}</span>`;
     case 'image': {
@@ -5366,6 +5370,30 @@ function tenantScalarInput(field, value, idAttr) {
     default: // text, url
       return `<input type="text" ${common} value="${escAttr(v)}"${field.max ? ` maxlength="${field.max}"` : ''} style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none;min-width:280px">`;
   }
+}
+
+function cqRowHtml(q) {
+  q = q || { label: '', type: 'text', required: false, options: [] };
+  const types = [['text', 'Short text'], ['textarea', 'Long text'], ['select', 'Dropdown'], ['checkbox', 'Tick box']];
+  const typeOpts = types.map(([v, l]) => `<option value="${v}"${q.type === v ? ' selected' : ''}>${l}</option>`).join('');
+  const isSelect = q.type === 'select';
+  const optsVal = Array.isArray(q.options) ? q.options.join(', ') : '';
+  const inp = 'padding:.35rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--navy-card);color:var(--white);font-size:.82rem';
+  return `<div class="cq-row" style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.5rem;padding:.5rem;border:1px solid var(--border);border-radius:7px">
+    <input type="text" class="cq-label" placeholder="Question label" value="${escAttr(q.label || '')}" style="flex:1;min-width:160px;${inp}">
+    <select class="cq-type" style="${inp}">${typeOpts}</select>
+    <input type="text" class="cq-options" placeholder="Options (comma-separated)" value="${escAttr(optsVal)}" style="flex:1;min-width:150px;${inp};${isSelect ? '' : 'display:none'}">
+    <label style="font-size:.78rem;color:var(--muted);cursor:pointer"><input type="checkbox" class="cq-required"${q.required ? ' checked' : ''} style="accent-color:var(--amber);vertical-align:middle"> required</label>
+    <button type="button" class="cq-remove filter-btn" style="font-size:.72rem;padding:.2rem .5rem;border-color:var(--red);color:var(--red)">✕</button>
+  </div>`;
+}
+
+function wireCqRow(row) {
+  const typeSel = row.querySelector('.cq-type');
+  const optsInput = row.querySelector('.cq-options');
+  if (typeSel) typeSel.addEventListener('change', () => { optsInput.style.display = typeSel.value === 'select' ? '' : 'none'; });
+  const rm = row.querySelector('.cq-remove');
+  if (rm) rm.addEventListener('click', () => row.remove());
 }
 
 function tenantScopeBadge(field) {
@@ -5411,6 +5439,16 @@ function tenantFieldRow(field, value) {
     return `<div style="margin-bottom:1.1rem">
       <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
       <table style="border-collapse:collapse">${rows}</table>${hint}
+    </div>`;
+  }
+
+  if (field.type === 'questions') {
+    const qs = Array.isArray(value) ? value : [];
+    return `<div style="margin-bottom:1.1rem">
+      <label style="display:block;font-weight:600;font-size:.9rem;margin-bottom:.4rem">${escHtml(field.label)}${badge}</label>
+      <div id="cq-rows">${qs.map(cqRowHtml).join('')}</div>
+      <button type="button" class="filter-btn" id="cq-add" style="font-size:.78rem;padding:.3rem .8rem;border-color:var(--amber);color:var(--amber)">+ Add question</button>
+      ${hint}
     </div>`;
   }
 
@@ -5480,6 +5518,19 @@ function renderTenantDetail(slug, config, schema) {
       if (lbl && lbl.tagName === 'SPAN') lbl.textContent = inp.value;
     });
   });
+  // Custom-questions editor: wire existing rows + the add button
+  main.querySelectorAll('#cq-rows .cq-row').forEach(wireCqRow);
+  const cqAdd = document.getElementById('cq-add');
+  if (cqAdd) {
+    cqAdd.addEventListener('click', () => {
+      const rows = document.getElementById('cq-rows');
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cqRowHtml(null);
+      const row = tmp.firstElementChild;
+      rows.appendChild(row);
+      wireCqRow(row);
+    });
+  }
   // Time-range fields (e.g. lunch break): toggle the time inputs with "enabled"
   main.querySelectorAll('.tr-enabled').forEach(cb => {
     cb.addEventListener('change', () => {
@@ -5533,6 +5584,16 @@ function gatherTenantConfig(schema) {
         if (open && close && open.value && close.value) obj[d.key] = { open: open.value, close: close.value };
       });
       config[field.key] = obj;
+    } else if (field.type === 'questions') {
+      const rows = Array.from(document.querySelectorAll('#cq-rows .cq-row'));
+      config[field.key] = rows.map(r => {
+        const label = r.querySelector('.cq-label').value.trim();
+        const type = r.querySelector('.cq-type').value;
+        const required = r.querySelector('.cq-required').checked;
+        const q = { label, type, required };
+        if (type === 'select') q.options = r.querySelector('.cq-options').value.split(',').map(s => s.trim()).filter(Boolean);
+        return q;
+      }).filter(q => q.label);
     } else if (field.type === 'timerange') {
       const en = main.querySelector(`.tr-enabled[data-key="${field.key}"]`);
       const s = document.getElementById(`tf-${field.key}-start`);

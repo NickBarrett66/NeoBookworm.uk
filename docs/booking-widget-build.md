@@ -1317,6 +1317,43 @@ Defaults preserve current behaviour exactly: buffer 0, no lunch, cutoff = lead
 time. **Deploy:** `cd workers/booking && npx wrangler deploy` (slot maths +
 cancel/reschedule); Vercel redeploys the dashboard widget on push. No secrets.
 
+### Phase 4 — form flexibility, built (June 2026)
+
+All four sub-features. Touches 8 files; the booking form is now config-driven.
+
+- **`src/schema.js`** — `select` options may be `{value,label}`; new `questions`
+  validator (id slugified from label, type whitelist, options required for
+  dropdowns, max 12). New fields: `locationType` (select in_person/phone/video),
+  `locationDetail`, `phoneEnabled`/`phoneRequired`, `noteEnabled`/`noteRequired`,
+  `addressEnabled`/`addressRequired`, `customQuestions`.
+- **`src/index.js`** — `validateBookingBody` is now config-aware: phone/note/
+  address required only when their tenant flags say so; UK postcode regex gate;
+  custom answers validated against the tenant's questions (required checks,
+  select-choice check, checkbox → Yes/No) and returned as `[{label,value}]`.
+  Threaded into insert, calendar event and business email; reschedule carries
+  the stored address/postcode/custom answers forward. (Exported for tests.)
+- **`src/ui.js`** — form renders phone/note conditionally + required-aware, an
+  address+postcode block (postcode validated client-side via **postcodes.io**,
+  fail-open if the service is down; server enforces the regex), custom-question
+  fields (`renderCustomQuestionField`), and a location-type note. Client JS
+  collects the new fields defensively (hidden fields no longer crash the POST).
+- **`src/db.js`** + **`migrations/0004_form.sql`** — new `address`, `postcode`,
+  `custom_answers` (JSON) columns on `bookings`.
+- **`src/calendar.js`** — event description includes address/postcode/custom
+  answers; event `location` set from location type (+ customer address for
+  in-person). **`src/email.js`** + **`api/notify-booking.js`** — business
+  notification includes the new fields and a location label.
+- **`dashboard.html`** — `select` renders value/label; a custom-questions editor
+  (add/remove rows, per-row label/type/required/options); location + toggle
+  fields render via the existing schema machinery.
+
+Defaults preserve current behaviour (phone on+required, note on+optional,
+address off, in_person, no custom questions). **Deploy order matters:**
+1. Apply the migration: `cd workers/booking && npx wrangler d1 migrations apply
+   bookings --remote` (and `--local` for dev) — **before** deploying the Worker.
+2. `npx wrangler deploy`; Vercel redeploys `notify-booking` + dashboard on push.
+No new secrets.
+
 ---
 
 ## Appendix — useful test commands

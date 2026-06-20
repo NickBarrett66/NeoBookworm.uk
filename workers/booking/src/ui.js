@@ -6,6 +6,38 @@
     .replace(/"/g, '&quot;');
 }
 
+function renderCustomQuestionField(q) {
+  const id = 'cq-' + escHtml(q.id);
+  const label = escHtml(q.label);
+  const req = q.required === true;
+  const reqAttr = req ? 'required' : '';
+  const optTag = req ? '' : ' <span style="font-weight:400;opacity:0.6">(optional)</span>';
+  if (q.type === 'checkbox') {
+    return `<div class="field">
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-weight:600">
+        <input type="checkbox" id="${id}" data-cq="${escHtml(q.id)}" ${reqAttr} style="width:18px;height:18px;accent-color:var(--accent)"> ${label}
+      </label>
+    </div>`;
+  }
+  if (q.type === 'select') {
+    const opts = (q.options || []).map((o) => `<option value="${escHtml(o)}">${escHtml(o)}</option>`).join('');
+    return `<div class="field">
+      <label for="${id}">${label}${optTag}</label>
+      <select id="${id}" data-cq="${escHtml(q.id)}" ${reqAttr}><option value="">Choose…</option>${opts}</select>
+    </div>`;
+  }
+  if (q.type === 'textarea') {
+    return `<div class="field">
+      <label for="${id}">${label}${optTag}</label>
+      <textarea id="${id}" data-cq="${escHtml(q.id)}" maxlength="500" ${reqAttr}></textarea>
+    </div>`;
+  }
+  return `<div class="field">
+    <label for="${id}">${label}${optTag}</label>
+    <input type="text" id="${id}" data-cq="${escHtml(q.id)}" maxlength="500" ${reqAttr}>
+  </div>`;
+}
+
 export function renderBookingPage(config, slug, rescheduleToken = null) {
   const displayName = escHtml(config.displayName);
   const slugJson = JSON.stringify(slug);
@@ -21,6 +53,24 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const introLine = config.introLine ? escHtml(config.introLine) : null;
   const successHeading = escHtml(config.successHeading || 'Booking confirmed');
   const successMessage = escHtml(config.successMessage || 'A confirmation has been sent to your email address.');
+  // Phase 4 — form flexibility
+  const phoneEnabled = config.phoneEnabled !== false;
+  const phoneRequired = phoneEnabled && config.phoneRequired !== false;
+  const noteEnabled = config.noteEnabled !== false;
+  const noteRequired = noteEnabled && config.noteRequired === true;
+  const addressEnabled = config.addressEnabled === true;
+  const addressRequired = addressEnabled && config.addressRequired === true;
+  const locationType = config.locationType || 'in_person';
+  const locationDetail = config.locationDetail ? escHtml(config.locationDetail) : null;
+  const customQuestions = Array.isArray(config.customQuestions) ? config.customQuestions : [];
+  const customQuestionsJson = JSON.stringify(customQuestions);
+  const addressEnabledJson = JSON.stringify(addressEnabled);
+  const optionalTag = ' <span style="font-weight:400;opacity:0.6">(optional)</span>';
+  const locationNote = locationType === 'phone'
+    ? 'This is a phone appointment — we\'ll call you on the number you provide.'
+    : locationType === 'video'
+      ? (config.locationDetail ? 'This is a video appointment. Joining details: ' + locationDetail : 'This is a video appointment — a joining link will be emailed to you.')
+      : (config.locationDetail ? 'Location: ' + locationDetail : null);
   const t = config.theme || {};
   const themeCss = `
     :root {
@@ -445,7 +495,8 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     }
 
     .field input,
-    .field textarea {
+    .field textarea,
+    .field select {
       display: block;
       width: 100%;
       padding: 0.65rem 0.75rem;
@@ -456,6 +507,24 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       font-family: inherit;
       font-size: 1rem;
       line-height: 1.4;
+    }
+
+    .field select option { color: #111; }
+
+    .postcode-msg {
+      margin-top: 0.35rem;
+      font-size: 0.85rem;
+    }
+    .postcode-msg.bad { color: #ffb3b3; }
+    .postcode-msg.ok { color: #9ff0c0; }
+
+    .location-note {
+      margin: 0 0 1rem;
+      padding: 0.6rem 0.8rem;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
 
     .field input::placeholder,
@@ -705,6 +774,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <div class="booking-summary-sub">${displayName} · ${slotDuration} min</div>
           </div>
         </div>
+        ${locationNote ? `<p class="location-note">${locationNote}</p>` : ''}
         <form id="booking-form" novalidate>
           <div class="field">
             <label for="name">Name</label>
@@ -714,19 +784,29 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autocomplete="email">
           </div>
-          <div class="field">
-            <label for="phone">Phone</label>
-            <input type="tel" id="phone" name="phone" required maxlength="30" autocomplete="tel">
-          </div>
+          ${phoneEnabled ? `<div class="field">
+            <label for="phone">Phone${phoneRequired ? '' : optionalTag}</label>
+            <input type="tel" id="phone" name="phone" ${phoneRequired ? 'required' : ''} maxlength="30" autocomplete="tel">
+          </div>` : ''}
           ${regEnabled ? `<div class="field">
             <label for="reg">Vehicle registration <span style="font-weight:400;opacity:0.6">(optional)</span></label>
             <input type="text" id="reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
             <div class="vehicle-card" id="vehicle-card" hidden></div>
           </div>` : ''}
-          <div class="field">
-            <label for="note">${noteLabel} <span style="font-weight:400;opacity:0.6">(optional)</span></label>
-            <textarea id="note" name="note" maxlength="500" placeholder="${notePlaceholder}"></textarea>
+          ${addressEnabled ? `<div class="field">
+            <label for="address">Address${addressRequired ? '' : optionalTag}</label>
+            <textarea id="address" name="address" maxlength="300" ${addressRequired ? 'required' : ''} autocomplete="street-address"></textarea>
           </div>
+          <div class="field">
+            <label for="postcode">Postcode${addressRequired ? '' : optionalTag}</label>
+            <input type="text" id="postcode" name="postcode" maxlength="10" ${addressRequired ? 'required' : ''} autocomplete="postal-code" style="text-transform:uppercase">
+            <div class="postcode-msg" id="postcode-msg" hidden></div>
+          </div>` : ''}
+          ${customQuestions.map((q) => renderCustomQuestionField(q)).join('')}
+          ${noteEnabled ? `<div class="field">
+            <label for="note">${noteLabel}${noteRequired ? '' : optionalTag}</label>
+            <textarea id="note" name="note" maxlength="500" ${noteRequired ? 'required' : ''} placeholder="${notePlaceholder}"></textarea>
+          </div>` : ''}
           <div class="hp-field" aria-hidden="true">
             <label for="company">Company</label>
             <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
@@ -761,6 +841,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var TZ = 'Europe/London';
   var MAX_ADVANCE_DAYS = ${maxAdvanceDays};
   var WORKING_DOWS = ${workingDowsJson};
+  var CUSTOM_QUESTIONS = ${customQuestionsJson};
+  var ADDRESS_ENABLED = ${addressEnabledJson};
+  var UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/i;
 
   // DOM refs
   var calGrid        = document.getElementById('cal-grid');
@@ -1178,10 +1261,39 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     if (selectedDate) loadSlots(selectedDate);
   });
 
+  async function validatePostcode(pc) {
+    try {
+      var r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/[\\s]+/g, '')) + '/validate');
+      if (!r.ok) return true; // service down — don't block the booking (server still checks format)
+      var d = await r.json();
+      return d && d.result === true;
+    } catch (e) { return true; }
+  }
+
   bookingForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     formError.hidden = true;
     if (!RESCHEDULE_TOKEN && !bookingForm.reportValidity()) return;
+
+    if (!RESCHEDULE_TOKEN && ADDRESS_ENABLED) {
+      var pcEl = document.getElementById('postcode');
+      var pcMsg = document.getElementById('postcode-msg');
+      var pc = pcEl ? pcEl.value.trim() : '';
+      if (pc) {
+        if (!UK_POSTCODE_RE.test(pc)) {
+          if (pcMsg) { pcMsg.hidden = false; pcMsg.className = 'postcode-msg bad'; pcMsg.textContent = 'Please enter a valid UK postcode'; }
+          if (pcEl) pcEl.focus();
+          return;
+        }
+        var pcOk = await validatePostcode(pc);
+        if (!pcOk) {
+          if (pcMsg) { pcMsg.hidden = false; pcMsg.className = 'postcode-msg bad'; pcMsg.textContent = 'We could not find that postcode — please check it'; }
+          if (pcEl) pcEl.focus();
+          return;
+        }
+        if (pcMsg) pcMsg.hidden = true;
+      }
+    }
 
     submitBtn.disabled = true;
     var origLabel = submitBtn.textContent;
@@ -1192,18 +1304,33 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     submitBtn.appendChild(spin);
     submitBtn.appendChild(document.createTextNode(RESCHEDULE_TOKEN ? 'Rescheduling…' : 'Booking…'));
 
+    function getVal(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    function collectCustomAnswers() {
+      var ans = {};
+      for (var i = 0; i < CUSTOM_QUESTIONS.length; i++) {
+        var q = CUSTOM_QUESTIONS[i];
+        var el = document.getElementById('cq-' + q.id);
+        if (!el) continue;
+        ans[q.id] = (q.type === 'checkbox') ? el.checked : el.value.trim();
+      }
+      return ans;
+    }
+
     var endpoint = RESCHEDULE_TOKEN ? ('/' + SLUG + '/reschedule') : ('/' + SLUG + '/book');
     var body = RESCHEDULE_TOKEN
       ? { token: RESCHEDULE_TOKEN, slot: selectedSlot }
       : {
           slot:           selectedSlot,
-          name:           document.getElementById('name').value.trim(),
-          email:          document.getElementById('email').value.trim(),
-          phone:          document.getElementById('phone').value.trim(),
-          note:           document.getElementById('note').value.trim() || null,
-          company:        document.getElementById('company').value,
-          reg:            (document.getElementById('reg')?.value.replace(/\s+/g, '').toUpperCase()) || null,
+          name:           getVal('name'),
+          email:          getVal('email'),
+          phone:          getVal('phone'),
+          note:           getVal('note') || null,
+          company:        getVal('company'),
+          reg:            (document.getElementById('reg')?.value.replace(/[\\s]+/g, '').toUpperCase()) || null,
           vehicleSummary: vehicleSummary || null,
+          address:        getVal('address') || null,
+          postcode:       getVal('postcode').toUpperCase() || null,
+          customAnswers:  collectCustomAnswers(),
         };
 
     try {
