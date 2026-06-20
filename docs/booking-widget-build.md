@@ -1069,6 +1069,153 @@ expiry trap — alert on it.
 
 ---
 
+## Config management surface — revised plan (June 2026)
+
+**Status:** design agreed, not yet built. This supersedes the ordering in the
+"Roadmap beyond Phase 1" section above for the config-management work
+specifically. Phase 1 (proven in production) and Phase 2 (D1-backed tenant
+config + KV cache + NeoBookworm as a second tenant) are **done**. What follows is
+how tenant config gets *managed* — and why that decision reaches well beyond
+booking.
+
+### The problem this solves
+
+After Phase 2, tenant config lives as a `config_json` blob in the booking
+Worker's D1 `tenants` table. Adding or changing a tenant currently means hand-
+writing SQL / a migration. That doesn't scale, and it's the wrong surface for a
+non-technical client to ever touch. We already have two admin surfaces built —
+the **dashboard** (`dashboard.html` + `api/dashboard.js`, Nick's mission
+control) and the **client portal** (`api/portal.js`, served at `/c/:slug`) — so
+config editing should live there.
+
+### The core architectural constraint
+
+There are **two separate Cloudflare D1 databases on two runtimes**:
+
+| | Runtime | D1 | Owns |
+|---|---|---|---|
+| Booking widget | Cloudflare Worker (`neobookworm-booking…`) | booking DB (`bookings`, `tenants`) | tenant config + KV cache |
+| Portal + Dashboard | Vercel functions (`api/portal.js`, `api/dashboard.js`) | enquiries DB (`clients`, `email_log`) | onboarding pipeline |
+
+The Vercel surfaces **cannot read the `tenants` table directly** — it lives in a
+different D1 they have no binding to. And only the Worker can bust its own KV
+cache on write. So the question is *how the Vercel admin surfaces talk to the
+booking Worker's config*.
+
+**Decision: keep `tenants` as the single source of truth in the booking Worker,
+and expose it over authenticated HTTP. The dashboard and portal are clients of
+that API.**
+
+```
+Dashboard (Nick)  ──admin secret──▶  Worker  GET/PUT /admin/tenant/:slug   ──▶ D1 + bust KV
+Portal (client)   ──via Vercel────▶  Worker  (Vercel forwards, slug-scoped) ──▶ D1 + bust KV
+```
+
+Rejected alternatives:
+
+- **Vercel binds to the booking D1 directly** — Vercel can't bind Cloudflare D1;
+  it would need the Cloudflare REST API token *and* still couldn't invalidate the
+  Worker's KV. Two writers, one cache = stale-config bugs.
+- **Move `tenants` into the enquiries DB** — couples the booking Worker to the
+  onboarding schema, and `tenants` conceptually belongs with `bookings`.
+
+This keeps **one owner and one cache-invalidation path**, and adds no new DB
+plumbing.
+
+### The piece that makes it sustainable: a config schema
+
+Config is currently one opaque `config_json` blob. The moment a *form* writes it
+back, a malformed blob silently breaks the booking page. So before any UI, the
+Worker needs a **validated schema** — and that schema does triple duty:
+
+```js
+// workers/booking/src/schema.js (to build)
+export const CONFIG_SCHEMA = {
+  calendarId:        { type: 'string',  scope: 'nick',   phase: 1 },
+  theme:             { type: 'object',  scope: 'nick',   phase: 3 },
+  regLookup:         { type: 'bool',    scope: 'nick',   phase: 1 },
+  slotDuration:      { type: 'int', min: 5, max: 240, scope: 'nick', phase: 1 },
+  workingHours:      { type: 'hours',   scope: 'client', phase: 1 },
+  minLeadMinutes:    { type: 'int', min: 0, max: 10080, scope: 'client', phase: 5 },
+  maxAdvanceDays:    { type: 'int', min: 1, max: 365,  scope: 'client', phase: 1 },
+  noteLabel:         { type: 'string',  scope: 'client', phase: 4 },
+  acceptingBookings: { type: 'bool',    scope: 'client', phase: 1 },
+  // …later phases append fields here with a scope + phase tag
+};
+```
+
+- **Worker** validates every PUT against it (whitelist keys, type-check, clamp
+  ranges) → bad input can't brick the widget.
+- **`scope` tag** splits *Nick-only* (calendarId, theme, reg lookup, slot
+  duration) from *client-editable* (hours, lead time, days off, note copy, an
+  "accepting bookings" on/off toggle).
+- Each later phase just **adds fields with a `scope` + `phase` tag**, and both
+  forms pick them up — no SQL migration per change.
+
+### Who edits what
+
+- **Dashboard (Nick)** — full config for *every* tenant. Where tenants are
+  created and the technical bits set. High value **now** (NeoBookworm, HE Tyres).
+- **Portal (client)** — only the `scope: 'client'` subset. Value arrives
+  **later**, when the first trade client has the widget live. Don't build client
+  self-service before there's a client using it.
+
+**Slug linkage:** for trade clients, make `tenants.slug == clients.slug` so the
+portal maps 1:1. NeoBookworm and HE Tyres are standalone tenants with no matching
+`clients` row — so the dashboard needs a **standalone "Tenants" list**, not only
+a panel hanging off a client detail view.
+
+**Portal writes** route **Vercel → Worker**, with Vercel holding the admin secret
+and enforcing (a) the slug in the URL and (b) the client-editable whitelist
+before forwarding. No new token system, no CORS, secret never reaches the
+browser.
+
+### Revised phase ordering
+
+Insert one phase; the later phases keep their content but each now also extends
+the schema + dashboard form (~10 min of form work instead of a new migration).
+
+- **Phase 2.5 — Config surface (do this next).**
+  1. `schema.js` with `scope` + `phase` tags; validation helper.
+  2. Worker endpoints: `GET/PUT /admin/tenant/:slug` (admin secret), KV bust on
+     write.
+  3. Dashboard **Booking panel** (full config) + standalone **Tenants list** for
+     tenants with no `clients` row.
+  4. Retires SQL-migration-per-change. This is the foundation everything rides on.
+- **Phases 3–7 (branding, form flexibility, scheduling depth, email/reminders,
+  multiple service types)** — unchanged in content; each appends its keys to the
+  schema and renders them in the dashboard form.
+- **Portal self-service** — thin follow-on, built when the first trade client
+  goes live with bookings.
+
+### Broader application — this pattern is not just for booking
+
+The same shape — **a validated, scope-tagged schema, owned by one service,
+edited through the dashboard (Nick) and a whitelisted subset through the portal
+(client)** — generalises to *site content* management. Once Phase 2.5 exists, the
+identical machinery can drive:
+
+- **Text edits** — headline, intro line, service descriptions, opening hours
+  blurb. Schema fields with `type: 'text'` / `type: 'richtext'`, `scope: 'client'`.
+- **Images** — gallery photos, hero image, logo swaps. Field `type: 'image'`
+  backed by an R2 upload (we already run R2 for intake uploads); the stored value
+  is the R2 URL, the editor is a file picker in the portal.
+- **Descriptions / metadata** — per-service blurbs, accreditation numbers,
+  coverage area — each a scoped schema field.
+
+The win is that a client editing their own site copy or swapping a photo becomes
+the *same* "render fields from a scoped schema → validate on write → bust cache"
+flow as editing a booking lead time. It turns the portal from a status page into
+a light **client CMS**, without a heavyweight CMS dependency. Worth designing
+Phase 2.5's schema/validation helpers to be **content-type agnostic from the
+start** (don't hardcode booking assumptions into the validator) so this
+generalisation is a matter of adding field types, not re-architecting.
+
+This is a roadmap note, not a commitment — but it's the reason to get the schema
+abstraction right now rather than bolting config editing onto booking alone.
+
+---
+
 ## Appendix — useful test commands
 
 ```bash
