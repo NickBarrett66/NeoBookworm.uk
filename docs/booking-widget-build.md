@@ -1353,10 +1353,14 @@ Nick-scope, default `postcode`):
   postcode and shows the area (`✓ admin_district, region`) on blur and submit.
   Fails open if the service is down. No key, no cost.
 - **`full` (opt-in, paid)** — a "Find address" button + address-picker dropdown.
-  The Worker route `GET /:slug/address-lookup?postcode=` proxies **Ideal
-  Postcodes** so the API key stays server-side; gated to `full`-mode tenants and
-  IP rate-limited to protect credits (~4.5p/lookup). Needs Worker secret
-  **`IDEAL_POSTCODES_KEY`**; lookups only fire on the button (never per keystroke).
+  The Worker route `GET /:slug/address-lookup?postcode=` proxies **Postcoder**
+  (`https://ws.postcoder.com/pcw/{key}/address/uk/{postcode}?format=json&lines=3`)
+  so the API key — which sits in the URL path — stays server-side; gated to
+  `full`-mode tenants and IP rate-limited to protect credits (2 credits/UK
+  lookup). Needs Worker secret **`POSTCODER_API_KEY`**; lookups only fire on the
+  button (never per keystroke). Postcoder returns a bare JSON array; the handler
+  maps `addressline1-3`/`posttown`/`postcode`/`summaryline` to the widget's
+  `{line1,line2,town,postcode,summary}` shape, so the client UI is unchanged.
 
 Defaults preserve current behaviour (phone on+required, note on+optional,
 address off, in_person, no custom questions, postcode-only lookup). **Deploy order matters:**
@@ -1364,7 +1368,46 @@ address off, in_person, no custom questions, postcode-only lookup). **Deploy ord
    bookings --remote` (and `--local` for dev) — **before** deploying the Worker.
 2. `npx wrangler deploy`; Vercel redeploys `notify-booking` + dashboard on push.
 No new secrets *unless* a tenant uses `addressLookup: 'full'`, which needs
-`npx wrangler secret put IDEAL_POSTCODES_KEY` on the Worker.
+`npx wrangler secret put POSTCODER_API_KEY` on the Worker.
+
+### Runbook — enable the full address finder (Postcoder) for a tenant
+
+Provider: **Postcoder** (`address` endpoint). UK lookups cost **2 credits each**.
+Confirmed working in production (June 2026). The key sits in the request URL path,
+so it is held only as a Worker secret and proxied server-side — never in the
+browser.
+
+1. **Get the key** — from the Postcoder account dashboard (format
+   `PCW45-12345-12345-1234X`).
+2. **Store it on the Worker** (one shared key for all tenants):
+   ```bash
+   cd workers/booking
+   npx wrangler secret put POSTCODER_API_KEY
+   ```
+3. **Deploy** (if not already on Phase 4 code): `npx wrangler deploy`.
+4. **Enable per tenant** — dashboard → **Bookings** → Edit tenant:
+   - *Ask for address* → on
+   - *Address required* → optional
+   - *Address lookup* → **Full address finder (Postcoder — paid)** (Nick-only field)
+   - Save (KV busts; live immediately).
+5. **Test** — on the booking form type a postcode → **Find address** → pick from
+   the dropdown → street + town auto-fill. Direct check (spends 2 credits):
+   ```bash
+   curl "https://neobookworm-booking.nickbarrett.workers.dev/<slug>/address-lookup?postcode=NR11NE"
+   ```
+   Expect `{"addresses":[{...,"summary":"..."}]}`.
+
+**Cost control (built in):** a lookup is spent only on the *Find address* click —
+never on typing, never for `postcode`-mode tenants; the route is config-gated and
+IP rate-limited. Any failure (bad key, no credits, Postcoder down) degrades
+gracefully to "type your address manually". Monitor the balance in Postcoder's
+usage dashboard.
+
+**Endpoint/mapping reference:**
+`GET https://ws.postcoder.com/pcw/{key}/address/uk/{postcode}?format=json&lines=3`
+returns a bare JSON array; the handler maps
+`addressline1-3 / posttown / postcode / summaryline` →
+`{line1, line2, town, postcode, summary}`.
 
 ---
 

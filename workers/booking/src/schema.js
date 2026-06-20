@@ -86,9 +86,9 @@ export const CONFIG_SCHEMA = [
   { key: 'addressLookup', label: 'Address lookup', type: 'select', scope: 'nick', phase: 4, default: 'postcode',
     options: [
       { value: 'postcode', label: 'Postcode check (free)' },
-      { value: 'full', label: 'Full address finder (Ideal Postcodes — paid)' },
+      { value: 'full', label: 'Full address finder (Postcoder — paid)' },
     ],
-    hint: 'Free: validates the postcode and shows the area. Full: customers pick their exact address (~4.5p/lookup; needs IDEAL_POSTCODES_KEY secret).' },
+    hint: 'Free: validates the postcode and shows the area. Full: customers pick their exact address (Postcoder, 2 credits/UK lookup; needs POSTCODER_API_KEY secret).' },
   { key: 'customQuestions', label: 'Custom questions', type: 'questions', scope: 'client', phase: 4, default: [],
     hint: 'Extra questions shown on the booking form. Answers appear in the calendar event and your email.' },
 ];

@@ -230,16 +230,16 @@ async function handleSlots(slug, url, env) {
   }
 }
 
-// Full house-level address finder — proxies Ideal Postcodes so the API key stays
-// server-side. Gated to tenants on addressLookup:'full' and rate-limited to
-// protect paid credits.
+// Full house-level address finder — proxies Postcoder so the API key (which sits
+// in the request URL path) stays server-side. Gated to tenants on
+// addressLookup:'full' and rate-limited to protect paid credits.
 async function handleAddressLookup(slug, url, req, env) {
   const config = await getConfig(slug, env);
   if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
   if (!config.addressEnabled || config.addressLookup !== 'full') {
     return jsonResponse({ error: 'Address lookup not enabled' }, 400);
   }
-  const key = env.IDEAL_POSTCODES_KEY;
+  const key = env.POSTCODER_API_KEY;
   if (!key) return jsonResponse({ error: 'Address lookup not configured' }, 500);
 
   const postcode = (url.searchParams.get('postcode') || '').trim();
@@ -249,22 +249,27 @@ async function handleAddressLookup(slug, url, req, env) {
   if (await checkIpRateLimit(env, ip)) return jsonResponse({ error: 'too_many' }, 429);
 
   try {
-    const pc = encodeURIComponent(postcode.replace(/\s+/g, '').toUpperCase());
-    const res = await fetch(`https://api.ideal-postcodes.co.uk/v1/postcodes/${pc}?api_key=${encodeURIComponent(key)}`);
+    const pc = encodeURIComponent(postcode.toUpperCase());
+    const endpoint = `https://ws.postcoder.com/pcw/${encodeURIComponent(key)}/address/uk/${pc}?format=json&lines=3`;
+    const res = await fetch(endpoint);
     const data = await res.json().catch(() => null);
-    if (!data) return jsonResponse({ error: 'lookup_failed' }, 502);
-    if (res.status === 404 || data.code === 4040) return jsonResponse({ addresses: [] });
-    if (!Array.isArray(data.result)) {
-      console.error('[booking] ideal-postcodes error:', res.status, data.message || '');
+    // Postcoder returns a bare JSON array of addresses on success.
+    if (!res.ok || !Array.isArray(data)) {
+      // A 404 / non-array for a valid-format postcode usually means "no matches".
+      if (res.status === 404) return jsonResponse({ addresses: [] });
+      console.error('[booking] postcoder error:', res.status, JSON.stringify(data).slice(0, 200));
       return jsonResponse({ error: 'lookup_failed' }, 502);
     }
-    const addresses = data.result.map((a) => ({
-      line1: a.line_1 || '',
-      line2: [a.line_2, a.line_3].filter(Boolean).join(', '),
-      town: a.post_town || '',
-      postcode: a.postcode || postcode.toUpperCase(),
-      summary: [a.line_1, a.line_2, a.line_3, a.post_town].filter(Boolean).join(', '),
-    }));
+    const addresses = data.map((a) => {
+      const lines = [a.addressline1, a.addressline2, a.addressline3].filter(Boolean);
+      return {
+        line1: a.addressline1 || lines[0] || '',
+        line2: [a.addressline2, a.addressline3].filter(Boolean).join(', '),
+        town: a.posttown || '',
+        postcode: a.postcode || postcode.toUpperCase(),
+        summary: a.summaryline || [...lines, a.posttown, a.postcode].filter(Boolean).join(', '),
+      };
+    });
     return jsonResponse({ addresses });
   } catch (err) {
     console.error('[booking] address lookup error:', err);
