@@ -26,7 +26,16 @@ async function bookingAdmin(path, { method = 'GET', body } = {}) {
     headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
-  const data = await res.json().catch(() => ({ ok: false, error: `Booking API returned ${res.status}` }));
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    // Non-JSON body (e.g. the Worker's plain-text catch-all when /admin routes
+    // aren't deployed). Surface a snippet so the cause is obvious.
+    const snippet = text.slice(0, 120).replace(/\s+/g, ' ').trim();
+    data = { ok: false, error: `Booking API returned non-JSON (${res.status}): ${snippet || '<empty>'} — is the Worker deployed with the /admin routes?` };
+  }
   return { status: res.status, data };
 }
 
