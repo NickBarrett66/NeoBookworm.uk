@@ -107,7 +107,7 @@ scripts\deploy.bat staging
 Use the staging Worker URLs directly, or push a feature branch and use the
 Vercel preview URL (which points at staging via the `BOOKING_WORKER_URL` env var).
 
-- [ ] Booking flow: create a test booking, confirm email arrives, check D1 row
+- [x] Booking flow: create a test booking, confirm email arrives, check D1 row
 - [ ] Landing enquiry form: submit a test enquiry, confirm email + D1 row
 - [ ] Admin dashboard: check test data appears correctly
 
