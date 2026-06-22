@@ -31,3 +31,23 @@ crons = ["*/15 * * * *", "0 8 * * *"]
 # zone_name     = "neobookworm.uk"
 #
 # Production URL (current): https://neobookworm-landing-enquiry.nickbarrett.workers.dev
+
+# ── Staging environment ───────────────────────────────────────────────────────
+# Deploy with: npx wrangler deploy --env staging
+# Worker URL:  https://neobookworm-landing-enquiry-staging.nickbarrett.workers.dev
+[env.staging]
+name            = "neobookworm-landing-enquiry-staging"
+workers_dev     = true
+preview_urls    = false
+
+[[env.staging.d1_databases]]
+binding      = "neobookworm_enquiries_staging"
+database_name = "neobookworm-enquiries-staging"
+# TODO: paste ID from `setup-staging` script output (d1 create neobookworm-enquiries-staging)
+database_id  = "96b0a37a-c664-4143-9af1-c91e3f34333b"
+
+# Staging crons run at a reduced cadence to avoid noise.
+# Retry: once per hour instead of every 15 min.
+# Digest: disabled (set to an unlikely time — 03:00 UTC on 1 Jan only).
+[env.staging.triggers]
+crons = ["0 * * * *", "0 3 1 1 *"]

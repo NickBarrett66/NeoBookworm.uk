@@ -12,4 +12,24 @@ binding = "TOKEN_CACHE"
 id = "aac53ca10b1e4c2aa6d2e407404f50c7"
 
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
+
+# ── Staging environment ───────────────────────────────────────────────────────
+# Deploy with: npx wrangler deploy --env staging
+# Worker URL:  https://neobookworm-booking-staging.nickbarrett.workers.dev
+[env.staging]
+name = "neobookworm-booking-staging"
+
+[[env.staging.d1_databases]]
+binding = "bookings_staging"
+database_name = "bookings-staging"
+# TODO: paste ID from `setup-staging` script output (d1 create bookings-staging)
+database_id = "d631d65e-54a3-4c67-b7ae-1de8d6e68649"
+
+[[env.staging.kv_namespaces]]
+binding = "TOKEN_CACHE_staging"
+# TODO: paste ID from `setup-staging` script output (kv namespace create TOKEN_CACHE-staging)
+id = "53f451805b934c95a612b4062fa0541e"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
