@@ -497,6 +497,27 @@
     .form-notice { display: none; margin-bottom: 1rem; padding: .75rem 1rem; border-radius: 6px; font-size: .9rem; font-weight: 600; }
     .form-notice.error { display: block; background: #fdecea; border: 2px solid #e74c3c; color: #922b21; }
     .form-hp { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    /* Enquiry type selector */
+    .enquiry-type { margin-bottom: 1.25rem; }
+    .type-label { font-size: .85rem; font-weight: 700; color: var(--navy); margin-bottom: .65rem; }
+    .type-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .type-card { display: flex; flex-direction: column; gap: .2rem; padding: .9rem 1rem; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color .2s, background .2s; background: #fff; position: relative; }
+    .type-card input[type=radio] { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+    .type-icon { font-size: 1.3rem; line-height: 1; margin-bottom: .15rem; }
+    .type-title { font-weight: 700; font-size: .875rem; color: var(--navy); line-height: 1.25; }
+    .type-sub { font-size: .78rem; color: var(--muted); line-height: 1.35; }
+    .type-card:hover { border-color: var(--orange); }
+    .type-card.selected { border-color: var(--orange); background: #fff8f0; }
+    .field-opt { font-weight: 400; color: var(--muted); font-size: .85em; }
+    .form-section[hidden] { display: none; }
+    .reg-row { display: flex; gap: .5rem; align-items: stretch; }
+    .reg-input { flex: 1; text-transform: uppercase; letter-spacing: .08em; }
+    .btn-lookup { flex-shrink: 0; background: var(--navy); color: #fff; border: none; border-radius: 6px; padding: 0 1rem; font-family: 'Montserrat', sans-serif; font-size: .85rem; font-weight: 700; cursor: pointer; transition: background .2s; white-space: nowrap; }
+    .btn-lookup:hover { background: #0a1526; }
+    .btn-lookup:disabled { opacity: .55; cursor: default; }
+    .vehicle-result { background: #e8f4fd; border: 2px solid #2980b9; border-radius: 6px; padding: .75rem 1rem; font-size: .875rem; color: var(--navy); margin-top: .5rem; line-height: 1.5; }
+    .vehicle-result strong { font-weight: 700; display: block; margin-bottom: .15rem; }
+    @media (max-width: 480px) { .type-cards { grid-template-columns: 1fr; } }
 
     /* ══════════════ FAQ ══════════════ */
     .faq { padding: 5rem 1.25rem; background: var(--light); }
@@ -1079,30 +1100,101 @@
               <input type="text" id="enquiry-website" name="website" tabindex="-1" autocomplete="off">
             </div>
             <div class="form-notice" id="formNotice" role="alert"></div>
-            <div class="form-group">
-              <label for="name">Your name</label>
-              <input type="text" id="name" name="name" autocomplete="name" required placeholder="Jane Smith">
+
+            <!-- Step 1: type selector -->
+            <div class="enquiry-type">
+              <p class="type-label">What do you need?</p>
+              <div class="type-cards" role="group" aria-label="Enquiry type">
+                <label class="type-card" id="typeCardMobile">
+                  <input type="radio" name="enquiry_type" value="mobile">
+                  <span class="type-icon" aria-hidden="true">🚐</span>
+                  <span class="type-title">Fit tyres at my home or work</span>
+                  <span class="type-sub">We come to you — driveway, car park or workplace</span>
+                </label>
+                <label class="type-card" id="typeCardGeneral">
+                  <input type="radio" name="enquiry_type" value="general">
+                  <span class="type-icon" aria-hidden="true">💬</span>
+                  <span class="type-title">Price or general question</span>
+                  <span class="type-sub">Unusual tyres, locking nuts, depot queries</span>
+                </label>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="phone">Phone number</label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" required placeholder="07700 900000">
+
+            <!-- Step 2a: mobile fitting fields -->
+            <div class="form-section" id="mobileFittingFields" hidden>
+              <div class="form-group">
+                <label for="postcode">Fitting address postcode</label>
+                <input type="text" id="postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. SN1 1AA" maxlength="8">
+              </div>
+              <div class="form-group">
+                <label for="reg">Vehicle registration <span class="field-opt">(optional)</span></label>
+                <div class="reg-row">
+                  <input type="text" id="reg" name="reg" placeholder="e.g. AB12 CDE" maxlength="9" autocomplete="off" class="reg-input">
+                  <button type="button" id="regLookupBtn" class="btn-lookup">Look up</button>
+                </div>
+                <div id="vehicleResult" class="vehicle-result" hidden></div>
+              </div>
+              <div class="form-group">
+                <label for="tyreSize">Tyre size <span class="field-opt">(optional — we'll confirm when we call)</span></label>
+                <input type="text" id="tyreSize" name="tyre_size" placeholder="e.g. 205/55 R16" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label for="tyreCount">How many tyres?</label>
+                <select id="tyreCount" name="tyre_count">
+                  <option value="">Select</option>
+                  <option value="1">1 tyre</option>
+                  <option value="2">2 tyres</option>
+                  <option value="3">3 tyres</option>
+                  <option value="4">4 tyres</option>
+                  <option value="Full set">Full set (all 4)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timing">When suits you?</label>
+                <select id="timing" name="timing">
+                  <option value="">Select</option>
+                  <option value="This week">This week</option>
+                  <option value="Next week">Next week</option>
+                  <option value="Flexible">Flexible — no rush</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="mobileMessage">Anything else we should know? <span class="field-opt">(optional)</span></label>
+                <textarea id="mobileMessage" name="mobile_message" placeholder="e.g. it's a run-flat, gated car park, or I need a specific morning slot"></textarea>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="email">Email <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-              <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com">
+
+            <!-- Step 2b: general enquiry fields -->
+            <div class="form-section" id="generalEnquiryFields" hidden>
+              <div class="form-group">
+                <label for="vehicle">Vehicle type <span class="field-opt">(optional)</span></label>
+                <select id="vehicle" name="vehicle">
+                  <option value="">Select</option>
+                  <option>Car</option><option>Van</option><option>Caravan</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="message">What do you need?</label>
+                <textarea id="message" name="message" placeholder="e.g. price for an unusual tyre size, or I've lost my locking nut key…"></textarea>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="vehicle">Vehicle type</label>
-              <select id="vehicle" name="vehicle">
-                <option value="">Select vehicle type</option>
-                <option>Car</option><option>Van</option><option>Caravan</option>
-              </select>
+
+            <!-- Step 3: common contact fields — revealed after type is chosen -->
+            <div class="form-section" id="commonFields" hidden>
+              <div class="form-group">
+                <label for="name">Your name</label>
+                <input type="text" id="name" name="name" autocomplete="name" placeholder="Jane Smith">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="07700 900000">
+              </div>
+              <div class="form-group">
+                <label for="email">Email <span class="field-opt">(optional)</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com">
+              </div>
+              <button type="submit" class="btn-form" id="enquirySubmitBtn">Send enquiry</button>
             </div>
-            <div class="form-group">
-              <label for="message">What do you need?</label>
-              <textarea id="message" name="message" required placeholder="e.g. 2 front tyres at home, size 205/55 R16 — or I've lost my locking nut key…"></textarea>
-            </div>
-            <button type="submit" class="btn-form" id="enquirySubmitBtn">Send enquiry</button>
           </form>
           <div class="form-success" id="formSuccess" role="status" aria-live="polite">✓ Thanks — we'll be in touch shortly!</div>
         </div>
@@ -1450,31 +1542,158 @@
       const form = document.getElementById('enquiryForm');
       const notice = document.getElementById('formNotice');
       const success = document.getElementById('formSuccess');
-      const btn = document.getElementById('enquirySubmitBtn');
-      if (!form || !notice || !success || !btn) return;
+
+      if (!form || !notice || !success) return;
 
       const host = window.location.hostname;
-      const apiUrl = (host === 'neobookworm.uk' || host === 'www.neobookworm.uk' ||
+      const baseUrl = (host === 'neobookworm.uk' || host === 'www.neobookworm.uk' ||
         host === 'localhost' || host.startsWith('127.0.0.1'))
-        ? '/api/he-tyres-enquiry'
-        : 'https://neobookworm.uk/api/he-tyres-enquiry';
+        ? ''
+        : 'https://neobookworm.uk';
 
+      // ── Type selector ──
+      const typeCards = form.querySelectorAll('.type-card');
+      const mobileFittingFields = document.getElementById('mobileFittingFields');
+      const generalEnquiryFields = document.getElementById('generalEnquiryFields');
+      const commonFields = document.getElementById('commonFields');
+      let selectedType = null;
+
+      typeCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          const radio = card.querySelector('input[type=radio]');
+          if (!radio) return;
+          radio.checked = true;
+          selectedType = radio.value;
+
+          typeCards.forEach(function (c) { c.classList.remove('selected'); });
+          card.classList.add('selected');
+
+          mobileFittingFields.hidden = (selectedType !== 'mobile');
+          generalEnquiryFields.hidden = (selectedType !== 'general');
+          commonFields.hidden = false;
+
+          notice.className = 'form-notice';
+          notice.textContent = '';
+        });
+      });
+
+      // ── Reg lookup ──
+      const regInput = document.getElementById('reg');
+      const lookupBtn = document.getElementById('regLookupBtn');
+      const vehicleResult = document.getElementById('vehicleResult');
+      const tyreSizeInput = document.getElementById('tyreSize');
+
+      // Store vehicle data from lookup for submission
+      let lookedUpVehicle = null;
+
+      if (lookupBtn && regInput) {
+        lookupBtn.addEventListener('click', async function () {
+          const reg = regInput.value.trim().toUpperCase().replace(/\s+/g, '');
+          if (!reg) {
+            vehicleResult.hidden = false;
+            vehicleResult.textContent = 'Please enter a registration number first.';
+            return;
+          }
+          lookupBtn.disabled = true;
+          lookupBtn.textContent = 'Looking…';
+          vehicleResult.hidden = true;
+          lookedUpVehicle = null;
+
+          try {
+            const res = await fetch(baseUrl + '/api/reg-lookup', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ reg }),
+            });
+            const data = await res.json();
+            const v = data.vehicle || {};
+            if (v.make) {
+              lookedUpVehicle = v;
+              const parts = [
+                v.make && v.model ? v.make + ' ' + v.model : (v.make || v.model || ''),
+                v.year,
+                v.colour,
+                v.fuelType,
+              ].filter(Boolean);
+              vehicleResult.hidden = false;
+              vehicleResult.innerHTML = '<strong>' + (data.reg || reg) + '</strong>' + parts.join(' · ');
+              // Pre-fill tyre size if returned and field is empty
+              if (v.tyreSize && tyreSizeInput && !tyreSizeInput.value.trim()) {
+                tyreSizeInput.value = v.tyreSize;
+              }
+            } else {
+              vehicleResult.hidden = false;
+              vehicleResult.textContent = 'No details found for ' + reg + ' — we\'ll confirm when we call.';
+            }
+          } catch {
+            vehicleResult.hidden = false;
+            vehicleResult.textContent = 'Lookup unavailable — we\'ll confirm your vehicle when we call.';
+          } finally {
+            lookupBtn.disabled = false;
+            lookupBtn.textContent = 'Look up';
+          }
+        });
+
+        // Also trigger lookup on Enter in the reg field
+        regInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); lookupBtn.click(); }
+        });
+      }
+
+      // ── Submission ──
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
         notice.className = 'form-notice';
         notice.textContent = '';
 
+        const btn = document.getElementById('enquirySubmitBtn');
+        const website = document.getElementById('enquiry-website').value.trim();
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
-        const vehicle = document.getElementById('vehicle').value.trim();
-        const message = document.getElementById('message').value.trim();
-        const website = document.getElementById('enquiry-website').value.trim();
 
-        if (!name || !phone || !message) {
+        if (!selectedType) {
           notice.className = 'form-notice error';
-          notice.textContent = 'Please fill in your name, phone number and message.';
+          notice.textContent = 'Please choose what you need — mobile fitting or a general question.';
           return;
+        }
+
+        if (!name || !phone) {
+          notice.className = 'form-notice error';
+          notice.textContent = 'Please fill in your name and phone number.';
+          return;
+        }
+
+        let payload = { enquiry_type: selectedType, name, phone, email, website };
+
+        if (selectedType === 'mobile') {
+          const postcode = document.getElementById('postcode').value.trim();
+          if (!postcode) {
+            notice.className = 'form-notice error';
+            notice.textContent = 'Please enter your postcode so we can check our coverage area.';
+            return;
+          }
+          payload.postcode = postcode;
+          payload.reg = regInput ? regInput.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+          if (lookedUpVehicle) {
+            payload.vehicle_make   = lookedUpVehicle.make   || '';
+            payload.vehicle_model  = lookedUpVehicle.model  || '';
+            payload.vehicle_year   = lookedUpVehicle.year   || '';
+            payload.vehicle_colour = lookedUpVehicle.colour || '';
+          }
+          payload.tyre_size   = document.getElementById('tyreSize').value.trim();
+          payload.tyre_count  = document.getElementById('tyreCount').value;
+          payload.timing      = document.getElementById('timing').value;
+          payload.mobile_message = document.getElementById('mobileMessage').value.trim();
+        } else {
+          const message = document.getElementById('message').value.trim();
+          if (!message) {
+            notice.className = 'form-notice error';
+            notice.textContent = 'Please tell us what you need.';
+            return;
+          }
+          payload.vehicle = document.getElementById('vehicle').value;
+          payload.message = message;
         }
 
         btn.disabled = true;
@@ -1482,10 +1701,10 @@
         btn.textContent = 'Sending…';
 
         try {
-          const res = await fetch(apiUrl, {
+          const res = await fetch(baseUrl + '/api/he-tyres-enquiry', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, phone, email, vehicle, message, website }),
+            body: JSON.stringify(payload),
           });
           let json = {};
           try { json = await res.json(); } catch { /* ignore */ }
