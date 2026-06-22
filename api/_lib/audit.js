@@ -192,7 +192,7 @@ async function callClaude({ business, url, pageText, pageCount = 1 }) {
   const Anthropic = require('@anthropic-ai/sdk');
   const client = new Anthropic({ apiKey });
 
-  const systemPrompt = `You are helping Nick Barrett, who runs NeoBookworm.uk — a web design service for UK tradespeople at £49.99. Nick will review your output before sending it to the prospect.
+  const systemPrompt = `You are helping Nick Barrett, who runs NeoBookworm.uk — a web design service for UK tradespeople at £299.99. Nick will review your output before sending it to the prospect.
 
 Write in Nick's voice: plain English, direct, no jargon, no sales pressure. If the site is genuinely fine, say so. If not, be specific about what's wrong and what would fix it.
 

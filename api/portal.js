@@ -1244,8 +1244,8 @@ function renderActivePanel(client, slug) {
     const safeSlug = esc(slug || '');
     const approveLabel  = isJ2Review ? 'Build me a new site — let\'s go' : 'Looks good — go live';
     const approveConfirm = isJ2Review
-      ? `Happy with the review? I\'ll build you a replacement from scratch and have the first version to you within 5 working days. It\'s £49.99 for the build — you don\'t pay until you\'re happy.`
-      : `Ready to go ahead? I\'ll send you payment details next — it\'s £49.99 for the build. You don\'t pay until you\'re happy with the site.`;
+      ? `Happy with the review? I\'ll build you a replacement from scratch and have the first version to you within 5 working days. It\'s £299.99 for the build — you don\'t pay until you\'re happy.`
+      : `Ready to go ahead? I\'ll send you payment details next — it\'s £299.99 for the build. You don\'t pay until you\'re happy with the site.`;
     const declineLabel   = isJ2Review ? 'I\'ll stick with what I\'ve got' : 'Not for me — close it down';
     const declineConfirm = isJ2Review
       ? `No problem at all. If you change your mind later, just drop me a line.`
@@ -1317,7 +1317,7 @@ function renderActivePanel(client, slug) {
         ? `<div class="panel-actions">` +
           `<p class="panel-actions-lead">Payment details:</p>` +
           `<ul>` +
-          `<li>£49.99 fixed price — covers the full build.</li>` +
+          `<li>£299.99 fixed price — covers the full build.</li>` +
           `<li>Secure Stripe checkout. Card or Apple Pay.</li>` +
           `<li>Receipt arrives by email straight after.</li>` +
           `</ul>` +
