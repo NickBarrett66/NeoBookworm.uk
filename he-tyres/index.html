@@ -61,6 +61,17 @@
   </script>
 
   <style>
+    /* ── Fonts (inline so @font-face rules exist before first paint, eliminating CLS from swap) ── */
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 800; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 900; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 500; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Oswald'; font-style: normal; font-weight: 700; font-display: swap; src: url('/he-tyres/fonts/oswald-latin-700.woff2') format('woff2'); }
+
     /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
