@@ -41,13 +41,12 @@ workers_dev     = true
 preview_urls    = false
 
 [[env.staging.d1_databases]]
-binding      = "neobookworm_enquiries_staging"
+binding      = "DB"
 database_name = "neobookworm-enquiries-staging"
 # TODO: paste ID from `setup-staging` script output (d1 create neobookworm-enquiries-staging)
 database_id  = "96b0a37a-c664-4143-9af1-c91e3f34333b"
 
-# Staging crons run at a reduced cadence to avoid noise.
-# Retry: once per hour instead of every 15 min.
-# Digest: disabled (set to an unlikely time — 03:00 UTC on 1 Jan only).
+# Crons are disabled on staging — free plan limit is 5 triggers per account.
+# To test cron handlers manually: npx wrangler dev --env staging then POST to /__scheduled
 [env.staging.triggers]
-crons = ["0 * * * *", "0 3 1 1 *"]
+crons = []

@@ -19,6 +19,8 @@ if "%ENV%"=="staging" (
 ) else (
   set "ENV_FLAG="
 )
+set "BOOKING_BINDING=DB"
+set "ENQUIRY_BINDING=DB"
 
 echo.
 echo ========================================================
@@ -29,13 +31,13 @@ echo.
 REM ── landing-enquiry ───────────────────────────────────────────────────────────
 echo --- workers\landing-enquiry ---
 cd /d "%REPO_ROOT%\workers\landing-enquiry"
-call npx wrangler d1 migrations apply DB %ENV_FLAG% --remote
+call npx wrangler d1 migrations apply %ENQUIRY_BINDING% %ENV_FLAG% --remote
 echo.
 
 REM ── booking ───────────────────────────────────────────────────────────────────
 echo --- workers\booking ---
 cd /d "%REPO_ROOT%\workers\booking"
-call npx wrangler d1 migrations apply DB %ENV_FLAG% --remote
+call npx wrangler d1 migrations apply %BOOKING_BINDING% %ENV_FLAG% --remote
 echo.
 
 echo ========================================================

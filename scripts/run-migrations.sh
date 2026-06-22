@@ -20,6 +20,8 @@ if [[ "$ENV" == "staging" ]]; then
 else
   ENV_FLAG=""
 fi
+BOOKING_BINDING="DB"
+ENQUIRY_BINDING="DB"
 
 echo ""
 echo "========================================================"
@@ -30,13 +32,13 @@ echo ""
 # ── landing-enquiry ───────────────────────────────────────────────────────────
 echo "--- workers/landing-enquiry ---"
 cd "$REPO_ROOT/workers/landing-enquiry"
-npx wrangler d1 migrations apply DB $ENV_FLAG --remote
+npx wrangler d1 migrations apply "$ENQUIRY_BINDING" $ENV_FLAG --remote
 echo ""
 
 # ── booking ───────────────────────────────────────────────────────────────────
 echo "--- workers/booking ---"
 cd "$REPO_ROOT/workers/booking"
-npx wrangler d1 migrations apply DB $ENV_FLAG --remote
+npx wrangler d1 migrations apply "$BOOKING_BINDING" $ENV_FLAG --remote
 echo ""
 
 echo "========================================================"
