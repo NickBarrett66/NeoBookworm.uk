@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neobookworm.uk/demos/hartley-plumbing/sitemap.xml

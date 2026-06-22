@@ -11,7 +11,8 @@
   ],
   "redirects": [
     { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true },
-    { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true }
+    { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true },
+    { "source": "/demos/hartley-plumbing", "destination": "/demos/hartley-plumbing/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/api/intake-upload-session", "destination": "/api/intake?action=upload-session" },

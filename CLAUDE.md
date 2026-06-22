@@ -436,7 +436,7 @@ so keeping it current is essential. Do not wait to be asked.
 | Site | HTML built | Images | Badges | Deployed | Netlify URL |
 |---|---|---|---|---|---|
 | Swift Electrical | No | No | No | No | — |
-| Hartley Plumbing | No | No | No | No | — |
+| Hartley Plumbing | Yes (`demos/hartley-plumbing/` — 5 pages: index/about/services/gallery/contact) | Real photos in `demos/hartley-plumbing/images/` | Yes (CSS Gas Safe + Insured + Workmanship) | **Hosted on neobookworm.uk** (ported from Neobookworm Demos; self-hosted fonts Fraunces + IBM Plex Sans + DM Sans) | `/demos/hartley-plumbing` |
 | Ridgecoat Decorators (painter/decorator) | Yes (`ridgecoat-decorators/` — 5 pages: index/about/services/gallery/contact) | Real photos in `ridgecoat-decorators/images/` | Yes (CSS CSCS + Insured) | **Hosted on neobookworm.uk** (ported from Netlify; self-hosted fonts Albert Sans + Bricolage Grotesque) | `/ridgecoat-decorators` |
 | Green Acre Landscapes | No | No | No | No | — |
 | Apex Roofing | No | No | No | No | — |
