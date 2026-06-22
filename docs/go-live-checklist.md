@@ -108,7 +108,7 @@ Use the staging Worker URLs directly, or push a feature branch and use the
 Vercel preview URL (which points at staging via the `BOOKING_WORKER_URL` env var).
 
 - [x] Booking flow: create a test booking, confirm email arrives, check D1 row
-- [ ] Landing enquiry form: submit a test enquiry, confirm email + D1 row
+- [x] Landing enquiry form: submit a test enquiry, confirm email + D1 row
 - [ ] Admin dashboard: check test data appears correctly
 
 ### Step 7 — Apply migrations to production
@@ -119,7 +119,7 @@ If this is a first-time setup, production migrations have not been run yet:
 scripts\run-migrations.bat production
 ```
 
-- [ ] Migrations applied to both production databases
+- [x] Migrations applied to both production databases
 
 ### Step 8 — Deploy Workers to production
 
@@ -127,14 +127,14 @@ scripts\run-migrations.bat production
 scripts\deploy.bat production
 ```
 
-- [ ] Both Workers deployed to production
-- [ ] Vercel main branch deployment is live (check Vercel dashboard)
+- [x] Both Workers deployed to production
+- [x] Vercel main branch deployment is live (check Vercel dashboard)
 
 ### Step 9 — Smoke test production
 
-- [ ] `https://neobookworm-booking.nickbarrett.workers.dev/<tenant>/slots` returns data
-- [ ] `https://neobookworm-landing-enquiry.nickbarrett.workers.dev` responds
-- [ ] Submit a real booking on `neobookworm.uk/contact` and confirm it arrives
+- [x] `https://neobookworm-booking.nickbarrett.workers.dev/<tenant>/slots` returns data
+- [x] `https://neobookworm-landing-enquiry.nickbarrett.workers.dev` responds
+- [x] Submit a real booking on `neobookworm.uk/contact` and confirm it arrives
 
 ---
 
