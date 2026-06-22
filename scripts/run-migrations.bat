@@ -19,8 +19,13 @@ if "%ENV%"=="staging" (
 ) else (
   set "ENV_FLAG="
 )
-set "BOOKING_BINDING=DB"
-set "ENQUIRY_BINDING=DB"
+if "%ENV%"=="staging" (
+  set "BOOKING_BINDING=bookings-staging"
+  set "ENQUIRY_BINDING=neobookworm-enquiries-staging"
+) else (
+  set "BOOKING_BINDING=bookings"
+  set "ENQUIRY_BINDING=neobookworm-enquiries"
+)
 
 echo.
 echo ========================================================

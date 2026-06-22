@@ -20,8 +20,13 @@ if [[ "$ENV" == "staging" ]]; then
 else
   ENV_FLAG=""
 fi
-BOOKING_BINDING="DB"
-ENQUIRY_BINDING="DB"
+if [[ "$ENV" == "staging" ]]; then
+  BOOKING_BINDING="bookings-staging"
+  ENQUIRY_BINDING="neobookworm-enquiries-staging"
+else
+  BOOKING_BINDING="bookings"
+  ENQUIRY_BINDING="neobookworm-enquiries"
+fi
 
 echo ""
 echo "========================================================"
