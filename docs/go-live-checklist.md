@@ -146,12 +146,14 @@ Follow this for every routine code change after the one-time setup above is done
 
 - [ ] Create a Git branch: `git checkout -b my-change`
 - [ ] Make and commit the change
-- [ ] Deploy to staging: `scripts\deploy.bat staging`
+- [ ] Deploy to staging: `scripts\deploy.bat staging`  
+"C:\Users\Nick\Dropbox\00 Neobookworm\[NeoBookworm.uk](http://NeoBookworm.uk)\scripts\deploy.bat" staging
 - [ ] Test manually against the staging Worker URL
 - [ ] Push the branch → Vercel generates a preview URL (talks to staging Workers)
 - [ ] Test the Vercel preview URL end-to-end
 - [ ] Merge to `main` → Vercel auto-deploys the frontend to production
-- [ ] Deploy Workers to production: `scripts\deploy.bat production`
+- [ ] Deploy Workers to production: `scripts\deploy.bat production`  
+"C:\Users\Nick\Dropbox\00 Neobookworm\[NeoBookworm.uk](http://NeoBookworm.uk)\scripts\deploy.bat" production
 - [ ] Smoke test production (booking, enquiry form)
 
 ### For D1 schema changes (new migration)
@@ -159,9 +161,11 @@ Follow this for every routine code change after the one-time setup above is done
 Before deploying a new migration, always test it on staging first:
 
 - [ ] Add the migration file to the relevant `migrations/` folder
-- [ ] Apply to staging: `scripts\run-migrations.bat staging`
+- [ ] Apply to staging: `scripts\run-migrations.bat staging`  
+"C:\Users\Nick\Dropbox\00 Neobookworm\[NeoBookworm.uk](http://NeoBookworm.uk)\scripts\run-migrations.bat" staging
 - [ ] Verify schema change is correct in staging
-- [ ] Deploy Worker to staging: `scripts\deploy.bat staging`
+- [ ] Deploy Worker to staging: `scripts\deploy.bat staging`  
+"C:\Users\Nick\Dropbox\00 Neobookworm\[NeoBookworm.uk](http://NeoBookworm.uk)\scripts\deploy.bat" staging
 - [ ] Test end-to-end on staging
 - [ ] Apply to production: `scripts\run-migrations.bat production`
 - [ ] Deploy Worker to production: `scripts\deploy.bat production`
