@@ -19,7 +19,7 @@ if "%ENV%"=="staging" (
   set "BOOKING_URL=https://neobookworm-booking-staging.nickbarrett.workers.dev"
   set "ENQUIRY_URL=https://neobookworm-landing-enquiry-staging.nickbarrett.workers.dev"
 ) else (
-  set "ENV_FLAG="
+  set "ENV_FLAG=--env="
   set "BOOKING_URL=https://neobookworm-booking.nickbarrett.workers.dev"
   set "ENQUIRY_URL=https://neobookworm-landing-enquiry.nickbarrett.workers.dev"
 )

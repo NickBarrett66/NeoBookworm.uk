@@ -20,7 +20,7 @@ if [[ "$ENV" == "staging" ]]; then
   BOOKING_URL="https://neobookworm-booking-staging.nickbarrett.workers.dev"
   ENQUIRY_URL="https://neobookworm-landing-enquiry-staging.nickbarrett.workers.dev"
 else
-  ENV_FLAG=""
+  ENV_FLAG='--env=""'
   BOOKING_URL="https://neobookworm-booking.nickbarrett.workers.dev"
   ENQUIRY_URL="https://neobookworm-landing-enquiry.nickbarrett.workers.dev"
 fi
