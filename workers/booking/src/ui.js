@@ -761,7 +761,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 <body>
   <header class="biz-header">
     ${logoUrl ? `<img class="biz-logo" src="${logoUrl}" alt="${displayName}">` : ''}
-    <span class="biz-name">${displayName}</span>
+    ${logoUrl ? '' : `<span class="biz-name">${displayName}</span>`}
     <span class="biz-sep" aria-hidden="true">·</span>
     <span class="biz-meta">Book a ${slotDuration}-min slot</span>
   </header>
