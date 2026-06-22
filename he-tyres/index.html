@@ -755,7 +755,7 @@
           <div class="hero-ctas">
             <a href="tel:01793876969" class="hero-pill hero-pill-hot">📞 Call 01793 876 969</a>
             <a href="#book" class="hero-pill hero-pill-mid" data-open-book>📅 Book a depot slot</a>
-            <a href="#contact" class="hero-pill hero-pill-cool">💬 Get a quote</a>
+            <a href="#contact" class="hero-pill hero-pill-cool" data-select-enquiry="general">💬 Get a quote</a>
           </div>
         </div>
       </div>
@@ -1240,7 +1240,7 @@
         <li>Punctures, replacements and runflats</li>
         <li>TPMS checked and reset on the spot</li>
       </ul>
-      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close data-select-enquiry="general" style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
     </div>
   </dialog>
   <dialog class="svc" id="m-depot">
@@ -1275,7 +1275,7 @@
         <li>Warning light reset after every fitting</li>
         <li>Genuine and quality-matched sensors</li>
       </ul>
-      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close data-select-enquiry="general" style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
     </div>
   </dialog>
   <dialog class="svc" id="m-locking">
@@ -1292,7 +1292,7 @@
         <li>No damage to your wheels</li>
         <li>Mobile or at the depot</li>
       </ul>
-      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close data-select-enquiry="general" style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
     </div>
   </dialog>
 
@@ -1580,6 +1580,17 @@
           timingSel.options[2].value = 'Next week (w/c ' + nextWC + ')';
         }
       })();
+
+      // Pre-select a card when arriving via a data-select-enquiry link
+      document.querySelectorAll('[data-select-enquiry]').forEach(function (link) {
+        link.addEventListener('click', function () {
+          var type = link.getAttribute('data-select-enquiry');
+          setTimeout(function () {
+            var card = type === 'mobile' ? document.getElementById('typeCardMobile') : document.getElementById('typeCardGeneral');
+            if (card) card.click();
+          }, 600);
+        });
+      });
 
       typeCards.forEach(function (card) {
         card.addEventListener('click', function () {
