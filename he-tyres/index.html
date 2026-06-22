@@ -1558,6 +1558,29 @@
       const commonFields = document.getElementById('commonFields');
       let selectedType = null;
 
+      // Label timing options with actual week-commencing dates
+      (function () {
+        function getMondayOffset(weeksAhead) {
+          var now = new Date();
+          var daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
+          var d = new Date(now);
+          d.setDate(now.getDate() - daysSinceMonday + weeksAhead * 7);
+          return d;
+        }
+        function fmtWC(d) {
+          return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        }
+        var thisWC = fmtWC(getMondayOffset(0));
+        var nextWC = fmtWC(getMondayOffset(1));
+        var timingSel = document.getElementById('timing');
+        if (timingSel) {
+          timingSel.options[1].text  = 'This week (w/c ' + thisWC + ')';
+          timingSel.options[1].value = 'This week (w/c ' + thisWC + ')';
+          timingSel.options[2].text  = 'Next week (w/c ' + nextWC + ')';
+          timingSel.options[2].value = 'Next week (w/c ' + nextWC + ')';
+        }
+      })();
+
       typeCards.forEach(function (card) {
         card.addEventListener('click', function () {
           const radio = card.querySelector('input[type=radio]');
