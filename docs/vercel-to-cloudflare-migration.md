@@ -198,7 +198,7 @@ Skip entirely (Notion retired): `NOTION_API_KEY`, `NOTION_INTAKE_DATABASE_ID`. B
 | Phase | Description | Status |
 |---|---|---|
 | 0 | **Move DNS zone to Cloudflare** + verify Google Workspace email imports | ✅ Done 2026-06-26 |
-| 1 | Static routing files (`_redirects`, `_headers`) | Not started |
+| 1 | Static routing files (`_redirects`, `_headers`) | ✅ Done 2026-06-25 |
 | 2 | Vercel bridge: add `api/send-email.js` (the `bridge.` custom domain is set up in Phase 7) | Not started |
 | 3 | Port `_lib` helpers to ES modules (`worker/_lib/`) | Not started |
 | 4 | Worker entry + router; port simple routes (`reg-lookup`, `booking-asset`, `portal` + sub-paths) | Not started |
