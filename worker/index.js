@@ -12,11 +12,11 @@ import * as portalAction from './routes/portal-action.js';
 // import * as runSiteAudit from './routes/run-site-audit.js';
 // import * as intake       from './routes/intake.js';
 
-// Phase 4b — SMTP forwarders imported when routes are created:
-// import * as contact              from './routes/contact.js';
-// import * as heTyresEnquiry       from './routes/he-tyres-enquiry.js';
-// import * as notifyLandingEnquiry from './routes/notify-landing-enquiry.js';
-// import * as notifyBooking        from './routes/notify-booking.js';
+// Phase 4b — SMTP forwarders:
+import * as contact              from './routes/contact.js';
+import * as heTyresEnquiry       from './routes/he-tyres-enquiry.js';
+import * as notifyLandingEnquiry from './routes/notify-landing-enquiry.js';
+import * as notifyBooking        from './routes/notify-booking.js';
 
 // Matches /c/<slug>[/<section>[/]] where section is one of the known sub-paths.
 const C_PATH_RE = /^\/c\/([^/]+)(?:\/(action|guides|review|handover|google-business))?\/?$/;
@@ -40,11 +40,11 @@ export default {
     //   return intake.handle(request, env, ctx, url);
     // }
 
-    // Phase 4b paths (reserved — forwarder handlers added when Phase 4b is done):
-    // if (p === '/api/contact')                  return contact.handle(request, env, ctx);
-    // if (p === '/api/he-tyres-enquiry')         return heTyresEnquiry.handle(request, env, ctx);
-    // if (p === '/api/notify-landing-enquiry')   return notifyLandingEnquiry.handle(request, env, ctx);
-    // if (p === '/api/notify-booking')           return notifyBooking.handle(request, env, ctx);
+    // Phase 4b — SMTP forwarders:
+    if (p === '/api/contact')                return contact.handle(request, env, ctx);
+    if (p === '/api/he-tyres-enquiry')       return heTyresEnquiry.handle(request, env, ctx);
+    if (p === '/api/notify-landing-enquiry') return notifyLandingEnquiry.handle(request, env, ctx);
+    if (p === '/api/notify-booking')         return notifyBooking.handle(request, env, ctx);
 
     // ── Portal routes (/c/:slug[/<section>]) ─────────────────────────────────
 
