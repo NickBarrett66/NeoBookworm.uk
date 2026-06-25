@@ -1,0 +1,6 @@
+worker/
+wrangler.toml
+.assetsignore
+_redirects
+_headers
+docs/
