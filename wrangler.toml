@@ -2,6 +2,8 @@ name                 = "neobookworm-uk"
 main                 = "worker/index.js"
 compatibility_date   = "2024-09-23"
 compatibility_flags  = ["nodejs_compat"]
+workers_dev          = true    # staging URL always available; flip to false after Phase 7 if desired
+preview_urls         = false   # disable per-deployment preview URLs (we only need workers.dev)
 # nodejs_compat is REQUIRED — the Worker bundles @aws-sdk/client-s3,
 # @anthropic-ai/sdk, Buffer, and node:crypto. Without this flag those fail
 # at runtime. With compatibility_date >= 2024-09-23 it also enables

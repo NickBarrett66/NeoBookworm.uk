@@ -33,6 +33,12 @@ package-lock.json
 .env.*
 *.env
 
+# ── Claude Code internals ─────────────────────────────────────────────────────
+.claude/
+
+# ── Wrangler build temp directory ─────────────────────────────────────────────
+.wrangler/
+
 # ── Editor / IDE config ───────────────────────────────────────────────────────
 .vscode/
 *.code-workspace

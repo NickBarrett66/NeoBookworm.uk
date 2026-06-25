@@ -205,7 +205,7 @@ Skip entirely (Notion retired): `NOTION_API_KEY`, `NOTION_INTAKE_DATABASE_ID`. B
 | 4b | **SMTP forwarder routes** (`contact`, `he-tyres-enquiry`, `notify-landing-enquiry`, `notify-booking`) | ✅ Done 2026-06-25 |
 | 5 | Port complex routes (`intake`, `run-site-audit`, `dashboard`) | ✅ Done 2026-06-25 |
 | 6 | Worker config (`wrangler.toml`, `.assetsignore`, assets/clean-URL settings) | ✅ Done 2026-06-25 |
-| 7 | Deploy, smoke-test, cut over DNS | Not started |
+| 7 | Deploy, smoke-test, cut over DNS | In progress — Worker deployed to workers.dev; bridge.neobookworm.uk live on Vercel with BRIDGE_SECRET set; Cloudflare CNAME added. Smoke test and apex cutover remaining. |
 | 8 | Cleanup — remove migrated functions from Vercel, update CLAUDE.md | Not started |
 
 ### Production-risk rating (1 = no prod impact, 10 = could take the live site/email down)
@@ -855,14 +855,15 @@ correct it if anything differs. Mark Phase 6 complete in the progress tracker.
 
 **Prerequisite:** Phase 0 is complete — the zone is already on Cloudflare, with Google Workspace email verified, and the apex A record still pointing at Vercel (site unchanged).
 
-### Step 1 — Stand up the bridge hostname (before apex repoint)
+### Step 1 — Stand up the bridge hostname (before apex repoint) ✅ DONE 2026-06-25
 
 The bridge must be reachable on a hostname that points at Vercel after the apex moves to the Worker:
-1. In **Vercel** → the (repurposed) project → **Settings → Domains**, add `bridge.neobookworm.uk`.
-2. In **Cloudflare DNS** (the zone now lives here), add a `CNAME` record: `bridge` → the target Vercel shows you (typically `cname.vercel-dns.com`). Set it **DNS-only (grey cloud)** — do not proxy a Vercel origin.
-3. Wait for Vercel to validate + issue the TLS cert for `bridge.neobookworm.uk`.
-4. Set `VERCEL_BRIDGE_URL=https://bridge.neobookworm.uk` in the **Worker** env (`wrangler secret put` or dashboard) and redeploy the Worker.
-5. **Leave the apex `neobookworm.uk` pointing at Vercel for now** — only `bridge.` is new at this stage. The live site is unaffected.
+1. ✅ In **Vercel** → the (repurposed) project → **Settings → Domains**, add `bridge.neobookworm.uk`.
+2. ✅ In **Cloudflare DNS** (the zone now lives here), add a `CNAME` record: `bridge` → the target Vercel shows you (typically `cname.vercel-dns.com`). Set it **DNS-only (grey cloud)** — do not proxy a Vercel origin.
+3. ✅ Wait for Vercel to validate + issue the TLS cert for `bridge.neobookworm.uk`.
+4. ✅ Set `VERCEL_BRIDGE_URL=https://bridge.neobookworm.uk` in the **Worker** env (`wrangler secret put` or dashboard) and redeploy the Worker.
+5. ✅ `BRIDGE_SECRET` added to Vercel environment variables.
+6. **Leave the apex `neobookworm.uk` pointing at Vercel for now** — only `bridge.` is new at this stage. The live site is unaffected.
 
 ### Step 2 — Smoke test against the `*.workers.dev` staging URL
 
@@ -1029,4 +1030,6 @@ After Phase 8, the Vercel bridge only needs: `d1.js`, `templates.js`, and `send-
 | 2026-06-25 | **RESOLVED (D3):** move DNS zone to Cloudflare | Verified Krystal has no apex ALIAS/ANAME and Cloudflare has no static apex IP, so apex-on-Cloudflare is impossible with DNS at Krystal. Nick chose to move the zone to Cloudflare (registration stays at Krystal). Overrides the brief's "keep DNS at Krystal". Now Phase 0. Email records must be verified on import. |
 | 2026-06-25 | **RESOLVED (D1):** Workers Static Assets, not Pages | Pages is maintenance-mode; Workers gets all new investment + has parity. `.assetsignore` removes the source-leak/`dist/` problem; matches existing Workers. Cost: one router file vs file-per-endpoint (in-repo precedent). |
 | 2026-06-25 | **RESOLVED (D2):** bridge host = `bridge.neobookworm.uk` | Stable, purpose-named; CNAME to Vercel in the Cloudflare zone. Set as `VERCEL_BRIDGE_URL`. |
+| 2026-06-25 | **Phase 6 COMPLETE** — `wrangler.toml` + `.assetsignore` created; Worker deployed to `https://neobookworm-uk.nickbarrett.workers.dev`; all 13 secrets set; D1 access confirmed (CF_API_TOKEN needed Account-level D1:Edit scope — User-level fails with 7403); source-leak check clean; portal branded 404 confirmed. |
+| 2026-06-25 | **Phase 7 Step 1 COMPLETE** — `bridge.neobookworm.uk` live on Vercel (TLS cert issued); Cloudflare CNAME added grey-cloud; `BRIDGE_SECRET` set on Vercel. Smoke test (Step 2) and apex cutover (Step 3) remaining. |
 | 2026-06-26 | **Phase 0 COMPLETE** — zone live on Cloudflare | NS = adam/sydney.ns.cloudflare.com. Email verified via live DNS: MX `1 smtp.google.com`, SPF, DKIM (`google._domainkey`, char-for-char match), DMARC, both google-site-verification TXTs. `booking` CNAME re-added. Apex `A` `216.198.79.1` + `www` set **grey-cloud (DNS-only)** → site still on Vercel. Note: Cloudflare's import proxied (orange) the apex by default — switched to grey to avoid proxy-in-front-of-Vercel SSL issues; real Cloudflare edge benefits return at Phase 7 via the Worker. |
