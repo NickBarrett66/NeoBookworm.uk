@@ -34,3 +34,5 @@ dist/
 *.mdb
 *.tmp
 *.log
+.vercel
+.env*.local
