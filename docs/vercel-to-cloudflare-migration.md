@@ -203,8 +203,8 @@ Skip entirely (Notion retired): `NOTION_API_KEY`, `NOTION_INTAKE_DATABASE_ID`. B
 | 3 | Port `_lib` helpers to ES modules (`worker/_lib/`) | ✅ Done 2026-06-25 |
 | 4 | Worker entry + router; port simple routes (`reg-lookup`, `booking-asset`, `portal` + sub-paths, `portal-action`) | ✅ Done 2026-06-25 |
 | 4b | **SMTP forwarder routes** (`contact`, `he-tyres-enquiry`, `notify-landing-enquiry`, `notify-booking`) | ✅ Done 2026-06-25 |
-| 5 | Port complex routes (`intake`, `run-site-audit`, `dashboard`) | Not started |
-| 6 | Worker config (`wrangler.toml`, `.assetsignore`, assets/clean-URL settings) | Not started |
+| 5 | Port complex routes (`intake`, `run-site-audit`, `dashboard`) | ✅ Done 2026-06-25 |
+| 6 | Worker config (`wrangler.toml`, `.assetsignore`, assets/clean-URL settings) | ✅ Done 2026-06-25 |
 | 7 | Deploy, smoke-test, cut over DNS | Not started |
 | 8 | Cleanup — remove migrated functions from Vercel, update CLAUDE.md | Not started |
 

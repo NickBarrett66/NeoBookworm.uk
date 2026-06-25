@@ -7,10 +7,10 @@ import * as bookingAsset from './routes/booking-asset.js';
 import * as portal       from './routes/portal.js';
 import * as portalAction from './routes/portal-action.js';
 
-// Phase 5 — imported when routes are created:
-// import * as dashboard    from './routes/dashboard.js';
-// import * as runSiteAudit from './routes/run-site-audit.js';
-// import * as intake       from './routes/intake.js';
+// Phase 5:
+import * as dashboard    from './routes/dashboard.js';
+import * as runSiteAudit from './routes/run-site-audit.js';
+import * as intake       from './routes/intake.js';
 
 // Phase 4b — SMTP forwarders:
 import * as contact              from './routes/contact.js';
@@ -31,14 +31,23 @@ export default {
     if (p === '/api/reg-lookup')    return regLookup.handle(request, env, ctx, url);
     if (p === '/api/booking-asset') return bookingAsset.handle(request, env, ctx, url);
 
-    // Phase 5 paths (reserved — handlers added when Phase 5 is done):
-    // if (p === '/api/dashboard')          return dashboard.handle(request, env, ctx, url);
-    // if (p === '/api/run-site-audit')     return runSiteAudit.handle(request, env, ctx, url);
-    // Intake rewrite aliases (replace vercel.json rewrites):
-    // if (p === '/api/intake' || p === '/api/intake-upload-session' ||
-    //     p === '/api/intake-finalize' || p === '/api/onboarding-intake') {
-    //   return intake.handle(request, env, ctx, url);
-    // }
+    // Phase 5:
+    if (p === '/api/dashboard')      return dashboard.handle(request, env, ctx, url);
+    if (p === '/api/run-site-audit') return runSiteAudit.handle(request, env, ctx, url);
+    // Intake aliases (replace vercel.json rewrites):
+    if (p === '/api/intake') return intake.handle(request, env, ctx, url);
+    if (p === '/api/intake-upload-session') {
+      url._aliasAction = 'upload-session';
+      return intake.handle(request, env, ctx, url);
+    }
+    if (p === '/api/intake-finalize') {
+      url._aliasAction = 'finalize';
+      return intake.handle(request, env, ctx, url);
+    }
+    if (p === '/api/onboarding-intake') {
+      url._aliasAction = 'onboarding';
+      return intake.handle(request, env, ctx, url);
+    }
 
     // Phase 4b — SMTP forwarders:
     if (p === '/api/contact')                return contact.handle(request, env, ctx);
