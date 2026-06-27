@@ -1,6 +1,6 @@
 // api/reg-lookup.js
 // Proxy for RegCheck SOAP API — returns vehicle data as JSON.
-// Called by reg-test.html; will be reused by api/he-tyres-dvla.js.
+// Called by he-tyres enquiry form; reg-test.html uses api/vdg-lookup.js instead.
 
 const REGCHECK_ENDPOINT = 'http://www.regcheck.org.uk/api/reg.asmx';
 const REGCHECK_USERNAME = 'NeoBookworm.uk';

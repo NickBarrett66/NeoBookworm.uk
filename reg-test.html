@@ -3,33 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reg Lookup Test</title>
+  <title>VDG Reg Lookup Test</title>
   <meta name="robots" content="noindex, nofollow">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 3rem auto; padding: 1rem; background: #f5f5f5; color: #1a1a1a; }
-    h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 3rem auto; padding: 1rem; background: #f5f5f5; color: #1a1a1a; }
+    h1 { font-size: 1.4rem; margin-bottom: .5rem; }
+    .intro { color: #555; font-size: .95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+    .notice { background: #fff8e6; border: 1px solid #f5d78a; border-radius: 6px; padding: .85rem 1rem; font-size: .9rem; margin-bottom: 1.5rem; line-height: 1.5; }
     .form-row { display: flex; gap: .75rem; margin-bottom: 1.5rem; }
     input[type="text"] { flex: 1; padding: .6rem .9rem; font-size: 1.1rem; border: 2px solid #ccc; border-radius: 6px; text-transform: uppercase; letter-spacing: .1em; }
     button { padding: .6rem 1.4rem; background: #f5a623; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
     button:disabled { opacity: .5; cursor: default; }
     #result { display: none; }
-    .plate { display: inline-block; background: #f5d000; border: 3px solid #333; border-radius: 6px; padding: .3rem 1rem; font-size: 1.8rem; font-weight: 700; letter-spacing: .12em; margin-bottom: 1rem; font-family: 'UK Number Plate', monospace; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
-    th, td { padding: .6rem .9rem; text-align: left; border-bottom: 1px solid #eee; }
-    th { width: 40%; color: #666; font-weight: 500; font-size: .9rem; }
+    .plate { display: inline-block; background: #f5d000; border: 3px solid #333; border-radius: 6px; padding: .3rem 1rem; font-size: 1.8rem; font-weight: 700; letter-spacing: .12em; margin-bottom: 1rem; font-family: monospace; }
+    h2 { font-size: 1rem; margin: 1.5rem 0 .75rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    th, td { padding: .6rem .9rem; text-align: left; border-bottom: 1px solid #eee; vertical-align: top; }
+    th { width: 34%; color: #666; font-weight: 500; font-size: .9rem; }
     td { font-weight: 600; }
+    .fitment-tag { display: inline-block; font-size: .75rem; font-weight: 700; padding: .15rem .45rem; border-radius: 999px; background: #e8f4fd; color: #1a5276; margin-left: .35rem; }
+    .fitment-tag.optional { background: #eee; color: #666; }
+    .fitment-summary { background: #e8f4fd; border: 1px solid #2980b9; border-radius: 6px; padding: .75rem 1rem; margin-bottom: 1rem; font-size: .95rem; }
+    .fitment-block { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.1); padding: .85rem 1rem; margin-bottom: 1rem; }
+    .fitment-block h3 { margin: 0 0 .65rem; font-size: .95rem; }
+    .fitment-pre { margin: 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .82rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; color: #222; }
     details { margin-top: 1rem; }
     summary { cursor: pointer; color: #666; font-size: .85rem; }
     pre { background: #fff; padding: 1rem; border-radius: 6px; font-size: .75rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin-top: .5rem; }
-    .error { background: #fff0f0; border: 1px solid #f5a0a0; border-radius: 6px; padding: 1rem; color: #900; }
+    .error, .warn { border-radius: 6px; padding: 1rem; margin-bottom: 1rem; line-height: 1.5; }
+    .error { background: #fff0f0; border: 1px solid #f5a0a0; color: #900; }
+    .warn { background: #fff8e6; border: 1px solid #f5d78a; color: #7a5b00; }
     .spinner { display: inline-block; width: 1.2rem; height: 1.2rem; border: 3px solid #ccc; border-top-color: #333; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: .5rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <h1>Vehicle Reg Lookup — Test Page</h1>
+  <h1>Vehicle Data Global — lookup test</h1>
+  <p class="intro">Calls <code>/api/vdg-lookup</code> (VehicleDetails + TyreDetails). For internal testing only.</p>
+  <div class="notice">
+    <strong>Trial note:</strong> sandbox keys only accept registrations containing the letter <strong>A</strong>.
+    Try <strong>AB12CDE</strong> here. Your own plate (e.g. LB69OHW) will work once the account is off sandbox.
+  </div>
+
   <div class="form-row">
-    <input type="text" id="regInput" placeholder="e.g. AB12CDE" maxlength="8" autocomplete="off" spellcheck="false">
+    <input type="text" id="regInput" placeholder="e.g. AB12CDE" maxlength="8" autocomplete="off" spellcheck="false" value="AB12CDE">
     <button id="lookupBtn" onclick="doLookup()">Look up</button>
   </div>
 
@@ -48,50 +65,101 @@
       const out = document.getElementById('result');
       btn.disabled = true;
       out.style.display = 'block';
-      out.innerHTML = '<span class="spinner"></span> Looking up ' + reg + '…';
+      out.innerHTML = '<span class="spinner"></span> Looking up ' + esc(reg) + '…';
 
       try {
-        const res = await fetch('/api/reg-lookup?reg=' + encodeURIComponent(reg));
+        const res = await fetch('/api/vdg-lookup?reg=' + encodeURIComponent(reg));
         const data = await res.json();
 
-        if (data.error) {
-          out.innerHTML = '<div class="error"><strong>Error:</strong> ' + esc(data.error) +
-            (data.detail ? '<br><small>' + esc(data.detail) + '</small>' : '') + '</div>';
+        if (!res.ok || data.error) {
+          let html = '<div class="error"><strong>Error:</strong> ' + esc(data.error || 'Lookup failed');
+          if (data.detail) html += '<br><small>' + esc(data.detail) + '</small>';
+          html += '</div>';
+          if (data.sandboxNote) html += '<div class="warn">' + esc(data.sandboxNote) + '</div>';
+          out.innerHTML = html;
           return;
         }
 
         const v = data.vehicle || {};
-        const rows = [
-          ['Make',          v.make],
-          ['Model',         v.model],
-          ['Colour',        v.colour],
-          ['Year',          v.year],
-          ['Fuel type',     v.fuelType],
-          ['Engine',        v.engineCapacity ? v.engineCapacity + ' cc' : null],
-          ['Transmission',  v.transmission],
-          ['Body style',    v.bodyStyle],
-          ['Doors',         v.doors],
-          ['MOT expiry',    v.motExpiry],
-          ['Tax expiry',    v.taxExpiry],
-          ['Description',   v.description],
-        ].filter(r => r[1]);
+        const vehicleRows = [
+          ['Make', v.make],
+          ['Model', v.model],
+          ['Colour', v.colour],
+          ['Year', v.year],
+          ['Fuel type', v.fuelType],
+          ['Body type', v.bodyType],
+          ['Engine', v.engineCapacity ? v.engineCapacity + ' cc' : null],
+        ].filter(function(r) { return r[1]; });
 
-        const tableRows = rows.map(r =>
-          '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'
-        ).join('');
+        let html = '';
+        if (data.sandboxNote) {
+          html += '<div class="warn">' + esc(data.sandboxNote) + '</div>';
+        }
 
-        out.innerHTML =
-          '<div class="plate">' + esc(data.reg) + '</div>' +
-          (rows.length
-            ? '<table><tbody>' + tableRows + '</tbody></table>'
-            : '<p>No vehicle fields returned — check raw response below.</p>') +
-          '<details><summary>Raw API response</summary><pre>' + esc(JSON.stringify(data, null, 2)) + '</pre></details>';
+        html += '<div class="plate">' + esc(data.reg) + '</div>';
+
+        if (vehicleRows.length) {
+          html += '<h2>Vehicle (DVLA)</h2><table><tbody>';
+          html += vehicleRows.map(function(r) {
+            return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>';
+          }).join('');
+          html += '</tbody></table>';
+        } else {
+          html += '<p>No vehicle details returned.</p>';
+        }
+
+        const tyres = data.tyres || [];
+        if (tyres.length) {
+          html += '<h2>Tyre fitments</h2>';
+          if (data.tyreSize) {
+            html += '<div class="fitment-summary"><strong>Standard fitment:</strong> ' + esc(data.tyreSize) + '</div>';
+          }
+          tyres.forEach(function(t, i) {
+            const tag = t.standard
+              ? '<span class="fitment-tag">Standard</span>'
+              : '<span class="fitment-tag optional">Optional</span>';
+            html += '<div class="fitment-block"><h3>Fitment ' + (i + 1) + ' ' + tag + '</h3>';
+            html += '<pre class="fitment-pre">' + esc(formatFitmentText(t)) + '</pre></div>';
+          });
+        } else {
+          html += '<p>No tyre fitments returned.</p>';
+          if (data.packages && data.packages.tyres) {
+            html += '<p class="intro">TyreDetails API: ' + esc(data.packages.tyres.statusMessage || 'unknown') + '</p>';
+          }
+        }
+
+        html += '<details><summary>Raw API response</summary><pre>' + esc(JSON.stringify(data, null, 2)) + '</pre></details>';
+        out.innerHTML = html;
 
       } catch (err) {
         out.innerHTML = '<div class="error"><strong>Request failed:</strong> ' + esc(err.message) + '</div>';
       } finally {
         btn.disabled = false;
       }
+    }
+
+    function formatTyreLine(label, side) {
+      if (!side) return label + ':   —';
+      const pressure = side.pressurePsi != null ? side.pressurePsi + ' PSI' : '? PSI';
+      const runFlat = side.runFlat === true ? 'true' : side.runFlat === false ? 'false' : '—';
+      let line = label + ':   ' + (side.size || '—')
+        + '  Load: ' + (side.loadIndex || '—')
+        + '  Speed: ' + (side.speedIndex || '—')
+        + '  RunFlat: ' + runFlat
+        + '  Pressure: ' + pressure;
+      if (side.rim) line += '  Rim: ' + side.rim;
+      return line;
+    }
+
+    function formatFitmentText(t) {
+      const lines = [];
+      if (t.modelName) lines.push('Model:        ' + t.modelName);
+      if (t.yearUk) lines.push('UK Year:      ' + t.yearUk);
+      lines.push(formatTyreLine('Front tyre', t.front));
+      lines.push(formatTyreLine('Rear tyre', t.rear));
+      if (t.pcd) lines.push('PCD:          ' + t.pcd);
+      if (t.torqueNm != null) lines.push('Torque:       ' + t.torqueNm + ' Nm');
+      return lines.join('\n');
     }
 
     function esc(str) {
