@@ -1075,8 +1075,11 @@ const OUTBOX_COLS = [
 /** Wait for a full word before column-filter API refresh (ms). */
 const FILTER_DEBOUNCE_MS = 700;
 
-/** Prospects Overview auto-refresh interval (ms). */
-const SUMMARY_REFRESH_MS = 60_000;
+/** Prospects Overview auto-refresh interval (ms).
+ *  Each refresh runs a full GROUP BY status over all prospects (~4,800 D1 rows
+ *  read per fire). At 60s an idle open tab burned ~2.3M rows/day. 10 min keeps
+ *  the counts usefully fresh while cutting that baseline ~10×. */
+const SUMMARY_REFRESH_MS = 600_000;
 
 let summaryRefreshTimer = null;
 
