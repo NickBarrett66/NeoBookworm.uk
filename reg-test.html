@@ -153,7 +153,6 @@
 
     function formatFitmentText(t) {
       const lines = [];
-      if (t.modelName) lines.push('Model:        ' + t.modelName);
       if (t.yearUk) lines.push('UK Year:      ' + t.yearUk);
       lines.push(formatTyreLine('Front tyre', t.front));
       lines.push(formatTyreLine('Rear tyre', t.rear));

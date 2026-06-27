@@ -51,7 +51,6 @@ if (result.tyreSize) console.log(`\nStandard fitment size: ${result.tyreSize}`);
 console.log(`\nTyre fitments found: ${result.tyres.length}\n`);
 result.tyres.forEach((t, i) => {
   console.log(`--- Fitment ${i + 1} ${t.standard ? '(standard)' : '(optional)'} ---`);
-  if (t.modelName) console.log(`  Model:        ${t.modelName}`);
   if (t.yearUk) console.log(`  UK Year:      ${t.yearUk}`);
   console.log(`  ${formatTyreLine('Front tyre', t.front)}`);
   console.log(`  ${formatTyreLine('Rear tyre', t.rear)}`);
