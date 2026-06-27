@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms &amp; Conditions | HEtyres Swindon</title>
+  <meta name="description" content="The terms and conditions for tyre fitting, bookings and mobile visits at HEtyres Swindon — plain English, no small print.">
+  <link rel="canonical" href="https://hetyres.co.uk/terms">
+  <meta name="robots" content="noindex, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hetyres.co.uk/terms">
+  <meta property="og:title" content="Terms &amp; Conditions | HEtyres Swindon">
+  <meta property="og:description" content="Terms for tyre fitting and bookings at HEtyres Swindon.">
+  <meta property="og:image" content="https://hetyres.co.uk/images/og.webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Self-hosted fonts: preload woff2 first, then load CSS non-blocking -->
+  <link rel="preload" href="/he-tyres/fonts/montserrat-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/he-tyres/fonts/opensans-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/he-tyres/fonts/oswald-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/he-tyres/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/he-tyres/fonts.css"></noscript>
+
+  <style>
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 800; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 900; font-display: swap; src: url('/he-tyres/fonts/montserrat-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('/he-tyres/fonts/opensans-latin-var.woff2') format('woff2'); }
+    @font-face { font-family: 'Oswald'; font-style: normal; font-weight: 700; font-display: swap; src: url('/he-tyres/fonts/oswald-latin-700.woff2') format('woff2'); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Open Sans', system-ui, sans-serif; color: var(--text); background: var(--white); line-height: 1.7; }
+
+    :root {
+      --navy:      #1a2336;
+      --navy-2:    #222d45;
+      --navy-deep: #121826;
+      --orange:    #ec7325;
+      --orange-h:  #d35f17;
+      --orange-soft:#fdf0e7;
+      --silver:    #c2c8d0;
+      --light:     #f4f5f7;
+      --border:    #e2e4e8;
+      --text:      #20242c;
+      --muted:     #5f6671;
+      --white:     #ffffff;
+      --max:       1140px;
+    }
+
+    .skip-link {
+      position: absolute; top: -100%; left: 1rem;
+      background: var(--orange); color: var(--navy); padding: .5rem 1rem;
+      font-weight: 700; text-decoration: none; border-radius: 0 0 4px 4px;
+      z-index: 9999; transition: top .2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 1.25rem; }
+
+    /* ══════════════ HEADER ══════════════ */
+    header {
+      position: sticky; top: 0; z-index: 1000;
+      background: var(--navy); border-bottom: 3px solid var(--orange);
+    }
+    .header-inner {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: .8rem 1.25rem; max-width: var(--max); margin: 0 auto;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.55rem;
+      text-decoration: none; letter-spacing: .01em; line-height: 1; white-space: nowrap;
+    }
+    .logo .bk { color: var(--silver); }
+    .logo .bk-r { color: var(--orange); }
+    .logo .he { color: var(--orange); }
+    .logo .ty { color: #fff; }
+    .nav-links { display: flex; gap: 1.4rem; margin-left: auto; }
+    .nav-links a {
+      color: #d6dae2; text-decoration: none; font-size: .92rem; font-weight: 600;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+    .header-phone {
+      font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: #fff; text-decoration: none;
+    }
+    .header-phone:hover { color: var(--orange); }
+    .btn-header {
+      background: var(--orange); color: var(--navy); font-family: 'Montserrat', sans-serif;
+      font-weight: 700; font-size: .85rem; text-decoration: none; padding: .55rem 1.25rem;
+      border-radius: 5px; white-space: nowrap; transition: background .2s;
+    }
+    .btn-header:hover { background: var(--orange-h); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: .25rem; }
+    .nav-toggle span { display: block; width: 26px; height: 3px; background: #fff; margin: 5px 0; border-radius: 2px; transition: .2s; }
+
+    /* ══════════════ PAGE HERO ══════════════ */
+    .page-hero {
+      background: var(--navy); color: #fff;
+      padding: 3.5rem 1.25rem 2.5rem; border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .page-hero-inner { max-width: var(--max); margin: 0 auto; }
+    .page-eyebrow {
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .72rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--orange); margin-bottom: .75rem;
+    }
+    .page-hero h1 {
+      font-family: 'Montserrat', sans-serif; font-weight: 900;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem); line-height: 1.1; margin-bottom: .75rem;
+    }
+    .page-hero p { color: #c7cdd8; font-size: 1rem; max-width: 600px; }
+
+    /* ══════════════ TERMS CONTENT ══════════════ */
+    .terms { padding: 4rem 1.25rem 5rem; }
+    .terms-inner { max-width: 760px; margin: 0 auto; }
+
+    .terms-inner h2 {
+      font-family: 'Montserrat', sans-serif; font-weight: 800;
+      font-size: 1.25rem; color: var(--navy); margin: 2.5rem 0 .75rem;
+      padding-bottom: .5rem; border-bottom: 2px solid var(--orange);
+    }
+    .terms-inner h2:first-child { margin-top: 0; }
+
+    .terms-inner p { margin-bottom: 1rem; color: var(--text); }
+    .terms-inner p:last-child { margin-bottom: 0; }
+
+    .terms-inner ul {
+      margin: 0 0 1rem 1.25rem; color: var(--text);
+    }
+    .terms-inner ul li { margin-bottom: .35rem; }
+
+    .terms-inner a { color: var(--navy); font-weight: 600; text-underline-offset: .15em; }
+    .terms-inner a:hover { color: var(--orange); }
+
+    .terms-meta {
+      background: var(--light); border-left: 4px solid var(--orange);
+      border-radius: 0 6px 6px 0; padding: 1rem 1.25rem;
+      font-size: .9rem; color: var(--muted); margin-bottom: 2.5rem;
+    }
+    .terms-meta strong { color: var(--navy); }
+
+    .callout {
+      background: var(--orange-soft); border: 1.5px solid var(--orange);
+      border-radius: 8px; padding: 1.1rem 1.25rem; margin: 1rem 0 1.5rem;
+      font-size: .95rem; color: var(--navy);
+    }
+
+    /* ══════════════ FOOTER ══════════════ */
+    footer { background: var(--navy-deep); color: #c7cdd8; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem 1.5rem; width: 100%; }
+    .footer-logo { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .01em; flex-shrink: 0; }
+    .footer-logo .bk { color: var(--silver); }
+    .footer-logo .bk-r { color: #f5c08a; }
+    .footer-logo .he { color: #f5c08a; }
+    .footer-logo .ty { color: #fff; }
+    .footer-links { display: flex; gap: 1.25rem 1.5rem; flex-wrap: wrap; justify-content: flex-end; flex: 1; }
+    .footer-links a { color: #c7cdd8; text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: #fff; }
+    .footer-links a[aria-current="page"] { color: #fff; font-weight: 700; }
+    footer small {
+      display: block; width: 100%; text-align: center; color: #c7cdd8;
+      padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.1);
+    }
+    footer small a { color: #fff; text-decoration: none; font-weight: 600; }
+    footer small a:hover { color: #f5c08a; }
+    footer { position: relative; }
+    .nb-credit {
+      position: absolute; bottom: 1rem; right: 1rem;
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 6px; padding: .3rem .55rem;
+      text-decoration: none; color: #8a93a6; font-size: .68rem; line-height: 1.3;
+      transition: background .2s, color .2s;
+    }
+    .nb-credit:hover { background: rgba(255,255,255,.1); color: #c7cdd8; }
+    .nb-credit .nb-mark { font-weight: 700; font-size: .75rem; letter-spacing: -.01em; }
+    .nb-credit .nb-n { color: #fff; }
+    .nb-credit .nb-b { color: #f5a623; }
+    @media (max-width: 639px) { .nb-credit { display: none; } }
+
+    /* ══════════════ RESPONSIVE ══════════════ */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      header.nav-open .nav-links {
+        display: flex; position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; background: #1a2336;
+        padding: 1rem 1.25rem; gap: 1rem;
+      }
+      .nav-toggle { display: block; margin-left: auto; }
+      .footer-row { flex-direction: column; align-items: center; }
+      .footer-links { justify-content: center; }
+    }
+    @media (max-width: 640px) {
+      .header-phone { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header id="siteHeader">
+    <div class="header-inner">
+      <a href="/he-tyres/" class="logo" aria-label="HEtyres home"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/he-tyres/#services">Services</a>
+        <a href="/he-tyres/#brands">Brands</a>
+        <a href="/he-tyres/#lounge">HEhub</a>
+        <a href="/he-tyres/#book">Book</a>
+        <a href="/he-tyres/#reviews">Reviews</a>
+        <a href="/he-tyres/#contact">Contact</a>
+      </nav>
+      <a href="tel:01793876969" class="header-phone">01793 876 969</a>
+      <a href="/he-tyres/#book" class="btn-header">Book depot slot</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- DEPLOY NOTE: When site goes live at hetyres.co.uk, update all /he-tyres/ paths to /
+       and update the canonical URL above. -->
+
+  <main id="main">
+
+    <div class="page-hero">
+      <div class="page-hero-inner">
+        <p class="page-eyebrow">Legal</p>
+        <h1>Terms &amp; Conditions</h1>
+        <p>Straightforward terms for our tyre fitting services — written to be read, not filed away.</p>
+      </div>
+    </div>
+
+    <section class="terms" aria-label="Terms and conditions">
+      <div class="terms-inner">
+
+        <div class="terms-meta">
+          <strong>H E Tyres Ltd</strong> · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW<br>
+          Phone: <a href="tel:01793876969">01793 876 969</a> · Email: <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a><br>
+          Last reviewed: 27 June 2026
+        </div>
+
+        <h2>1. Who we are</h2>
+        <p>These terms apply to all tyre fitting, balancing, TPMS servicing, and locking wheel nut removal carried out by H E Tyres Ltd — whether at our depot on Westmead Drive, Swindon, or at a location we visit for a mobile fitting. By booking a job with us, you agree to these terms.</p>
+        <p>We're a small, family-run business and we aim to be straight with you at every step. If anything here isn't clear, just call us on <a href="tel:01793876969">01793 876 969</a>.</p>
+
+        <h2>2. Quotes and prices</h2>
+        <p>All prices we give you are quotes based on the information you provide — tyre size, vehicle type, and the job required. A quote is not a fixed price until we've inspected the vehicle and confirmed the job.</p>
+        <p>We'll always tell you before we start if the actual price differs from the quote, and we won't carry out any additional work without your agreement first. You're never committed to a job you haven't explicitly approved.</p>
+        <p>Prices include fitting, balancing and valve replacement as standard unless we tell you otherwise. TPMS sensor work, locking nut removal, and other specialist services are priced separately.</p>
+
+        <h2>3. Bookings and cancellations</h2>
+        <p>You can book a depot slot online or by calling us. Depot bookings are confirmed by email with a calendar invite.</p>
+        <p>For mobile visits, we'll agree a date and time window with you when you enquire. We ask for a reasonable amount of notice if you need to cancel or rearrange:</p>
+        <ul>
+          <li><strong>Depot appointments:</strong> please cancel or rearrange at least 24 hours in advance using the link in your confirmation email, or by calling us.</li>
+          <li><strong>Mobile visits:</strong> please give us at least 24 hours' notice. If we arrive at the agreed location and nobody is available or the vehicle isn't accessible, we may charge a callout fee to cover our travel costs — we'll always try to reach you first.</li>
+        </ul>
+        <p>We'll do our best to keep to agreed appointment times but occasionally delays happen. We'll contact you as early as possible if we're running significantly late.</p>
+
+        <h2>4. Payment</h2>
+        <p>Payment is due on completion of the job. We accept cash, bank transfer, and all major debit and credit cards.</p>
+        <p>We retain ownership of any tyres or parts supplied until payment is received in full.</p>
+        <p>If you're not happy with the work, please tell us before you leave — or contact us as soon as possible afterwards. We'd rather sort things out directly than have you leave dissatisfied.</p>
+
+        <h2>5. Your vehicle and our responsibility</h2>
+        <p>We take care of your vehicle, but there are a few things we need you to know:</p>
+        <ul>
+          <li><strong>Pre-existing condition:</strong> we're not responsible for damage that was already present before we started work. If we notice something — a kerbed alloy, a cracked rim, seized locking nuts that risk damage during removal — we'll tell you before we proceed.</li>
+          <li><strong>Alloy wheels:</strong> fitting tyres to alloys that are already damaged, corroded, or out of round carries a higher risk of issues. We'll point this out and discuss options, but if you ask us to proceed, we can't be held responsible for damage arising from the wheel's pre-existing condition.</li>
+          <li><strong>Locking wheel nuts:</strong> removal of locking wheel nuts using specialist tools is generally safe, but carries a small risk of cosmetic marking to the nut or wheel. We'll take every reasonable precaution, but this risk is inherent in the process — particularly for seized or corroded nuts.</li>
+          <li><strong>Access for mobile visits:</strong> you're responsible for ensuring the vehicle is accessible, on a reasonably level and safe surface, and that there's enough room for us to work. We may be unable to complete a mobile fitting if the conditions aren't safe.</li>
+        </ul>
+
+        <div class="callout">
+          We carry full public liability insurance. If we cause damage to your vehicle through our own negligence, we'll put it right.
+        </div>
+
+        <h2>6. Tyres and workmanship</h2>
+        <p>All tyres we supply are new and sourced from reputable distributors. We don't knowingly supply tyres that are unsafe, expired, or not appropriate for your vehicle.</p>
+        <p>Our workmanship — fitting, balancing, and valve replacement — is guaranteed. If a tyre we fitted develops a fault caused by incorrect fitting rather than road damage or misuse, contact us and we'll resolve it at no extra charge.</p>
+        <p>Tyre manufacturers' warranties are separate and handled by the manufacturer. We'll assist where we can but we're not able to process manufacturer warranty claims on your behalf.</p>
+        <p>We may decline to fit a tyre if, in our professional judgement, it's not safe to do so — for example if the wheel is structurally damaged. We'll explain our reasons and won't charge for a visit where we've been unable to carry out the work for safety reasons.</p>
+
+        <h2>7. Limitation of liability</h2>
+        <p>Our liability to you in connection with any job is limited to the price you paid for that job. We're not liable for indirect losses — for example, loss of earnings or hire car costs arising from a delay in completing the work.</p>
+        <p>Nothing in these terms limits our liability for death or personal injury caused by our negligence, or for fraud, or for anything else that cannot legally be excluded.</p>
+
+        <h2>8. Your statutory rights</h2>
+        <p>These terms don't affect your statutory rights as a consumer under UK law, including rights under the Consumer Rights Act 2015. Services must be carried out with reasonable care and skill, within a reasonable time, and at a reasonable price where no price has been agreed upfront. If we fall short of that, you have the right to ask us to redo the work or to a price reduction.</p>
+
+        <h2>9. Governing law</h2>
+        <p>These terms are governed by the law of England and Wales. Any disputes will be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+
+        <h2>10. Changes to these terms</h2>
+        <p>We may update these terms from time to time. The "Last reviewed" date at the top will always reflect the current version. Changes don't affect jobs already booked or in progress.</p>
+
+        <h2>11. Contact us</h2>
+        <p>If you have any questions about these terms, or about a job we've carried out, please get in touch:</p>
+        <ul>
+          <li><strong>Phone:</strong> <a href="tel:01793876969">01793 876 969</a></li>
+          <li><strong>Email:</strong> <a href="mailto:info@hetyres.co.uk">info@hetyres.co.uk</a></li>
+          <li><strong>Post:</strong> H E Tyres Ltd, Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW</li>
+        </ul>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-row">
+        <span class="footer-logo"><span class="bk">[</span><span class="he">HE</span><span class="ty">tyres</span><span class="bk-r">]</span></span>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="/he-tyres/#services">Services</a>
+          <a href="/he-tyres/#brands">Brands</a>
+          <a href="/he-tyres/#lounge">HEhub</a>
+          <a href="/he-tyres/#book">Book</a>
+          <a href="/he-tyres/#reviews">Reviews</a>
+          <a href="/he-tyres/#contact">Contact</a>
+          <a href="/he-tyres/privacy.html">Privacy</a>
+          <a href="/he-tyres/terms.html" aria-current="page">Terms</a>
+        </nav>
+      </div>
+      <small>© 2026 H E Tyres Ltd · Unit 5 Star West, Westmead Drive, Westlea, Swindon SN5 7SW · <a href="tel:01793876969">01793 876 969</a></small>
+      <a href="https://neobookworm.uk" target="_blank" rel="noopener" class="nb-credit" aria-label="Website by NeoBookworm.uk — websites, done properly">
+        <span class="nb-mark"><span class="nb-n">N</span><span class="nb-b">B</span></span>
+        <span>websites,<br>done properly</span>
+      </a>
+    </div>
+  </footer>
+
+  <script defer>
+    (function () {
+      var header = document.getElementById('siteHeader');
+      var toggle = document.getElementById('navToggle');
+      if (!header || !toggle) return;
+      toggle.addEventListener('click', function () {
+        var open = header.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    })();
+  </script>
+
+</body>
+</html>
