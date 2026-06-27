@@ -407,6 +407,30 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  // ── run-site-audit sub-route (merged from api/run-site-audit.js) ──────────
+  // Called by the CF Worker with ONBOARDING_INTAKE_SECRET — bypasses DASHBOARD_SECRET.
+  if (req.method === 'POST') {
+    const body0 = parseBody(req);
+    if (body0 && body0.action === 'run_site_audit') {
+      const intakeSecret = process.env.ONBOARDING_INTAKE_SECRET;
+      if (intakeSecret) {
+        const auth  = req.headers.authorization || '';
+        const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+        if (token !== intakeSecret) return res.status(401).json({ error: 'Unauthorised' });
+      }
+      if (!process.env.CF_API_TOKEN) return res.status(500).json({ error: 'CF_API_TOKEN not configured' });
+      const { slug, dry_run = false, test_mode = false } = body0;
+      if (!slug || typeof slug !== 'string') return res.status(400).json({ ok: false, error: 'slug required' });
+      try {
+        const result = await require('./_lib/audit').runSiteAudit(slug, { dryRun: Boolean(dry_run), testMode: Boolean(test_mode) });
+        return res.status(result.ok ? 200 : 400).json(result);
+      } catch (err) {
+        console.error('[run-site-audit]', err.message);
+        return res.status(500).json({ ok: false, error: err.message });
+      }
+    }
+  }
+
   const secret = process.env.DASHBOARD_SECRET;
   if (secret) {
     const auth  = req.headers.authorization || '';
