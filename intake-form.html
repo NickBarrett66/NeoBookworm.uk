@@ -1031,7 +1031,30 @@ function setSingle(chip,rowId){var chips=document.querySelectorAll('#'+rowId+' .
 function setDomain(chip,val){var chips=document.querySelectorAll('#cr_domain .chip');for(var i=0;i<chips.length;i++) chips[i].classList.remove('on');chip.classList.add('on');domainVal=val;revealField('domainFi',val==='yes');}
 function revealField(id,show){var el=document.getElementById(id);if(!el) return;if(show){el.classList.remove('hid');}else{el.classList.add('hid');}}
 function pickStyle(card,name){var cards=document.querySelectorAll('.scard');for(var i=0;i<cards.length;i++) cards[i].classList.remove('on');card.classList.add('on');styleVal=name;}
-function showFiles(input,listId){var list=document.getElementById(listId);if(!list) return;if(!input.files||input.files.length===0){list.textContent='';return;}var names=[];for(var i=0;i<input.files.length;i++) names.push(input.files[i].name);list.textContent='\u2713 '+input.files.length+' file(s): '+names.join(', ');}
+// Accumulated photo files across multiple file-picker openings (browser FileList resets on each pick).
+var accumulatedPhotos=[];
+function showFiles(input,listId){
+  var list=document.getElementById(listId);if(!list) return;
+  if(listId==='fl_photos'){
+    // Append newly chosen files; skip exact duplicates (same name + size).
+    if(input.files){
+      for(var ni=0;ni<input.files.length;ni++){
+        var nf=input.files[ni];
+        var dup=false;
+        for(var ei=0;ei<accumulatedPhotos.length;ei++){
+          if(accumulatedPhotos[ei].name===nf.name&&accumulatedPhotos[ei].size===nf.size){dup=true;break;}
+        }
+        if(!dup) accumulatedPhotos.push(nf);
+      }
+    }
+    if(!accumulatedPhotos.length){list.textContent='';return;}
+    list.textContent='\u2713 '+accumulatedPhotos.length+' file(s): '+accumulatedPhotos.map(function(f){return f.name;}).join(', ');
+  } else {
+    if(!input.files||input.files.length===0){list.textContent='';return;}
+    var names=[];for(var i=0;i<input.files.length;i++) names.push(input.files[i].name);
+    list.textContent='\u2713 '+input.files.length+' file(s): '+names.join(', ');
+  }
+}
 
 var ALLOWED_UPLOAD_TYPES=['image/jpeg','image/png','image/webp','image/gif','image/heic','image/heif','image/svg+xml','application/pdf'];
 
@@ -1080,12 +1103,10 @@ var photosInput=document.getElementById('f_photos');
 var logoInput=document.getElementById('f_logo');
 var photosMeta=[];
 try{
-if(photosInput&&photosInput.files){
-  for(var pi=0;pi<photosInput.files.length;pi++){
-    var pf=photosInput.files[pi];
-    if(!pf.size) continue;
-    photosMeta.push({name:pf.name,mimeType:assertUploadMime(pf)});
-  }
+for(var pi=0;pi<accumulatedPhotos.length;pi++){
+  var pf=accumulatedPhotos[pi];
+  if(!pf.size) continue;
+  photosMeta.push({name:pf.name,mimeType:assertUploadMime(pf)});
 }
 var logoMeta=null;
 if(logoInput&&logoInput.files&&logoInput.files.length>0){
@@ -1132,11 +1153,11 @@ fetch('/api/intake-upload-session',{
 
   var jobs=[];
   if(uploads.length){
-    if(!photosInput||!photosInput.files||photosInput.files.length<uploads.length){
+    if(accumulatedPhotos.length<uploads.length){
       throw new Error('Photo files missing — please re-select your photos and try again');
     }
     for(var ui=0;ui<uploads.length;ui++){
-      jobs.push(putOne(uploads[ui],photosInput.files[ui]));
+      jobs.push(putOne(uploads[ui],accumulatedPhotos[ui]));
     }
   }
   if(logoUp&&logoInput&&logoInput.files&&logoInput.files.length>0){
