@@ -4,22 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Contact — Get a fixed quote | Frayne Lofts Ltd</title>
+    <title>Contact — Get a fixed quote | Beckett Lofts Ltd</title>
     <meta
       name="description"
       content="Tell us about your loft conversion or extension. We’ll survey the space, explain what’s possible, and provide a clear fixed quote. Serving Bath and Wiltshire."
     />
 
-    <link rel="canonical" href="https://neobookworm.uk/demos/fraynes-lofts/contact.html" />
-    <meta property="og:site_name" content="Frayne Lofts Ltd" />
-    <meta property="og:title" content="Contact — Get a fixed quote | Frayne Lofts Ltd" />
+    <link rel="canonical" href="https://neobookworm.uk/demos/beckett-lofts/contact.html" />
+    <meta property="og:site_name" content="Beckett Lofts Ltd" />
+    <meta property="og:title" content="Contact — Get a fixed quote | Beckett Lofts Ltd" />
     <meta
       property="og:description"
       content="Tell us about your loft conversion or extension. We’ll survey the space, explain what’s possible, and provide a clear fixed quote. Serving Bath and Wiltshire."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://neobookworm.uk/demos/fraynes-lofts/contact.html" />
-    <meta property="og:image" content="https://neobookworm.uk/demos/fraynes-lofts/images/hero.jpg" />
+    <meta property="og:url" content="https://neobookworm.uk/demos/beckett-lofts/contact.html" />
+    <meta property="og:image" content="https://neobookworm.uk/demos/beckett-lofts/images/hero.jpg" />
 
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
@@ -33,10 +33,10 @@
 
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="index.html" aria-label="Frayne Lofts home">
+        <a class="brand" href="index.html" aria-label="Beckett Lofts home">
           <img src="favicon.svg" alt="" width="64" height="64" decoding="async" />
           <span class="brand-text" aria-hidden="true">
-            <strong>Frayne Lofts</strong>
+            <strong>Beckett Lofts</strong>
             <span>Ltd</span>
           </span>
         </a>
@@ -66,7 +66,7 @@
           <a class="brand" href="index.html">
             <img src="favicon.svg" alt="" width="64" height="64" decoding="async" />
             <span class="brand-text" aria-hidden="true">
-              <strong>Frayne Lofts</strong>
+              <strong>Beckett Lofts</strong>
               <span>Ltd</span>
             </span>
           </a>
@@ -105,12 +105,12 @@
               <dl class="contact-dl">
                 <dt>Phone</dt>
                 <dd>
-                  <a href="tel:07507351851" data-demo-block><strong>07507 351851</strong></a>
+                  <a href="tel:07700900315" data-demo-block><strong>07700 900315</strong></a>
                   <span class="muted">— demo site note: calls are blocked.</span>
                 </dd>
                 <dt>Email</dt>
                 <dd>
-                  <a href="mailto:fraynelofts@gmail.com"><strong>fraynelofts@gmail.com</strong></a>
+                  <a href="mailto:info@beckettlofts.co.uk"><strong>info@beckettlofts.co.uk</strong></a>
                 </dd>
               </dl>
             </div>
@@ -118,17 +118,17 @@
             <div class="map-panel contact-map-panel">
               <h2 class="contact-map-panel__heading">Service area</h2>
               <p class="muted contact-map-panel__lede">
-                Coverage (approx. 25 miles from Sutton Benger). Slightly outside? Ask — we’ll tell you straight.
+                Coverage (approx. 25 miles from Bradford on Avon). Slightly outside? Ask — we’ll tell you straight.
               </p>
               <div
                 id="contact-map"
                 class="map coverage-map"
                 role="region"
-                aria-label="Map showing Frayne Lofts coverage area around Sutton Benger"
+                aria-label="Map showing Beckett Lofts coverage area around Bradford on Avon"
               ></div>
 
               <ul class="contact-map-legend" aria-label="Towns shown on the map">
-                <li><span class="contact-map-legend__abbr">S</span> Sutton Benger</li>
+                <li><span class="contact-map-legend__abbr">S</span> Bradford on Avon</li>
                 <li><span class="contact-map-legend__abbr">B</span> Bath</li>
                 <li><span class="contact-map-legend__abbr">C</span> Chippenham</li>
                 <li><span class="contact-map-legend__abbr">Co</span> Corsham</li>
@@ -148,9 +148,9 @@
                 }
 
                 /** Classic markers + raster tiles; unique callback; overlays after first idle (matches Swift Electrical pattern). */
-                window.neoFraynesContactMapsCallback = function neoFraynesContactMapsCallback() {
-                  window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__ = true;
-                  var centre = { lat: 51.507206, lng: -2.077756 }; /* Sutton Benger */
+                window.neoBeckettContactMapsCallback = function neoBeckettContactMapsCallback() {
+                  window.__NB_BECKETT_CONTACT_MAP_INIT_CALLED__ = true;
+                  var centre = { lat: 51.348, lng: -2.252 }; /* Bradford on Avon */
                   var mapEl = document.getElementById("contact-map");
                   if (!mapEl) return;
 
@@ -220,7 +220,7 @@
                       refitCoverageView();
 
                       var locations = [
-                        { pos: centre, label: "S", title: "Sutton Benger" },
+                        { pos: centre, label: "S", title: "Bradford on Avon" },
                         { pos: { lat: 51.381386, lng: -2.359696 }, label: "B", title: "Bath" },
                         { pos: { lat: 51.459066, lng: -2.116074 }, label: "C", title: "Chippenham" },
                         { pos: { lat: 51.4323, lng: -2.1849 }, label: "Co", title: "Corsham" },
@@ -271,8 +271,8 @@
                     );
                   };
 
-                  if (window.__NB_FRAYNES_CONTACT_MAPS_API_REQUESTED__) return;
-                  window.__NB_FRAYNES_CONTACT_MAPS_API_REQUESTED__ = true;
+                  if (window.__NB_BECKETT_CONTACT_MAPS_API_REQUESTED__) return;
+                  window.__NB_BECKETT_CONTACT_MAPS_API_REQUESTED__ = true;
 
                   var s = document.createElement("script");
                   s.async = true;
@@ -285,13 +285,13 @@
                   s.src =
                     "https://maps.googleapis.com/maps/api/js?key=" +
                     encodeURIComponent(key) +
-                    "&callback=neoFraynesContactMapsCallback";
+                    "&callback=neoBeckettContactMapsCallback";
 
-                  window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__ = false;
+                  window.__NB_BECKETT_CONTACT_MAP_INIT_CALLED__ = false;
                   document.head.appendChild(s);
 
                   window.setTimeout(function () {
-                    if (window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__) return;
+                    if (window.__NB_BECKETT_CONTACT_MAP_INIT_CALLED__) return;
                     showContactMapError(
                       "Google Maps didn’t finish loading. This is usually an API key restriction (HTTP referrer) or billing issue. Open the browser console to see the exact Google error.",
                     );
@@ -387,18 +387,18 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <div>
-          <h2>Frayne Lofts Ltd</h2>
+          <h2>Beckett Lofts Ltd</h2>
           <p class="demo-note"><strong>Owner-led loft conversions &amp; extensions</strong> across Bath and Wiltshire.</p>
 
           <div class="footer-meta" aria-label="Contact details">
             <div>
               <strong>Phone:</strong>
-              <a href="tel:07507351851" data-demo-block>07507 351851</a>
+              <a href="tel:07700900315" data-demo-block>07700 900315</a>
               <div class="demo-note">Demo site note: calls are blocked — use the contact form instead.</div>
             </div>
-            <div><strong>Email:</strong> <a href="mailto:fraynelofts@gmail.com">fraynelofts@gmail.com</a></div>
+            <div><strong>Email:</strong> <a href="mailto:info@beckettlofts.co.uk">info@beckettlofts.co.uk</a></div>
             <div>
-              <strong>Service area:</strong> Based in Sutton Benger, SN15 — serving Bath, Chippenham and surrounding towns.
+              <strong>Service area:</strong> Based in Bradford on Avon, BA15 — serving Bath, Chippenham and surrounding towns.
             </div>
           </div>
         </div>
@@ -425,7 +425,7 @@
       </div>
 
       <div class="container footer-bottom">
-        <div>© Frayne Lofts Ltd</div>
+        <div>© Beckett Lofts Ltd</div>
         <div>Demo site for NeoBookworm.uk</div>
       </div>
     </footer>
