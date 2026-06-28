@@ -7,4 +7,4 @@
  *
  * https://developers.google.com/maps/documentation/javascript/get-api-key
  */
-window.__GMAPS_KEY__ = "AIzaSyBeFb_3BZpFYWzG9U_ntiwlH_YP0jNVPsM";
+window.__GMAPS_KEY__ = "AIzaSyDC1bgCEL8PJ0P3kO_2JAj6ffdTrG0fV_g";
