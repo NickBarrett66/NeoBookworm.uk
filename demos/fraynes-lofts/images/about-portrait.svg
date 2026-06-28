@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1125" role="img" aria-label="Placeholder portrait: Olly Frayne">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6F2EA"/>
+      <stop offset="1" stop-color="#EEE8DD"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1125" fill="url(#bg)"/>
+  <circle cx="450" cy="420" r="190" fill="#262626" opacity="0.08"/>
+  <path d="M210 1030C250 820 340 720 450 720C560 720 650 820 690 1030" fill="#262626" opacity="0.06"/>
+  <path d="M338 520h224" stroke="#C89B2D" stroke-width="10" stroke-linecap="round" opacity="0.65"/>
+  <text x="68" y="120" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="44" font-weight="900" fill="#262626">
+    Owner portrait
+  </text>
+  <text x="68" y="178" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="22" font-weight="650" fill="#5F5F5F">
+    Placeholder  replace with about-portrait.jpg
+  </text>
+</svg>

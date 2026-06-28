@@ -12,7 +12,11 @@
   "redirects": [
     { "source": "/he-tyres", "destination": "/he-tyres/", "permanent": true },
     { "source": "/ridgecoat-decorators", "destination": "/ridgecoat-decorators/", "permanent": true },
-    { "source": "/demos/hartley-plumbing", "destination": "/demos/hartley-plumbing/", "permanent": true }
+    { "source": "/demos/hartley-plumbing",        "destination": "/demos/hartley-plumbing/",        "permanent": true },
+    { "source": "/demos/swift-electrical",        "destination": "/demos/swift-electrical/",        "permanent": true },
+    { "source": "/demos/a-p-brickwork",           "destination": "/demos/a-p-brickwork/",           "permanent": true },
+    { "source": "/demos/harveys-kitchen-fitters", "destination": "/demos/harveys-kitchen-fitters/", "permanent": true },
+    { "source": "/demos/fraynes-lofts",           "destination": "/demos/fraynes-lofts/",           "permanent": true }
   ],
   "rewrites": [
     { "source": "/api/intake-upload-session", "destination": "/api/intake?action=upload-session" },

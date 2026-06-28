@@ -1,0 +1,38 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEOBOOKWORM QA REPORT — Harvey's Kitchen Fitters Ltd
+Tuesday May 5, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ LIGHTHOUSE SCORES (live Netlify URL)
+Performance:     92/100
+Accessibility:   96/100
+Best Practices:  100/100
+SEO:             100/100
+
+✅ MOBILE LAYOUT
+375px (iPhone SE):  Pass (no horizontal overflow spotted)
+390px (iPhone 14):  Pass
+412px (Pixel 7):    Pass
+
+✅ GALLERY
+Homepage teaser:    Live site missing (fixed locally: added 3-card teaser + “See all our work →” → `gallery.html`)
+gallery.html:       Pass (6 cards present). Fixed locally: nav now points to `gallery.html` and card SVG icons now include `aria-hidden="true"`
+Image-free check:   Pass (no `<img>` tags inside gallery cards)
+
+✅ GA4 SNIPPET
+index.html:      Injected locally (was missing on live)
+gallery.html:    Injected locally (was missing on live)
+
+✅ CONTENT & COPY
+No obvious spelling/grammar issues found in reviewed pages.
+
+✅ BROKEN ASSETS
+No broken assets found (spot-checked key R2 images + Google Fonts = 200 OK).
+
+⚠️  ITEMS REQUIRING YOUR REVIEW
+- Live Netlify deploy does not include the QA fixes yet (GA4, gallery teaser on homepage, gallery icon aria-hidden, canonical/og/schema URLs updated to the real Netlify domain, `rel="noopener noreferrer"` on external links).
+
+📁 FILES
+Original backed up to: index-pre-qa.html, gallery-pre-qa.html
+Corrected file(s) saved to: index.html, gallery.html, about.html, services.html, contact.html, css/styles.css
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,363 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Kitchen Portfolio — Harvey's Kitchen Fitters, Bath</title>
+  <meta name="description" content="See Harvey's finished kitchen installations across Bath and Somerset. 25 years of domestic and contract kitchen fitting — browse our portfolio." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Kitchen Portfolio — Harvey's Kitchen Fitters, Bath" />
+  <meta property="og:description" content="25 years of kitchen installations across Bath, Somerset and Wiltshire. Domestic and contract work — all managed by the Harvey family team." />
+  <meta property="og:image" content="https://pub-f093c230437d4977b0f5e45607fd9186.r2.dev/demos/library/kitchen-fitter/hero.webp" />
+  <meta property="og:url" content="https://neobookworm.uk/demos/harveys-kitchen-fitters/gallery.html" />
+
+  <link rel="canonical" href="https://neobookworm.uk/demos/harveys-kitchen-fitters/gallery.html" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <style>
+  /* ── Gallery section ── */
+  .gallery-section {
+    padding: 80px 0;
+    background: var(--color-bg-alt);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  @media (max-width: 900px) {
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gallery-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .gallery-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+
+  .gallery-card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    color: var(--color-accent);
+  }
+
+  .gallery-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--color-primary);
+  }
+
+  .gallery-card-location {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+  }
+
+  .gallery-card-quote {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--color-text);
+    line-height: 1.5;
+  }
+
+  .gallery-cta {
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  .gallery-cta p {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--color-primary);
+  }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HomeAndConstructionBusiness",
+    "name": "Harvey's Kitchen Fitters Ltd",
+    "description": "Family-run kitchen fitters serving Bath, Somerset, and Wiltshire for over 25 years — domestic, contract, and full project management.",
+    "telephone": "07976 358749",
+    "email": "harveyskitchenfitters@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Bath",
+      "addressRegion": "Somerset",
+      "addressCountry": "GB"
+    },
+    "areaServed": "Bath and approximately 25-mile radius — Somerset, Wiltshire, and Bristol fringe",
+    "url": "https://neobookworm.uk/demos/harveys-kitchen-fitters/gallery.html",
+    "priceRange": "££",
+    "openingHours": "Mo-Su 00:00-23:59"
+  }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQ91NBYHCL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VQ91NBYHCL');
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="demo-banner" data-demo-banner role="alert">
+    <p><strong>Demo site</strong> — This is an example website built by <a href="https://neobookworm.uk" target="_blank" rel="noopener noreferrer">NeoBookworm</a>. Calls and form submissions are disabled.</p>
+    <button class="demo-banner__close" data-banner-close aria-label="Dismiss demo notice">&#x2715;</button>
+  </div>
+
+  <div class="toast" data-toast hidden role="alert" aria-live="polite" aria-atomic="true">
+    <strong data-toast-title></strong>
+    <span data-toast-msg></span>
+  </div>
+
+  <header class="site-header" data-site-header>
+    <div class="header__inner">
+      <a href="index.html" class="wordmark" aria-label="Harvey's Kitchen Fitters — home">
+        <span class="wordmark__name">Harvey's</span>
+        <span class="wordmark__trade">Kitchen Fitters</span>
+      </a>
+      <nav class="nav" data-nav aria-label="Main navigation">
+        <ul class="nav__list">
+          <li><a href="index.html" class="nav__link">Home</a></li>
+          <li><a href="services.html" class="nav__link">Services</a></li>
+          <li><a href="about.html" class="nav__link">About</a></li>
+          <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+          <li><a href="contact.html" class="nav__link">Contact</a></li>
+        </ul>
+      </nav>
+      <a href="tel:07976358749" class="btn btn--accent btn--sm header__cta">Call 07976 358749</a>
+      <button class="nav-toggle" data-nav-open aria-expanded="false" aria-controls="nav-drawer" aria-label="Toggle navigation">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="nav-overlay" data-nav-overlay aria-hidden="true"></div>
+  <div class="nav-drawer" id="nav-drawer" data-nav-drawer aria-hidden="true" aria-label="Mobile navigation">
+    <button class="nav-drawer__close" data-nav-close aria-label="Close navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+    <div>
+      <div class="nav-drawer__wordmark">Harvey's</div>
+      <div class="nav-drawer__trade">Kitchen Fitters</div>
+    </div>
+    <nav data-nav-drawer aria-label="Mobile navigation links">
+      <ul>
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="services.html" class="nav__link">Services</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="tel:07976358749" class="btn btn--accent">Call 07976 358749</a>
+  </div>
+
+  <main id="main">
+
+    <!-- Page hero -->
+    <section class="page-hero" aria-label="Portfolio">
+      <div class="container">
+        <h1 class="page-hero__headline">Our Work</h1>
+        <p class="page-hero__sub">25 years of installations — Georgian townhouses, Victorian terraces, new builds, and everything in between. Every kitchen fitted properly, once.</p>
+      </div>
+    </section>
+
+    <!-- GALLERY SECTION -->
+    <section id="gallery" class="gallery-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Recent Projects</h2>
+          <p>A selection of kitchens we've fitted across Bath and the surrounding area</p>
+        </div>
+        <div class="gallery-grid">
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </div>
+            <h3>Full Kitchen Replacement</h3>
+            <p class="gallery-card-location">📍 Bath</p>
+            <p class="gallery-card-quote">"Completely transformed — we couldn't be happier with the result."</p>
+          </div>
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h3>Howdens Fitted Kitchen</h3>
+            <p class="gallery-card-location">📍 Timsbury</p>
+            <p class="gallery-card-quote">"Top notch work — proper craftsmen."</p>
+          </div>
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3>Integrated Appliance Fit</h3>
+            <p class="gallery-card-location">📍 Midsomer Norton</p>
+            <p class="gallery-card-quote">"Lamona appliances fitted perfectly — looks exactly as planned."</p>
+          </div>
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <h3>Open-Plan Kitchen Refit</h3>
+            <p class="gallery-card-location">📍 Radstock</p>
+            <p class="gallery-card-quote">"Managed the whole project start to finish — no stress whatsoever."</p>
+          </div>
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <h3>Extra Storage &amp; Utility</h3>
+            <p class="gallery-card-location">📍 Bristol Fringe</p>
+            <p class="gallery-card-quote">"Added a run of larder units we didn't think would fit — they found a way."</p>
+          </div>
+
+          <div class="gallery-card">
+            <div class="gallery-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h3>Full Project Management</h3>
+            <p class="gallery-card-location">📍 Peasedown St John</p>
+            <p class="gallery-card-quote">"From supply to sign-off — a genuinely painless experience."</p>
+          </div>
+
+        </div><!-- /.gallery-grid -->
+
+        <div class="gallery-cta">
+          <p>Like what you see?</p>
+          <a href="contact.html" class="btn btn-primary">Get a Free Quote</a>
+        </div>
+
+      </div><!-- /.container -->
+    </section>
+    <!-- END GALLERY SECTION -->
+
+    <!-- CTA band -->
+    <section class="cta-band" aria-label="Get a quote">
+      <div class="cta-band__bg">
+        <img src="https://pub-f093c230437d4977b0f5e45607fd9186.r2.dev/demos/library/kitchen-fitter/cta-bg.webp" alt="" loading="lazy" />
+      </div>
+      <div class="cta-band__overlay" aria-hidden="true"></div>
+      <div class="cta-band__content">
+        <h2 class="cta-band__headline">Ready for a Kitchen That's Actually Fitted Properly?</h2>
+        <p class="cta-band__sub">Call us on <a href="tel:07976358749">07976 358749</a> — or send a message and we'll come and take a look.</p>
+        <a href="contact.html" class="btn btn--accent btn--lg">Get a Free Quote</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <span class="footer__wordmark">Harvey's Kitchen Fitters</span>
+          <p class="footer__tagline">Bath's kitchen fitters. Family-run since the 1990s.</p>
+        </div>
+        <div>
+          <p class="footer__col-heading">Navigation</p>
+          <ul class="footer__links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-heading">Contact</p>
+          <ul class="footer__contact-list">
+            <li class="footer__contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.5 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.41 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <a href="tel:07976358749">07976 358749</a>
+            </li>
+            <li class="footer__contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <a href="mailto:harveyskitchenfitters@gmail.com">harveyskitchenfitters@gmail.com</a>
+            </li>
+            <li class="footer__contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              <a href="https://facebook.com/Harveyskitchenfitters" target="_blank" rel="noopener noreferrer">Facebook</a>
+            </li>
+            <li class="footer__contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              <a href="https://instagram.com/harveyskitchenfitters" target="_blank" rel="noopener noreferrer">@harveyskitchenfitters</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__badges" aria-label="Accreditations">
+        <div class="nb-badge nb-trustmark dk" role="img" aria-label="TrustMark — Government Endorsed Quality Scheme">
+          <div class="nb-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true">
+              <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="white" stroke-width="2" fill="none"/>
+              <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nb-text">
+            <div class="nb-top">TRUSTMARK</div>
+            <div class="nb-bot">Government Endorsed<br>Quality Scheme</div>
+          </div>
+        </div>
+        <div class="nb-badge nb-chas dk" role="img" aria-label="CHAS — Health and Safety Accredited">
+          <div class="nb-mark"><span aria-hidden="true">HS</span></div>
+          <div class="nb-text">
+            <div class="nb-top">CHAS</div>
+            <div class="nb-bot">Health &amp; Safety<br>Accredited</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer__base">
+        <span>© 2026 Harvey's Kitchen Fitters Ltd · Registered in England &amp; Wales · Companies House: 08621460</span>
+        <a href="https://neobookworm.uk" target="_blank" rel="noopener noreferrer">Website by NeoBookworm</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
