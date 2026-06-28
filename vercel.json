@@ -23,7 +23,7 @@
     { "source": "/demos/swift-electrical",        "destination": "/demos/swift-electrical/",        "permanent": true },
     { "source": "/demos/a-p-brickwork",           "destination": "/demos/a-p-brickwork/",           "permanent": true },
     { "source": "/demos/harveys-kitchen-fitters", "destination": "/demos/harveys-kitchen-fitters/", "permanent": true },
-    { "source": "/demos/fraynes-lofts",           "destination": "/demos/fraynes-lofts/",           "permanent": true }
+    { "source": "/demos/beckett-lofts",            "destination": "/demos/beckett-lofts/",           "permanent": true }
   ],
   "rewrites": [
     { "source": "/api/intake-upload-session", "destination": "/api/intake?action=upload-session" },
