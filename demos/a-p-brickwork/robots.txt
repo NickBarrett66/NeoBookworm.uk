@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://a-p-brickwork-njb-demo.netlify.app/sitemap.xml

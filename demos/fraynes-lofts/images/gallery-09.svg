@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Placeholder gallery image 09">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6F2EA"/>
+      <stop offset="1" stop-color="#EEE8DD"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <path d="M220 680 H980" stroke="#262626" stroke-width="12" opacity="0.10" stroke-linecap="round"/>
+  <path d="M220 740 H980" stroke="#262626" stroke-width="12" opacity="0.06" stroke-linecap="round"/>
+  <circle cx="900" cy="340" r="16" fill="#C89B2D" opacity="0.8"/>
+  <text x="72" y="108" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="34" font-weight="900" fill="#262626">
+    Gallery 09
+  </text>
+  <text x="72" y="154" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="18" font-weight="650" fill="#5F5F5F">
+    Placeholder  replace with gallery-09.jpg
+  </text>
+</svg>

@@ -1,0 +1,443 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Contact — Get a fixed quote | Frayne Lofts Ltd</title>
+    <meta
+      name="description"
+      content="Tell us about your loft conversion or extension. We’ll survey the space, explain what’s possible, and provide a clear fixed quote. Serving Bath and Wiltshire."
+    />
+
+    <link rel="canonical" href="https://neobookworm.uk/demos/fraynes-lofts/contact.html" />
+    <meta property="og:site_name" content="Frayne Lofts Ltd" />
+    <meta property="og:title" content="Contact — Get a fixed quote | Frayne Lofts Ltd" />
+    <meta
+      property="og:description"
+      content="Tell us about your loft conversion or extension. We’ll survey the space, explain what’s possible, and provide a clear fixed quote. Serving Bath and Wiltshire."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://neobookworm.uk/demos/fraynes-lofts/contact.html" />
+    <meta property="og:image" content="https://neobookworm.uk/demos/fraynes-lofts/images/hero.jpg" />
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <link rel="stylesheet" href="fonts/fonts.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Frayne Lofts home">
+          <img src="favicon.svg" alt="" width="64" height="64" decoding="async" />
+          <span class="brand-text" aria-hidden="true">
+            <strong>Frayne Lofts</strong>
+            <span>Ltd</span>
+          </span>
+        </a>
+
+        <button class="nav-toggle" type="button" data-nav-open aria-controls="nav-overlay" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Menu
+        </button>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="about.html">About</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="contact.html" aria-current="page">Contact</a>
+        </nav>
+
+        <a class="btn btn-primary header-cta" href="#form">Get a fixed quote</a>
+      </div>
+    </header>
+
+    <div class="nav-overlay" id="nav-overlay" data-nav-overlay data-open="false" aria-hidden="true">
+      <div class="nav-panel" role="dialog" aria-modal="true" aria-label="Site navigation">
+        <header>
+          <a class="brand" href="index.html">
+            <img src="favicon.svg" alt="" width="64" height="64" decoding="async" />
+            <span class="brand-text" aria-hidden="true">
+              <strong>Frayne Lofts</strong>
+              <span>Ltd</span>
+            </span>
+          </a>
+          <button class="nav-close" type="button" data-nav-close>Close</button>
+        </header>
+
+        <nav class="nav-links" aria-label="Primary (mobile)">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="about.html">About</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="contact.html" aria-current="page">Contact</a>
+        </nav>
+
+        <a class="btn btn-primary" href="#form">Get a fixed quote</a>
+      </div>
+    </div>
+
+    <main id="main">
+      <section class="page-hero">
+        <div class="container">
+          <p class="eyebrow">Contact</p>
+          <h1>Get a fixed quote.</h1>
+          <p class="lead muted">
+            Tell us what you’re trying to achieve and where the property is. We’ll come back with next steps and a realistic
+            plan.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-label="How to reach us, service area map, and quote form">
+        <div class="container contact-grid">
+          <div class="contact-column">
+            <div class="contact-methods">
+              <h2>How to reach us</h2>
+              <dl class="contact-dl">
+                <dt>Phone</dt>
+                <dd>
+                  <a href="tel:07507351851" data-demo-block><strong>07507 351851</strong></a>
+                  <span class="muted">— demo site note: calls are blocked.</span>
+                </dd>
+                <dt>Email</dt>
+                <dd>
+                  <a href="mailto:fraynelofts@gmail.com"><strong>fraynelofts@gmail.com</strong></a>
+                </dd>
+              </dl>
+            </div>
+
+            <div class="map-panel contact-map-panel">
+              <h2 class="contact-map-panel__heading">Service area</h2>
+              <p class="muted contact-map-panel__lede">
+                Coverage (approx. 25 miles from Sutton Benger). Slightly outside? Ask — we’ll tell you straight.
+              </p>
+              <div
+                id="contact-map"
+                class="map coverage-map"
+                role="region"
+                aria-label="Map showing Frayne Lofts coverage area around Sutton Benger"
+              ></div>
+
+              <ul class="contact-map-legend" aria-label="Towns shown on the map">
+                <li><span class="contact-map-legend__abbr">S</span> Sutton Benger</li>
+                <li><span class="contact-map-legend__abbr">B</span> Bath</li>
+                <li><span class="contact-map-legend__abbr">C</span> Chippenham</li>
+                <li><span class="contact-map-legend__abbr">Co</span> Corsham</li>
+                <li><span class="contact-map-legend__abbr">T</span> Trowbridge</li>
+                <li><span class="contact-map-legend__abbr">F</span> Frome</li>
+                <li><span class="contact-map-legend__abbr">K</span> Keynsham</li>
+                <li><span class="contact-map-legend__abbr">M</span> Melksham</li>
+              </ul>
+
+              <script src="js/maps-config.js"></script>
+              <script>
+                function showContactMapError(message) {
+                  var mapEl = document.getElementById("contact-map");
+                  if (!mapEl) return;
+                  mapEl.classList.add("coverage-map--fallback");
+                  mapEl.innerHTML = '<p class="coverage-map__fallback muted">' + message + "</p>";
+                }
+
+                /** Classic markers + raster tiles; unique callback; overlays after first idle (matches Swift Electrical pattern). */
+                window.neoFraynesContactMapsCallback = function neoFraynesContactMapsCallback() {
+                  window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__ = true;
+                  var centre = { lat: 51.507206, lng: -2.077756 }; /* Sutton Benger */
+                  var mapEl = document.getElementById("contact-map");
+                  if (!mapEl) return;
+
+                  try {
+                    var map = new google.maps.Map(mapEl, {
+                      center: centre,
+                      zoom: 10,
+                      mapTypeId: "roadmap",
+                      renderingType: "RASTER",
+                      mapTypeControl: false,
+                      streetViewControl: false,
+                      fullscreenControl: false,
+                    });
+
+                    function coverageMarkerIcon(label, fill, color) {
+                      var safe = String(label)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&apos;");
+                      var fs = String(label).length > 1 ? 10 : 11;
+                      var svg =
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34">' +
+                        '<circle cx="17" cy="17" r="15" fill="' +
+                        fill +
+                        '" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>' +
+                        '<text x="17" y="17" text-anchor="middle" dominant-baseline="central" font-family="Sora, system-ui, sans-serif" font-size="' +
+                        fs +
+                        '" font-weight="900" fill="' +
+                        color +
+                        '">' +
+                        safe +
+                        "</text>" +
+                        "</svg>";
+                      return {
+                        url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+                        scaledSize: new google.maps.Size(34, 34),
+                        anchor: new google.maps.Point(17, 17),
+                      };
+                    }
+
+                    google.maps.event.addListenerOnce(map, "idle", function () {
+                      var css = getComputedStyle(document.documentElement);
+                      var gold = (css.getPropertyValue("--color-accent") || "#C89B2D").trim();
+                      var ink = (css.getPropertyValue("--color-primary") || "#2B2416").trim();
+
+                      var coverageCircle = new google.maps.Circle({
+                        map: map,
+                        center: centre,
+                        radius: 40233.6,
+                        strokeColor: gold,
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: gold,
+                        fillOpacity: 0.08,
+                      });
+
+                      var coverageBounds = coverageCircle.getBounds();
+                      var coverageFitPadding = { top: 18, right: 18, bottom: 18, left: 18 };
+
+                      function refitCoverageView() {
+                        if (!coverageBounds) return;
+                        map.fitBounds(coverageBounds, coverageFitPadding);
+                      }
+
+                      refitCoverageView();
+
+                      var locations = [
+                        { pos: centre, label: "S", title: "Sutton Benger" },
+                        { pos: { lat: 51.381386, lng: -2.359696 }, label: "B", title: "Bath" },
+                        { pos: { lat: 51.459066, lng: -2.116074 }, label: "C", title: "Chippenham" },
+                        { pos: { lat: 51.4323, lng: -2.1849 }, label: "Co", title: "Corsham" },
+                        { pos: { lat: 51.319, lng: -2.208 }, label: "T", title: "Trowbridge" },
+                        { pos: { lat: 51.229, lng: -2.322 }, label: "F", title: "Frome" },
+                        { pos: { lat: 51.413, lng: -2.497 }, label: "K", title: "Keynsham" },
+                        { pos: { lat: 51.372, lng: -2.141 }, label: "M", title: "Melksham" },
+                      ];
+
+                      locations.forEach(function (loc) {
+                        new google.maps.Marker({
+                          map: map,
+                          position: loc.pos,
+                          title: loc.title,
+                          icon: coverageMarkerIcon(loc.label, gold, ink),
+                        });
+                      });
+
+                      if (typeof ResizeObserver !== "undefined") {
+                        var ro = new ResizeObserver(function () {
+                          google.maps.event.trigger(map, "resize");
+                          refitCoverageView();
+                        });
+                        ro.observe(mapEl);
+                      }
+                    });
+                  } catch (err) {
+                    showContactMapError(
+                      "Google Maps failed to initialise. Check the console for details (common causes: referrer restrictions or billing not enabled for the API key).",
+                    );
+                  }
+                };
+
+                (function loadMapsApi() {
+                  var key = typeof window.__GMAPS_KEY__ === "string" ? window.__GMAPS_KEY__.trim() : "";
+                  var mapEl = document.getElementById("contact-map");
+                  if (!mapEl) return;
+                  if (!key || key === "YOUR_GOOGLE_MAPS_API_KEY") {
+                    mapEl.classList.add("coverage-map--fallback");
+                    mapEl.innerHTML =
+                      '<p class="coverage-map__fallback muted">Demo-safe map: copy <code>templates/maps-config.example.js</code> to <code>js/maps-config.js</code> in this site folder and add your Google Maps API key (gitignored).</p>';
+                    return;
+                  }
+
+                  window.gm_authFailure = function () {
+                    showContactMapError(
+                      "Google Maps authentication failed. Check API key restrictions (HTTP referrers) and that billing is enabled for the key.",
+                    );
+                  };
+
+                  if (window.__NB_FRAYNES_CONTACT_MAPS_API_REQUESTED__) return;
+                  window.__NB_FRAYNES_CONTACT_MAPS_API_REQUESTED__ = true;
+
+                  var s = document.createElement("script");
+                  s.async = true;
+                  s.defer = true;
+                  s.onerror = function () {
+                    showContactMapError(
+                      "Google Maps script failed to load. Check network access and API key restrictions (HTTP referrers).",
+                    );
+                  };
+                  s.src =
+                    "https://maps.googleapis.com/maps/api/js?key=" +
+                    encodeURIComponent(key) +
+                    "&callback=neoFraynesContactMapsCallback";
+
+                  window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__ = false;
+                  document.head.appendChild(s);
+
+                  window.setTimeout(function () {
+                    if (window.__NB_FRAYNES_CONTACT_MAP_INIT_CALLED__) return;
+                    showContactMapError(
+                      "Google Maps didn’t finish loading. This is usually an API key restriction (HTTP referrer) or billing issue. Open the browser console to see the exact Google error.",
+                    );
+                  }, 8000);
+                })();
+              </script>
+            </div>
+          </div>
+
+          <aside class="form-panel" id="form" aria-labelledby="form-heading">
+            <h2 id="form-heading">Send your details</h2>
+            <p class="muted" style="margin-top: -0.25rem">
+              This is a demo form — submissions are not delivered.
+            </p>
+
+            <form data-demo-block action="#" method="post" class="contact-form">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="full-name">Full name</label>
+                  <input id="full-name" name="name" type="text" autocomplete="name" required />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Phone number</label>
+                  <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email address</label>
+                  <input id="email" name="email" type="email" autocomplete="email" required />
+                </div>
+
+                <div class="field">
+                  <label for="postcode">Postcode</label>
+                  <input id="postcode" name="postcode" type="text" autocomplete="postal-code" required />
+                </div>
+
+                <div class="field field-full">
+                  <label for="build-type">What are you looking to build?</label>
+                  <select id="build-type" name="build_type" required>
+                    <option value="">Select one…</option>
+                    <option value="dormer">Dormer conversion</option>
+                    <option value="velux">Velux conversion</option>
+                    <option value="hip-to-gable">Hip-to-gable</option>
+                    <option value="loft-bedroom-ensuite">Loft bedroom + en-suite</option>
+                    <option value="home-office">Home office</option>
+                    <option value="extension">Extension</option>
+                    <option value="not-sure">Not sure yet</option>
+                  </select>
+                </div>
+
+                <div class="field field-full">
+                  <label for="constraints">Any constraints we should know?</label>
+                  <input
+                    id="constraints"
+                    name="constraints"
+                    type="text"
+                    placeholder="Planning / conservation area / access / timeline"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="field field-full">
+                  <label for="message">Your message</label>
+                  <textarea id="message" name="message" rows="6" required></textarea>
+                </div>
+
+                <div class="field field-full">
+                  <label for="heard-from">How did you hear about us?</label>
+                  <select id="heard-from" name="heard_from">
+                    <option value="">Optional</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="recommendation">Recommendation</option>
+                    <option value="google">Google</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Send my details</button>
+                <p class="muted" style="margin: 0.65rem 0 0">
+                  We’ll reply within 2 working days. If you’re near the edge of our area, include your nearest town and we’ll
+                  confirm.
+                </p>
+              </div>
+            </form>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <h2>Frayne Lofts Ltd</h2>
+          <p class="demo-note"><strong>Owner-led loft conversions &amp; extensions</strong> across Bath and Wiltshire.</p>
+
+          <div class="footer-meta" aria-label="Contact details">
+            <div>
+              <strong>Phone:</strong>
+              <a href="tel:07507351851" data-demo-block>07507 351851</a>
+              <div class="demo-note">Demo site note: calls are blocked — use the contact form instead.</div>
+            </div>
+            <div><strong>Email:</strong> <a href="mailto:fraynelofts@gmail.com">fraynelofts@gmail.com</a></div>
+            <div>
+              <strong>Service area:</strong> Based in Sutton Benger, SN15 — serving Bath, Chippenham and surrounding towns.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="eyebrow" style="color: rgba(255, 255, 255, 0.7); margin-bottom: 0.75rem">Accreditations</p>
+          <div class="badge-row" aria-label="Accreditation badges">
+            <div class="nb-insured" aria-label="Fully insured badge">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path d="M9 12L11 14L15 10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div>
+                <div class="nb-top">Fully Insured</div>
+                <div class="nb-bot">Public liability cover<br />up to £5 million</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container footer-bottom">
+        <div>© Frayne Lofts Ltd</div>
+        <div>Demo site for NeoBookworm.uk</div>
+      </div>
+    </footer>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQ91NBYHCL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VQ91NBYHCL');
+    </script>
+  </body>
+</html>
+

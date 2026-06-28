@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Placeholder service image: dormer loft conversion">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6F2EA"/>
+      <stop offset="1" stop-color="#EEE8DD"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <path d="M120 640 L600 360 L1080 640 V820 H120 Z" fill="#262626" opacity="0.06"/>
+  <rect x="700" y="470" width="320" height="220" rx="18" fill="#262626" opacity="0.12"/>
+  <rect x="720" y="490" width="280" height="180" rx="14" fill="#ffffff" opacity="0.7"/>
+  <path d="M720 580 H1000" stroke="#C89B2D" stroke-width="6" opacity="0.55"/>
+  <text x="72" y="104" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="32" font-weight="900" fill="#262626">
+    Dormer loft conversions
+  </text>
+  <text x="72" y="148" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="18" font-weight="650" fill="#5F5F5F">
+    Placeholder image  replace with service-01-dormer.jpg
+  </text>
+</svg>

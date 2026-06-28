@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Placeholder hero image: finished loft room with warm light">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6F2EA"/>
+      <stop offset="1" stop-color="#EEE8DD"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <!-- simple room geometry -->
+  <path d="M140 680 L800 350 L1460 680 L1460 860 L140 860 Z" fill="#D8D2C7" opacity="0.55"/>
+  <path d="M140 680 L800 350 L800 860 L140 860 Z" fill="#262626" opacity="0.06"/>
+  <path d="M800 350 L1460 680 L1460 860 L800 860 Z" fill="#262626" opacity="0.04"/>
+
+  <!-- window / dormer -->
+  <rect x="1020" y="430" width="360" height="260" rx="18" fill="#262626" opacity="0.12"/>
+  <rect x="1040" y="450" width="320" height="220" rx="14" fill="url(#glass)"/>
+  <path d="M1040 560 H1360" stroke="#C89B2D" stroke-width="6" opacity="0.55"/>
+
+  <!-- subtle joinery lines -->
+  <path d="M260 780 H1340" stroke="#262626" stroke-width="3" opacity="0.12"/>
+  <path d="M260 820 H1340" stroke="#262626" stroke-width="3" opacity="0.08"/>
+
+  <!-- label -->
+  <g transform="translate(90 92)">
+    <rect x="0" y="0" width="540" height="120" rx="18" fill="#262626" opacity="0.08"/>
+    <rect x="10" y="10" width="520" height="100" rx="14" fill="#F6F2EA" stroke="#D8D2C7"/>
+    <text x="34" y="54" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="16" font-weight="800" fill="#262626" letter-spacing="2">
+      PLACEHOLDER IMAGE
+    </text>
+    <text x="34" y="84" font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="16" font-weight="650" fill="#5F5F5F">
+      Replace with <tspan font-weight="800" fill="#262626">images/hero.jpg</tspan> when available
+    </text>
+  </g>
+</svg>
