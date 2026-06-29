@@ -39,7 +39,7 @@
 //   D1_PROSPECTS_ID     — defaults to neobookworm-prospects DB id
 //   D1_ENQUIRIES_ID     — defaults to neobookworm-enquiries DB id
 
-const { queryD1, prospectsDb, enquiriesDb } = require('./_lib/d1');
+const { queryD1, kvGet, kvSet, prospectsDb, enquiriesDb } = require('./_lib/d1');
 const { bookingAdmin }                     = require('./_lib/booking');
 const { promoteToClient }                  = require('./_lib/promote');
 const { sendTemplated, sendRendered }      = require('./_lib/email');
@@ -1171,19 +1171,28 @@ module.exports = async (req, res) => {
   try {
     // ── Summary: prospect counts + enquiries total ───────────────────────────
     if (action === 'summary') {
+      const CACHE_KEY = 'dashboard:summary';
+      const CACHE_TTL = 300; // 5 minutes
+
+      // Return cached result if available — avoids a 4,789-row D1 GROUP BY scan
+      const cached = await kvGet(CACHE_KEY);
+      if (cached) return res.status(200).json({ ...cached, cached: true });
+
       const [prospectRows, enquiryRows, intakeRows, contactRows] = await Promise.all([
         queryD1(prospectsDb(), `SELECT status, COUNT(*) AS count FROM prospects GROUP BY status ORDER BY count DESC`),
         queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM landing_enquiries`),
         queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM intake_submissions`),
         queryD1(enquiriesDb(), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM contact_enquiries`),
       ]);
-      return res.status(200).json({
+      const payload = {
         ok: true,
-        data:     prospectRows,
+        data:      prospectRows,
         enquiries: enquiryRows[0] || { total: 0, handled: 0 },
         intake:    intakeRows[0]  || { total: 0, handled: 0 },
         contact:   contactRows[0] || { total: 0, handled: 0 },
-      });
+      };
+      await kvSet(CACHE_KEY, payload, CACHE_TTL);
+      return res.status(200).json(payload);
     }
 
     // ── Booking tenants: list + single config (proxy to booking Worker) ───────
