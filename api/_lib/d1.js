@@ -66,21 +66,21 @@ async function kvGet(key) {
 }
 
 async function kvSet(key, value, ttlSeconds = 300) {
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId()}/storage/kv/namespaces/${kvSummaryCacheId()}/values/${encodeURIComponent(key)}?expiration_ttl=${ttlSeconds}`;
   try {
-    const res = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${accountId()}/storage/kv/namespaces/${kvSummaryCacheId()}/values/${encodeURIComponent(key)}?expiration_ttl=${ttlSeconds}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${process.env.CF_API_TOKEN}`,
-          'Content-Type':  'text/plain',
-        },
-        body: JSON.stringify(value),
-      }
-    );
-    await res.text(); // drain body so Node doesn't close the connection early
-  } catch {
-    // Cache write failure is non-fatal — caller returns fresh D1 data
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${process.env.CF_API_TOKEN}`,
+        'Content-Type':  'text/plain',
+      },
+      body: JSON.stringify(value),
+    });
+    const text = await res.text();
+    if (!res.ok) console.error('[kvSet] KV write failed', res.status, text, 'account:', accountId(), 'ns:', kvSummaryCacheId());
+    else console.log('[kvSet] KV write ok', res.status, key);
+  } catch (err) {
+    console.error('[kvSet] KV write exception', err.message);
   }
 }
 
