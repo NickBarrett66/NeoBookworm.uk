@@ -1,0 +1,67 @@
+# .assetsignore — excludes non-static files from the Workers Static Assets upload.
+# Syntax is gitignore-style. The directory root is the repo root (assets.directory = ".").
+#
+# Anything listed here is NOT served as a public static file.
+# Everything else (HTML, CSS, images, fonts, demos, guides, vendor, etc.) IS uploaded.
+
+# ── Server / Worker source code — never serve these as public files ──────────
+api/
+worker/
+workers/
+
+# ── Internal documentation and planning ──────────────────────────────────────
+docs/
+
+# ── Build / utility scripts ──────────────────────────────────────────────────
+scripts/
+
+# ── Node packages ─────────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+
+# ── Git internals ─────────────────────────────────────────────────────────────
+.git/
+
+# ── Config and lock files that must not be public ────────────────────────────
+wrangler.toml
+.assetsignore
+vercel.json
+netlify.toml
+package.json
+package-lock.json
+.env
+.env.*
+*.env
+
+# ── Claude Code internals ─────────────────────────────────────────────────────
+.claude/
+
+# ── Wrangler build temp directory ─────────────────────────────────────────────
+.wrangler/
+
+# ── Editor / IDE config ───────────────────────────────────────────────────────
+.vscode/
+*.code-workspace
+.mcp.json
+
+# ── Ignore files (themselves) ─────────────────────────────────────────────────
+.gitignore
+.dropboxignore
+.vercelignore
+
+# ── Markdown (internal docs, READMEs, planning notes) ────────────────────────
+*.md
+
+# ── Sensitive / internal data files ──────────────────────────────────────────
+*.csv
+*.sql
+*.mdb
+
+# ── Claude Code temp files (*.tmp.NNNN.XXXX) ─────────────────────────────────
+*.tmp.*
+
+# ── Old / archived site versions ─────────────────────────────────────────────
+Old Pricing html/
+
+# ── Internal skill and revision tracking ──────────────────────────────────────
+skill-revisions/

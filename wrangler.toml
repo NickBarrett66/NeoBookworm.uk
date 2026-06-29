@@ -1,0 +1,64 @@
+name                 = "neobookworm-uk"
+main                 = "worker/index.js"
+compatibility_date   = "2024-09-23"
+compatibility_flags  = ["nodejs_compat"]
+workers_dev          = true    # staging URL always available; flip to false after Phase 7 if desired
+preview_urls         = false   # disable per-deployment preview URLs (we only need workers.dev)
+# nodejs_compat is REQUIRED — the Worker bundles @aws-sdk/client-s3,
+# @anthropic-ai/sdk, Buffer, and node:crypto. Without this flag those fail
+# at runtime. With compatibility_date >= 2024-09-23 it also enables
+# nodejs_compat_v2 automatically.
+
+# ── Static Assets ─────────────────────────────────────────────────────────────
+# directory  = serve the repo root. .assetsignore excludes api/, worker/,
+#              workers/, docs/, scripts/, node_modules, and other non-static
+#              files so they are never uploaded or served publicly.
+# binding    = ASSETS. The router in worker/index.js calls
+#              env.ASSETS.fetch(request) as its catch-all; the binding name
+#              must match.
+# html_handling = "auto-trailing-slash" (the default, stated explicitly).
+#              Gives clean URLs: a request for /about serves /about.html.
+#              /guides → /guides.html, /guides/ → redirect to /guides, etc.
+# not_found_handling = "none" (also the default, stated explicitly).
+#              When no static asset matches, the Worker script is invoked
+#              (not a built-in 404 page). Our router returns branded HTML
+#              for unknown portal slugs and JSON errors for unknown API paths.
+#
+# run_worker_first is NOT set (default = false):
+#              Static asset requests are served directly by the assets layer
+#              without invoking the Worker script — more efficient for HTML/
+#              CSS/images. For paths with no matching asset (/api/*, /c/*)
+#              the Worker is invoked automatically. The explicit
+#              env.ASSETS.fetch(request) fallback in worker/index.js handles
+#              any remaining unmatched paths (returns 404).
+
+[assets]
+directory          = "."
+binding            = "ASSETS"
+html_handling      = "auto-trailing-slash"
+not_found_handling = "none"
+
+# ── Plain (non-secret) vars ───────────────────────────────────────────────────
+# Add non-secret vars here under [vars]. Put secrets via `wrangler secret put`.
+# Example:
+# [vars]
+# ENVIRONMENT = "production"
+
+# ── Bindings — FUTURE (native D1/R2, uncomment when refactoring away from
+#    the REST-API approach) ──────────────────────────────────────────────────
+# The ported routes use the D1 REST API (CF_API_TOKEN) and the AWS S3 SDK
+# (R2_* keys) — these native bindings are NOT required for cutover.
+#
+# [[d1_databases]]
+# binding       = "DB"
+# database_name = "neobookworm-enquiries"
+# database_id   = "771b3047-f977-485e-9cfb-736815931998"
+#
+# [[d1_databases]]
+# binding       = "PROSPECTS_DB"
+# database_name = "neobookworm-prospects"
+# database_id   = "0ae32598-1680-4995-a010-96b647eacabd"
+#
+# [[r2_buckets]]
+# binding     = "R2"
+# bucket_name = "neo-bookworm-uk"
