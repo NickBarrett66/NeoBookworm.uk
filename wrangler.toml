@@ -62,3 +62,7 @@ not_found_handling = "none"
 # [[r2_buckets]]
 # binding     = "R2"
 # bucket_name = "neo-bookworm-uk"
+
+[[kv_namespaces]]
+binding    = "SUMMARY_CACHE"
+id         = "6fdba13203444cbebf4ca88e21c3e620"

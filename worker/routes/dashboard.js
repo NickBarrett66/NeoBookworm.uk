@@ -1047,19 +1047,32 @@ export async function handle(request, env, ctx, url) {
 
   try {
     if (action === 'summary') {
+      const CACHE_KEY = 'dashboard:summary';
+      const CACHE_TTL = 300; // 5 minutes
+
+      // Native KV binding — one read, zero D1 rows on a cache hit
+      if (env.SUMMARY_CACHE) {
+        const cached = await env.SUMMARY_CACHE.get(CACHE_KEY, 'json');
+        if (cached) return json({ ...cached, cached: true });
+      }
+
       const [prospectRows, enquiryRows, intakeRows, contactRows] = await Promise.all([
         queryD1(env, prospectsDb(env), `SELECT status, COUNT(*) AS count FROM prospects GROUP BY status ORDER BY count DESC`),
         queryD1(env, enquiriesDb(env), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM landing_enquiries`),
         queryD1(env, enquiriesDb(env), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM intake_submissions`),
         queryD1(env, enquiriesDb(env), `SELECT COUNT(*) AS total, SUM(CASE WHEN handled = 1 THEN 1 ELSE 0 END) AS handled FROM contact_enquiries`),
       ]);
-      return json({
+      const payload = {
         ok: true,
         data:      prospectRows,
         enquiries: enquiryRows[0] || { total: 0, handled: 0 },
         intake:    intakeRows[0]  || { total: 0, handled: 0 },
         contact:   contactRows[0] || { total: 0, handled: 0 },
-      });
+      };
+      if (env.SUMMARY_CACHE) {
+        await env.SUMMARY_CACHE.put(CACHE_KEY, JSON.stringify(payload), { expirationTtl: CACHE_TTL });
+      }
+      return json(payload);
     }
 
     if (action === 'tenant_list') {
