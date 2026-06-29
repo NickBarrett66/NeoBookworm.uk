@@ -178,135 +178,79 @@
               </p>
             </div>
 
-            <!-- Map script (inline, after element) -->
-            <script src="js/maps-config.js"></script>
+            <!-- Map (Leaflet + OpenStreetMap) -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
             <script>
-              function showContactMapError(message) {
-                var mapEl = document.getElementById('contact-map');
-                if (!mapEl) return;
-                mapEl.classList.add('coverage-map--fallback');
-                mapEl.innerHTML = '<p class="coverage-map__fallback">' + message + '</p>';
-              }
+              (function () {
+                function initMap() {
+                  var mapEl = document.getElementById('contact-map');
+                  if (!mapEl || typeof L === 'undefined') return;
 
-              /** Classic markers + raster tiles; unique callback; overlays after first idle (matches Swift Electrical pattern). */
-              window.neoApBrickworkContactMapsCallback = function neoApBrickworkContactMapsCallback() {
-                window.__NB_AP_BRICKWORK_MAP_INIT_CALLED__ = true;
-                var centre = { lat: 51.420, lng: -0.970 }; /* Shinfield / Reading area */
-                var mapEl = document.getElementById('contact-map');
-                if (!mapEl) return;
+                  var centre = [51.420, -0.970];
+                  var map = L.map('contact-map', { zoomControl: true, scrollWheelZoom: false }).setView(centre, 10);
 
-                try {
-                  var map = new google.maps.Map(mapEl, {
-                    center: centre,
-                    zoom: 10,
-                    mapTypeId: 'roadmap',
-                    renderingType: 'RASTER',
-                    mapTypeControl: false,
-                    streetViewControl: false,
-                    fullscreenControl: false,
-                  });
+                  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19,
+                  }).addTo(map);
 
                   var accentColor = '#B85C38';
 
-                  function markerIcon(label) {
-                    var safe = String(label)
-                      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-                    var fs = String(label).length > 1 ? 10 : 11;
+                  var circle = L.circle(centre, {
+                    radius: 24140,
+                    color: accentColor,
+                    weight: 2,
+                    opacity: 0.75,
+                    fillColor: accentColor,
+                    fillOpacity: 0.08,
+                  }).addTo(map);
+
+                  function refitView() {
+                    map.fitBounds(circle.getBounds(), { padding: [20, 20] });
+                  }
+                  refitView();
+
+                  var locations = [
+                    { pos: [51.454, -0.973], label: 'Re', title: 'Reading' },
+                    { pos: [51.420, -0.967], label: 'Sh', title: 'Shinfield' },
+                    { pos: [51.441, -0.941], label: 'Ea', title: 'Earley' },
+                    { pos: [51.483, -0.981], label: 'Ca', title: 'Caversham' },
+                    { pos: [51.410, -0.832], label: 'Wo', title: 'Wokingham' },
+                    { pos: [51.415, -0.745], label: 'Br', title: 'Bracknell' },
+                  ];
+
+                  locations.forEach(function (loc) {
+                    var fs = String(loc.label).length > 1 ? 10 : 11;
                     var svg =
                       '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34">' +
                       '<circle cx="17" cy="17" r="15" fill="' + accentColor + '" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>' +
-                      '<text x="17" y="17" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="' + fs + '" font-weight="700" fill="#fff">' + safe + '</text>' +
-                      '</svg>';
-                    return {
-                      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-                      scaledSize: new google.maps.Size(34, 34),
-                      anchor: new google.maps.Point(17, 17),
-                    };
-                  }
-
-                  google.maps.event.addListenerOnce(map, 'idle', function () {
-                    var coverageCircle = new google.maps.Circle({
-                      map: map,
-                      center: centre,
-                      radius: 24140, /* ~15 miles in metres */
-                      strokeColor: accentColor,
-                      strokeOpacity: 0.75,
-                      strokeWeight: 2,
-                      fillColor: accentColor,
-                      fillOpacity: 0.08,
-                    });
-
-                    function refitView() {
-                      var bounds = coverageCircle.getBounds();
-                      if (bounds) map.fitBounds(bounds, { top: 20, right: 20, bottom: 20, left: 20 });
-                    }
-                    refitView();
-
-                    var locations = [
-                      { pos: { lat: 51.454, lng: -0.973 }, label: 'Re', title: 'Reading' },
-                      { pos: { lat: 51.420, lng: -0.967 }, label: 'Sh', title: 'Shinfield' },
-                      { pos: { lat: 51.441, lng: -0.941 }, label: 'Ea', title: 'Earley' },
-                      { pos: { lat: 51.483, lng: -0.981 }, label: 'Ca', title: 'Caversham' },
-                      { pos: { lat: 51.410, lng: -0.832 }, label: 'Wo', title: 'Wokingham' },
-                      { pos: { lat: 51.415, lng: -0.745 }, label: 'Br', title: 'Bracknell' },
-                    ];
-
-                    locations.forEach(function (loc) {
-                      new google.maps.Marker({
-                        map: map,
-                        position: loc.pos,
-                        title: loc.title,
-                        icon: markerIcon(loc.label),
-                      });
-                    });
-
-                    if (typeof ResizeObserver !== 'undefined') {
-                      var ro = new ResizeObserver(function () {
-                        google.maps.event.trigger(map, 'resize');
-                        refitView();
-                      });
-                      ro.observe(mapEl);
-                    }
+                      '<text x="17" y="17" text-anchor="middle" dominant-baseline="central" font-family="system-ui,sans-serif" font-size="' + fs + '" font-weight="700" fill="#fff">' + loc.label + '</text></svg>';
+                    var icon = L.divIcon({ html: svg, className: '', iconSize: [34, 34], iconAnchor: [17, 17] });
+                    L.marker(loc.pos, { icon: icon, title: loc.title }).addTo(map);
                   });
-                } catch (err) {
-                  showContactMapError('Map unavailable — please call <strong>07990 761750</strong> or use the form to confirm your postcode is covered.');
-                }
-              };
 
-              (function loadMapsApi() {
-                var key = typeof window.__GMAPS_KEY__ === 'string' ? window.__GMAPS_KEY__.trim() : '';
-                var mapEl = document.getElementById('contact-map');
-                if (!mapEl) return;
-                if (!key || key === 'YOUR_GOOGLE_MAPS_API_KEY') {
-                  mapEl.classList.add('coverage-map--fallback');
-                  mapEl.innerHTML = '<p class="coverage-map__fallback">Map unavailable in this preview — add your Google Maps API key to <code>js/maps-config.js</code> to enable the coverage map.</p>';
-                  return;
+                  if (typeof ResizeObserver !== 'undefined') {
+                    var ro = new ResizeObserver(function () {
+                      map.invalidateSize();
+                      refitView();
+                    });
+                    ro.observe(mapEl);
+                  }
                 }
 
-                window.gm_authFailure = function () {
-                  showContactMapError('Map unavailable — please call <strong>07990 761750</strong> or use the form to confirm your postcode is covered.');
-                };
+                function whenLeafletReady(fn) {
+                  if (typeof L !== 'undefined') { fn(); return; }
+                  var check = setInterval(function () {
+                    if (typeof L !== 'undefined') { clearInterval(check); fn(); }
+                  }, 50);
+                }
 
-                if (window.__NB_AP_BRICKWORK_MAPS_API_REQUESTED__) return;
-                window.__NB_AP_BRICKWORK_MAPS_API_REQUESTED__ = true;
-
-                var s = document.createElement('script');
-                s.async = true;
-                s.defer = true;
-                s.onerror = function () {
-                  showContactMapError('Map failed to load — please call <strong>07990 761750</strong> or use the contact form.');
-                };
-                s.src = 'https://maps.googleapis.com/maps/api/js?key=' +
-                  encodeURIComponent(key) + '&callback=neoApBrickworkContactMapsCallback';
-
-                window.__NB_AP_BRICKWORK_MAP_INIT_CALLED__ = false;
-                document.head.appendChild(s);
-
-                setTimeout(function () {
-                  if (window.__NB_AP_BRICKWORK_MAP_INIT_CALLED__) return;
-                  showContactMapError('Map took too long to load — this is usually an API key restriction or billing issue. Please use the contact form.');
-                }, 8000);
+                if (document.readyState === 'loading') {
+                  document.addEventListener('DOMContentLoaded', function () { whenLeafletReady(initMap); });
+                } else {
+                  whenLeafletReady(initMap);
+                }
               })();
             </script>
 

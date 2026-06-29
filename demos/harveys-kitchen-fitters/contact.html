@@ -289,24 +289,97 @@
               aria-label="Service area map — Harvey's Kitchen Fitters covers Bath and a 25-mile radius"
               id="map-wrapper">
 
-              <!-- Google Maps renders here when API key is present -->
-              <div id="map-canvas" aria-hidden="true"></div>
+              <div id="map-canvas" role="region" aria-label="Map showing service area around Bath"></div>
 
-              <!-- Fallback shown if no map loads -->
-              <div class="map-fallback" id="map-fallback" aria-live="polite">
-                <strong>Service area</strong>
-                We cover Bath and the surrounding area: Somerset, Wiltshire, and the Bristol fringe — including Chippenham, Frome, Trowbridge, Radstock, Shepton Mallet, and the BS postcode area.
-                <br><br>
-                Call <a href="tel:07976358749">07976 358749</a> to check your area.
-              </div>
-
-              <!-- Legend (shown when map loads) -->
-              <div class="map-legend" id="map-legend" hidden>
-                <div class="map-legend__dot" aria-hidden="true"></div>
-                Harvey's Kitchen Fitters — service area
-              </div>
+              <div class="map-legend map-legend--towns" id="map-legend" aria-label="Towns shown on the map"></div>
 
             </div>
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+            <script>
+            (function () {
+              function initHarveysMap() {
+                var mapEl = document.getElementById('map-canvas');
+                if (!mapEl || typeof L === 'undefined') return;
+
+                var bath = [51.3781, -2.3597];
+                var map = L.map('map-canvas', { zoomControl: true, scrollWheelZoom: false }).setView(bath, 9);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                  maxZoom: 19,
+                }).addTo(map);
+
+                var accent = '#C17F24';
+                var primary = '#2C4A2C';
+
+                var circle = L.circle(bath, {
+                  radius: 25 * 1609.344,
+                  color: accent,
+                  weight: 2,
+                  opacity: 0.75,
+                  fillColor: accent,
+                  fillOpacity: 0.12,
+                }).addTo(map);
+
+                function refit() {
+                  map.fitBounds(circle.getBounds(), { padding: [32, 32] });
+                }
+                refit();
+
+                var towns = [
+                  { pos: [51.3781, -2.3597], label: 'Ba', title: 'Bath' },
+                  { pos: [51.4545, -2.5879], label: 'Br', title: 'Bristol' },
+                  { pos: [51.4582, -2.1167], label: 'Ch', title: 'Chippenham' },
+                  { pos: [51.2299, -2.3218], label: 'F', title: 'Frome' },
+                  { pos: [51.3198, -2.2086], label: 'T', title: 'Trowbridge' },
+                  { pos: [51.2938, -2.4474], label: 'Ra', title: 'Radstock' },
+                  { pos: [51.1930, -2.5459], label: 'SM', title: 'Shepton Mallet' },
+                ];
+
+                towns.forEach(function (t) {
+                  var fs = t.label.length > 1 ? 9 : 11;
+                  var svg =
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34">' +
+                    '<circle cx="17" cy="17" r="15" fill="' + primary + '" stroke="#fff" stroke-width="2"/>' +
+                    '<text x="17" y="17" text-anchor="middle" dominant-baseline="central" font-family="system-ui,sans-serif" font-size="' + fs + '" font-weight="700" fill="#fff">' + t.label + '</text></svg>';
+                  var icon = L.divIcon({ html: svg, className: '', iconSize: [34, 34], iconAnchor: [17, 17] });
+                  L.marker(t.pos, { icon: icon, title: t.title }).addTo(map);
+                });
+
+                var legendEl = document.getElementById('map-legend');
+                if (legendEl) {
+                  legendEl.innerHTML = towns.map(function (t) {
+                    return '<span class="map-legend__item"><span class="map-legend__abbr" style="background:' + primary + '">' + t.label + '</span> ' + t.title + '</span>';
+                  }).join('');
+                }
+
+                if (typeof ResizeObserver !== 'undefined') {
+                  var wrapper = document.getElementById('map-wrapper');
+                  if (wrapper) {
+                    var ro = new ResizeObserver(function () {
+                      map.invalidateSize();
+                      refit();
+                    });
+                    ro.observe(wrapper);
+                  }
+                }
+              }
+
+              function whenLeafletReady(fn) {
+                if (typeof L !== 'undefined') { fn(); return; }
+                var check = setInterval(function () {
+                  if (typeof L !== 'undefined') { clearInterval(check); fn(); }
+                }, 50);
+              }
+
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function () { whenLeafletReady(initHarveysMap); });
+              } else {
+                whenLeafletReady(initHarveysMap);
+              }
+            })();
+            </script>
           </div>
 
         </div>
@@ -381,110 +454,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- Maps config (gitignored — sets window.__GMAPS_KEY__) -->
-  <script src="js/maps-config.js"></script>
-
-  <!-- Google Maps loader -->
-  <script>
-  (function () {
-    const key = window.__GMAPS_KEY__;
-    if (!key || key === "YOUR_GOOGLE_MAPS_API_KEY") {
-      // No key — leave fallback visible
-      return;
-    }
-
-    const fallback = document.getElementById("map-fallback");
-    const legend = document.getElementById("map-legend");
-    const canvas = document.getElementById("map-canvas");
-
-    // Load the Maps JS API
-    const script = document.createElement("script");
-    script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(key) + "&callback=initHarveysMap";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-
-    window.initHarveysMap = function () {
-      const BATH = { lat: 51.3781, lng: -2.3597 };
-      const RADIUS_M = 25 * 1609.344; // 25 miles in metres
-
-      const map = new google.maps.Map(canvas, {
-        center: BATH,
-        zoom: 10,
-        mapTypeId: "roadmap",
-        renderingType: "RASTER",
-        disableDefaultUI: false,
-        zoomControl: true,
-        streetViewControl: false,
-        mapTypeControl: false,
-        fullscreenControl: false,
-        styles: [
-          { featureType: "poi", stylers: [{ visibility: "off" }] },
-          { featureType: "transit", stylers: [{ visibility: "off" }] }
-        ]
-      });
-
-      // 25-mile radius circle
-      const circle = new google.maps.Circle({
-        map,
-        center: BATH,
-        radius: RADIUS_M,
-        strokeColor: "#C17F24",
-        strokeOpacity: 0.75,
-        strokeWeight: 2,
-        fillColor: "#C17F24",
-        fillOpacity: 0.12
-      });
-
-      map.fitBounds(circle.getBounds(), 32);
-
-      // Town markers
-      const towns = [
-        { name: "Bath",             lat: 51.3781, lng: -2.3597 },
-        { name: "Bristol",          lat: 51.4545, lng: -2.5879 },
-        { name: "Chippenham",       lat: 51.4582, lng: -2.1167 },
-        { name: "Frome",            lat: 51.2299, lng: -2.3218 },
-        { name: "Trowbridge",       lat: 51.3198, lng: -2.2086 },
-        { name: "Radstock",         lat: 51.2938, lng: -2.4474 },
-        { name: "Shepton Mallet",   lat: 51.1930, lng: -2.5459 }
-      ];
-
-      const pinSvg = encodeURIComponent(
-        '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">' +
-        '<circle cx="6" cy="6" r="5" fill="#2C4A2C" stroke="#fff" stroke-width="1.5"/>' +
-        '</svg>'
-      );
-
-      towns.forEach(function (t) {
-        new google.maps.Marker({
-          position: { lat: t.lat, lng: t.lng },
-          map,
-          title: t.name,
-          icon: {
-            url: "data:image/svg+xml," + pinSvg,
-            scaledSize: new google.maps.Size(12, 12),
-            anchor: new google.maps.Point(6, 6)
-          }
-        });
-      });
-
-      // Show legend, hide text fallback
-      if (fallback) fallback.hidden = true;
-      if (legend) legend.hidden = false;
-
-      // ResizeObserver — refit if column width changes
-      if (window.ResizeObserver) {
-        const ro = new ResizeObserver(function () {
-          google.maps.event.trigger(map, "resize");
-          map.fitBounds(circle.getBounds(), 32);
-        });
-        const wrapper = document.getElementById("map-wrapper");
-        if (wrapper) ro.observe(wrapper);
-      }
-    };
-  })();
-  </script>
 
   <script src="js/main.js"></script>
 </body>
