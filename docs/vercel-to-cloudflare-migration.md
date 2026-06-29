@@ -982,7 +982,7 @@ Tasks:
 3. Update vercel.json — remove /c/:slug/* rewrites. Keep trailing-slash redirects.
 4. Update CLAUDE.md — deployment section, function inventory, environment variables.
    Reflect the new Worker + Vercel bridge architecture and the Cloudflare DNS move.
-5. Update the progress tracker in this doc (mark Phase 8 complete).
+5. Update the progress tracker in this doc (mark Phase 8 complete)..
 
 Check each deletion carefully — confirm the file is not imported by any
 remaining Vercel bridge function before deleting it.
