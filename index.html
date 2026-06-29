@@ -27,6 +27,37 @@
         imagesrcset="/Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp 640w, /Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp 820w"
         imagesizes="(max-width: 900px) 100vw, 820px"
         fetchpriority="high">
+  <!-- Critical @font-face for LCP (nav wordmark + hero h1) — full families still load via fonts.css -->
+  <style>
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/nuFkD-vYSZviVYUb_rj3ij__anPXDTnogkk7.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2') format('woff2');
+  }
+  </style>
   <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/fonts-bebas.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/fonts-bebas.css"></noscript>
@@ -220,7 +251,7 @@ line-height: 1.06;
 letter-spacing: -0.025em;
 color: var(--white);
 margin-bottom: 1.5rem;
-animation: fadeUp 0.7s 0.1s ease both;
+animation: fadeUpNoOpacity 0.7s 0.1s ease both;
 }
 
 h1 em {
@@ -1309,6 +1340,11 @@ from { opacity: 0; transform: translateY(20px); }
 to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fadeUpNoOpacity {
+from { transform: translateY(20px); }
+to   { transform: translateY(0); }
+}
+
 @keyframes fadeDown {
 from { opacity: 0; transform: translateY(-10px); }
 to   { opacity: 1; transform: translateY(0); }
@@ -1570,9 +1606,9 @@ margin-top: 2px;
           srcset="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp 640w, Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp 820w"
           sizes="(max-width: 900px) 100vw, 820px"
           type="image/webp">
-        <img src="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk.webp"
+        <img src="Images/Hero_NeoBookworm_Professional_web_designer_working_at_a_clean_desk-640.webp"
              alt="Professional web designer working at a clean desk"
-             width="820" height="548"
+             width="640" height="427"
              loading="eager"
              decoding="async"
              fetchpriority="high">
