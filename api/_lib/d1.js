@@ -67,7 +67,7 @@ async function kvGet(key) {
 
 async function kvSet(key, value, ttlSeconds = 300) {
   try {
-    await fetch(
+    const res = await fetch(
       `https://api.cloudflare.com/client/v4/accounts/${accountId()}/storage/kv/namespaces/${kvSummaryCacheId()}/values/${encodeURIComponent(key)}?expiration_ttl=${ttlSeconds}`,
       {
         method: 'PUT',
@@ -78,6 +78,7 @@ async function kvSet(key, value, ttlSeconds = 300) {
         body: JSON.stringify(value),
       }
     );
+    await res.text(); // drain body so Node doesn't close the connection early
   } catch {
     // Cache write failure is non-fatal — caller returns fresh D1 data
   }
