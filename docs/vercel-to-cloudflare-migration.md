@@ -206,7 +206,7 @@ Skip entirely (Notion retired): `NOTION_API_KEY`, `NOTION_INTAKE_DATABASE_ID`. B
 | 5 | Port complex routes (`portal-action`, `intake`, `run-site-audit`, `dashboard`) | Not started |
 | 6 | Worker config (`wrangler.toml`, `.assetsignore`, assets/clean-URL settings) | Not started |
 | 7 | Deploy, smoke-test, cut over DNS | Not started |
-| 8 | Cleanup — remove migrated functions from Vercel, update CLAUDE.md | Not started |
+| 8 | Cleanup — remove migrated functions from Vercel, update CLAUDE.md | In progress — `worker/`, `wrangler.toml`, `.assetsignore` merged to `main` 2026-06-29; `main` is now the canonical deployment branch. Swift Electrical images carried across. Remaining: delete 7 migrated Vercel functions, update CLAUDE.md, detach apex from Vercel (after 24h rollback window). |
 
 ### Production-risk rating (1 = no prod impact, 10 = could take the live site/email down)
 
