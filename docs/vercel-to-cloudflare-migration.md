@@ -868,11 +868,11 @@ The bridge must be reachable on a hostname that points at Vercel after the apex 
 ### Step 2 — Smoke test against the `*.workers.dev` staging URL
 
 Static:
-- [ ] `https://neobookworm-uk.<subdomain>.workers.dev/` homepage loads
-- [ ] `/guides` resolves (clean URL via `html_handling`)
-- [ ] `/he-tyres` → `/he-tyres/` redirect works (from `_redirects`)
-- [ ] `/ridgecoat-decorators` and `/demos/hartley-plumbing` redirects work
-- [ ] **Source-leak check:** `/api/contact.js`, `/worker/index.js`, `/workers/...`, `/wrangler.toml` all return 404 (must NOT serve source)
+- [x] `https://https://neobookworm-uk.nickbarrett.workers.dev/` homepage loads
+- [x] `/guides` resolves (clean URL via `html_handling`)
+- [x] `/he-tyres` → `/he-tyres/` redirect works (from `_redirects`)
+- [x] `/ridgecoat-decorators` and `/demos/hartley-plumbing` redirects work
+- [x] **Source-leak check:** `/api/contact.js`, `/worker/index.js`, `/workers/...`, `/wrangler.toml` all return 404 (must NOT serve source)
 
 API — ported logic routes (on workers.dev):
 - [ ] `GET /api/reg-lookup?reg=TEST` returns JSON (or correct error)
