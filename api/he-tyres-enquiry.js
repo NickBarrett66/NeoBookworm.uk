@@ -263,6 +263,7 @@ async function handleAddressLookup(req, res, body) {
       line1:    a.addressline1 || '',
       line2:    [a.addressline2, a.addressline3].filter(Boolean).join(', '),
       town:     a.posttown || '',
+      county:   a.county || '',
       postcode: a.postcode || postcode.toUpperCase(),
       summary:  a.summaryline || [a.addressline1, a.addressline2, a.posttown, a.postcode].filter(Boolean).join(', '),
     }));

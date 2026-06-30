@@ -1796,7 +1796,7 @@
             if (isNaN(idx)) return;
             const a = pickerAddresses[idx];
             if (!a || !addrEl) return;
-            addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\n');
+            addrEl.value = [a.line1, a.line2, a.town, a.county, a.postcode].filter(function (x) { return x; }).join('\n');
           });
         }
 
