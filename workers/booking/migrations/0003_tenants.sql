@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tenants (
 
 INSERT OR REPLACE INTO tenants (slug, config_json) VALUES (
   'hetyres',
-  '{"displayName":"HE Tyres","homeUrl":"https://neobookworm.uk/he-tyres/","theme":{"bg":"#1a2336","accent":"#ec7325","accentH":"#d35f17","accentFg":"#1a2336","accentRgb":"236, 115, 37"},"calendarId":null,"slotDuration":30,"minLeadMinutes":60,"maxAdvanceDays":60,"timezone":"Europe/London","regLookup":true,"workingHours":{"1":{"open":"08:30","close":"17:00"},"2":{"open":"08:30","close":"17:00"},"3":{"open":"08:30","close":"17:00"},"4":{"open":"08:30","close":"17:00"},"5":{"open":"08:30","close":"17:00"},"6":{"open":"08:30","close":"12:30"}}}'
+  '{"displayName":"HE Tyres","homeUrl":"https://neobookworm.uk/he-tyres/","theme":{"bg":"#1a2336","accent":"#ec7325","accentH":"#d35f17","accentFg":"#1a2336","accentRgb":"236, 115, 37"},"calendarId":null,"slotDuration":30,"minLeadMinutes":120,"maxAdvanceDays":60,"timezone":"Europe/London","regLookup":true,"workingHours":{"1":{"open":"08:30","close":"17:00"},"2":{"open":"08:30","close":"17:00"},"3":{"open":"08:30","close":"17:00"},"4":{"open":"08:30","close":"17:00"},"5":{"open":"08:30","close":"17:00"},"6":{"open":"08:30","close":"12:30"}}}'
 );
 
 INSERT OR REPLACE INTO tenants (slug, config_json) VALUES (

@@ -180,13 +180,20 @@ export function getWorkingSlots(isoDate, config = SLUG_CONFIG.hetyres) {
   return slots;
 }
 
-export function filterAvailableSlots(workingSlots, busyPeriods, config = SLUG_CONFIG.hetyres) {
+export function filterAvailableSlots(
+  workingSlots,
+  busyPeriods,
+  config = SLUG_CONFIG.hetyres,
+  nowMs = Date.now(),
+) {
   const timeZone = config.timezone;
   // Phase 5 — buffer between appointments: pad each busy period on both sides so
   // back-to-back bookings leave a gap. Applies to our own events and external
   // calendar events alike (both come through freebusy).
   const bufferMs = (config.bufferMinutes || 0) * 60_000;
+  const minStartMs = nowMs + (config.minLeadMinutes || 0) * 60_000;
   return workingSlots
+    .filter((slot) => slot.start.getTime() >= minStartMs)
     .filter(
       (slot) =>
         !busyPeriods.some(

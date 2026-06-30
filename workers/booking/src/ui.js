@@ -1604,7 +1604,7 @@ export function renderManagePage(booking, state, config, slug) {
     const slotMs = new Date(booking.slot_start.replace('T', ' ') + ' UTC').getTime();
     // Rough wall-time parse — precise enough for UI gating
     const isPast = slotMs < Date.now();
-    const tooClosed = !isPast && (slotMs <= Date.now() + (config.minLeadMinutes || 60) * 60_000);
+    const tooClosed = !isPast && (slotMs <= Date.now() + (config.minLeadMinutes ?? 120) * 60_000);
 
     const slotFormatted = escHtml(fmtSlot(booking.slot_start));
     const tokenJson = JSON.stringify(booking.manage_token);

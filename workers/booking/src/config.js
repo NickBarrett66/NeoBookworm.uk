@@ -13,7 +13,7 @@ export const SLUG_CONFIG = {
     },
     calendarId: null,
     slotDuration: 30,
-    minLeadMinutes: 60,
+    minLeadMinutes: 120,
     maxAdvanceDays: 60,
     timezone: 'Europe/London',
     regLookup: true,
