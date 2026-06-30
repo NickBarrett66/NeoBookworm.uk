@@ -81,9 +81,12 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
           </div>`;
     const findBtn = addressLookup === 'full' ? `<button type="button" id="address-find" class="pc-find-btn">Find address</button>` : '';
     const picker = addressLookup === 'full' ? `<select id="address-picker" class="address-picker" hidden></select>` : '';
+    const pcHint = addressLookup === 'full' ? `<div class="pc-hint">Enter your postcode and tap <strong>Find address</strong>, then pick yours from the list.</div>` : '';
+    const pcPlaceholder = addressLookup === 'full' ? ' placeholder="e.g. SW1A 1AA"' : '';
     const pcField = `<div class="field">
             <label for="postcode">Postcode${addressRequired ? '' : optionalTag}</label>
-            <div class="pc-row"><input type="text" id="postcode" name="postcode" maxlength="10" ${addressRequired ? 'required' : ''} autocomplete="postal-code" style="text-transform:uppercase">${findBtn}</div>
+            ${pcHint}
+            <div class="pc-row"><input type="text" id="postcode" name="postcode" maxlength="10" ${addressRequired ? 'required' : ''} autocomplete="postal-code"${pcPlaceholder} style="text-transform:uppercase">${findBtn}</div>
             ${picker}
             <div class="postcode-msg" id="postcode-msg" hidden></div>
           </div>`;
@@ -534,7 +537,14 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       font-size: 0.85rem;
     }
     .postcode-msg.bad { color: #ffb3b3; }
+    .postcode-msg.warn { color: #ffd9a0; }
     .postcode-msg.ok { color: #9ff0c0; }
+
+    .pc-hint {
+      margin: -0.1rem 0 0.4rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
 
     .pc-row { display: flex; gap: 0.5rem; align-items: stretch; }
     .pc-row input { flex: 1; }
@@ -553,6 +563,10 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     }
     .pc-find-btn:disabled { opacity: 0.6; cursor: default; }
     .address-picker { margin-top: 0.5rem; }
+    /* The hidden attribute must win over the generic .field select display:block rule,
+       otherwise an empty picker shows before any search has run. */
+    .address-picker[hidden] { display: none; }
+    .field textarea.addr-highlight { border-color: var(--accent); }
 
     .location-note {
       margin: 0 0 1rem;
@@ -1327,7 +1341,17 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     }
     var findBtn = document.getElementById('address-find');
     var picker = document.getElementById('address-picker');
+    var addrEl = document.getElementById('address');
     var found = [];
+    // Service-down fallback: point the customer at the manual Address box and make it
+    // obvious. Used when the finder is unavailable (out of credit, rate-limited, etc.).
+    function revealManualAddress() {
+      if (!addrEl) return;
+      addrEl.classList.add('addr-highlight');
+      try { addrEl.focus(); } catch (e) {}
+      try { addrEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+    }
+    if (addrEl) addrEl.addEventListener('input', function () { addrEl.classList.remove('addr-highlight'); });
     if (findBtn) findBtn.addEventListener('click', async function () {
       var pc = pcEl.value.trim();
       if (!UK_POSTCODE_RE.test(pc)) { setPostcodeMsg('bad', 'Please enter a valid UK postcode'); return; }
@@ -1336,25 +1360,46 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       findBtn.textContent = 'Searching…';
       try {
         var r = await fetch('/' + SLUG + '/address-lookup?postcode=' + encodeURIComponent(pc));
-        var d = await r.json();
-        found = (d && d.addresses) || [];
-        if (!found.length) { setPostcodeMsg('bad', 'No addresses found — please type yours'); if (picker) picker.hidden = true; return; }
+        var d = await r.json().catch(function () { return null; });
+        if (!r.ok || !d) {
+          // Service problem (out of credit 502, rate-limited 429, missing key 500, bad JSON).
+          // Not the customer's fault — don't blame their postcode; offer manual entry.
+          if (picker) picker.hidden = true;
+          setPostcodeMsg('warn', 'Our address finder is unavailable right now — just type your address below.');
+          revealManualAddress();
+          return;
+        }
+        found = d.addresses || [];
+        if (!found.length) {
+          if (picker) picker.hidden = true;
+          setPostcodeMsg('bad', "We couldn't find an address for that postcode — please type it below.");
+          revealManualAddress();
+          return;
+        }
         if (picker) {
           var opts = '<option value="">' + found.length + ' found — choose yours…</option>';
           for (var i = 0; i < found.length; i++) opts += '<option value="' + i + '">' + found[i].summary.replace(/</g, '&lt;') + '</option>';
           picker.innerHTML = opts;
           picker.hidden = false;
+          try { picker.focus(); } catch (e) {}
         }
         setPostcodeMsg('ok', 'Select your address below');
-      } catch (e) { setPostcodeMsg('bad', 'Lookup failed — please type your address'); }
+      } catch (e) {
+        // Network throw (offline / blocked) — same graceful manual fallback.
+        if (picker) picker.hidden = true;
+        setPostcodeMsg('warn', 'Our address finder is unavailable right now — just type your address below.');
+        revealManualAddress();
+      }
       finally { findBtn.disabled = false; findBtn.textContent = orig; }
     });
     if (picker) picker.addEventListener('change', function () {
       if (picker.value === '') return;
       var a = found[picker.value];
       if (!a) return;
-      var addrEl = document.getElementById('address');
-      if (addrEl) addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\\n');
+      if (addrEl) {
+        addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\\n');
+        addrEl.classList.remove('addr-highlight');
+      }
       if (a.postcode) pcEl.value = a.postcode;
       setPostcodeMsg('ok', '✓ Address selected');
     });

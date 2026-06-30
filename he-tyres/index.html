@@ -502,6 +502,11 @@
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--orange); }
     .form-group textarea { height: 96px; resize: vertical; }
+    .pc-hint { margin: -0.1rem 0 0.4rem; font-size: 0.8rem; color: var(--muted); }
+    .pc-msg { margin-top: 0.35rem; font-size: 0.85rem; font-weight: 600; display: none; }
+    .pc-msg.bad  { display: block; color: #c0392b; }
+    .pc-msg.ok   { display: block; color: #1a7a45; }
+    .pc-msg.warn { display: block; color: #b85c0a; }
     .btn-form { width: 100%; background: var(--orange); color: var(--navy); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; padding: .9rem; border: none; border-radius: 6px; cursor: pointer; transition: background .2s; }
     .btn-form:hover { background: var(--orange-h); }
     .form-success { display: none; background: #e6f9f0; border: 2px solid #27ae60; border-radius: 6px; padding: 1.25rem; text-align: center; color: #1a7a45; font-weight: 600; margin-top: 1rem; }
@@ -1135,7 +1140,9 @@
             <div class="form-section" id="mobileFittingFields" hidden>
               <div class="form-group">
                 <label for="postcode">Fitting address postcode</label>
-                <input type="text" id="postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. SN1 1AA" maxlength="8">
+                <div class="pc-hint">We'll use this to confirm we cover your area (15 miles of Swindon).</div>
+                <input type="text" id="postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. SN1 2BL" maxlength="10" style="text-transform:uppercase">
+                <div class="pc-msg" id="postcode-msg"></div>
               </div>
               <div class="form-group">
                 <label for="reg">Vehicle registration <span class="field-opt">(optional)</span></label>
@@ -1723,6 +1730,42 @@
         document.getElementById('regLookupBtnGeneral'),
         document.getElementById('vehicleResultGeneral')
       );
+
+      // ── Postcode blur-validation ──
+      (function wirePostcode() {
+        const pcEl = document.getElementById('postcode');
+        const msgEl = document.getElementById('postcode-msg');
+        if (!pcEl || !msgEl) return;
+        const UK_PC_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
+
+        function setPcMsg(kind, text) {
+          msgEl.className = 'pc-msg' + (kind ? ' ' + kind : '');
+          msgEl.textContent = text;
+        }
+
+        async function checkPostcode(pc) {
+          try {
+            const r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/\s+/g, '')));
+            if (r.status === 404) return { valid: false, area: null };
+            if (!r.ok) return { valid: true, area: null }; // service issue — fail open
+            const d = await r.json();
+            if (!d || !d.result) return { valid: false, area: null };
+            const parts = [d.result.admin_district, d.result.region].filter(Boolean);
+            return { valid: true, area: parts.join(', ') };
+          } catch (e) { return { valid: true, area: null }; } // network issue — fail open
+        }
+
+        pcEl.addEventListener('blur', async function () {
+          const pc = pcEl.value.trim();
+          if (!pc) { setPcMsg('', ''); return; }
+          if (!UK_PC_RE.test(pc)) { setPcMsg('bad', 'Please enter a valid UK postcode'); return; }
+          const a = await checkPostcode(pc);
+          if (!a.valid) setPcMsg('bad', "We couldn't find that postcode — please check it");
+          else setPcMsg('ok', a.area ? '✓ ' + a.area : '✓ Postcode looks good');
+        });
+
+        pcEl.addEventListener('input', function () { setPcMsg('', ''); });
+      })();
 
       // ── Submission ──
       form.addEventListener('submit', async function (e) {
