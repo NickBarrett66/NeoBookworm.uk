@@ -507,6 +507,9 @@
     .pc-msg.bad  { display: block; color: #c0392b; }
     .pc-msg.ok   { display: block; color: #1a7a45; }
     .pc-msg.warn { display: block; color: #b85c0a; }
+    /* Prevent .form-group select rule overriding the hidden attribute on the picker */
+    .form-group select[hidden] { display: none; }
+    #address-picker { margin-bottom: 0.5rem; cursor: pointer; }
     .btn-form { width: 100%; background: var(--orange); color: var(--navy); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; padding: .9rem; border: none; border-radius: 6px; cursor: pointer; transition: background .2s; }
     .btn-form:hover { background: var(--orange-h); }
     .form-success { display: none; background: #e6f9f0; border: 2px solid #27ae60; border-radius: 6px; padding: 1.25rem; text-align: center; color: #1a7a45; font-weight: 600; margin-top: 1rem; }
@@ -1144,6 +1147,12 @@
                 <input type="text" id="postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. SN1 2BL" maxlength="10" style="text-transform:uppercase">
                 <div class="pc-msg" id="postcode-msg"></div>
               </div>
+              <div class="form-group" id="addressGroup" hidden>
+                <label for="fitting_address">Fitting address <span class="field-opt">(optional)</span></label>
+                <select id="address-picker" hidden></select>
+                <div class="pc-hint" id="address-hint">Add your house number and street to help us find you.</div>
+                <textarea id="fitting_address" name="fitting_address" rows="2" placeholder="e.g. 42 Westmead Drive, Swindon"></textarea>
+              </div>
               <div class="form-group">
                 <label for="reg">Vehicle registration <span class="field-opt">(optional)</span></label>
                 <div class="reg-row">
@@ -1731,10 +1740,10 @@
         document.getElementById('vehicleResultGeneral')
       );
 
-      // ── Postcode blur-validation ──
+      // ── Postcode blur-validation + address picker ──
       (function wirePostcode() {
-        const pcEl = document.getElementById('postcode');
-        const msgEl = document.getElementById('postcode-msg');
+        const pcEl       = document.getElementById('postcode');
+        const msgEl      = document.getElementById('postcode-msg');
         if (!pcEl || !msgEl) return;
         const UK_PC_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
 
@@ -1743,28 +1752,101 @@
           msgEl.textContent = text;
         }
 
+        // Free postcodes.io check — validates existence and returns area name. Fails open.
         async function checkPostcode(pc) {
           try {
             const r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/\s+/g, '')));
             if (r.status === 404) return { valid: false, area: null };
-            if (!r.ok) return { valid: true, area: null }; // service issue — fail open
+            if (!r.ok) return { valid: true, area: null };
             const d = await r.json();
             if (!d || !d.result) return { valid: false, area: null };
             const parts = [d.result.admin_district, d.result.region].filter(Boolean);
             return { valid: true, area: parts.join(', ') };
-          } catch (e) { return { valid: true, area: null }; } // network issue — fail open
+          } catch (e) { return { valid: true, area: null }; }
+        }
+
+        const addrGroup  = document.getElementById('addressGroup');
+        const addrEl     = document.getElementById('fitting_address');
+        const addrPicker = document.getElementById('address-picker');
+        const addrHint   = document.getElementById('address-hint');
+        let   pickerAddresses = [];
+
+        function setAddrHint(text) { if (addrHint) addrHint.textContent = text; }
+
+        function populatePicker(addresses) {
+          if (!addrPicker) return;
+          pickerAddresses = addresses;
+          let opts = '<option value="">— ' + addresses.length + ' addresses found — select yours —</option>';
+          addresses.forEach(function (a, i) {
+            opts += '<option value="' + i + '">' + a.summary.replace(/</g, '&lt;') + '</option>';
+          });
+          addrPicker.innerHTML = opts;
+          addrPicker.hidden = false;
+          setAddrHint('Select your address above, or type it in the box below.');
+        }
+
+        function resetPicker() {
+          if (addrPicker) { addrPicker.hidden = true; addrPicker.innerHTML = ''; addrPicker.value = ''; }
+          pickerAddresses = [];
+        }
+
+        if (addrPicker) {
+          addrPicker.addEventListener('change', function () {
+            const idx = parseInt(addrPicker.value, 10);
+            if (isNaN(idx)) return;
+            const a = pickerAddresses[idx];
+            if (!a || !addrEl) return;
+            addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\n');
+          });
         }
 
         pcEl.addEventListener('blur', async function () {
           const pc = pcEl.value.trim();
-          if (!pc) { setPcMsg('', ''); return; }
-          if (!UK_PC_RE.test(pc)) { setPcMsg('bad', 'Please enter a valid UK postcode'); return; }
+          if (!pc) { setPcMsg('', ''); if (addrGroup) addrGroup.hidden = true; resetPicker(); return; }
+          if (!UK_PC_RE.test(pc)) { setPcMsg('bad', 'Please enter a valid UK postcode'); if (addrGroup) addrGroup.hidden = true; resetPicker(); return; }
+
           const a = await checkPostcode(pc);
-          if (!a.valid) setPcMsg('bad', "We couldn't find that postcode — please check it");
-          else setPcMsg('ok', a.area ? '✓ ' + a.area : '✓ Postcode looks good');
+          if (!a.valid) {
+            setPcMsg('bad', "We couldn't find that postcode — please check it");
+            if (addrGroup) addrGroup.hidden = true;
+            resetPicker();
+            return;
+          }
+
+          const areaText = a.area || '';
+          setPcMsg('ok', areaText ? '✓ ' + areaText : '✓ Postcode looks good');
+          if (addrGroup) addrGroup.hidden = false;
+          resetPicker();
+          setAddrHint('Looking up addresses…');
+
+          // Full address list from Postcoder proxy — 2 credits per lookup.
+          try {
+            const r = await fetch('/api/he-tyres-enquiry', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'address-lookup', postcode: pc }),
+            });
+            const d = await r.json().catch(function () { return null; });
+            if (r.ok && d && d.addresses && d.addresses.length) {
+              populatePicker(d.addresses);
+              // Pre-fill the textarea with area only if the user hasn't typed anything yet.
+              if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
+            } else {
+              // No addresses or service unavailable — fall back to manual entry.
+              setAddrHint('Add your house number and street to help us find you.');
+              if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
+            }
+          } catch (e) {
+            setAddrHint('Add your house number and street to help us find you.');
+            if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
+          }
         });
 
-        pcEl.addEventListener('input', function () { setPcMsg('', ''); });
+        pcEl.addEventListener('input', function () {
+          setPcMsg('', '');
+          if (addrGroup) addrGroup.hidden = true;
+          resetPicker();
+        });
       })();
 
       // ── Submission ──
@@ -1801,6 +1883,8 @@
             return;
           }
           payload.postcode = postcode;
+          const fittingAddrEl = document.getElementById('fitting_address');
+          if (fittingAddrEl) payload.fitting_address = fittingAddrEl.value.trim();
           const regEl = document.getElementById('reg');
           payload.reg = regEl ? regEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
           const lookedUpVehicle = mobileRegLookup.getLookedUpVehicle();
