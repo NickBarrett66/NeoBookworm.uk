@@ -1175,11 +1175,12 @@
             <!-- Step 2b: general enquiry fields -->
             <div class="form-section" id="generalEnquiryFields" hidden>
               <div class="form-group">
-                <label for="vehicle">Vehicle type <span class="field-opt">(optional)</span></label>
-                <select id="vehicle" name="vehicle">
-                  <option value="">Select</option>
-                  <option>Car</option><option>Van</option><option>Caravan</option>
-                </select>
+                <label for="regGeneral">Vehicle registration <span class="field-opt">(optional)</span></label>
+                <div class="reg-row">
+                  <input type="text" id="regGeneral" name="reg_general" placeholder="e.g. AB12 CDE" maxlength="9" autocomplete="off" class="reg-input">
+                  <button type="button" id="regLookupBtnGeneral" class="btn-lookup">Look up</button>
+                </div>
+                <div id="vehicleResultGeneral" class="vehicle-result" hidden></div>
               </div>
               <div class="form-group">
                 <label for="message">What do you need?</label>
@@ -1647,16 +1648,17 @@
         });
       });
 
-      // ── Reg lookup ──
-      const regInput = document.getElementById('reg');
-      const lookupBtn = document.getElementById('regLookupBtn');
-      const vehicleResult = document.getElementById('vehicleResult');
+      // ── Reg lookup (shared by mobile + general enquiry sections) ──
       const tyreSizeInput = document.getElementById('tyreSize');
 
-      // Store vehicle data from lookup for submission
-      let lookedUpVehicle = null;
+      function setupRegLookup(regInput, lookupBtn, vehicleResult, options) {
+        const opts = options || {};
+        let lookedUpVehicle = null;
 
-      if (lookupBtn && regInput) {
+        if (!lookupBtn || !regInput || !vehicleResult) {
+          return { getLookedUpVehicle: function () { return null; } };
+        }
+
         lookupBtn.addEventListener('click', async function () {
           const reg = regInput.value.trim().toUpperCase().replace(/\s+/g, '');
           if (!reg) {
@@ -1687,9 +1689,8 @@
               ].filter(Boolean);
               vehicleResult.hidden = false;
               vehicleResult.innerHTML = '<strong>' + (data.reg || reg) + '</strong>' + parts.join(' · ');
-              // Pre-fill tyre size if returned and field is empty
-              if (v.tyreSize && tyreSizeInput && !tyreSizeInput.value.trim()) {
-                tyreSizeInput.value = v.tyreSize;
+              if (opts.tyreSizeInput && v.tyreSize && !opts.tyreSizeInput.value.trim()) {
+                opts.tyreSizeInput.value = v.tyreSize;
               }
             } else {
               vehicleResult.hidden = false;
@@ -1704,11 +1705,24 @@
           }
         });
 
-        // Also trigger lookup on Enter in the reg field
         regInput.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { e.preventDefault(); lookupBtn.click(); }
         });
+
+        return { getLookedUpVehicle: function () { return lookedUpVehicle; } };
       }
+
+      const mobileRegLookup = setupRegLookup(
+        document.getElementById('reg'),
+        document.getElementById('regLookupBtn'),
+        document.getElementById('vehicleResult'),
+        { tyreSizeInput: tyreSizeInput }
+      );
+      const generalRegLookup = setupRegLookup(
+        document.getElementById('regGeneral'),
+        document.getElementById('regLookupBtnGeneral'),
+        document.getElementById('vehicleResultGeneral')
+      );
 
       // ── Submission ──
       form.addEventListener('submit', async function (e) {
@@ -1744,7 +1758,9 @@
             return;
           }
           payload.postcode = postcode;
-          payload.reg = regInput ? regInput.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+          const regEl = document.getElementById('reg');
+          payload.reg = regEl ? regEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+          const lookedUpVehicle = mobileRegLookup.getLookedUpVehicle();
           if (lookedUpVehicle) {
             payload.vehicle_make   = lookedUpVehicle.make   || '';
             payload.vehicle_model  = lookedUpVehicle.model  || '';
@@ -1762,7 +1778,15 @@
             notice.textContent = 'Please tell us what you need.';
             return;
           }
-          payload.vehicle = document.getElementById('vehicle').value;
+          const regGeneralEl = document.getElementById('regGeneral');
+          payload.reg = regGeneralEl ? regGeneralEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+          const lookedUpVehicleGeneral = generalRegLookup.getLookedUpVehicle();
+          if (lookedUpVehicleGeneral) {
+            payload.vehicle_make   = lookedUpVehicleGeneral.make   || '';
+            payload.vehicle_model  = lookedUpVehicleGeneral.model  || '';
+            payload.vehicle_year   = lookedUpVehicleGeneral.year   || '';
+            payload.vehicle_colour = lookedUpVehicleGeneral.colour || '';
+          }
           payload.message = message;
         }
 

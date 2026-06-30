@@ -82,14 +82,19 @@ function buildMobileEmail({ name, phone, email, postcode, reg, vehicle_make, veh
   ].join('\n');
 }
 
-function buildGeneralEmail({ name, phone, email, vehicle, message }) {
+function buildGeneralEmail({ name, phone, email, reg, vehicle_make, vehicle_model, vehicle_year, vehicle_colour, message }) {
+  const vehicleLine = (vehicle_make || vehicle_model)
+    ? [vehicle_make, vehicle_model, vehicle_year, vehicle_colour].filter(Boolean).join(' ')
+    : reg ? '(not looked up)' : '(not provided)';
+
   return [
     'New GENERAL enquiry — HEtyres',
     '==============================',
     `Name:          ${name}`,
     `Phone:         ${phone}`,
     `Email:         ${email || '(not provided)'}`,
-    `Vehicle type:  ${vehicle || '(not selected)'}`,
+    `Registration:  ${reg || '(not provided)'}`,
+    `Vehicle:       ${vehicleLine}`,
     '',
     'Message:',
     message,
@@ -162,12 +167,17 @@ module.exports = async (req, res) => {
     if (!message) {
       return res.status(400).json({ error: 'Please tell us what you need.' });
     }
+    const reg = str(data.reg);
     emailBody = buildGeneralEmail({
       name, phone, email,
-      vehicle: str(data.vehicle),
+      reg,
+      vehicle_make:   str(data.vehicle_make),
+      vehicle_model:  str(data.vehicle_model),
+      vehicle_year:   str(data.vehicle_year),
+      vehicle_colour: str(data.vehicle_colour),
       message,
     });
-    subject = `HEtyres enquiry from ${name}${data.vehicle ? ' — ' + str(data.vehicle) : ''}`;
+    subject = `HEtyres enquiry from ${name}${reg ? ' — ' + reg : ''}`;
   }
 
   const smtpHost = process.env.SMTP_HOST;
