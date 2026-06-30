@@ -1157,15 +1157,12 @@
                   <option value="2">2 tyres</option>
                   <option value="3">3 tyres</option>
                   <option value="4">4 tyres</option>
-                  <option value="Full set">Full set (all 4)</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="timing">When suits you?</label>
                 <select id="timing" name="timing">
                   <option value="">Select</option>
-                  <option value="This week">This week</option>
-                  <option value="Next week">Next week</option>
                   <option value="Flexible">Flexible — no rush</option>
                 </select>
               </div>
@@ -1571,26 +1568,52 @@
       const commonFields = document.getElementById('commonFields');
       let selectedType = null;
 
-      // Label timing options with actual week-commencing dates
+      // Week-commencing timing options — three Mondays, rolling after Fri 17:00
       (function () {
-        function getMondayOffset(weeksAhead) {
-          var now = new Date();
-          var daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
-          var d = new Date(now);
-          d.setDate(now.getDate() - daysSinceMonday + weeksAhead * 7);
-          return d;
+        function ordinal(n) {
+          var s = ['th', 'st', 'nd', 'rd'];
+          var v = n % 100;
+          return n + (s[(v - 20) % 10] || s[v] || s[0]);
         }
         function fmtWC(d) {
-          return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+          var month = d.toLocaleDateString('en-GB', { month: 'long' });
+          return 'w/c ' + ordinal(d.getDate()) + ' ' + month;
         }
-        var thisWC = fmtWC(getMondayOffset(0));
-        var nextWC = fmtWC(getMondayOffset(1));
+        function getFirstAvailableMonday() {
+          var now = new Date();
+          var daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
+          var monday = new Date(now);
+          monday.setHours(0, 0, 0, 0);
+          monday.setDate(now.getDate() - daysSinceMonday);
+          var fridayCutoff = new Date(monday);
+          fridayCutoff.setDate(monday.getDate() + 4);
+          fridayCutoff.setHours(17, 0, 0, 0);
+          if (now > fridayCutoff) {
+            monday.setDate(monday.getDate() + 7);
+          }
+          return monday;
+        }
         var timingSel = document.getElementById('timing');
-        if (timingSel) {
-          timingSel.options[1].text  = 'This week (w/c ' + thisWC + ')';
-          timingSel.options[1].value = 'This week (w/c ' + thisWC + ')';
-          timingSel.options[2].text  = 'Next week (w/c ' + nextWC + ')';
-          timingSel.options[2].value = 'Next week (w/c ' + nextWC + ')';
+        if (!timingSel) return;
+        var flexibleOpt = timingSel.querySelector('option[value="Flexible"]');
+        var firstMonday = getFirstAvailableMonday();
+        timingSel.innerHTML = '<option value="">Select</option>';
+        for (var i = 0; i < 3; i++) {
+          var d = new Date(firstMonday);
+          d.setDate(firstMonday.getDate() + i * 7);
+          var label = fmtWC(d);
+          var opt = document.createElement('option');
+          opt.value = label;
+          opt.textContent = label;
+          timingSel.appendChild(opt);
+        }
+        if (flexibleOpt) {
+          timingSel.appendChild(flexibleOpt);
+        } else {
+          var flex = document.createElement('option');
+          flex.value = 'Flexible';
+          flex.textContent = 'Flexible — no rush';
+          timingSel.appendChild(flex);
         }
       })();
 
