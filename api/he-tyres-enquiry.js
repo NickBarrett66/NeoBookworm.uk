@@ -71,7 +71,6 @@ function buildCustomerConfirmEmail({ name, phone, postcode, fitting_address, reg
     'If anything looks wrong, just reply to this email and let us know.',
     '',
     'Thanks,',
-    'Emma & Howard',
     'HEtyres — Westmead Drive, Swindon',
     '01793 876 969',
   ].filter(l => l !== null).join('\n');
