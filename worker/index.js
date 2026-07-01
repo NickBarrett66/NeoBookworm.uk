@@ -12,8 +12,7 @@ import * as dashboard    from './routes/dashboard.js';
 import * as runSiteAudit from './routes/run-site-audit.js';
 import * as intake       from './routes/intake.js';
 
-// Phase 4b — email routes (contact + notify-landing-enquiry send via Gmail API;
-// he-tyres-enquiry + notify-booking still forward to the Vercel bridge):
+// Phase 4b — email routes (all send via Gmail API):
 import * as contact              from './routes/contact.js';
 import * as heTyresEnquiry       from './routes/he-tyres-enquiry.js';
 import * as notifyLandingEnquiry from './routes/notify-landing-enquiry.js';

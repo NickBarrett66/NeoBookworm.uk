@@ -3,8 +3,14 @@
 // Optional KV: SUMMARY_CACHE (caches the 1-hour access token)
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const SEND_URL  = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
-const FROM      = '"Nick at NeoBookworm" <nick@neobookworm.uk>';
-const REPLY_TO  = 'nick@neobookworm.uk';
+const FROM_EMAIL = 'nick@neobookworm.uk';
+const FROM       = `"Nick at NeoBookworm" <${FROM_EMAIL}>`;
+const REPLY_TO   = FROM_EMAIL;
+
+function resolveFrom(fromName) {
+  if (!fromName) return FROM;
+  return `"${fromName}" <${FROM_EMAIL}>`;
+}
 
 async function getAccessToken(env) {
   if (env.SUMMARY_CACHE) {
@@ -42,21 +48,24 @@ function encodeSubject(subject) {
   return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
 }
 
-function buildMime({ to, subject, body, replyTo }) {
-  const headers = [
-    `From: ${FROM}`, `To: ${to}`, `Reply-To: ${replyTo || REPLY_TO}`,
-    `Subject: ${encodeSubject(subject)}`, 'MIME-Version: 1.0',
+function buildMime({ to, subject, body, replyTo, fromName }) {
+  const headerLines = [
+    `From: ${resolveFrom(fromName)}`,
+    `To: ${to}`,
+    ...(replyTo !== null ? [`Reply-To: ${replyTo ?? REPLY_TO}`] : []),
+    `Subject: ${encodeSubject(subject)}`,
+    'MIME-Version: 1.0',
     'Content-Type: text/plain; charset="UTF-8"',
-  ].join('\r\n');
-  return b64url(new TextEncoder().encode(`${headers}\r\n\r\n${body}`));
+  ];
+  return b64url(new TextEncoder().encode(`${headerLines.join('\r\n')}\r\n\r\n${body}`));
 }
 
-export async function sendViaGmail(env, { to, subject, body, replyTo }) {
+export async function sendViaGmail(env, { to, subject, body, replyTo, fromName }) {
   const token = await getAccessToken(env);
   const res = await fetch(SEND_URL, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ raw: buildMime({ to, subject, body, replyTo }) }),
+    body: JSON.stringify({ raw: buildMime({ to, subject, body, replyTo, fromName }) }),
   });
   if (!res.ok) throw new Error(`Gmail send HTTP ${res.status}: ${await res.text()}`);
   return res.json();
