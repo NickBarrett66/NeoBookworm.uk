@@ -1,51 +1,37 @@
-// Email helper — Worker ES module version.
-// Does NOT use nodemailer. Calls the Vercel SMTP bridge via fetch().
-//
-// Required Worker env vars:
-//   VERCEL_BRIDGE_URL  — https://bridge.neobookworm.uk (no trailing slash)
-//   BRIDGE_SECRET      — shared secret; must match BRIDGE_SECRET on the Vercel bridge
+import { renderTemplate } from './templates.js';
+import { queryD1, enquiriesDb } from './d1.js';
+import { sendViaGmail } from './gmail.js';
 
-async function _callBridge(env, payload) {
-  const url = `${env.VERCEL_BRIDGE_URL}/api/send-email`;
-  let res;
+async function logEmail(env, { slug, templateId, subject, body = null, to, status, error = null }) {
   try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.BRIDGE_SECRET}`,
-        'Content-Type':  'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    await queryD1(env, enquiriesDb(env),
+      `INSERT INTO email_log (slug, template, subject, body, recipient, status, error)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [slug, templateId, subject, body, to, status, error]);
+  } catch (err) { console.error('[email] email_log INSERT failed:', err.message); }
+}
+
+async function send(env, { slug, templateId, subject, body, to }) {
+  try {
+    await sendViaGmail(env, { to, subject, body });
+    await logEmail(env, { slug, templateId, subject, body, to, status: 'sent' });
+    return { ok: true };
   } catch (err) {
-    return { ok: false, error: `Bridge fetch failed: ${err.message}` };
-  }
-  if (!res.ok) return { ok: false, error: `Bridge HTTP ${res.status}` };
-  try {
-    return await res.json();
-  } catch {
-    return { ok: false, error: 'Bridge returned non-JSON response' };
+    const message = err.message || String(err);
+    console.error(`[email] send failed (${templateId} → ${to}):`, message);
+    await logEmail(env, { slug, templateId, subject, body, to, status: 'failed', error: message });
+    return { ok: false, error: message };
   }
 }
 
-/**
- * Render a template by ID and send via the Vercel SMTP bridge.
- * Mirrors api/_lib/email.js sendTemplated — same return shape { ok, error? }.
- */
 export async function sendTemplated(env, { slug, templateId, vars, to }) {
-  return _callBridge(env, { slug, templateId, vars, to });
+  let subject, body;
+  try { ({ subject, body } = renderTemplate(templateId, vars || {})); }
+  catch (err) { return { ok: false, error: err.message }; }
+  return send(env, { slug, templateId, subject, body, to });
 }
 
-/**
- * Send a pre-rendered subject+body via the Vercel SMTP bridge (manual mode).
- * Used for ad-hoc notifications (audit Nick alert, intake notification).
- */
 export async function sendRendered(env, { slug, templateId, subject, body, to }) {
-  return _callBridge(env, {
-    slug,
-    templateId: templateId || 'manual',
-    subject,
-    body,
-    to,
-  });
+  if (!subject || !body) return { ok: false, error: 'subject and body required' };
+  return send(env, { slug, templateId: templateId || 'manual', subject, body, to });
 }
