@@ -36,11 +36,16 @@ function b64url(bytes) {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+function encodeSubject(subject) {
+  // RFC 2047 B-encoding — required whenever subject contains non-ASCII (e.g. em dashes).
+  if (/^[\x00-\x7F]*$/.test(subject)) return subject;
+  return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
+}
+
 function buildMime({ to, subject, body }) {
-  // Keep subjects ASCII; RFC 2047-encode if you ever need non-ASCII.
   const headers = [
     `From: ${FROM}`, `To: ${to}`, `Reply-To: ${REPLY_TO}`,
-    `Subject: ${subject}`, 'MIME-Version: 1.0',
+    `Subject: ${encodeSubject(subject)}`, 'MIME-Version: 1.0',
     'Content-Type: text/plain; charset="UTF-8"',
   ].join('\r\n');
   return b64url(new TextEncoder().encode(`${headers}\r\n\r\n${body}`));
