@@ -12,7 +12,8 @@ import * as dashboard    from './routes/dashboard.js';
 import * as runSiteAudit from './routes/run-site-audit.js';
 import * as intake       from './routes/intake.js';
 
-// Phase 4b — SMTP forwarders:
+// Phase 4b — email routes (contact + notify-landing-enquiry send via Gmail API;
+// he-tyres-enquiry + notify-booking still forward to the Vercel bridge):
 import * as contact              from './routes/contact.js';
 import * as heTyresEnquiry       from './routes/he-tyres-enquiry.js';
 import * as notifyLandingEnquiry from './routes/notify-landing-enquiry.js';
@@ -49,7 +50,7 @@ export default {
       return intake.handle(request, env, ctx, url);
     }
 
-    // Phase 4b — SMTP forwarders:
+    // Phase 4b — email routes:
     if (p === '/api/contact')                return contact.handle(request, env, ctx);
     if (p === '/api/he-tyres-enquiry')       return heTyresEnquiry.handle(request, env, ctx);
     if (p === '/api/notify-landing-enquiry') return notifyLandingEnquiry.handle(request, env, ctx);

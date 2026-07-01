@@ -42,21 +42,21 @@ function encodeSubject(subject) {
   return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
 }
 
-function buildMime({ to, subject, body }) {
+function buildMime({ to, subject, body, replyTo }) {
   const headers = [
-    `From: ${FROM}`, `To: ${to}`, `Reply-To: ${REPLY_TO}`,
+    `From: ${FROM}`, `To: ${to}`, `Reply-To: ${replyTo || REPLY_TO}`,
     `Subject: ${encodeSubject(subject)}`, 'MIME-Version: 1.0',
     'Content-Type: text/plain; charset="UTF-8"',
   ].join('\r\n');
   return b64url(new TextEncoder().encode(`${headers}\r\n\r\n${body}`));
 }
 
-export async function sendViaGmail(env, { to, subject, body }) {
+export async function sendViaGmail(env, { to, subject, body, replyTo }) {
   const token = await getAccessToken(env);
   const res = await fetch(SEND_URL, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ raw: buildMime({ to, subject, body }) }),
+    body: JSON.stringify({ raw: buildMime({ to, subject, body, replyTo }) }),
   });
   if (!res.ok) throw new Error(`Gmail send HTTP ${res.status}: ${await res.text()}`);
   return res.json();
