@@ -17,6 +17,7 @@ export const SLUG_CONFIG = {
     maxAdvanceDays: 60,
     timezone: 'Europe/London',
     regLookup: true,
+    mobileEnquiryUrl: 'https://neobookworm.uk/api/he-tyres-enquiry',
     workingHours: {
       1: { open: '08:30', close: '17:00' },
       2: { open: '08:30', close: '17:00' },

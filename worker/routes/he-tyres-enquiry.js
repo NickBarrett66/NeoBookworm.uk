@@ -14,6 +14,7 @@ const ALLOWED_ORIGINS = [
   'https://www.neobookworm.uk',
   'https://hetyres.co.uk',
   'https://www.hetyres.co.uk',
+  'https://neobookworm-booking.nickbarrett.workers.dev',
 ];
 
 const UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;

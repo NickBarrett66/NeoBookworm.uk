@@ -67,6 +67,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const customQuestions = Array.isArray(config.customQuestions) ? config.customQuestions : [];
   const customQuestionsJson = JSON.stringify(customQuestions);
   const addressEnabledJson = JSON.stringify(addressEnabled);
+  const fittingChooser = !!config.mobileEnquiryUrl;
+  const mobileEnquiryUrlJson = JSON.stringify(config.mobileEnquiryUrl || null);
+  const fittingChooserJson = JSON.stringify(fittingChooser);
   const optionalTag = ' <span style="font-weight:400;opacity:0.6">(optional)</span>';
   const locationNote = locationType === 'phone'
     ? 'This is a phone appointment — we\'ll call you on the number you provide.'
@@ -176,6 +179,118 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     }
 
     .view[hidden] { display: none !important; }
+
+    /* ── Fitting chooser (View 0) ───────────────── */
+    .chooser-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .chooser-heading {
+      margin: 0 0 0.35rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .chooser-sub {
+      margin: 0 0 1.25rem;
+      font-size: 0.9375rem;
+      opacity: 0.75;
+      text-align: center;
+    }
+
+    .chooser-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chooser-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      width: 100%;
+      min-height: 72px;
+      padding: 1rem 1.125rem;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .chooser-btn:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .chooser-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .chooser-btn.selected {
+      background: rgba(var(--accent-rgb), 0.14);
+      border-color: rgba(var(--accent-rgb), 0.55);
+      box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.25);
+    }
+
+    .chooser-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .chooser-text { flex: 1; min-width: 0; }
+
+    .chooser-title {
+      display: block;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .chooser-desc {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.875rem;
+      font-weight: 400;
+      opacity: 0.75;
+      line-height: 1.35;
+    }
+
+    .picker-back-chooser {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+      padding: 0.35rem 0;
+      border: none;
+      background: none;
+      color: rgba(255,255,255,0.8);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .picker-back-chooser:hover { color: #fff; }
+    .picker-back-chooser:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .mobile-intro {
+      margin: 0 0 1.25rem;
+      font-size: 0.9375rem;
+      opacity: 0.85;
+      line-height: 1.45;
+    }
 
     /* ── Two-pane picker layout ──────────────────── */
     .picker-layout {
@@ -777,14 +892,81 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     ${logoUrl ? `<img class="biz-logo" src="${logoUrl}" alt="${displayName}">` : ''}
     ${logoUrl ? '' : `<span class="biz-name">${displayName}</span>`}
     <span class="biz-sep" aria-hidden="true">·</span>
-    <span class="biz-meta">Book a ${slotDuration}-min slot</span>
+    <span class="biz-meta">${fittingChooser ? 'Depot or mobile fitting' : 'Book a ' + slotDuration + '-min slot'}</span>
   </header>
   ${introLine ? `<p class="biz-tagline">${introLine}</p>` : ''}
 
   <div class="wrap">
 
+    ${fittingChooser ? `<!-- View 0: depot / mobile chooser -->
+    <div id="view-chooser" class="view">
+      <div class="chooser-wrap">
+        <p class="chooser-heading">Where would you like your tyres fitted?</p>
+        <p class="chooser-sub">Depot slots are confirmed instantly. Mobile visits — we'll call to arrange.</p>
+        <div class="chooser-btns" role="group" aria-label="Fitting location">
+          <button type="button" class="chooser-btn" id="choose-depot">
+            <span class="chooser-icon" aria-hidden="true">&#128295;</span>
+            <span class="chooser-text">
+              <span class="chooser-title">At the depot — watch over a coffee</span>
+              <span class="chooser-desc">Pick a half-hour slot and relax in HEhub while we work</span>
+            </span>
+          </button>
+          <button type="button" class="chooser-btn" id="choose-mobile">
+            <span class="chooser-icon" aria-hidden="true">&#128656;</span>
+            <span class="chooser-text">
+              <span class="chooser-title">At my home or work — we come to you</span>
+              <span class="chooser-desc">Tell us where to come and we'll get back to you to arrange</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile enquiry view (routes to existing HE Tyres enquiry API) -->
+    <div id="view-mobile-enquiry" class="view" hidden>
+      <div class="form-wrap">
+        <button type="button" class="back-btn" id="mobile-back-btn">← Back</button>
+        <p class="mobile-intro">We'll come to you — tell us where and we'll call to arrange a time.</p>
+        <form id="mobile-enquiry-form" novalidate>
+          <div class="field">
+            <label for="mob-postcode">Fitting postcode</label>
+            <input type="text" id="mob-postcode" name="postcode" required maxlength="10" autocomplete="postal-code" placeholder="e.g. SN1 2BL" style="text-transform:uppercase">
+            <div class="postcode-msg" id="mob-postcode-msg" hidden></div>
+          </div>
+          <div class="field">
+            <label for="mob-address">Fitting address${optionalTag}</label>
+            <textarea id="mob-address" name="fitting_address" maxlength="300" placeholder="House number and street — helps us find you" autocomplete="street-address"></textarea>
+          </div>
+          <div class="field">
+            <label for="mob-name">Your name</label>
+            <input type="text" id="mob-name" name="name" required maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="mob-phone">Phone number</label>
+            <input type="tel" id="mob-phone" name="phone" required maxlength="30" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="mob-email">Email${optionalTag}</label>
+            <input type="email" id="mob-email" name="email" autocomplete="email">
+          </div>
+          ${regEnabled ? `<div class="field">
+            <label for="mob-reg">Vehicle registration${optionalTag}</label>
+            <input type="text" id="mob-reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
+            <div class="vehicle-card" id="mob-vehicle-card" hidden></div>
+          </div>` : ''}
+          <div class="hp-field" aria-hidden="true">
+            <label for="mob-website">Website</label>
+            <input type="text" id="mob-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <p class="form-error" id="mobile-form-error" hidden>Something went wrong — please try again</p>
+          <button type="submit" class="submit-btn" id="mobile-submit-btn">Send enquiry</button>
+        </form>
+      </div>
+    </div>` : ''}
+
     <!-- Picker view -->
-    <div id="view-picker" class="view">
+    <div id="view-picker" class="view"${fittingChooser ? ' hidden' : ''}>
+      ${fittingChooser ? '<button type="button" class="picker-back-chooser" id="picker-back-chooser">← Change fitting type</button>' : ''}
       <div class="picker-layout">
 
         <div class="cal-pane">
@@ -886,9 +1068,13 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var CUSTOM_QUESTIONS = ${customQuestionsJson};
   var ADDRESS_ENABLED = ${addressEnabledJson};
   var ADDRESS_LOOKUP = ${addressLookupJson};
+  var FITTING_CHOOSER = ${fittingChooserJson};
+  var MOBILE_ENQUIRY_URL = ${mobileEnquiryUrlJson};
   var UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/i;
 
   // DOM refs
+  var viewChooser    = document.getElementById('view-chooser');
+  var viewMobile     = document.getElementById('view-mobile-enquiry');
   var calGrid        = document.getElementById('cal-grid');
   var calMonthLabel  = document.getElementById('cal-month-label');
   var calPrev        = document.getElementById('cal-prev');
@@ -909,8 +1095,16 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var successSlotText  = document.getElementById('success-slot-text');
   var successAnotherBtn = document.getElementById('success-another-btn');
   var icsBtn           = document.getElementById('ics-btn');
+  var chooseDepotBtn   = document.getElementById('choose-depot');
+  var chooseMobileBtn  = document.getElementById('choose-mobile');
+  var pickerBackChooser = document.getElementById('picker-back-chooser');
+  var mobileBackBtn    = document.getElementById('mobile-back-btn');
+  var mobileEnquiryForm = document.getElementById('mobile-enquiry-form');
+  var mobileFormError  = document.getElementById('mobile-form-error');
+  var mobileSubmitBtn  = document.getElementById('mobile-submit-btn');
 
   // State
+  var calendarBooted = !FITTING_CHOOSER || !!RESCHEDULE_TOKEN;
   var todayIso = londonToday();
   var currentMonth = todayIso.slice(0, 7);
   var maxMonth = addDaysIso(todayIso, MAX_ADVANCE_DAYS).slice(0, 7);
@@ -1237,9 +1431,196 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   // ── View switching ───────────────────────────────
 
   function showView(name) {
+    if (viewChooser) viewChooser.hidden = name !== 'chooser';
     viewPicker.hidden  = name !== 'picker';
+    if (viewMobile) viewMobile.hidden = name !== 'mobile';
     viewForm.hidden    = name !== 'form';
     viewSuccess.hidden = name !== 'success';
+  }
+
+  function bootCalendarIfNeeded() {
+    if (calendarBooted) return;
+    calendarBooted = true;
+    loadMonthAvailability(currentMonth);
+    renderCalendar();
+    var p = currentMonth.split('-').map(Number);
+    var nextMonth = new Date(Date.UTC(p[0], p[1], 1)).toISOString().slice(0, 7);
+    if (nextMonth <= maxMonth) loadMonthAvailability(nextMonth);
+  }
+
+  if (FITTING_CHOOSER && !RESCHEDULE_TOKEN) {
+    if (chooseDepotBtn) {
+      chooseDepotBtn.addEventListener('click', function () {
+        bootCalendarIfNeeded();
+        showView('picker');
+      });
+    }
+    if (chooseMobileBtn) {
+      chooseMobileBtn.addEventListener('click', function () {
+        if (mobileFormError) mobileFormError.hidden = true;
+        showView('mobile');
+      });
+    }
+    if (pickerBackChooser) {
+      pickerBackChooser.addEventListener('click', function () {
+        selectedDate = null;
+        selectedTime = null;
+        selectedSlot = null;
+        clearSlotsUI();
+        slotsHint.hidden = false;
+        showView('chooser');
+      });
+    }
+    if (mobileBackBtn) {
+      mobileBackBtn.addEventListener('click', function () {
+        if (mobileFormError) mobileFormError.hidden = true;
+        showView('chooser');
+      });
+    }
+  }
+
+  function setMobPostcodeMsg(kind, text) {
+    var m = document.getElementById('mob-postcode-msg');
+    if (!m) return;
+    if (!text) { m.hidden = true; return; }
+    m.hidden = false; m.className = 'postcode-msg ' + kind; m.textContent = text;
+  }
+
+  if (FITTING_CHOOSER && MOBILE_ENQUIRY_URL) {
+    var mobPcEl = document.getElementById('mob-postcode');
+    if (mobPcEl) {
+      mobPcEl.addEventListener('blur', async function () {
+        var pc = mobPcEl.value.trim();
+        if (!pc) { setMobPostcodeMsg('', ''); return; }
+        if (!UK_POSTCODE_RE.test(pc)) { setMobPostcodeMsg('bad', 'Please enter a valid UK postcode'); return; }
+        var a = await postcodeArea(pc);
+        if (!a.valid) setMobPostcodeMsg('bad', 'We could not find that postcode');
+        else setMobPostcodeMsg('ok', a.area ? '✓ ' + a.area : '');
+      });
+    }
+
+    ${regEnabled ? `
+    var mobRegInput = document.getElementById('mob-reg');
+    var mobRegTimer = null;
+    function setMobVehicleCard(state, html) {
+      var card = document.getElementById('mob-vehicle-card');
+      if (!card) return;
+      card.hidden = (state === 'hidden');
+      card.className = 'vehicle-card' +
+        (state === 'found' ? ' vc-found' : state === 'miss' ? ' vc-miss' : '');
+      card.innerHTML = html;
+    }
+    async function lookupMobReg(reg) {
+      setMobVehicleCard('loading', '<span class="vc-spinner" aria-hidden="true"></span> Looking up…');
+      try {
+        var res = await fetch('https://neobookworm.uk/api/reg-lookup?reg=' + encodeURIComponent(reg));
+        var data = await res.json();
+        if (data.error || !data.vehicle) {
+          setMobVehicleCard('miss', "— Not recognised — we'll confirm when we call");
+          return;
+        }
+        var v = data.vehicle;
+        var label = [
+          [v.make, v.model].filter(Boolean).join(' '),
+          [v.colour, v.year].filter(Boolean).join(' · '),
+        ].filter(Boolean).join(' · ');
+        if (!label) { setMobVehicleCard('hidden', ''); return; }
+        setMobVehicleCard('found', '🚗 ' + safeText(label));
+      } catch (e) {
+        setMobVehicleCard('miss', "Couldn't look that up right now");
+      }
+    }
+    if (mobRegInput) {
+      mobRegInput.addEventListener('input', function () {
+        clearTimeout(mobRegTimer);
+        setMobVehicleCard('hidden', '');
+        var val = this.value.replace(/[\\s]+/g, '').toUpperCase();
+        if (val.length >= 5) {
+          mobRegTimer = setTimeout(function () { lookupMobReg(val); }, 1200);
+        }
+      });
+    }
+    ` : ''}
+
+    if (mobileEnquiryForm) {
+      mobileEnquiryForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (mobileFormError) mobileFormError.hidden = true;
+        if (!mobileEnquiryForm.reportValidity()) return;
+
+        var mobPc = document.getElementById('mob-postcode');
+        var pc = mobPc ? mobPc.value.trim() : '';
+        if (!UK_POSTCODE_RE.test(pc)) {
+          setMobPostcodeMsg('bad', 'Please enter a valid UK postcode');
+          if (mobPc) mobPc.focus();
+          return;
+        }
+        var area = await postcodeArea(pc);
+        if (!area.valid) {
+          setMobPostcodeMsg('bad', 'We could not find that postcode — please check it');
+          if (mobPc) mobPc.focus();
+          return;
+        }
+
+        mobileSubmitBtn.disabled = true;
+        var mobOrigLabel = mobileSubmitBtn.textContent;
+        mobileSubmitBtn.textContent = '';
+        var mobSpin = document.createElement('span');
+        mobSpin.className = 'spinner';
+        mobSpin.setAttribute('aria-hidden', 'true');
+        mobileSubmitBtn.appendChild(mobSpin);
+        mobileSubmitBtn.appendChild(document.createTextNode('Sending…'));
+
+        function mobVal(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+        var mobRegEl = document.getElementById('mob-reg');
+        var payload = {
+          enquiry_type: 'mobile',
+          name: mobVal('mob-name'),
+          phone: mobVal('mob-phone'),
+          email: mobVal('mob-email'),
+          postcode: pc.toUpperCase(),
+          fitting_address: mobVal('mob-address') || null,
+          reg: mobRegEl ? mobRegEl.value.replace(/[\\s]+/g, '').toUpperCase() : null,
+          vehicle_make: null,
+          vehicle_model: null,
+          website: mobVal('mob-website'),
+        };
+
+        try {
+          var mobRes = await fetch(MOBILE_ENQUIRY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          var mobData = await mobRes.json().catch(function () { return {}; });
+
+          if (mobRes.ok && mobData.ok) {
+            successSlotText.textContent = 'Mobile fitting enquiry sent';
+            var successH2 = document.querySelector('#view-success h2');
+            if (successH2) successH2.textContent = 'Enquiry received';
+            var successP = document.querySelector('#view-success .success-wrap > p');
+            if (successP) successP.textContent = "Thanks — we'll call you shortly to arrange your visit.";
+            if (icsBtn) icsBtn.hidden = true;
+            showView('success');
+            return;
+          }
+
+          if (mobileFormError) {
+            mobileFormError.hidden = false;
+            mobileFormError.textContent = mobData.error || 'Something went wrong — please try again or call 01793 876 969';
+          }
+        } catch (err) {
+          if (mobileFormError) {
+            mobileFormError.hidden = false;
+            mobileFormError.textContent = 'Something went wrong — please try again or call 01793 876 969';
+          }
+        }
+
+        mobileSubmitBtn.replaceChildren();
+        mobileSubmitBtn.textContent = mobOrigLabel;
+        mobileSubmitBtn.disabled = false;
+      });
+    }
   }
 
   // ── Month navigation ─────────────────────────────
@@ -1479,6 +1860,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
         successSlotText.textContent = formatSummaryLine(selectedDate, selectedTime);
         var successH2 = document.querySelector('#view-success h2');
         if (successH2) successH2.textContent = RESCHEDULE_TOKEN ? 'Booking rescheduled' : 'Booking confirmed';
+        var successP = document.querySelector('#view-success .success-wrap > p');
+        if (successP) successP.textContent = ${JSON.stringify(successMessage)};
+        if (icsBtn) icsBtn.hidden = false;
         try { window.parent.postMessage('booking-confirmed', '*'); } catch (_) {}
         showView('success');
         return;
@@ -1531,7 +1915,20 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       clearSlotsUI();
       slotsHint.hidden = false;
       renderCalendar();
-      showView('picker');
+      var successH2 = document.querySelector('#view-success h2');
+      if (successH2) successH2.textContent = ${JSON.stringify(successHeading)};
+      var successP = document.querySelector('#view-success .success-wrap > p');
+      if (successP) successP.textContent = ${JSON.stringify(successMessage)};
+      if (icsBtn) icsBtn.hidden = false;
+      if (mobileEnquiryForm) mobileEnquiryForm.reset();
+      var mobVc = document.getElementById('mob-vehicle-card');
+      if (mobVc) mobVc.hidden = true;
+      setMobPostcodeMsg('', '');
+      if (FITTING_CHOOSER && !RESCHEDULE_TOKEN) {
+        showView('chooser');
+      } else {
+        showView('picker');
+      }
     });
   }
 
@@ -1591,12 +1988,14 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 
   // ── Boot ─────────────────────────────────────────
 
-  loadMonthAvailability(currentMonth);
-  renderCalendar();
-  // Prefetch next month in the background
-  var p = currentMonth.split('-').map(Number);
-  var nextMonth = new Date(Date.UTC(p[0], p[1], 1)).toISOString().slice(0, 7);
-  if (nextMonth <= maxMonth) loadMonthAvailability(nextMonth);
+  if (RESCHEDULE_TOKEN) {
+    showView('picker');
+    bootCalendarIfNeeded();
+  } else if (FITTING_CHOOSER) {
+    showView('chooser');
+  } else {
+    bootCalendarIfNeeded();
+  }
 
 })();
   </script>
