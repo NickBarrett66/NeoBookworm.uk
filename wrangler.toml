@@ -37,6 +37,11 @@ directory          = "."
 binding            = "ASSETS"
 html_handling      = "auto-trailing-slash"
 not_found_handling = "none"
+# run_worker_first = true is required so that /fonts/* requests reach the Worker
+# script (where CORS headers are added for the booking widget cross-origin load).
+# Without this, static assets bypass the Worker entirely and CORS headers are
+# never attached.
+run_worker_first   = true
 
 # ── Plain (non-secret) vars ───────────────────────────────────────────────────
 # Add non-secret vars here under [vars]. Put secrets via `wrangler secret put`.
