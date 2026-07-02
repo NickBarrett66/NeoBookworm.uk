@@ -26,6 +26,19 @@ export default {
     const url = new URL(request.url);
     const p   = url.pathname;
 
+    // ── Font CORS — booking widget loads fonts cross-origin from this domain ──
+    // Browsers enforce CORS on @font-face src URLs; ASSETS binding doesn't add
+    // the header automatically, so we intercept and attach it here.
+    if (p.startsWith('/fonts/')) {
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Max-Age': '86400' } });
+      }
+      const fontRes = await env.ASSETS.fetch(request);
+      const r = new Response(fontRes.body, fontRes);
+      r.headers.set('Access-Control-Allow-Origin', '*');
+      return r;
+    }
+
     // ── API routes ──────────────────────────────────────────────────────────
 
     if (p === '/api/reg-lookup')    return regLookup.handle(request, env, ctx, url);
