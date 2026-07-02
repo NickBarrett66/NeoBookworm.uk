@@ -67,9 +67,11 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   const customQuestions = Array.isArray(config.customQuestions) ? config.customQuestions : [];
   const customQuestionsJson = JSON.stringify(customQuestions);
   const addressEnabledJson = JSON.stringify(addressEnabled);
-  const fittingChooser = !!config.mobileEnquiryUrl;
+  const fittingChooser = config.mobileBooking === true || !!config.mobileEnquiryUrl;
+  const mobileBooking = config.mobileBooking === true;
   const mobileEnquiryUrlJson = JSON.stringify(config.mobileEnquiryUrl || null);
   const fittingChooserJson = JSON.stringify(fittingChooser);
+  const mobileBookingJson = JSON.stringify(mobileBooking);
   const optionalTag = ' <span style="font-weight:400;opacity:0.6">(optional)</span>';
   const locationNote = locationType === 'phone'
     ? 'This is a phone appointment — we\'ll call you on the number you provide.'
@@ -290,6 +292,24 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       font-size: 0.9375rem;
       opacity: 0.85;
       line-height: 1.45;
+    }
+
+    .out-of-area-msg {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 0 0 1rem;
+      font-size: 0.9375rem;
+    }
+
+    .out-of-area-msg p { margin: 0 0 0.5rem; }
+    .out-of-area-msg p:last-child { margin-bottom: 0; }
+
+    .mobile-postcode-chip {
+      font-size: 0.8125rem;
+      opacity: 0.75;
+      margin: 0 0 0.75rem 1.25rem;
     }
 
     /* ── Two-pane picker layout ──────────────────── */
@@ -902,7 +922,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     <div id="view-chooser" class="view">
       <div class="chooser-wrap">
         <p class="chooser-heading">Where would you like your tyres fitted?</p>
-        <p class="chooser-sub">Depot slots are confirmed instantly. Mobile visits — we'll call to arrange.</p>
+        <p class="chooser-sub">Depot slots are confirmed instantly. Mobile visits are requested — Howie confirms before your visit.</p>
         <div class="chooser-btns" role="group" aria-label="Fitting location">
           <button type="button" class="chooser-btn" id="choose-depot">
             <span class="chooser-icon" aria-hidden="true">&#128295;</span>
@@ -915,14 +935,112 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
             <span class="chooser-icon" aria-hidden="true">&#128656;</span>
             <span class="chooser-text">
               <span class="chooser-title">At my home or work — we come to you</span>
-              <span class="chooser-desc">Tell us where to come and we'll get back to you to arrange</span>
+              <span class="chooser-desc">${mobileBooking ? 'Pick a day and arrival window — we come to you' : "Tell us where to come and we'll get back to you to arrange"}</span>
             </span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile enquiry view (routes to existing HE Tyres enquiry API) -->
+    ${mobileBooking ? `<!-- Mobile booking: postcode gate -->
+    <div id="view-mobile-postcode" class="view" hidden>
+      <div class="form-wrap">
+        <button type="button" class="back-btn" id="mobile-pc-back-btn">← Back</button>
+        <p class="mobile-intro">Where should we come to fit your tyres?</p>
+        <div class="field">
+          <label for="mobile-pc-input">Fitting postcode</label>
+          <input type="text" id="mobile-pc-input" maxlength="10" autocomplete="postal-code" placeholder="e.g. SN1 2BL" style="text-transform:uppercase">
+          <div class="postcode-msg" id="mobile-pc-msg" hidden></div>
+        </div>
+        <div class="out-of-area-msg" id="mobile-out-of-area" hidden>
+          <p>You're just outside our mobile patch (about 15 miles from the depot).</p>
+          <p>Give Ema a call on <a href="tel:01793876969" style="color:var(--accent)">01793 876 969</a> — we'll see what we can do.</p>
+        </div>
+        <button type="button" class="submit-btn" id="mobile-pc-continue">Continue</button>
+      </div>
+    </div>
+
+    <!-- Mobile booking: day + arrival window picker -->
+    <div id="view-mobile-picker" class="view" hidden>
+      <button type="button" class="picker-back-chooser" id="mobile-picker-back">← Change fitting type</button>
+      <p class="mobile-postcode-chip" id="mobile-postcode-chip"></p>
+      <div class="picker-layout">
+        <div class="cal-pane">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" id="mob-cal-prev" aria-label="Previous month">&#8249;</button>
+            <span class="cal-month-label" id="mob-cal-month-label"></span>
+            <button type="button" class="cal-nav-btn" id="mob-cal-next" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="cal-dow-row" aria-hidden="true">
+            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span>
+            <span>Fr</span><span>Sa</span><span class="cal-sun">Su</span>
+          </div>
+          <div class="cal-grid" id="mob-cal-grid" role="listbox" aria-label="Choose a date"></div>
+        </div>
+        <div class="slots-pane">
+          <div class="slots-area" id="mob-windows-area">
+            <p class="slots-hint" id="mob-windows-hint">Select a date to see arrival windows</p>
+            <div class="slots-empty" id="mob-windows-empty" hidden>No windows available — try another day</div>
+            <div id="mob-windows-content"></div>
+          </div>
+          <button type="button" class="continue-btn" id="mob-continue-btn" hidden>Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile booking: details form -->
+    <div id="view-mobile-form" class="view" hidden>
+      <div class="form-wrap">
+        <button type="button" class="back-btn" id="mobile-form-back-btn">← Back</button>
+        <div class="booking-summary-card" id="mobile-summary-card">
+          <div class="booking-summary-icon" aria-hidden="true">&#128656;</div>
+          <div>
+            <div class="booking-summary-text" id="mobile-summary-text"></div>
+            <div class="booking-summary-sub">Mobile fitting · request</div>
+          </div>
+        </div>
+        <form id="mobile-booking-form" novalidate>
+          <div class="field">
+            <label for="mob-name">Your name</label>
+            <input type="text" id="mob-name" name="name" required maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="mob-email">Email</label>
+            <input type="email" id="mob-email" name="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="mob-phone">Phone number</label>
+            <input type="tel" id="mob-phone" name="phone" required maxlength="30" autocomplete="tel">
+          </div>
+          ${regEnabled ? `<div class="field">
+            <label for="mob-reg">Vehicle registration${optionalTag}</label>
+            <input type="text" id="mob-reg" name="reg" maxlength="10" autocomplete="off" spellcheck="false" placeholder="e.g. AB12 CDE" style="text-transform:uppercase;letter-spacing:.05em">
+            <div class="vehicle-card" id="mob-vehicle-card" hidden></div>
+          </div>` : ''}
+          <div class="field">
+            <label for="mob-address">Fitting address</label>
+            <div class="pc-hint">Enter your postcode and tap <strong>Find address</strong>, then pick yours from the list.</div>
+            <div class="pc-row">
+              <input type="text" id="mob-fitting-postcode" name="postcode" required maxlength="10" autocomplete="postal-code" placeholder="e.g. SN1 2BL" style="text-transform:uppercase">
+              <button type="button" id="mob-address-find" class="pc-find-btn">Find address</button>
+            </div>
+            <select id="mob-address-picker" class="address-picker" hidden></select>
+            <div class="postcode-msg" id="mob-addr-msg" hidden></div>
+            <textarea id="mob-address" name="address" required maxlength="300" autocomplete="street-address"></textarea>
+          </div>
+          <div class="field">
+            <label for="mob-note">Anything else we should know?${optionalTag}</label>
+            <textarea id="mob-note" name="note" maxlength="500" placeholder="Tyre size, access notes, etc."></textarea>
+          </div>
+          <div class="hp-field" aria-hidden="true">
+            <label for="mob-company">Company</label>
+            <input type="text" id="mob-company" name="company" tabindex="-1" autocomplete="off">
+          </div>
+          <p class="form-error" id="mobile-booking-error" hidden>Something went wrong — please try again</p>
+          <button type="submit" class="submit-btn" id="mobile-booking-submit">Request visit</button>
+        </form>
+      </div>
+    </div>` : fittingChooser ? `<!-- Mobile enquiry view (legacy fallback) -->
     <div id="view-mobile-enquiry" class="view" hidden>
       <div class="form-wrap">
         <button type="button" class="back-btn" id="mobile-back-btn">← Back</button>
@@ -963,6 +1081,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
         </form>
       </div>
     </div>` : ''}
+` : ''}
 
     <!-- Picker view -->
     <div id="view-picker" class="view"${fittingChooser ? ' hidden' : ''}>
@@ -1069,6 +1188,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var ADDRESS_ENABLED = ${addressEnabledJson};
   var ADDRESS_LOOKUP = ${addressLookupJson};
   var FITTING_CHOOSER = ${fittingChooserJson};
+  var MOBILE_BOOKING = ${mobileBookingJson};
   var MOBILE_ENQUIRY_URL = ${mobileEnquiryUrlJson};
   var UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/i;
 
@@ -1434,6 +1554,12 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     if (viewChooser) viewChooser.hidden = name !== 'chooser';
     viewPicker.hidden  = name !== 'picker';
     if (viewMobile) viewMobile.hidden = name !== 'mobile';
+    var viewMobilePc = document.getElementById('view-mobile-postcode');
+    var viewMobilePicker = document.getElementById('view-mobile-picker');
+    var viewMobileForm = document.getElementById('view-mobile-form');
+    if (viewMobilePc) viewMobilePc.hidden = name !== 'mobile-postcode';
+    if (viewMobilePicker) viewMobilePicker.hidden = name !== 'mobile-picker';
+    if (viewMobileForm) viewMobileForm.hidden = name !== 'mobile-form';
     viewForm.hidden    = name !== 'form';
     viewSuccess.hidden = name !== 'success';
   }
@@ -1457,6 +1583,10 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
     }
     if (chooseMobileBtn) {
       chooseMobileBtn.addEventListener('click', function () {
+        if (MOBILE_BOOKING) {
+          showView('mobile-postcode');
+          return;
+        }
         if (mobileFormError) mobileFormError.hidden = true;
         showView('mobile');
       });
@@ -1475,6 +1605,489 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
       mobileBackBtn.addEventListener('click', function () {
         if (mobileFormError) mobileFormError.hidden = true;
         showView('chooser');
+      });
+    }
+  }
+
+  // ── Mobile booking flow (M2) ─────────────────────
+
+  if (MOBILE_BOOKING) {
+    var mobilePostcode = '';
+    var mobileSelectedDate = null;
+    var mobileSelectedWindow = null;
+    var mobileWindowLabel = '';
+    var mobileVehicleSummary = null;
+    var mobCalendarBooted = false;
+    var mobCurrentMonth = todayIso.slice(0, 7);
+    var mobFetchToken = 0;
+
+    var mobCalGrid = document.getElementById('mob-cal-grid');
+    var mobCalMonthLabel = document.getElementById('mob-cal-month-label');
+    var mobCalPrev = document.getElementById('mob-cal-prev');
+    var mobCalNext = document.getElementById('mob-cal-next');
+    var mobWindowsHint = document.getElementById('mob-windows-hint');
+    var mobWindowsEmpty = document.getElementById('mob-windows-empty');
+    var mobWindowsContent = document.getElementById('mob-windows-content');
+    var mobContinueBtn = document.getElementById('mob-continue-btn');
+
+    function setMobilePcMsg(kind, text) {
+      var m = document.getElementById('mobile-pc-msg');
+      if (!m) return;
+      if (!text) { m.hidden = true; return; }
+      m.hidden = false; m.className = 'postcode-msg ' + kind; m.textContent = text;
+    }
+
+    function setMobAddrMsg(kind, text) {
+      var m = document.getElementById('mob-addr-msg');
+      if (!m) return;
+      if (!text) { m.hidden = true; return; }
+      m.hidden = false; m.className = 'postcode-msg ' + kind; m.textContent = text;
+    }
+
+    function formatMobileSummary(iso, windowId) {
+      var p = iso.split('-').map(Number);
+      var d = new Date(Date.UTC(p[0], p[1] - 1, p[2], 12));
+      var dateStr = new Intl.DateTimeFormat('en-GB', {
+        weekday: 'long', day: 'numeric', month: 'long', timeZone: TZ
+      }).format(d);
+      return dateStr + ' · ' + (windowId === 'am' ? 'Morning' : 'Afternoon');
+    }
+
+    function bootMobileCalendar() {
+      if (mobCalendarBooted) return;
+      mobCalendarBooted = true;
+      loadMonthAvailability(mobCurrentMonth);
+      renderMobileCalendar();
+    }
+
+    function renderMobileCalendar() {
+      if (!mobCalGrid) return;
+      mobCalMonthLabel.textContent = monthLabel(mobCurrentMonth);
+      mobCalPrev.disabled = mobCurrentMonth <= todayIso.slice(0, 7);
+      mobCalNext.disabled = mobCurrentMonth >= maxMonth;
+
+      var days = monthDays(mobCurrentMonth);
+      var firstDow = isoUTCDay(days[0]);
+      var offset = firstDow === 0 ? 6 : firstDow - 1;
+      var cacheEntry = monthCache[mobCurrentMonth];
+      var isLoading = monthLoading[mobCurrentMonth] && !cacheEntry;
+      var available = cacheEntry && !cacheEntry.error ? cacheEntry.available : null;
+
+      mobCalGrid.textContent = '';
+      for (var i = 0; i < offset; i++) {
+        var empty = document.createElement('span');
+        empty.className = 'cal-cell cal-empty';
+        mobCalGrid.appendChild(empty);
+      }
+
+      days.forEach(function (iso) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cal-cell';
+        btn.dataset.date = iso;
+        btn.setAttribute('role', 'option');
+        btn.textContent = parseInt(iso.split('-')[2], 10);
+
+        var isPast = iso < todayIso;
+        var notWorking = !isWorkingDay(iso);
+        var notAvail = available !== null && available.indexOf(iso) === -1;
+        var isUnavail = isPast || notWorking || notAvail;
+
+        if (iso === todayIso) btn.classList.add('cal-today');
+        if (iso === mobileSelectedDate) btn.classList.add('selected');
+
+        if (isUnavail) {
+          btn.disabled = true;
+          btn.classList.add('unavailable');
+        } else if (isLoading && !isPast && !notWorking) {
+          btn.classList.add('cal-loading-day');
+        }
+
+        if (!isUnavail) {
+          btn.addEventListener('click', function () { selectMobileDay(this.dataset.date); });
+        }
+        mobCalGrid.appendChild(btn);
+      });
+    }
+
+    function clearMobileWindowsUI() {
+      if (mobWindowsContent) mobWindowsContent.textContent = '';
+      if (mobWindowsHint) mobWindowsHint.hidden = false;
+      if (mobWindowsEmpty) mobWindowsEmpty.hidden = true;
+      if (mobContinueBtn) mobContinueBtn.hidden = true;
+      mobileSelectedWindow = null;
+      mobileWindowLabel = '';
+    }
+
+    async function loadMobileWindows(iso) {
+      var token = ++mobFetchToken;
+      clearMobileWindowsUI();
+      if (mobWindowsHint) mobWindowsHint.hidden = true;
+      if (mobWindowsContent) {
+        mobWindowsContent.textContent = '';
+        var skel = document.createElement('div');
+        skel.className = 'slots-skeleton-grid';
+        for (var i = 0; i < 4; i++) {
+          var s = document.createElement('div');
+          s.className = 'slot-skeleton-btn';
+          mobWindowsContent.appendChild(s);
+        }
+      }
+
+      try {
+        var url = '/' + SLUG + '/mobile-windows?date=' + encodeURIComponent(iso) +
+          '&postcode=' + encodeURIComponent(mobilePostcode);
+        var res = await fetch(url);
+        var data = await res.json();
+        if (token !== mobFetchToken) return;
+        if (mobWindowsContent) mobWindowsContent.textContent = '';
+
+        if (!res.ok || data.inArea === false) {
+          if (mobWindowsEmpty) {
+            mobWindowsEmpty.hidden = false;
+            mobWindowsEmpty.textContent = data.inArea === false
+              ? 'Outside our mobile area for this postcode'
+              : 'Unable to load windows — please try again';
+          }
+          return;
+        }
+
+        var availableWindows = (data.windows || []).filter(function (w) { return w.available; });
+        if (!availableWindows.length) {
+          if (mobWindowsEmpty) mobWindowsEmpty.hidden = false;
+          return;
+        }
+
+        var lbl = document.createElement('p');
+        lbl.className = 'slot-group-label';
+        lbl.textContent = 'Arrival window';
+        mobWindowsContent.appendChild(lbl);
+
+        var grid = document.createElement('div');
+        grid.className = 'slots-grid';
+        availableWindows.forEach(function (w) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'time-btn';
+          btn.textContent = w.label;
+          btn.dataset.window = w.id;
+          if (w.id === mobileSelectedWindow) btn.classList.add('selected');
+          btn.addEventListener('click', function () { selectMobileWindow(w.id, w.label); });
+          grid.appendChild(btn);
+        });
+        mobWindowsContent.appendChild(grid);
+      } catch (e) {
+        if (token !== mobFetchToken) return;
+        if (mobWindowsContent) mobWindowsContent.textContent = '';
+        if (mobWindowsEmpty) {
+          mobWindowsEmpty.hidden = false;
+          mobWindowsEmpty.textContent = 'Unable to load windows — please try again';
+        }
+      }
+    }
+
+    function selectMobileDay(iso) {
+      mobileSelectedDate = iso;
+      mobileSelectedWindow = null;
+      mobileWindowLabel = '';
+      if (mobContinueBtn) mobContinueBtn.hidden = true;
+      renderMobileCalendar();
+      loadMobileWindows(iso);
+    }
+
+    function selectMobileWindow(id, label) {
+      mobileSelectedWindow = id;
+      mobileWindowLabel = label;
+      mobWindowsContent.querySelectorAll('.time-btn').forEach(function (btn) {
+        btn.classList.toggle('selected', btn.dataset.window === id);
+      });
+      if (mobContinueBtn) mobContinueBtn.hidden = false;
+    }
+
+    var mobilePcBack = document.getElementById('mobile-pc-back-btn');
+    var mobilePcContinue = document.getElementById('mobile-pc-continue');
+    var mobilePcInput = document.getElementById('mobile-pc-input');
+    var mobileOutOfArea = document.getElementById('mobile-out-of-area');
+    var mobilePickerBack = document.getElementById('mobile-picker-back');
+    var mobileFormBack = document.getElementById('mobile-form-back-btn');
+    var mobileBookingForm = document.getElementById('mobile-booking-form');
+    var mobileBookingError = document.getElementById('mobile-booking-error');
+    var mobileBookingSubmit = document.getElementById('mobile-booking-submit');
+    var mobileSummaryText = document.getElementById('mobile-summary-text');
+    var mobFittingPostcode = document.getElementById('mob-fitting-postcode');
+
+    if (mobilePcBack) {
+      mobilePcBack.addEventListener('click', function () { showView('chooser'); });
+    }
+
+    if (mobilePickerBack) {
+      mobilePickerBack.addEventListener('click', function () {
+        mobileSelectedDate = null;
+        mobileSelectedWindow = null;
+        clearMobileWindowsUI();
+        showView('chooser');
+      });
+    }
+
+    if (mobileFormBack) {
+      mobileFormBack.addEventListener('click', function () {
+        if (mobileBookingError) mobileBookingError.hidden = true;
+        showView('mobile-picker');
+        renderMobileCalendar();
+        if (mobileSelectedDate) loadMobileWindows(mobileSelectedDate);
+      });
+    }
+
+    if (mobilePcInput) {
+      mobilePcInput.addEventListener('input', function () {
+        if (mobileOutOfArea) mobileOutOfArea.hidden = true;
+        if (mobilePcContinue) mobilePcContinue.hidden = false;
+      });
+    }
+
+    if (mobilePcContinue) {
+      mobilePcContinue.addEventListener('click', async function () {
+        if (!mobilePcInput) return;
+        var pc = mobilePcInput.value.trim();
+        if (!UK_POSTCODE_RE.test(pc)) {
+          setMobilePcMsg('bad', 'Please enter a valid UK postcode');
+          mobilePcInput.focus();
+          return;
+        }
+        mobilePcContinue.disabled = true;
+        if (mobileOutOfArea) mobileOutOfArea.hidden = true;
+        setMobilePcMsg('', '');
+
+        try {
+          var res = await fetch('/' + SLUG + '/mobile-windows?date=' + encodeURIComponent(todayIso) +
+            '&postcode=' + encodeURIComponent(pc));
+          var data = await res.json();
+          if (data.inArea === false) {
+            if (mobileOutOfArea) mobileOutOfArea.hidden = false;
+            if (mobilePcContinue) mobilePcContinue.hidden = true;
+            return;
+          }
+          if (!res.ok) {
+            setMobilePcMsg('bad', 'Could not check that postcode — please try again');
+            return;
+          }
+          mobilePostcode = pc.toUpperCase();
+          var chip = document.getElementById('mobile-postcode-chip');
+          if (chip) chip.textContent = 'Fitting postcode: ' + mobilePostcode;
+          if (mobFittingPostcode) mobFittingPostcode.value = mobilePostcode;
+          mobCurrentMonth = todayIso.slice(0, 7);
+          mobileSelectedDate = null;
+          mobileSelectedWindow = null;
+          clearMobileWindowsUI();
+          bootMobileCalendar();
+          showView('mobile-picker');
+        } catch (e) {
+          setMobilePcMsg('bad', 'Could not check that postcode — please try again');
+        } finally {
+          mobilePcContinue.disabled = false;
+        }
+      });
+    }
+
+    if (mobCalPrev) {
+      mobCalPrev.addEventListener('click', function () {
+        var p = mobCurrentMonth.split('-').map(Number);
+        mobCurrentMonth = new Date(Date.UTC(p[0], p[1] - 2, 1)).toISOString().slice(0, 7);
+        if (!monthCache[mobCurrentMonth]) loadMonthAvailability(mobCurrentMonth);
+        renderMobileCalendar();
+        clearMobileWindowsUI();
+        mobileSelectedDate = null;
+      });
+    }
+
+    if (mobCalNext) {
+      mobCalNext.addEventListener('click', function () {
+        var p = mobCurrentMonth.split('-').map(Number);
+        mobCurrentMonth = new Date(Date.UTC(p[0], p[1], 1)).toISOString().slice(0, 7);
+        if (!monthCache[mobCurrentMonth]) loadMonthAvailability(mobCurrentMonth);
+        renderMobileCalendar();
+        clearMobileWindowsUI();
+        mobileSelectedDate = null;
+      });
+    }
+
+    if (mobContinueBtn) {
+      mobContinueBtn.addEventListener('click', function () {
+        if (!mobileSelectedDate || !mobileSelectedWindow) return;
+        if (mobileSummaryText) {
+          mobileSummaryText.textContent = formatMobileSummary(mobileSelectedDate, mobileSelectedWindow);
+        }
+        if (mobileBookingError) mobileBookingError.hidden = true;
+        showView('mobile-form');
+      });
+    }
+
+    // Postcoder address finder for mobile form
+    (function wireMobileAddress() {
+      var findBtn = document.getElementById('mob-address-find');
+      var picker = document.getElementById('mob-address-picker');
+      var addrEl = document.getElementById('mob-address');
+      var pcEl = mobFittingPostcode;
+      var found = [];
+      if (!findBtn || !pcEl) return;
+
+      findBtn.addEventListener('click', async function () {
+        var pc = pcEl.value.trim();
+        if (!UK_POSTCODE_RE.test(pc)) { setMobAddrMsg('bad', 'Please enter a valid UK postcode'); return; }
+        findBtn.disabled = true;
+        var orig = findBtn.textContent;
+        findBtn.textContent = 'Searching…';
+        try {
+          var r = await fetch('/' + SLUG + '/address-lookup?postcode=' + encodeURIComponent(pc));
+          var d = await r.json().catch(function () { return null; });
+          if (!r.ok || !d) {
+            setMobAddrMsg('warn', 'Our address finder is unavailable — type your address below.');
+            return;
+          }
+          found = d.addresses || [];
+          if (!found.length) {
+            if (picker) picker.hidden = true;
+            setMobAddrMsg('bad', "We couldn't find an address — please type it below.");
+            return;
+          }
+          if (picker) {
+            var opts = '<option value="">' + found.length + ' found — choose yours…</option>';
+            for (var i = 0; i < found.length; i++) {
+              opts += '<option value="' + i + '">' + found[i].summary.replace(/</g, '&lt;') + '</option>';
+            }
+            picker.innerHTML = opts;
+            picker.hidden = false;
+          }
+          setMobAddrMsg('ok', 'Select your address below');
+        } catch (e) {
+          setMobAddrMsg('warn', 'Our address finder is unavailable — type your address below.');
+        } finally {
+          findBtn.disabled = false;
+          findBtn.textContent = orig;
+        }
+      });
+
+      if (picker) {
+        picker.addEventListener('change', function () {
+          if (picker.value === '') return;
+          var a = found[picker.value];
+          if (!a || !addrEl) return;
+          addrEl.value = [a.line1, a.line2, a.town].filter(function (x) { return x; }).join('\\n');
+          if (a.postcode) pcEl.value = a.postcode;
+          setMobAddrMsg('ok', '✓ Address selected');
+        });
+      }
+    })();
+
+    ${regEnabled ? `
+    var mobRegInput2 = document.getElementById('mob-reg');
+    var mobRegTimer2 = null;
+    function setMobVehicleCard2(state, html) {
+      var card = document.getElementById('mob-vehicle-card');
+      if (!card) return;
+      card.hidden = (state === 'hidden');
+      card.className = 'vehicle-card' +
+        (state === 'found' ? ' vc-found' : state === 'miss' ? ' vc-miss' : '');
+      card.innerHTML = html;
+    }
+    if (mobRegInput2) {
+      mobRegInput2.addEventListener('input', function () {
+        mobileVehicleSummary = null;
+        clearTimeout(mobRegTimer2);
+        setMobVehicleCard2('hidden', '');
+        var val = this.value.replace(/[\\s]+/g, '').toUpperCase();
+        if (val.length >= 5) {
+          mobRegTimer2 = setTimeout(async function () {
+            setMobVehicleCard2('loading', '<span class="vc-spinner" aria-hidden="true"></span> Looking up…');
+            try {
+              var res = await fetch('https://neobookworm.uk/api/reg-lookup?reg=' + encodeURIComponent(val));
+              var data = await res.json();
+              if (data.error || !data.vehicle) {
+                setMobVehicleCard2('miss', "— Not recognised — we'll confirm when Howie calls");
+                return;
+              }
+              var v = data.vehicle;
+              var label = [
+                [v.make, v.model].filter(Boolean).join(' '),
+                [v.colour, v.year].filter(Boolean).join(' · '),
+              ].filter(Boolean).join(' · ');
+              mobileVehicleSummary = label || null;
+              if (label) setMobVehicleCard2('found', '🚗 ' + safeText(label));
+              else setMobVehicleCard2('hidden', '');
+            } catch (e) {
+              setMobVehicleCard2('miss', "Couldn't look that up right now");
+            }
+          }, 1200);
+        }
+      });
+    }
+    ` : ''}
+
+    if (mobileBookingForm) {
+      mobileBookingForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (mobileBookingError) mobileBookingError.hidden = true;
+        if (!mobileBookingForm.reportValidity()) return;
+        if (!mobileSelectedDate || !mobileSelectedWindow) return;
+
+        mobileBookingSubmit.disabled = true;
+        var origLabel = mobileBookingSubmit.textContent;
+        mobileBookingSubmit.textContent = 'Sending request…';
+
+        var mobRegEl = document.getElementById('mob-reg');
+        var payload = {
+          date: mobileSelectedDate,
+          arrivalWindow: mobileSelectedWindow,
+          postcode: mobFittingPostcode ? mobFittingPostcode.value.trim().toUpperCase() : mobilePostcode,
+          name: document.getElementById('mob-name').value.trim(),
+          email: document.getElementById('mob-email').value.trim(),
+          phone: document.getElementById('mob-phone').value.trim(),
+          address: document.getElementById('mob-address').value.trim(),
+          note: document.getElementById('mob-note').value.trim() || null,
+          reg: mobRegEl ? mobRegEl.value.replace(/[\\s]+/g, '').toUpperCase() : null,
+          vehicleSummary: mobileVehicleSummary,
+          company: document.getElementById('mob-company').value.trim(),
+        };
+
+        try {
+          var res = await fetch('/' + SLUG + '/mobile-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          var data = await res.json().catch(function () { return {}; });
+
+          if (res.ok && data.ok) {
+            successSlotText.textContent = data.arrivalLabel || formatMobileSummary(mobileSelectedDate, mobileSelectedWindow);
+            var successH2 = document.querySelector('#view-success h2');
+            if (successH2) successH2.textContent = 'Request received';
+            var successP = document.querySelector('#view-success .success-wrap > p');
+            if (successP) successP.textContent = 'Howie will confirm your visit shortly — watch for a confirmation email.';
+            if (icsBtn) icsBtn.hidden = true;
+            showView('success');
+            try { window.parent.postMessage('booking-confirmed', '*'); } catch (e) {}
+            return;
+          }
+
+          if (mobileBookingError) {
+            mobileBookingError.hidden = false;
+            if (data.error === 'window_unavailable') {
+              mobileBookingError.textContent = 'That window was just taken — please go back and pick another.';
+            } else if (data.error === 'out_of_area') {
+              mobileBookingError.textContent = 'That postcode is outside our mobile area.';
+            } else {
+              mobileBookingError.textContent = 'Something went wrong — please try again or call 01793 876 969';
+            }
+          }
+        } catch (err) {
+          if (mobileBookingError) {
+            mobileBookingError.hidden = false;
+            mobileBookingError.textContent = 'Something went wrong — please try again or call 01793 876 969';
+          }
+        }
+
+        mobileBookingSubmit.textContent = origLabel;
+        mobileBookingSubmit.disabled = false;
       });
     }
   }
@@ -2183,6 +2796,84 @@ export function renderManagePage(booking, state, config, slug) {
   <div class="wrap">
     ${bodyHtml}
   </div>
+</body>
+</html>`;
+}
+
+// ── Howie confirm page (mobile pending → confirmed) ─────────────────────────
+
+export function renderConfirmPage(booking, state, config) {
+  const displayName = escHtml(config.displayName);
+  const t = config.theme || {};
+  const themeCss = `
+    :root {
+      --bg:         ${t.bg        || '#0f1f3d'};
+      --accent:     ${t.accent    || '#f5a623'};
+      --accent-h:   ${t.accentH   || '#d4891a'};
+      --accent-fg:  ${t.accentFg  || '#0f1f3d'};
+      --accent-rgb: ${t.accentRgb || '245, 166, 35'};
+    }`;
+
+  function fmtArrival(bookingRow) {
+    if (!bookingRow?.slot_start) return '';
+    const [datePart] = bookingRow.slot_start.split('T');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d, 12));
+    const dateStr = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+    }).format(dt);
+    const part = bookingRow.arrival_window === 'am' ? 'morning' : 'afternoon';
+    return `${dateStr} ${part}`;
+  }
+
+  let bodyHtml;
+  if (state === 'not_found' || state === 'invalid') {
+    bodyHtml = `<div class="msg-card err"><p>This confirmation link is not valid — it may have expired.</p></div>`;
+  } else if (state === 'already_confirmed') {
+    bodyHtml = `
+      <div class="msg-card ok">
+        <p><strong>Already confirmed.</strong></p>
+        <p>${escHtml(fmtArrival(booking))} — ${escHtml(booking.name)}</p>
+        <p>The customer has already been sent their confirmation email.</p>
+      </div>`;
+  } else if (state === 'confirmed') {
+    bodyHtml = `
+      <div class="msg-card ok">
+        <p><strong>Visit confirmed.</strong></p>
+        <p>${escHtml(fmtArrival(booking))} — ${escHtml(booking.name)}</p>
+        <p>${escHtml(booking.address || '')}${booking.postcode ? `, ${escHtml(booking.postcode)}` : ''}</p>
+        <p>The customer has been sent their firm confirmation email.</p>
+      </div>`;
+  } else {
+    bodyHtml = `<div class="msg-card err"><p>Something went wrong.</p></div>`;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm mobile visit | ${displayName}</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/x-icon" href="https://neobookworm.uk/favicon.ico">
+  <style>
+    ${themeCss}
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.5; }
+    .biz-header { padding: 0.875rem 1.25rem; background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    .msg-card { background: rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem; }
+    .msg-card.ok { border: 1px solid rgba(var(--accent-rgb), 0.45); }
+    .msg-card.err { border: 1px solid rgba(220,53,69,0.3); }
+    .msg-card p { margin: 0 0 0.75rem; }
+    .msg-card p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <header class="biz-header">${displayName} — mobile confirm</header>
+  <div class="wrap">${bodyHtml}</div>
 </body>
 </html>`;
 }

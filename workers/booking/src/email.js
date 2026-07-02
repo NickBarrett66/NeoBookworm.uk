@@ -36,3 +36,18 @@ export async function sendCancellationEmail(env, { to, name, slotStart, business
 export async function sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType }) {
   await postNotify(env, { type: 'business_notification', name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType });
 }
+
+export async function sendMobileHoldingEmail(env, { to, name, arrivalLabel, businessName }) {
+  await postNotify(env, { type: 'mobile_holding', to, name, arrivalLabel, businessName });
+}
+
+export async function sendMobileConfirmRequestEmail(env, {
+  name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary,
+  address, postcode, arrivalLabel, confirmUrl,
+}) {
+  await postNotify(env, {
+    type: 'mobile_confirm_request',
+    name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary,
+    address, postcode, arrivalLabel, confirmUrl,
+  });
+}

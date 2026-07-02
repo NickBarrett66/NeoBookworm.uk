@@ -345,3 +345,121 @@ export async function createCalendarEvent(
 
   return res.json();
 }
+
+export async function createPendingMobileEvent(
+  env,
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow },
+  config = SLUG_CONFIG.hetyres,
+) {
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+
+  const windowLabel = arrivalWindow === 'am' ? 'morning' : 'afternoon';
+  const summary = reg
+    ? `PENDING — Mobile (${windowLabel}): ${name} (${reg})`
+    : `PENDING — Mobile (${windowLabel}): ${name}`;
+  const description = [
+    'Status: PENDING — awaiting Howie confirmation',
+    `Arrival window: ${windowLabel}`,
+    `Name: ${name}`,
+    `Email: ${email}`,
+    phone ? `Phone: ${phone}` : null,
+    reg ? `Reg: ${reg}` : null,
+    vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
+    address ? `Address: ${address}` : null,
+    postcode ? `Postcode: ${postcode}` : null,
+    note ? `Note: ${note}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const event = {
+    summary,
+    description,
+    start: { dateTime: slotStart, timeZone: config.timezone },
+    end: { dateTime: slotEnd, timeZone: config.timezone },
+    colorId: '5',
+    attendees: [{ email }],
+  };
+  if (address || postcode) {
+    event.location = [address, postcode].filter(Boolean).join(', ');
+  }
+
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?sendUpdates=none`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(event),
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Google Calendar pending event create failed: ${res.status} ${text}`);
+  }
+
+  return res.json();
+}
+
+export async function confirmMobileCalendarEvent(
+  env,
+  eventId,
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow },
+  config = SLUG_CONFIG.hetyres,
+) {
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+
+  const windowLabel = arrivalWindow === 'am' ? 'morning' : 'afternoon';
+  const summary = reg
+    ? `Mobile (${windowLabel}): ${name} (${reg})`
+    : `Mobile (${windowLabel}): ${name}`;
+  const description = [
+    `Arrival window: ${windowLabel}`,
+    `Name: ${name}`,
+    `Email: ${email}`,
+    phone ? `Phone: ${phone}` : null,
+    reg ? `Reg: ${reg}` : null,
+    vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
+    address ? `Address: ${address}` : null,
+    postcode ? `Postcode: ${postcode}` : null,
+    note ? `Note: ${note}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const event = {
+    summary,
+    description,
+    start: { dateTime: slotStart, timeZone: config.timezone },
+    end: { dateTime: slotEnd, timeZone: config.timezone },
+    colorId: '10',
+    attendees: [{ email }],
+  };
+  if (address || postcode) {
+    event.location = [address, postcode].filter(Boolean).join(', ');
+  }
+
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(event),
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Google Calendar event confirm update failed: ${res.status} ${text}`);
+  }
+
+  return res.json();
+}

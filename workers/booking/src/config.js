@@ -17,7 +17,10 @@ export const SLUG_CONFIG = {
     maxAdvanceDays: 60,
     timezone: 'Europe/London',
     regLookup: true,
-    mobileEnquiryUrl: 'https://neobookworm.uk/api/he-tyres-enquiry',
+    mobileBooking: true,
+    addressEnabled: true,
+    addressRequired: true,
+    addressLookup: 'full',
     workingHours: {
       1: { open: '08:30', close: '17:00' },
       2: { open: '08:30', close: '17:00' },
@@ -56,12 +59,36 @@ export const SLUG_CONFIG = {
 
 const KV_TTL = 3600; // 1 hour
 
+// SQLite has no native boolean, so `json_set(..., true)` in migrations stores an
+// integer 1 (and false → 0). JS strict checks like `config.mobileBooking === true`
+// would then fail. Coerce known boolean flags back to real booleans on read.
+const BOOLEAN_CONFIG_KEYS = [
+  'mobileBooking',
+  'addressEnabled',
+  'addressRequired',
+  'phoneEnabled',
+  'phoneRequired',
+  'noteEnabled',
+  'noteRequired',
+  'regLookup',
+];
+
+function normalizeConfig(config) {
+  if (!config || typeof config !== 'object') return config;
+  for (const key of BOOLEAN_CONFIG_KEYS) {
+    if (key in config && typeof config[key] !== 'boolean') {
+      config[key] = config[key] === 1 || config[key] === '1' || config[key] === true;
+    }
+  }
+  return config;
+}
+
 export async function getConfig(slug, env) {
   // 1. KV cache
   if (env?.TOKEN_CACHE) {
     try {
       const cached = await env.TOKEN_CACHE.get(`tenant:${slug}`, 'json');
-      if (cached) return cached;
+      if (cached) return normalizeConfig(cached);
     } catch (e) {
       console.warn('[config] KV read failed:', e.message);
     }
@@ -76,7 +103,7 @@ export async function getConfig(slug, env) {
         if (env.TOKEN_CACHE) {
           await env.TOKEN_CACHE.put(`tenant:${slug}`, row.config_json, { expirationTtl: KV_TTL }).catch(() => {});
         }
-        return config;
+        return normalizeConfig(config);
       }
     } catch (e) {
       console.warn('[config] D1 read failed:', e.message);

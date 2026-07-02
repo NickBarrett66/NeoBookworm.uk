@@ -4,6 +4,8 @@ import {
   filterAvailableSlots,
   wallSlotsToLabels,
   createCalendarEvent,
+  createPendingMobileEvent,
+  confirmMobileCalendarEvent,
   deleteCalendarEvent,
   londonWallToInstant,
   getAvailableDaysInMonth,
@@ -11,15 +13,25 @@ import {
 import { getConfig } from './config.js'; // async — always await getConfig(slug, env)
 import {
   insertBooking,
+  insertMobileBooking,
   updateBookingEvent,
   markBookingFailed,
   cancelBooking,
   getBookingByToken,
+  getBookingByConfirmToken,
+  confirmMobileBooking,
   countRecentBookingsByEmail,
   SlotTakenError,
 } from './db.js';
-import { sendConfirmationEmail, sendCancellationEmail, sendBusinessNotificationEmail } from './email.js';
-import { renderBookingPage, renderManagePage } from './ui.js';
+import {
+  sendConfirmationEmail,
+  sendCancellationEmail,
+  sendBusinessNotificationEmail,
+  sendMobileHoldingEmail,
+  sendMobileConfirmRequestEmail,
+} from './email.js';
+import { renderBookingPage, renderManagePage, renderConfirmPage } from './ui.js';
+import { getMobileWindowsForDay, validateAndPlaceMobileWindow, formatArrivalWindowLabel } from './mobile.js';
 import {
   handleAdminTenantList,
   handleAdminTenantGet,
@@ -77,6 +89,11 @@ function wallEndFromStart(slotStart, durationMinutes, timeZone) {
 
 function sqliteSince24h() {
   return new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+}
+
+function confirmUrl(req, slug, token) {
+  const { origin } = new URL(req.url);
+  return `${origin}/${slug}/confirm/${token}`;
 }
 
 function manageUrl(req, slug, token) {
@@ -500,6 +517,219 @@ async function handleReschedule(slug, req, env, ctx) {
   return jsonResponse({ ok: true, slotStart: slot, slotEnd });
 }
 
+async function handleMobileWindows(slug, url, env) {
+  const config = await getConfig(slug, env);
+  if (!config) return jsonResponse({ error: 'Unknown booking slug' }, 404);
+  if (!config.mobileBooking) return jsonResponse({ error: 'Mobile booking not enabled' }, 400);
+
+  const date = url.searchParams.get('date');
+  const postcode = (url.searchParams.get('postcode') || '').trim();
+  const validationError = validateDateParam(date, config);
+  if (validationError) return jsonResponse({ error: validationError.error }, validationError.status);
+  if (!postcode || !UK_POSTCODE_RE.test(postcode)) {
+    return jsonResponse({ error: 'Invalid postcode' }, 400);
+  }
+
+  try {
+    const result = await getMobileWindowsForDay(env, date, postcode, config);
+    return jsonResponse(result);
+  } catch (err) {
+    console.error('[booking] mobile-windows error:', err);
+    return jsonResponse({ error: 'Unable to fetch mobile windows' }, 502);
+  }
+}
+
+function validateMobileRequestBody(body) {
+  const {
+    date, arrivalWindow, postcode, name, email, phone, note, reg, vehicleSummary, address,
+  } = body;
+
+  if (!date || !arrivalWindow || !postcode || !name || !email || !phone || !address) {
+    return { error: 'Missing required fields' };
+  }
+  if (!ISO_DATE_RE.test(date)) return { error: 'Invalid date format' };
+  if (!['am', 'pm'].includes(arrivalWindow)) return { error: 'Invalid arrival window' };
+  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 80) return { error: 'Invalid name' };
+  if (typeof email !== 'string' || !EMAIL_RE.test(email)) return { error: 'Invalid email' };
+  if (typeof phone !== 'string' || phone.trim().length === 0 || phone.length > 30) return { error: 'Invalid phone' };
+  if (typeof address !== 'string' || address.trim().length === 0 || address.length > 300) {
+    return { error: 'Address is required' };
+  }
+  if (typeof postcode !== 'string' || postcode.length > 12 || !UK_POSTCODE_RE.test(postcode.trim())) {
+    return { error: 'Please enter a valid UK postcode' };
+  }
+  if (note != null && note !== '' && (typeof note !== 'string' || note.length > 500)) {
+    return { error: 'Note is too long' };
+  }
+
+  const cleanReg = reg ? String(reg).trim().toUpperCase().replace(/\s+/g, '').slice(0, 10) : null;
+  const cleanVehicleSummary = vehicleSummary ? String(vehicleSummary).slice(0, 200) : null;
+
+  return {
+    date,
+    arrivalWindow,
+    postcode: postcode.trim().toUpperCase(),
+    name: name.trim(),
+    email: email.trim().toLowerCase(),
+    phone: phone.trim(),
+    note: note ? String(note).trim() : null,
+    reg: cleanReg,
+    vehicleSummary: cleanVehicleSummary,
+    address: address.trim(),
+  };
+}
+
+async function handleMobileRequest(slug, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) return jsonResponse({ ok: false, error: 'Unknown booking slug' }, 404);
+  if (!config.mobileBooking) return jsonResponse({ ok: false, error: 'Mobile booking not enabled' }, 400);
+
+  let body;
+  try { body = await req.json(); } catch { return jsonResponse({ ok: false, error: 'Invalid JSON body' }, 400); }
+
+  if (body.company) return jsonResponse({ ok: true });
+
+  const ip = req.headers.get('CF-Connecting-IP');
+  if (await checkIpRateLimit(env, ip)) return jsonResponse({ ok: false, error: 'too_many' }, 429);
+
+  const validated = validateMobileRequestBody(body);
+  if (validated.error) return jsonResponse({ ok: false, error: validated.error }, 400);
+
+  const dateError = validateDateParam(validated.date, config);
+  if (dateError) return jsonResponse({ ok: false, error: dateError.error }, dateError.status);
+
+  const {
+    date, arrivalWindow, postcode, name, email, phone, note, reg, vehicleSummary, address,
+  } = validated;
+
+  let placement;
+  try {
+    placement = await validateAndPlaceMobileWindow(env, date, arrivalWindow, postcode, config);
+  } catch (err) {
+    console.error('[booking] mobile placement error:', err);
+    return jsonResponse({ ok: false, error: 'calendar_error' }, 502);
+  }
+
+  if (placement.error === 'out_of_area') return jsonResponse({ ok: false, error: 'out_of_area' }, 400);
+  if (placement.error) return jsonResponse({ ok: false, error: 'window_unavailable' }, 409);
+
+  const { slotStart, slotEnd, band } = placement;
+
+  const recentCount = await countRecentBookingsByEmail(env.DB, slug, email, sqliteSince24h());
+  if (recentCount >= 3) return jsonResponse({ ok: false, error: 'too_many' }, 429);
+
+  const confirmToken = crypto.randomUUID();
+  let bookingId;
+  try {
+    ({ id: bookingId } = await insertMobileBooking(env.DB, {
+      slug,
+      slotStart,
+      slotEnd,
+      name,
+      email,
+      phone,
+      note,
+      reg,
+      vehicleSummary,
+      address,
+      postcode,
+      band,
+      arrivalWindow,
+      confirmToken,
+    }));
+  } catch (err) {
+    console.error('[booking] mobile insert error:', err);
+    throw err;
+  }
+
+  let googleEvent;
+  try {
+    googleEvent = await createPendingMobileEvent(env, {
+      slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow,
+    }, config);
+  } catch (err) {
+    console.error('[booking] pending calendar create error:', err);
+    await markBookingFailed(env.DB, bookingId);
+    return jsonResponse({ ok: false, error: 'calendar_error' }, 502);
+  }
+
+  await updateBookingEvent(env.DB, bookingId, googleEvent.id);
+
+  const arrivalLabel = formatArrivalWindowLabel(date, arrivalWindow, config.timezone);
+  const cUrl = confirmUrl(req, slug, confirmToken);
+
+  ctx.waitUntil(
+    sendMobileHoldingEmail(env, { to: email, name, arrivalLabel, businessName: config.displayName }),
+  );
+  ctx.waitUntil(
+    sendMobileConfirmRequestEmail(env, {
+      name, email, phone, slotStart, slotEnd, businessName: config.displayName,
+      reg, vehicleSummary, address, postcode, arrivalLabel, confirmUrl: cUrl,
+    }),
+  );
+
+  return jsonResponse({ ok: true, name, arrivalLabel, date, arrivalWindow });
+}
+
+async function handleConfirm(slug, token, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) return new Response('Not found', { status: 404 });
+
+  const booking = await getBookingByConfirmToken(env.DB, token);
+  if (!booking || booking.slug !== slug) {
+    return htmlResponse(renderConfirmPage(null, 'not_found', config));
+  }
+
+  if (booking.status === 'confirmed') {
+    return htmlResponse(renderConfirmPage(booking, 'already_confirmed', config));
+  }
+
+  if (booking.status !== 'pending') {
+    return htmlResponse(renderConfirmPage(booking, 'invalid', config));
+  }
+
+  await confirmMobileBooking(env.DB, booking.id);
+
+  if (booking.google_event_id) {
+    try {
+      await confirmMobileCalendarEvent(
+        env,
+        booking.google_event_id,
+        {
+          slotStart: booking.slot_start,
+          slotEnd: booking.slot_end,
+          name: booking.name,
+          email: booking.email,
+          phone: booking.phone,
+          note: booking.note,
+          reg: booking.reg,
+          vehicleSummary: booking.vehicle_summary,
+          address: booking.address,
+          postcode: booking.postcode,
+          arrivalWindow: booking.arrival_window,
+        },
+        config,
+      );
+    } catch (err) {
+      console.error('[booking] confirm calendar update error:', err);
+    }
+  }
+
+  const mUrl = manageUrl(req, slug, booking.manage_token);
+  ctx.waitUntil(
+    sendConfirmationEmail(env, {
+      to: booking.email,
+      name: booking.name,
+      slotStart: booking.slot_start,
+      slotEnd: booking.slot_end,
+      businessName: config.displayName,
+      manageUrl: mUrl,
+    }),
+  );
+
+  return htmlResponse(renderConfirmPage(booking, 'confirmed', config));
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────
 
 export default {
@@ -557,6 +787,15 @@ export default {
 
     const addressMatch = url.pathname.match(/^\/([^/]+)\/address-lookup$/);
     if (req.method === 'GET' && addressMatch) return handleAddressLookup(addressMatch[1], url, req, env);
+
+    const mobileWindowsMatch = url.pathname.match(/^\/([^/]+)\/mobile-windows$/);
+    if (req.method === 'GET' && mobileWindowsMatch) return handleMobileWindows(mobileWindowsMatch[1], url, env);
+
+    const mobileRequestMatch = url.pathname.match(/^\/([^/]+)\/mobile-request$/);
+    if (req.method === 'POST' && mobileRequestMatch) return handleMobileRequest(mobileRequestMatch[1], req, env, ctx);
+
+    const confirmMatch = url.pathname.match(/^\/([^/]+)\/confirm\/([^/]+)$/);
+    if (req.method === 'GET' && confirmMatch) return handleConfirm(confirmMatch[1], confirmMatch[2], req, env, ctx);
 
     if (req.method === 'GET' && url.pathname === '/favicon.ico') {
       return Response.redirect('https://neobookworm.uk/favicon.ico', 302);
