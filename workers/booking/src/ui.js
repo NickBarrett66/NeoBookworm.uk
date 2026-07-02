@@ -38,9 +38,10 @@ function renderCustomQuestionField(q) {
   </div>`;
 }
 
-export function renderBookingPage(config, slug, rescheduleToken = null) {
+export function renderBookingPage(config, slug, rescheduleToken = null, adminKey = null) {
   const displayName = escHtml(config.displayName);
   const slugJson = JSON.stringify(slug);
+  const adminKeyJson = JSON.stringify(adminKey);
   const slotDuration = config.slotDuration || 30;
   const maxAdvanceDays = config.maxAdvanceDays || 60;
   const workingDowsJson = JSON.stringify(Object.keys(config.workingHours).map(Number));
@@ -1181,6 +1182,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 (function () {
   var SLUG = ${slugJson};
   var RESCHEDULE_TOKEN = ${rescheduleTokenJson};
+  var ADMIN_KEY = ${adminKeyJson};
   var TZ = 'Europe/London';
   var MAX_ADVANCE_DAYS = ${maxAdvanceDays};
   var WORKING_DOWS = ${workingDowsJson};
@@ -1224,7 +1226,11 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
   var mobileSubmitBtn  = document.getElementById('mobile-submit-btn');
 
   // State
-  var calendarBooted = !FITTING_CHOOSER || !!RESCHEDULE_TOKEN;
+  // The initial calendar render happens only via bootCalendarIfNeeded(), which
+  // is called for the reschedule and no-chooser boot paths and on chooser-button
+  // click. So this MUST start false — otherwise that first render is skipped and
+  // the day grid renders empty (e.g. the amend/reschedule flow).
+  var calendarBooted = false;
   var todayIso = londonToday();
   var currentMonth = todayIso.slice(0, 7);
   var maxMonth = addDaysIso(todayIso, MAX_ADVANCE_DAYS).slice(0, 7);
@@ -2446,7 +2452,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 
     var endpoint = RESCHEDULE_TOKEN ? ('/' + SLUG + '/reschedule') : ('/' + SLUG + '/book');
     var body = RESCHEDULE_TOKEN
-      ? { token: RESCHEDULE_TOKEN, slot: selectedSlot }
+      ? { token: RESCHEDULE_TOKEN, slot: selectedSlot, adminKey: ADMIN_KEY }
       : {
           slot:           selectedSlot,
           name:           getVal('name'),
@@ -2618,7 +2624,9 @@ export function renderBookingPage(config, slug, rescheduleToken = null) {
 
 // ── Manage page (cancel / reschedule) ────────────────────────────────────────
 
-export function renderManagePage(booking, state, config, slug) {
+export function renderManagePage(booking, state, config, slug, opts = {}) {
+  const isAdmin = !!opts.isAdmin;
+  const adminKey = opts.adminKey || null;
   const displayName = escHtml(config.displayName);
   const t = config.theme || {};
   const themeCss = `
@@ -2666,39 +2674,46 @@ export function renderManagePage(booking, state, config, slug) {
     const slotFormatted = escHtml(fmtSlot(booking.slot_start));
     const tokenJson = JSON.stringify(booking.manage_token);
     const slugJson = JSON.stringify(slug);
+    const adminKeyJson = JSON.stringify(adminKey);
+    const cardLabel = isAdmin ? 'Customer booking' : 'Your booking';
+    const cancelLabel = isAdmin ? 'Cancel this booking' : 'Cancel booking';
 
     let actionsHtml;
-    if (isPast) {
+    if (!isAdmin && isPast) {
       actionsHtml = `<p class="note">This appointment has already passed.</p>`;
-    } else if (tooClosed) {
+    } else if (!isAdmin && tooClosed) {
       actionsHtml = `<p class="note">Your appointment is coming up very soon — it's too late to make changes online. Please call ${escHtml(config.displayName)} directly.</p>`;
     } else {
       actionsHtml = `
+        ${isAdmin ? '<p class="note" style="margin-bottom:0.75rem">Staff view — changes here skip the customer cutoff. The customer is emailed automatically.</p>' : ''}
         <div class="actions">
-          <button type="button" class="btn-reschedule" id="rescheduleBtn">Reschedule</button>
-          <button type="button" class="btn-cancel"     id="cancelBtn">Cancel booking</button>
+          <button type="button" class="btn-reschedule" id="rescheduleBtn">${isAdmin ? 'Amend / reschedule' : 'Reschedule'}</button>
+          <button type="button" class="btn-cancel"     id="cancelBtn">${cancelLabel}</button>
         </div>
         <p class="cancel-msg" id="cancelMsg" hidden></p>`;
     }
 
     bodyHtml = `
       <div class="booking-card">
-        <div class="booking-card-label">Your booking</div>
+        <div class="booking-card-label">${cardLabel}</div>
         <div class="booking-card-slot">${slotFormatted}</div>
-        <div class="booking-card-biz">${displayName}</div>
+        <div class="booking-card-biz">${isAdmin && booking.name ? escHtml(booking.name) + ' · ' : ''}${displayName}</div>
       </div>
       ${actionsHtml}
       <script>
 (function () {
   var SLUG  = ${slugJson};
   var TOKEN = ${tokenJson};
+  var ADMIN_KEY = ${adminKeyJson};
   var rescheduleBtn = document.getElementById('rescheduleBtn');
   var cancelBtn     = document.getElementById('cancelBtn');
   var cancelMsg     = document.getElementById('cancelMsg');
 
   if (rescheduleBtn) {
     rescheduleBtn.addEventListener('click', function () {
-      window.location.href = '/' + SLUG + '?reschedule=' + encodeURIComponent(TOKEN);
+      var url = '/' + SLUG + '?reschedule=' + encodeURIComponent(TOKEN);
+      if (ADMIN_KEY) url += '&k=' + encodeURIComponent(ADMIN_KEY);
+      window.location.href = url;
     });
   }
 
@@ -2711,7 +2726,7 @@ export function renderManagePage(booking, state, config, slug) {
         var res  = await fetch('/' + SLUG + '/cancel', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: TOKEN }),
+          body: JSON.stringify({ token: TOKEN, adminKey: ADMIN_KEY }),
         });
         var data = await res.json();
         if (data.ok) {
@@ -2791,7 +2806,7 @@ export function renderManagePage(booking, state, config, slug) {
   <header class="biz-header">
     <span class="biz-name">${displayName}</span>
     <span class="biz-sep" aria-hidden="true">·</span>
-    <span class="biz-meta">Manage booking</span>
+    <span class="biz-meta">Manage booking${isAdmin ? ' · staff' : ''}</span>
   </header>
   <div class="wrap">
     ${bodyHtml}

@@ -32,6 +32,8 @@ import {
 } from './email.js';
 import { renderBookingPage, renderManagePage, renderConfirmPage } from './ui.js';
 import { getMobileWindowsForDay, validateAndPlaceMobileWindow, formatArrivalWindowLabel } from './mobile.js';
+import { travelMinForBand } from './geo.js';
+import { makeAdminKey, verifyAdminKey } from './signing.js';
 import {
   handleAdminTenantList,
   handleAdminTenantGet,
@@ -99,6 +101,17 @@ function confirmUrl(req, slug, token) {
 function manageUrl(req, slug, token) {
   const { origin } = new URL(req.url);
   return `${origin}/${slug}/manage?token=${token}`;
+}
+
+/**
+ * Staff (Howie) management link for embedding in the calendar event — the same
+ * manage page but signed with an admin key so it bypasses the customer
+ * cancellation cutoff. Falls back to the plain manage URL if no ADMIN_SECRET.
+ */
+async function adminManageUrl(req, env, slug, token) {
+  const key = await makeAdminKey(env, token);
+  const base = manageUrl(req, slug, token);
+  return key ? `${base}&k=${key}` : base;
 }
 
 function validateDateParam(date, config) {
@@ -333,9 +346,10 @@ async function handleBook(slug, req, env, ctx) {
     throw err;
   }
 
+  const adminUrl = await adminManageUrl(req, env, slug, manageToken);
   let googleEvent;
   try {
-    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers }, config);
+    googleEvent = await createCalendarEvent(env, { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers, manageUrl: adminUrl }, config);
   } catch (err) {
     console.error('[booking] calendar create error:', err);
     await markBookingFailed(env.DB, bookingId);
@@ -362,8 +376,16 @@ async function handleManage(slug, url, env) {
   const token = url.searchParams.get('token');
   if (!token) return htmlResponse(renderManagePage(null, 'invalid', config, slug));
 
+  const adminKey = url.searchParams.get('k');
+  const isAdmin = await verifyAdminKey(env, token, adminKey);
+
   const booking = await getBookingByToken(env.DB, token);
-  return htmlResponse(renderManagePage(booking || null, booking ? 'found' : 'not_found', config, slug));
+  return htmlResponse(
+    renderManagePage(booking || null, booking ? 'found' : 'not_found', config, slug, {
+      isAdmin,
+      adminKey: isAdmin ? adminKey : null,
+    }),
+  );
 }
 
 async function handleCancel(slug, req, env, ctx) {
@@ -380,11 +402,15 @@ async function handleCancel(slug, req, env, ctx) {
   if (!booking || booking.slug !== slug) return jsonResponse({ ok: false, error: 'not_found' }, 404);
   if (booking.status === 'cancelled') return jsonResponse({ ok: false, error: 'already_cancelled' }, 409);
 
-  const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
-  const slotInstant = londonWallToInstant(booking.slot_start, config.timezone);
-  if (slotInstant.getTime() < Date.now()) return jsonResponse({ ok: false, error: 'already_past' }, 409);
-  if (slotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
-    return jsonResponse({ ok: false, error: 'too_late' }, 409);
+  // Staff (admin-signed) links bypass the customer cancellation cutoff.
+  const isAdmin = await verifyAdminKey(env, token, body.adminKey);
+  if (!isAdmin) {
+    const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
+    const slotInstant = londonWallToInstant(booking.slot_start, config.timezone);
+    if (slotInstant.getTime() < Date.now()) return jsonResponse({ ok: false, error: 'already_past' }, 409);
+    if (slotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
+      return jsonResponse({ ok: false, error: 'too_late' }, 409);
+    }
   }
 
   await cancelBooking(env.DB, booking.id);
@@ -423,11 +449,14 @@ async function handleReschedule(slug, req, env, ctx) {
   if (!booking || booking.slug !== slug) return jsonResponse({ ok: false, error: 'not_found' }, 404);
   if (booking.status === 'cancelled') return jsonResponse({ ok: false, error: 'already_cancelled' }, 409);
 
-  // The existing booking must still be inside its change window (cancellation cutoff).
-  const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
-  const oldSlotInstant = londonWallToInstant(booking.slot_start, config.timezone);
-  if (oldSlotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
-    return jsonResponse({ ok: false, error: 'too_late' }, 409);
+  // Staff (admin-signed) links bypass the customer change-window cutoff.
+  const isAdmin = await verifyAdminKey(env, token, body.adminKey);
+  if (!isAdmin) {
+    const cutoffMin = config.cancellationCutoffMinutes ?? config.minLeadMinutes;
+    const oldSlotInstant = londonWallToInstant(booking.slot_start, config.timezone);
+    if (oldSlotInstant.getTime() <= Date.now() + cutoffMin * 60_000) {
+      return jsonResponse({ ok: false, error: 'too_late' }, 409);
+    }
   }
 
   const slotDate = slot.slice(0, 10);
@@ -486,11 +515,12 @@ async function handleReschedule(slug, req, env, ctx) {
   }
 
   // Create new calendar event
+  const newAdminUrl = await adminManageUrl(req, env, slug, newManageToken);
   let googleEvent;
   try {
     googleEvent = await createCalendarEvent(
       env,
-      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note, reg: booking.reg, vehicleSummary: booking.vehicle_summary, address: booking.address, postcode: booking.postcode, customAnswers: oldCustomAnswers },
+      { slotStart: slot, slotEnd, name: booking.name, email: booking.email, phone: booking.phone, note: booking.note, reg: booking.reg, vehicleSummary: booking.vehicle_summary, address: booking.address, postcode: booking.postcode, customAnswers: oldCustomAnswers, manageUrl: newAdminUrl },
       config,
     );
   } catch (err) {
@@ -613,15 +643,15 @@ async function handleMobileRequest(slug, req, env, ctx) {
   if (placement.error === 'out_of_area') return jsonResponse({ ok: false, error: 'out_of_area' }, 400);
   if (placement.error) return jsonResponse({ ok: false, error: 'window_unavailable' }, 409);
 
-  const { slotStart, slotEnd, band } = placement;
+  const { slotStart, slotEnd, band, travelEachWayMin } = placement;
 
   const recentCount = await countRecentBookingsByEmail(env.DB, slug, email, sqliteSince24h());
   if (recentCount >= 3) return jsonResponse({ ok: false, error: 'too_many' }, 429);
 
   const confirmToken = crypto.randomUUID();
-  let bookingId;
+  let bookingId, manageToken;
   try {
-    ({ id: bookingId } = await insertMobileBooking(env.DB, {
+    ({ id: bookingId, manageToken } = await insertMobileBooking(env.DB, {
       slug,
       slotStart,
       slotEnd,
@@ -642,10 +672,12 @@ async function handleMobileRequest(slug, req, env, ctx) {
     throw err;
   }
 
+  const adminUrl = await adminManageUrl(req, env, slug, manageToken);
   let googleEvent;
   try {
     googleEvent = await createPendingMobileEvent(env, {
-      slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow,
+      slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode,
+      arrivalWindow, travelEachWayMin, manageUrl: adminUrl,
     }, config);
   } catch (err) {
     console.error('[booking] pending calendar create error:', err);
@@ -692,6 +724,7 @@ async function handleConfirm(slug, token, req, env, ctx) {
 
   if (booking.google_event_id) {
     try {
+      const adminUrl = await adminManageUrl(req, env, slug, booking.manage_token);
       await confirmMobileCalendarEvent(
         env,
         booking.google_event_id,
@@ -707,6 +740,8 @@ async function handleConfirm(slug, token, req, env, ctx) {
           address: booking.address,
           postcode: booking.postcode,
           arrivalWindow: booking.arrival_window,
+          travelEachWayMin: travelMinForBand(booking.band),
+          manageUrl: adminUrl,
         },
         config,
       );
@@ -807,7 +842,10 @@ export default {
       const config = await getConfig(slug, env);
       if (!config) return new Response('Not found', { status: 404 });
       const rescheduleToken = url.searchParams.get('reschedule') || null;
-      return htmlResponse(renderBookingPage(config, slug, rescheduleToken));
+      // Admin key carried through so a staff-initiated reschedule bypasses the cutoff.
+      let adminKey = url.searchParams.get('k') || null;
+      if (adminKey && !(await verifyAdminKey(env, rescheduleToken, adminKey))) adminKey = null;
+      return htmlResponse(renderBookingPage(config, slug, rescheduleToken, adminKey));
     }
 
     return new Response(`NeoBookworm Booking — ${url.pathname}`, {

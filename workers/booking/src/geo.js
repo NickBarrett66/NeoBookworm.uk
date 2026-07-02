@@ -39,6 +39,17 @@ function bandForRoadMiles(roadMiles) {
   return null;
 }
 
+/**
+ * Travel-each-way minutes for a stored band letter ('A' | 'B' | 'C').
+ * Lets us re-derive the travel margin at confirm time (when we only have the
+ * band stored on the booking, not the original travelEachWayMin).
+ */
+export function travelMinForBand(bandLetter) {
+  const idx = { A: 0, B: 1, C: 2 }[bandLetter];
+  if (idx == null) return null;
+  return DISTANCE_BANDS[idx]?.travelEachWayMin ?? null;
+}
+
 export async function lookupPostcodeLatLon(postcode) {
   const normalised = postcode.replace(/\s+/g, '').toUpperCase();
   const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(normalised)}`);

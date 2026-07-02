@@ -289,7 +289,7 @@ export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.het
 
 export async function createCalendarEvent(
   env,
-  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers, manageUrl },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
@@ -306,6 +306,7 @@ export async function createCalendarEvent(
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
     ...(Array.isArray(customAnswers) ? customAnswers.map((a) => `${a.label}: ${a.value}`) : []),
+    manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -346,21 +347,73 @@ export async function createCalendarEvent(
   return res.json();
 }
 
+// ── Mobile job timing breakdown (single-event, shown in Howie's calendar) ──────
+const MOBILE_FIT_MINUTES_DEFAULT = 45;
+
+function wallTimeLabel(wall) {
+  const [, timePart] = wall.split('T');
+  const [hh, mm] = timePart.split(':');
+  const h = parseInt(hh, 10);
+  const ampm = h < 12 ? 'am' : 'pm';
+  const h12 = h % 12 || 12;
+  return `${h12}:${mm}${ampm}`;
+}
+
+function addMinutesToWall(wall, minutes) {
+  const [datePart, timePart] = wall.split('T');
+  const [h, m, s = '00'] = timePart.split(':');
+  let total = parseInt(h, 10) * 60 + parseInt(m, 10) + minutes;
+  total = ((total % 1440) + 1440) % 1440; // clamp within the day (safe in working hours)
+  const hh = String(Math.floor(total / 60)).padStart(2, '0');
+  const mm = String(total % 60).padStart(2, '0');
+  return `${datePart}T${hh}:${mm}:${s}`;
+}
+
+/**
+ * Break a mobile job's single time block into its travel-out / fit / travel-back
+ * legs. slotStart is when Howie leaves the depot; the customer fit starts after
+ * the outbound travel, and the safety margin trails the return.
+ */
+function computeMobileTiming(slotStart, travelEachWayMin, fitMinutes = MOBILE_FIT_MINUTES_DEFAULT) {
+  const fitStartWall = addMinutesToWall(slotStart, travelEachWayMin);
+  const fitEndWall = addMinutesToWall(fitStartWall, fitMinutes);
+  const backWall = addMinutesToWall(fitEndWall, travelEachWayMin);
+  return {
+    departLabel: wallTimeLabel(slotStart),
+    fitStartLabel: wallTimeLabel(fitStartWall),
+    fitEndLabel: wallTimeLabel(fitEndWall),
+    backLabel: wallTimeLabel(backWall),
+  };
+}
+
+function mobileTimingLines(t, travelEachWayMin) {
+  return [
+    'Timing (one job block):',
+    `  • Depart depot: ${t.departLabel}`,
+    `  • Fit at customer: ${t.fitStartLabel}–${t.fitEndLabel}`,
+    `  • Back at depot: ${t.backLabel}`,
+    `  (travel ~${travelEachWayMin} min each way; safety margin trails)`,
+  ];
+}
+
 export async function createPendingMobileEvent(
   env,
-  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow, travelEachWayMin, fitMinutes, manageUrl },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
 
   const windowLabel = arrivalWindow === 'am' ? 'morning' : 'afternoon';
+  const timing = travelEachWayMin ? computeMobileTiming(slotStart, travelEachWayMin, fitMinutes) : null;
+  const fitRange = timing ? `${timing.fitStartLabel}–${timing.fitEndLabel} ` : '';
   const summary = reg
-    ? `PENDING — Mobile (${windowLabel}): ${name} (${reg})`
-    : `PENDING — Mobile (${windowLabel}): ${name}`;
+    ? `PENDING — Mobile ${fitRange}(${windowLabel}): ${name} (${reg})`
+    : `PENDING — Mobile ${fitRange}(${windowLabel}): ${name}`;
   const description = [
     'Status: PENDING — awaiting Howie confirmation',
     `Arrival window: ${windowLabel}`,
+    ...(timing ? mobileTimingLines(timing, travelEachWayMin) : []),
     `Name: ${name}`,
     `Email: ${email}`,
     phone ? `Phone: ${phone}` : null,
@@ -369,6 +422,7 @@ export async function createPendingMobileEvent(
     address ? `Address: ${address}` : null,
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
+    manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -408,18 +462,21 @@ export async function createPendingMobileEvent(
 export async function confirmMobileCalendarEvent(
   env,
   eventId,
-  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow, travelEachWayMin, fitMinutes, manageUrl },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
 
   const windowLabel = arrivalWindow === 'am' ? 'morning' : 'afternoon';
+  const timing = travelEachWayMin ? computeMobileTiming(slotStart, travelEachWayMin, fitMinutes) : null;
+  const fitRange = timing ? `${timing.fitStartLabel}–${timing.fitEndLabel} ` : '';
   const summary = reg
-    ? `Mobile (${windowLabel}): ${name} (${reg})`
-    : `Mobile (${windowLabel}): ${name}`;
+    ? `Mobile ${fitRange}(${windowLabel}): ${name} (${reg})`
+    : `Mobile ${fitRange}(${windowLabel}): ${name}`;
   const description = [
     `Arrival window: ${windowLabel}`,
+    ...(timing ? mobileTimingLines(timing, travelEachWayMin) : []),
     `Name: ${name}`,
     `Email: ${email}`,
     phone ? `Phone: ${phone}` : null,
@@ -428,6 +485,7 @@ export async function confirmMobileCalendarEvent(
     address ? `Address: ${address}` : null,
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
+    manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)
     .join('\n');
