@@ -363,7 +363,7 @@ async function handleBook(slug, req, env, ctx) {
     sendConfirmationEmail(env, { to: email, name, slotStart, slotEnd, businessName: config.displayName, manageUrl: mUrl }),
   );
   ctx.waitUntil(
-    sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName: config.displayName, reg, vehicleSummary, address, postcode, customAnswers, locationType: config.locationType }),
+    sendBusinessNotificationEmail(env, { name, email, phone, slotStart, slotEnd, businessName: config.displayName, reg, vehicleSummary, address, postcode, customAnswers, locationType: config.locationType, manageUrl: adminUrl }),
   );
 
   return jsonResponse({ ok: true, name, slotStart, slotEnd });
@@ -696,7 +696,7 @@ async function handleMobileRequest(slug, req, env, ctx) {
   ctx.waitUntil(
     sendMobileConfirmRequestEmail(env, {
       name, email, phone, slotStart, slotEnd, businessName: config.displayName,
-      reg, vehicleSummary, address, postcode, arrivalLabel, confirmUrl: cUrl,
+      reg, vehicleSummary, address, postcode, arrivalLabel, confirmUrl: cUrl, manageUrl: adminUrl,
     }),
   );
 
@@ -742,6 +742,7 @@ async function handleConfirm(slug, token, req, env, ctx) {
           arrivalWindow: booking.arrival_window,
           travelEachWayMin: travelMinForBand(booking.band),
           manageUrl: adminUrl,
+          createdAt: booking.created_at,
         },
         config,
       );

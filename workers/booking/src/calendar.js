@@ -82,6 +82,20 @@ function calendarIdFor(env, config) {
   return config?.calendarId ?? env.GOOGLE_CALENDAR_ID;
 }
 
+// "2026-06-23 08:30:00" (SQLite `datetime('now')`, UTC, no offset) -> Date.
+function parseSqliteUtc(sqliteDatetime) {
+  return new Date(sqliteDatetime.replace(' ', 'T') + 'Z');
+}
+
+function bookedAtLabel(instant, timeZone) {
+  const dtf = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+  return dtf.format(instant);
+}
+
 export async function getAccessToken(env) {
   const cached = await env.TOKEN_CACHE.get(TOKEN_CACHE_KEY, 'json');
   if (cached?.token && cached.expiresAt > Date.now() + 60_000) {
@@ -306,6 +320,7 @@ export async function createCalendarEvent(
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
     ...(Array.isArray(customAnswers) ? customAnswers.map((a) => `${a.label}: ${a.value}`) : []),
+    `Booked: ${bookedAtLabel(new Date(), config.timezone)}`,
     manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)
@@ -422,6 +437,7 @@ export async function createPendingMobileEvent(
     address ? `Address: ${address}` : null,
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
+    `Booked: ${bookedAtLabel(new Date(), config.timezone)}`,
     manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)
@@ -462,7 +478,7 @@ export async function createPendingMobileEvent(
 export async function confirmMobileCalendarEvent(
   env,
   eventId,
-  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow, travelEachWayMin, fitMinutes, manageUrl },
+  { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, arrivalWindow, travelEachWayMin, fitMinutes, manageUrl, createdAt },
   config = SLUG_CONFIG.hetyres,
 ) {
   const calendarId = calendarIdFor(env, config);
@@ -485,6 +501,7 @@ export async function confirmMobileCalendarEvent(
     address ? `Address: ${address}` : null,
     postcode ? `Postcode: ${postcode}` : null,
     note ? `Note: ${note}` : null,
+    `Booked: ${bookedAtLabel(createdAt ? parseSqliteUtc(createdAt) : new Date(), config.timezone)}`,
     manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
   ]
     .filter(Boolean)

@@ -73,7 +73,7 @@ function renderConfirmationEmail({ name, slotStart, slotEnd, businessName, manag
 
 const LOCATION_LABELS = { in_person: 'In person', phone: 'Phone call', video: 'Video call' };
 
-function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType }) {
+function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType, manageUrl }) {
   const { dateLine, timeRange, subjectDay, startTime } = formatTimes(slotStart, slotEnd);
   const subject = `New booking — ${subjectDay} at ${startTime}${reg ? ' — ' + reg : ''}`;
   const lines = [
@@ -101,6 +101,11 @@ function renderBusinessNotificationEmail({ name, email, phone, slotStart, slotEn
     lines.push('');
     for (const a of customAnswers) lines.push(`${a.label}: ${a.value}`);
   }
+  if (manageUrl) {
+    lines.push('');
+    lines.push('Need to amend or cancel this booking?');
+    lines.push(`  ${manageUrl}`);
+  }
   return { subject, body: lines.filter((l) => l !== null).join('\n') };
 }
 
@@ -122,7 +127,7 @@ function renderMobileHoldingEmail({ name, arrivalLabel, businessName }) {
 
 function renderMobileConfirmRequestEmail({
   name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary,
-  address, postcode, arrivalLabel, confirmUrl,
+  address, postcode, arrivalLabel, confirmUrl, manageUrl,
 }) {
   const { dateLine, timeRange } = formatTimes(slotStart, slotEnd);
   const subject = `Confirm mobile request — ${arrivalLabel}${reg ? ' — ' + reg : ''}`;
@@ -149,6 +154,11 @@ function renderMobileConfirmRequestEmail({
   lines.push('');
   lines.push('Confirm this visit (sends the customer their firm confirmation):');
   lines.push(`  ${confirmUrl}`);
+  if (manageUrl) {
+    lines.push('');
+    lines.push('Need to amend or cancel this request instead?');
+    lines.push(`  ${manageUrl}`);
+  }
   return { subject, body: lines.join('\n') };
 }
 
@@ -212,7 +222,7 @@ export async function handle(request, env) {
       const { subject, body: text } = renderCancellationEmail({ name, slotStart: String(slotStart), businessName: String(businessName) });
       await sendEmail(env, { to: String(to), subject, body: text, businessName: String(businessName) });
     } else if (type === 'business_notification') {
-      const { name, email: custEmail, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType } = body;
+      const { name, email: custEmail, phone, slotStart, slotEnd, businessName, reg, vehicleSummary, address, postcode, customAnswers, locationType, manageUrl } = body;
       if (!name || !custEmail || !slotStart || !slotEnd || !businessName) return json({ ok: false, error: 'Missing fields' }, 400);
       const to = env.HE_TYRES_TO_EMAIL || env.TO_EMAIL;
       if (!to) return json({ ok: false, error: 'No business notification email configured' }, 500);
@@ -223,6 +233,7 @@ export async function handle(request, env) {
         address: address ? String(address) : null, postcode: postcode ? String(postcode) : null,
         customAnswers: Array.isArray(customAnswers) ? customAnswers : null,
         locationType: locationType ? String(locationType) : null,
+        manageUrl: manageUrl ? String(manageUrl) : null,
       });
       await sendEmail(env, { to, subject, body: text, businessName: String(businessName) });
     } else if (type === 'mobile_holding') {
@@ -235,7 +246,7 @@ export async function handle(request, env) {
     } else if (type === 'mobile_confirm_request') {
       const {
         name, email, phone, slotStart, slotEnd, businessName, reg, vehicleSummary,
-        address, postcode, arrivalLabel, confirmUrl,
+        address, postcode, arrivalLabel, confirmUrl, manageUrl,
       } = body;
       if (!name || !email || !slotStart || !slotEnd || !businessName || !arrivalLabel || !confirmUrl) {
         return json({ ok: false, error: 'Missing fields' }, 400);
@@ -248,6 +259,7 @@ export async function handle(request, env) {
         reg: reg ? String(reg) : null, vehicleSummary: vehicleSummary ? String(vehicleSummary) : null,
         address: address ? String(address) : null, postcode: postcode ? String(postcode) : null,
         arrivalLabel: String(arrivalLabel), confirmUrl: String(confirmUrl),
+        manageUrl: manageUrl ? String(manageUrl) : null,
       });
       await sendEmail(env, { to, subject, body: text, businessName: String(businessName) });
     } else {

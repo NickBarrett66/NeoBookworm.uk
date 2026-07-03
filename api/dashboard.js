@@ -5,7 +5,7 @@
 // ALTER TABLE prospects ADD COLUMN sequence_suppressed INTEGER NOT NULL DEFAULT 0; -- mirrors suppressed state at prospect level
 
 // GET  /api/dashboard?action=summary
-// GET  /api/dashboard?action=prospect_search&q=business&page=N
+// GET  /api/dashboard?action=prospect_search&q=business-or-email&page=N
 // GET  /api/dashboard?action=list&status=X&page=N&q_business=&q_contact=&q_trade=&q_town=&has_website=0|1&min_rating=&max_rating=&emailed_filter=emailed|never&created_from=YYYY-MM-DD&created_to=YYYY-MM-DD&sort1_col=&sort1_dir=asc|desc&sort2_col=&sort2_dir=asc|desc&sort3_col=&sort3_dir=asc|desc
 // GET  /api/dashboard?action=record&id=X
 // GET  /api/dashboard?action=submissions_list&page=N&q=search&handled=0|1|all&source=all|enquiry|intake|contact
@@ -1208,13 +1208,14 @@ module.exports = async (req, res) => {
       return res.status(status).json(data);
     }
 
-    // ── Prospects: business name search (overview) ───────────────────────────
+    // ── Prospects: business name / email search (overview) ───────────────────
     if (action === 'prospect_search') {
       const q = (req.query.q || '').trim();
       if (!q) {
         return res.status(200).json({ ok: true, data: [], total: 0, page: pageNum, pageSize });
       }
       const pct = `%${q}%`;
+      const searchWhere = 'business_name LIKE ? OR email_address LIKE ?';
       const campaignIdExpr = `COALESCE(
         NULLIF(TRIM(prospects.email_campaign_id), ''),
         (SELECT o.campaign_id
@@ -1225,17 +1226,17 @@ module.exports = async (req, res) => {
       )`;
       const [rows, countRows] = await Promise.all([
         queryD1(prospectsDb(),
-          `SELECT notion_id, business_name, status, trade_category, town, contact_name,
+          `SELECT notion_id, business_name, email_address, status, trade_category, town, contact_name,
                   ${campaignIdExpr} AS campaign_id
            FROM prospects
-           WHERE business_name LIKE ?
+           WHERE ${searchWhere}
            ORDER BY business_name ASC
            LIMIT ? OFFSET ?`,
-          [pct, pageSize, offset]
+          [pct, pct, pageSize, offset]
         ),
         queryD1(prospectsDb(),
-          `SELECT COUNT(*) AS total FROM prospects WHERE business_name LIKE ?`,
-          [pct]
+          `SELECT COUNT(*) AS total FROM prospects WHERE ${searchWhere}`,
+          [pct, pct]
         ),
       ]);
       return res.status(200).json({

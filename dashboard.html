@@ -1910,7 +1910,7 @@ function renderSummary(rows) {
       </div>
     </div>
     <div class="summary-search-bar">
-      <input type="search" id="summary-business-search" placeholder="Search by business…" aria-label="Search by business" value="${escAttr(state.summarySearch)}" autocomplete="off" spellcheck="false">
+      <input type="search" id="summary-business-search" placeholder="Search by business or email…" aria-label="Search by business or email" value="${escAttr(state.summarySearch)}" autocomplete="off" spellcheck="false">
     </div>
     <div id="summary-search-results" hidden></div>
     <div class="section-label">Active pipeline</div>
@@ -1986,7 +1986,7 @@ function renderSummarySearchResults({ data: rows, total, pageSize }) {
   if (!container) return;
 
   if (!rows.length) {
-    container.innerHTML = `<div class="search-meta">No businesses matching “${escHtml(state.summarySearch.trim())}”</div>`;
+    container.innerHTML = `<div class="search-meta">No prospects matching “${escHtml(state.summarySearch.trim())}”</div>`;
     return;
   }
 
@@ -2002,6 +2002,7 @@ function renderSummarySearchResults({ data: rows, total, pageSize }) {
         <thead>
           <tr>
             <th>Business</th>
+            <th>Email</th>
             <th>Status</th>
             <th>Campaign</th>
             <th>Trade</th>
@@ -2021,6 +2022,7 @@ function renderSummarySearchResults({ data: rows, total, pageSize }) {
       : '<span class="muted">—</span>';
     tr.innerHTML = `
       <td>${escHtml(row.business_name || '—')}</td>
+      <td class="muted">${escHtml(row.email_address || '—')}</td>
       <td class="muted">${escHtml(row.status || '—')}</td>
       <td>${campCell}</td>
       <td class="muted">${escHtml(row.trade_category || '—')}</td>

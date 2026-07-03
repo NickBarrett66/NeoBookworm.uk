@@ -1091,6 +1091,7 @@ export async function handle(request, env, ctx, url) {
       const qr = (sp.get('q') || '').trim();
       if (!qr) return json({ ok: true, data: [], total: 0, page: pageNum, pageSize });
       const pct = `%${qr}%`;
+      const searchWhere = 'business_name LIKE ? OR email_address LIKE ?';
       const campaignIdExpr = `COALESCE(
         NULLIF(TRIM(prospects.email_campaign_id), ''),
         (SELECT o.campaign_id
@@ -1101,17 +1102,17 @@ export async function handle(request, env, ctx, url) {
       )`;
       const [rows, countRows] = await Promise.all([
         queryD1(env, prospectsDb(env),
-          `SELECT notion_id, business_name, status, trade_category, town, contact_name,
+          `SELECT notion_id, business_name, email_address, status, trade_category, town, contact_name,
                   ${campaignIdExpr} AS campaign_id
            FROM prospects
-           WHERE business_name LIKE ?
+           WHERE ${searchWhere}
            ORDER BY business_name ASC
            LIMIT ? OFFSET ?`,
-          [pct, pageSize, offset]
+          [pct, pct, pageSize, offset]
         ),
         queryD1(env, prospectsDb(env),
-          `SELECT COUNT(*) AS total FROM prospects WHERE business_name LIKE ?`,
-          [pct]
+          `SELECT COUNT(*) AS total FROM prospects WHERE ${searchWhere}`,
+          [pct, pct]
         ),
       ]);
       return json({ ok: true, data: rows, total: countRows[0]?.total || 0, page: pageNum, pageSize });
