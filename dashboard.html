@@ -5373,6 +5373,12 @@ function tenantScalarInput(field, value, idAttr) {
         </div>`;
     }
     default: // text, url
+      if (field.secret) {
+        return `<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <input type="password" ${common} value="${escAttr(v)}" autocomplete="new-password"${field.min ? ` minlength="${field.min}"` : ''} style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none;min-width:280px;flex:1">
+          ${field.key === 'workbenchToken' ? `<button type="button" class="filter-btn wb-token-gen" data-target="${idAttr}" style="font-size:.78rem;padding:.35rem .75rem;border-color:var(--amber);color:var(--amber)">Generate</button>` : ''}
+        </div>`;
+      }
       return `<input type="text" ${common} value="${escAttr(v)}"${field.max ? ` maxlength="${field.max}"` : ''} style="padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--navy-card);color:var(--white);font-size:.88rem;outline:none;min-width:280px">`;
   }
 }
@@ -5496,6 +5502,11 @@ function renderTenantDetail(slug, config, schema) {
       </div>
 
       <p style="color:var(--muted);font-size:.8rem;margin:.2rem 0 1.2rem"><span style="color:var(--blue);font-weight:700">client</span> fields will be editable by the client in their portal (future); <span style="color:var(--muted);font-weight:700">Nick</span> fields are dashboard-only.</p>
+      <div id="workbench-url-preview" style="display:none;margin-bottom:1.2rem;padding:.75rem 1rem;border:1px solid var(--border);border-radius:8px;background:rgba(245,166,35,.08)">
+        <div style="font-size:.8rem;font-weight:700;color:var(--amber);margin-bottom:.35rem">Staff workbench link</div>
+        <a id="workbench-url-link" href="#" target="_blank" rel="noopener" style="color:var(--amber);font-size:.82rem;word-break:break-all"></a>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:.35rem">Bookmark this on Emma &amp; Howie&apos;s phones. Rotate the token above if it leaks.</div>
+      </div>
       ${schema.map(f => tenantFieldRow(f, config[f.key])).join('')}
 
       <div style="display:flex;gap:.8rem;align-items:center;margin:1.6rem 0 2rem">
@@ -5560,6 +5571,48 @@ function renderTenantDetail(slug, config, schema) {
       btn.style.display = 'none';
     });
   });
+
+  function randomWorkbenchToken() {
+    var bytes = new Uint8Array(24);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  function updateWorkbenchUrlPreview() {
+    var box = document.getElementById('workbench-url-preview');
+    var link = document.getElementById('workbench-url-link');
+    if (!box || !link) return;
+    var enabled = document.getElementById('tf-workbenchEnabled');
+    var tokenEl = document.getElementById('tf-workbenchToken');
+    var tenantSlug = slug || (document.getElementById('tenant-slug')?.value || '').trim().toLowerCase();
+    var token = tokenEl ? tokenEl.value.trim() : '';
+    if (enabled && enabled.checked && token.length >= 32 && tenantSlug) {
+      var url = 'https://neobookworm-booking.nickbarrett.workers.dev/' + encodeURIComponent(tenantSlug) + '/workbench?key=' + encodeURIComponent(token);
+      link.href = url;
+      link.textContent = url;
+      box.style.display = '';
+    } else {
+      box.style.display = 'none';
+    }
+  }
+
+  main.querySelectorAll('.wb-token-gen').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (target) {
+        target.type = 'text';
+        target.value = randomWorkbenchToken();
+        target.type = 'password';
+        const en = document.getElementById('tf-workbenchEnabled');
+        if (en && !en.checked) en.checked = true;
+        updateWorkbenchUrlPreview();
+      }
+    });
+  });
+  document.getElementById('tf-workbenchEnabled')?.addEventListener('change', updateWorkbenchUrlPreview);
+  document.getElementById('tf-workbenchToken')?.addEventListener('input', updateWorkbenchUrlPreview);
+  document.getElementById('tenant-slug')?.addEventListener('input', updateWorkbenchUrlPreview);
+  updateWorkbenchUrlPreview();
 
   document.getElementById('tenant-cancel')?.addEventListener('click', () => {
     state.tenantsView = 'list';

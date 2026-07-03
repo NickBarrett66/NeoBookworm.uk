@@ -112,12 +112,41 @@ export async function countRecentBookingsByEmail(db, slug, email, sinceIso) {
   return row?.count ?? 0;
 }
 
+export async function updateBookingPrep(db, { slug, bookingId, prepStatus, internalNote }) {
+  const existing = await db
+    .prepare(`SELECT * FROM bookings WHERE id = ? AND slug = ?`)
+    .bind(bookingId, slug)
+    .first();
+  if (!existing) return null;
+
+  const sets = [];
+  const binds = [];
+  if (prepStatus !== undefined) {
+    sets.push('prep_status = ?');
+    binds.push(prepStatus);
+  }
+  if (internalNote !== undefined) {
+    sets.push('internal_note = ?');
+    binds.push(internalNote === '' || internalNote == null ? null : internalNote);
+  }
+  if (!sets.length) return existing;
+
+  binds.push(bookingId, slug);
+  await db
+    .prepare(`UPDATE bookings SET ${sets.join(', ')} WHERE id = ? AND slug = ?`)
+    .bind(...binds)
+    .run();
+
+  return db.prepare(`SELECT * FROM bookings WHERE id = ?`).bind(bookingId).first();
+}
+
 /** Read-only workbench list — pending mobile + confirmed in [fromDate, toDate]. */
 export async function getWorkbenchBookings(db, slug, fromDate, toDate) {
   const { results } = await db
     .prepare(
       `SELECT id, slot_start, slot_end, name, email, phone, note, reg,
-              address, postcode, type, band, arrival_window, status
+              address, postcode, type, band, arrival_window, status,
+              prep_status, internal_note
        FROM bookings
        WHERE slug = ?
          AND status != 'cancelled'

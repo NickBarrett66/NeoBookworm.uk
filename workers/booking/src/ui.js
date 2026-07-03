@@ -1,4 +1,6 @@
-﻿function escHtml(str) {
+﻿import { workbenchSectionTitle } from './workbench.js';
+
+function escHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -2907,9 +2909,31 @@ function workbenchThemeCss(config) {
     }`;
 }
 
-function renderWorkbenchBookingRowHtml(b) {
+function renderWorkbenchPrepHtml(b) {
+  const isReady = b.prepStatus === 'ready';
+  const advanceBtn = isReady
+    ? `<button type="button" class="wb-prep-btn wb-prep-ready" disabled aria-label="Prep complete">${escHtml(b.prepLabel)} ✓</button>`
+    : `<button type="button" class="wb-prep-btn" data-prep-advance data-id="${escHtml(b.id)}" data-next="${escHtml(b.nextPrepStatus)}" aria-label="Advance prep to ${escHtml(b.advancePrepLabel)}">${escHtml(b.advancePrepLabel)}</button>`;
+  const backBtn = b.prevPrepStatus
+    ? `<button type="button" class="wb-prep-back" data-prep-back data-id="${escHtml(b.id)}" data-prev="${escHtml(b.prevPrepStatus)}" aria-label="Step prep back one stage">‹ Back</button>`
+    : '';
+  const statusPill = `<span class="wb-prep-status" data-prep-label>${escHtml(b.prepLabel)}</span>`;
+  const noteVal = b.internalNote ? escHtml(b.internalNote) : '';
+  return `
+    <div class="wb-prep-row">
+      ${statusPill}
+      <div class="wb-prep-actions">${advanceBtn}${backBtn}</div>
+    </div>
+    <label class="wb-internal-wrap">
+      <span class="wb-internal-label">Private staff note</span>
+      <textarea class="wb-internal-note" data-booking-id="${escHtml(b.id)}" data-saved="${noteVal}" rows="2" maxlength="500" placeholder="Sizes, supplier, due date — customers never see this">${noteVal}</textarea>
+    </label>`;
+}
+
+function renderWorkbenchBookingRowHtml(b, { highlightNotReady = false } = {}) {
   const typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
   const pendingClass = b.isPending ? ' wb-pending-row' : '';
+  const notReadyClass = (highlightNotReady && b.prepStatus !== 'ready') ? ' wb-card-not-ready' : '';
 
   const regHtml = b.reg
     ? `<div class="wb-reg">${escHtml(b.reg)}</div>`
@@ -2942,7 +2966,7 @@ function renderWorkbenchBookingRowHtml(b) {
     : '';
 
   return `
-    <article class="wb-card${pendingClass}">
+    <article class="wb-card${pendingClass}${notReadyClass}" data-booking-id="${escHtml(b.id)}">
       <div class="wb-card-top">
         <span class="wb-time">${escHtml(b.timeLabel)}</span>
         <span class="wb-type ${typeClass}">${escHtml(b.typeLabel)}</span>
@@ -2953,16 +2977,19 @@ function renderWorkbenchBookingRowHtml(b) {
       <div class="wb-contact">${phoneHtml}${phoneHtml && emailHtml ? ' · ' : ''}${emailHtml}</div>
       ${addressHtml}
       ${noteHtml}
+      ${renderWorkbenchPrepHtml(b)}
     </article>`;
 }
 
-function renderWorkbenchSectionHtml(title, bookings, emptyMessage) {
+function renderWorkbenchSectionHtml(title, bookings, emptyMessage, { showReadyCount = false, highlightNotReady = false } = {}) {
+  const heading = workbenchSectionTitle(title, bookings, { showReadyCount });
   const body = bookings.length
-    ? bookings.map(renderWorkbenchBookingRowHtml).join('')
+    ? bookings.map((b) => renderWorkbenchBookingRowHtml(b, { highlightNotReady })).join('')
     : `<p class="wb-empty">${escHtml(emptyMessage)}</p>`;
+  const warnClass = showReadyCount && bookings.some((b) => b.prepStatus !== 'ready') ? ' wb-section-warn' : '';
   return `
-    <section class="wb-section">
-      <h2 class="wb-heading">${escHtml(title)}</h2>
+    <section class="wb-section${warnClass}">
+      <h2 class="wb-heading">${escHtml(heading)}</h2>
       <div class="wb-list">${body}</div>
     </section>`;
 }
@@ -3008,14 +3035,14 @@ export function renderWorkbenchPage(config, slug, key, data) {
     <section class="wb-section wb-section-pending">
       <h2 class="wb-heading">Pending mobile requests</h2>
       ${pendingNote}
-      <div class="wb-list">${data.pending.map(renderWorkbenchBookingRowHtml).join('')}</div>
+      <div class="wb-list">${data.pending.map((b) => renderWorkbenchBookingRowHtml(b)).join('')}</div>
     </section>`
     : '';
 
   const sectionsHtml =
     pendingSection
-    + renderWorkbenchSectionHtml('Today', data.today, 'Nothing booked today')
-    + renderWorkbenchSectionHtml('Tomorrow', data.tomorrow, 'Nothing booked tomorrow')
+    + renderWorkbenchSectionHtml('Today', data.today, 'Nothing booked today', { showReadyCount: true, highlightNotReady: true })
+    + renderWorkbenchSectionHtml('Tomorrow', data.tomorrow, 'Nothing booked tomorrow', { showReadyCount: true, highlightNotReady: true })
     + renderWorkbenchSectionHtml('Next 7 days', data.upcoming, 'Nothing booked in the next week');
 
   const slugJson = JSON.stringify(slug);
@@ -3073,6 +3100,29 @@ export function renderWorkbenchPage(config, slug, key, data) {
       font-size: 0.9375rem; opacity: 0.9; line-height: 1.4; }
     .wb-note-label { display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.05em; opacity: 0.55; margin-bottom: 0.2rem; }
+    .wb-card-not-ready { border-color: rgba(255, 180, 50, 0.75);
+      box-shadow: inset 4px 0 0 rgba(255, 180, 50, 0.95); background: rgba(255, 180, 50, 0.08); }
+    .wb-section-warn .wb-heading { color: #ffc857; opacity: 1; }
+    .wb-prep-row { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.12); }
+    .wb-prep-status { display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; opacity: 0.65; margin-bottom: 0.5rem; }
+    .wb-prep-actions { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
+    .wb-prep-btn { flex: 1; min-height: 48px; min-width: 140px; padding: 0.65rem 1rem; border: none;
+      border-radius: 10px; background: var(--accent); color: var(--accent-fg); font-family: inherit;
+      font-size: 1rem; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+    .wb-prep-btn:active:not(:disabled) { background: var(--accent-h); }
+    .wb-prep-btn:disabled, .wb-prep-ready { opacity: 0.85; cursor: default; }
+    .wb-prep-back { min-height: 48px; padding: 0.65rem 0.85rem; border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px; background: transparent; color: #fff; font-family: inherit; font-size: 0.9375rem;
+      font-weight: 600; cursor: pointer; touch-action: manipulation; }
+    .wb-prep-back:active { background: rgba(255,255,255,0.08); }
+    .wb-internal-wrap { display: block; margin-top: 0.75rem; }
+    .wb-internal-label { display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: rgba(180, 200, 255, 0.85); margin-bottom: 0.35rem; }
+    .wb-internal-note { width: 100%; min-height: 3.5rem; padding: 0.65rem 0.75rem; border-radius: 8px;
+      border: 1px dashed rgba(180, 200, 255, 0.35); background: rgba(0, 0, 0, 0.22); color: #fff;
+      font-family: inherit; font-size: 0.9375rem; line-height: 1.4; resize: vertical; }
+    .wb-internal-note:focus { outline: 2px solid rgba(180, 200, 255, 0.5); outline-offset: 1px; }
     .wb-updated { text-align: center; font-size: 0.75rem; opacity: 0.45; margin-top: 1.5rem; }
   </style>
 </head>
@@ -3090,6 +3140,11 @@ export function renderWorkbenchPage(config, slug, key, data) {
   var SLUG = ${slugJson};
   var KEY = ${keyJson};
   var REFRESH_MS = 5 * 60 * 1000;
+  var PREP_LABELS = { new: 'New', stock_checked: 'Stock checked', ordered: 'Ordered', ready: 'Ready' };
+  var PREP_ADVANCE = { new: 'Check stock', stock_checked: 'Mark ordered', ordered: 'Mark ready', ready: 'Ready' };
+  var PREP_NEXT = { new: 'stock_checked', stock_checked: 'ordered', ordered: 'ready', ready: null };
+  var PREP_PREV = { new: null, stock_checked: 'new', ordered: 'stock_checked', ready: 'ordered' };
+  var noteSaveTimers = {};
 
   function esc(s) {
     return String(s)
@@ -3099,9 +3154,32 @@ export function renderWorkbenchPage(config, slug, key, data) {
       .replace(/"/g, '&quot;');
   }
 
-  function rowHtml(b) {
+  function sectionTitle(title, bookings, showReadyCount) {
+    if (!showReadyCount || !bookings.length) return title;
+    var notReady = bookings.filter(function (b) { return b.prepStatus !== 'ready'; }).length;
+    if (!notReady) return title;
+    return title + ' · ' + notReady + ' of ' + bookings.length + ' not ready';
+  }
+
+  function prepHtml(b) {
+    var isReady = b.prepStatus === 'ready';
+    var advance = isReady
+      ? '<button type="button" class="wb-prep-btn wb-prep-ready" disabled aria-label="Prep complete">' + esc(b.prepLabel || PREP_LABELS.ready) + ' ✓</button>'
+      : '<button type="button" class="wb-prep-btn" data-prep-advance data-id="' + esc(b.id) + '" data-next="' + esc(b.nextPrepStatus) + '">' + esc(b.advancePrepLabel || PREP_ADVANCE[b.prepStatus] || 'Advance') + '</button>';
+    var back = b.prevPrepStatus
+      ? '<button type="button" class="wb-prep-back" data-prep-back data-id="' + esc(b.id) + '" data-prev="' + esc(b.prevPrepStatus) + '">‹ Back</button>'
+      : '';
+    var noteVal = b.internalNote ? esc(b.internalNote) : '';
+    return '<div class="wb-prep-row"><span class="wb-prep-status" data-prep-label>' + esc(b.prepLabel || PREP_LABELS[b.prepStatus] || 'New') + '</span>' +
+      '<div class="wb-prep-actions">' + advance + back + '</div></div>' +
+      '<label class="wb-internal-wrap"><span class="wb-internal-label">Private staff note</span>' +
+      '<textarea class="wb-internal-note" data-booking-id="' + esc(b.id) + '" data-saved="' + noteVal + '" rows="2" maxlength="500" placeholder="Sizes, supplier, due date — customers never see this">' + noteVal + '</textarea></label>';
+  }
+
+  function rowHtml(b, highlightNotReady) {
     var typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
     var pendingClass = b.isPending ? ' wb-pending-row' : '';
+    var notReadyClass = (highlightNotReady && b.prepStatus !== 'ready') ? ' wb-card-not-ready' : '';
     var regHtml = b.reg ? '<div class="wb-reg">' + esc(b.reg) + '</div>' : '';
     var phoneHtml = b.telHref
       ? '<a class="wb-link" href="' + esc(b.telHref) + '">' + esc(b.phone) + '</a>'
@@ -3121,20 +3199,93 @@ export function renderWorkbenchPage(config, slug, key, data) {
       ? '<div class="wb-note"><span class="wb-note-label">Customer note</span> ' + esc(b.note) + '</div>'
       : '';
     var contactSep = phoneHtml && emailHtml ? ' · ' : '';
-    return '<article class="wb-card' + pendingClass + '">' +
+    return '<article class="wb-card' + pendingClass + notReadyClass + '" data-booking-id="' + esc(b.id) + '">' +
       '<div class="wb-card-top"><span class="wb-time">' + esc(b.timeLabel) + '</span>' +
       '<span class="wb-type ' + typeClass + '">' + esc(b.typeLabel) + '</span>' + bandHtml + '</div>' +
       '<div class="wb-name">' + esc(b.name) + '</div>' + regHtml +
       '<div class="wb-contact">' + phoneHtml + contactSep + emailHtml + '</div>' +
-      addressHtml + noteHtml + '</article>';
+      addressHtml + noteHtml + prepHtml(b) + '</article>';
   }
 
-  function sectionHtml(title, bookings, emptyMsg) {
+  function sectionHtml(title, bookings, emptyMsg, opts) {
+    opts = opts || {};
+    var heading = sectionTitle(title, bookings, opts.showReadyCount);
+    var warnClass = opts.showReadyCount && bookings.some(function (b) { return b.prepStatus !== 'ready'; }) ? ' wb-section-warn' : '';
     var body = bookings.length
-      ? bookings.map(rowHtml).join('')
+      ? bookings.map(function (b) { return rowHtml(b, opts.highlightNotReady); }).join('')
       : '<p class="wb-empty">' + esc(emptyMsg) + '</p>';
-    return '<section class="wb-section"><h2 class="wb-heading">' + esc(title) + '</h2>' +
+    return '<section class="wb-section' + warnClass + '"><h2 class="wb-heading">' + esc(heading) + '</h2>' +
       '<div class="wb-list">' + body + '</div></section>';
+  }
+
+  function applyBookingToCard(card, booking) {
+    if (!card || !booking) return;
+    var section = card.closest('.wb-section');
+    var heading = section && section.querySelector('.wb-heading');
+    var baseTitle = heading ? heading.textContent.split(' · ')[0] : '';
+    var highlight = baseTitle === 'Today' || baseTitle === 'Tomorrow';
+    var parent = card.parentNode;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = rowHtml(booking, highlight && booking.prepStatus !== 'ready');
+    var fresh = tmp.firstElementChild;
+    if (fresh && parent) parent.replaceChild(fresh, card);
+    updateReadyCounts();
+  }
+
+  function updateReadyCounts() {
+    document.querySelectorAll('.wb-section').forEach(function (sec) {
+      var h = sec.querySelector('.wb-heading');
+      if (!h) return;
+      var base = h.textContent.split(' · ')[0];
+      if (base !== 'Today' && base !== 'Tomorrow') return;
+      var cards = sec.querySelectorAll('.wb-card');
+      var notReady = 0;
+      cards.forEach(function (c) {
+        if (!c.querySelector('.wb-prep-ready')) notReady++;
+      });
+      if (notReady > 0) {
+        h.textContent = base + ' · ' + notReady + ' of ' + cards.length + ' not ready';
+        sec.classList.add('wb-section-warn');
+        cards.forEach(function (c) {
+          if (!c.querySelector('.wb-prep-ready')) c.classList.add('wb-card-not-ready');
+          else c.classList.remove('wb-card-not-ready');
+        });
+      } else {
+        h.textContent = base;
+        sec.classList.remove('wb-section-warn');
+        cards.forEach(function (c) { c.classList.remove('wb-card-not-ready'); });
+      }
+    });
+  }
+
+  async function postPrep(bookingId, prepStatus) {
+    var res = await fetch('/' + SLUG + '/workbench/prep', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: KEY, bookingId: bookingId, prepStatus: prepStatus }),
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'update_failed');
+    return data.booking;
+  }
+
+  async function saveInternalNote(textarea) {
+    var bookingId = textarea.getAttribute('data-booking-id');
+    var card = textarea.closest('.wb-card');
+    var value = textarea.value;
+    try {
+      var res = await fetch('/' + SLUG + '/workbench/prep', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: KEY, bookingId: bookingId, internalNote: value }),
+      });
+      var data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'save_failed');
+      textarea.dataset.saved = value;
+    } catch (_) {
+      textarea.style.borderColor = 'rgba(255, 100, 100, 0.8)';
+      setTimeout(function () { textarea.style.borderColor = ''; }, 2000);
+    }
   }
 
   function renderAll(data) {
@@ -3143,18 +3294,12 @@ export function renderWorkbenchPage(config, slug, key, data) {
       pending = '<section class="wb-section wb-section-pending">' +
         '<h2 class="wb-heading">Pending mobile requests</h2>' +
         '<p class="wb-pending-note">Confirm or decline via the link in your email — inline buttons coming soon.</p>' +
-        '<div class="wb-list">' + data.pending.map(rowHtml).join('') + '</div></section>';
+        '<div class="wb-list">' + data.pending.map(function (b) { return rowHtml(b, false); }).join('') + '</div></section>';
     }
-    var html = pending +
-      sectionHtml('Today', data.today || [], 'Nothing booked today') +
-      sectionHtml('Tomorrow', data.tomorrow || [], 'Nothing booked tomorrow') +
+    return pending +
+      sectionHtml('Today', data.today || [], 'Nothing booked today', { showReadyCount: true, highlightNotReady: true }) +
+      sectionHtml('Tomorrow', data.tomorrow || [], 'Nothing booked tomorrow', { showReadyCount: true, highlightNotReady: true }) +
       sectionHtml('Next 7 days', data.upcoming || [], 'Nothing booked in the next week');
-    var foot = document.getElementById('wbUpdatedFoot');
-    if (data.updatedAt) {
-      foot.hidden = false;
-      foot.textContent = 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    }
-    return html;
   }
 
   async function refresh() {
@@ -3168,6 +3313,46 @@ export function renderWorkbenchPage(config, slug, key, data) {
         '</p>';
     } catch (_) { /* silent — keep last good render */ }
   }
+
+  document.addEventListener('click', function (e) {
+    var adv = e.target.closest('[data-prep-advance]');
+    if (adv) {
+      e.preventDefault();
+      var id = adv.getAttribute('data-id');
+      var next = adv.getAttribute('data-next');
+      var card = adv.closest('.wb-card');
+      adv.disabled = true;
+      postPrep(id, next).then(function (booking) {
+        applyBookingToCard(card, booking);
+      }).catch(function () {
+        adv.disabled = false;
+      });
+      return;
+    }
+    var back = e.target.closest('[data-prep-back]');
+    if (back) {
+      e.preventDefault();
+      var bid = back.getAttribute('data-id');
+      var prev = back.getAttribute('data-prev');
+      var bcard = back.closest('.wb-card');
+      back.disabled = true;
+      postPrep(bid, prev).then(function (booking) {
+        applyBookingToCard(bcard, booking);
+      }).catch(function () {
+        back.disabled = false;
+      });
+    }
+  });
+
+  document.addEventListener('focusout', function (e) {
+    var ta = e.target;
+    if (!ta.matches || !ta.matches('.wb-internal-note')) return;
+    if (ta.dataset.saved === ta.value) return;
+    clearTimeout(noteSaveTimers[ta.getAttribute('data-booking-id')]);
+    noteSaveTimers[ta.getAttribute('data-booking-id')] = setTimeout(function () {
+      saveInternalNote(ta).then(function () { ta.dataset.saved = ta.value; });
+    }, 300);
+  });
 
   setInterval(refresh, REFRESH_MS);
   document.addEventListener('visibilitychange', function () {

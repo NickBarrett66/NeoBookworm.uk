@@ -22,6 +22,7 @@ import {
   confirmMobileBooking,
   countRecentBookingsByEmail,
   getWorkbenchBookings,
+  updateBookingPrep,
   SlotTakenError,
 } from './db.js';
 import {
@@ -45,6 +46,8 @@ import {
   verifyWorkbenchKey,
   groupWorkbenchBookings,
   addDaysIso,
+  formatWorkbenchBooking,
+  isValidPrepStatus,
   WORKBENCH_HEADERS_HTML,
   WORKBENCH_HEADERS_JSON,
 } from './workbench.js';
@@ -117,6 +120,88 @@ async function handleWorkbenchData(slug, url, env) {
     });
   }
   return new Response(JSON.stringify({ ok: true, ...loaded.data }), {
+    headers: WORKBENCH_HEADERS_JSON,
+  });
+}
+
+async function handleWorkbenchPrep(slug, req, env) {
+  const config = await getConfig(slug, env);
+  if (!config) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  let body;
+  try { body = await req.json(); } catch {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_json' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const { key, bookingId, prepStatus, internalNote } = body || {};
+  if (!verifyWorkbenchKey(config, key || '')) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (!bookingId || typeof bookingId !== 'string') {
+    return new Response(JSON.stringify({ ok: false, error: 'missing_booking_id' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (prepStatus === undefined && internalNote === undefined) {
+    return new Response(JSON.stringify({ ok: false, error: 'nothing_to_update' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (prepStatus !== undefined && !isValidPrepStatus(prepStatus)) {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_prep_status' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (internalNote !== undefined && internalNote !== null && typeof internalNote !== 'string') {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_internal_note' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (typeof internalNote === 'string' && internalNote.length > 500) {
+    return new Response(JSON.stringify({ ok: false, error: 'internal_note_too_long' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const updated = await updateBookingPrep(env.DB, {
+    slug,
+    bookingId,
+    prepStatus,
+    internalNote,
+  });
+
+  if (!updated) {
+    return new Response(JSON.stringify({ ok: false, error: 'not_found' }), {
+      status: 404,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  return new Response(JSON.stringify({
+    ok: true,
+    booking: formatWorkbenchBooking(updated, { timezone: config.timezone || 'Europe/London' }),
+  }), {
     headers: WORKBENCH_HEADERS_JSON,
   });
 }
@@ -890,6 +975,9 @@ export default {
 
     const workbenchDataMatch = url.pathname.match(/^\/([^/]+)\/workbench\/data$/);
     if (req.method === 'GET' && workbenchDataMatch) return handleWorkbenchData(workbenchDataMatch[1], url, env);
+
+    const workbenchPrepMatch = url.pathname.match(/^\/([^/]+)\/workbench\/prep$/);
+    if (req.method === 'POST' && workbenchPrepMatch) return handleWorkbenchPrep(workbenchPrepMatch[1], req, env);
 
     const workbenchMatch = url.pathname.match(/^\/([^/]+)\/workbench$/);
     if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env);

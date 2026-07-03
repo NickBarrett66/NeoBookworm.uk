@@ -3,6 +3,8 @@ import {
   verifyWorkbenchKey,
   groupWorkbenchBookings,
   formatWorkbenchBooking,
+  workbenchSectionTitle,
+  isValidPrepStatus,
 } from '../src/workbench.js';
 import { validatePatch } from '../src/schema.js';
 import { renderWorkbenchRefusalPage, renderWorkbenchPage } from '../src/ui.js';
@@ -75,6 +77,42 @@ describe('formatWorkbenchBooking', () => {
     expect(b.telHref).toBe('tel:07700900000');
     expect(b.typeLabel).toBe('Mobile');
   });
+
+  it('includes prep status and internal note', () => {
+    const b = formatWorkbenchBooking({
+      id: 'x',
+      status: 'confirmed',
+      type: 'depot',
+      slot_start: '2026-07-03T10:00:00',
+      name: 'Jane',
+      prep_status: 'ordered',
+      internal_note: '205/55 R16',
+    });
+    expect(b.prepStatus).toBe('ordered');
+    expect(b.internalNote).toBe('205/55 R16');
+    expect(b.nextPrepStatus).toBe('ready');
+    expect(b.prevPrepStatus).toBe('stock_checked');
+    expect(b.isReady).toBe(false);
+  });
+});
+
+describe('prep status helpers', () => {
+  it('validates prep status vocabulary', () => {
+    expect(isValidPrepStatus('ordered')).toBe(true);
+    expect(isValidPrepStatus('shipped')).toBe(false);
+  });
+
+  it('builds not-ready section titles', () => {
+    const bookings = [
+      { prepStatus: 'new' },
+      { prepStatus: 'ready' },
+      { prepStatus: 'ordered' },
+    ];
+    expect(workbenchSectionTitle('Today', bookings, { showReadyCount: true }))
+      .toBe('Today · 2 of 3 not ready');
+    expect(workbenchSectionTitle('Today', [{ prepStatus: 'ready' }], { showReadyCount: true }))
+      .toBe('Today');
+  });
 });
 
 describe('schema workbench fields', () => {
@@ -107,7 +145,11 @@ describe('workbench pages', () => {
           name: 'Pat', reg: 'AB12 CDE', phone: '07700900000', telHref: 'tel:07700900000', email: 'p@x.com',
           band: 'A', note: '205/55 R16', address: '1 High St', postcode: 'SN1 1AA',
           mapsUrl: 'https://maps.example', slotDate: '2026-07-04' }],
-        today: [],
+        today: [{ id: '2', timeLabel: '9:00am', type: 'depot', typeLabel: 'Depot', isPending: false,
+          name: 'Today', reg: null, phone: '', telHref: null, email: '', band: null, note: null,
+          address: null, postcode: null, mapsUrl: null, slotDate: '2026-07-03',
+          prepStatus: 'new', prepLabel: 'New', advancePrepLabel: 'Check stock',
+          nextPrepStatus: 'stock_checked', prevPrepStatus: null, internalNote: null, isReady: false }],
         tomorrow: [],
         upcoming: [],
         updatedAt: '2026-07-03T12:00:00.000Z',
@@ -118,5 +160,7 @@ describe('workbench pages', () => {
     expect(html).toContain('mailto:p@x.com');
     expect(html).toContain('Nothing booked today');
     expect(html).toContain('visibilitychange');
+    expect(html).toContain('Private staff note');
+    expect(html).toContain('Check stock');
   });
 });

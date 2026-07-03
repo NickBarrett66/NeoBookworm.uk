@@ -1,5 +1,39 @@
 import { formatArrivalWindowLabel } from './mobile.js';
 
+export const PREP_STATUSES = ['new', 'stock_checked', 'ordered', 'ready'];
+
+export const PREP_LABELS = {
+  new: 'New',
+  stock_checked: 'Stock checked',
+  ordered: 'Ordered',
+  ready: 'Ready',
+};
+
+export const PREP_ADVANCE_LABELS = {
+  new: 'Check stock',
+  stock_checked: 'Mark ordered',
+  ordered: 'Mark ready',
+  ready: 'Ready',
+};
+
+export const PREP_NEXT = {
+  new: 'stock_checked',
+  stock_checked: 'ordered',
+  ordered: 'ready',
+  ready: null,
+};
+
+export const PREP_PREV = {
+  new: null,
+  stock_checked: 'new',
+  ordered: 'stock_checked',
+  ready: 'ordered',
+};
+
+export function isValidPrepStatus(value) {
+  return typeof value === 'string' && PREP_STATUSES.includes(value);
+}
+
 export const WORKBENCH_HEADERS_HTML = {
   'Content-Type': 'text/html; charset=utf-8',
   'X-Robots-Tag': 'noindex',
@@ -76,6 +110,8 @@ export function formatWorkbenchBooking(row, { timezone = 'Europe/London', showDa
 
   const mapsUrl = isMobile ? mapsQuery(row.address, row.postcode) : null;
 
+  const prepStatus = row.prep_status || 'new';
+
   return {
     id: row.id,
     timeLabel,
@@ -93,7 +129,22 @@ export function formatWorkbenchBooking(row, { timezone = 'Europe/London', showDa
     band: row.band || null,
     note: row.note || null,
     slotDate: isoDate,
+    prepStatus,
+    prepLabel: PREP_LABELS[prepStatus] || PREP_LABELS.new,
+    advancePrepLabel: PREP_ADVANCE_LABELS[prepStatus] || PREP_ADVANCE_LABELS.new,
+    nextPrepStatus: PREP_NEXT[prepStatus] ?? null,
+    prevPrepStatus: PREP_PREV[prepStatus] ?? null,
+    internalNote: row.internal_note || null,
+    isReady: prepStatus === 'ready',
   };
+}
+
+/** Section heading with optional not-ready count (Today / Tomorrow). */
+export function workbenchSectionTitle(title, bookings, { showReadyCount = false } = {}) {
+  if (!showReadyCount || !bookings?.length) return title;
+  const notReady = bookings.filter((b) => b.prepStatus !== 'ready').length;
+  if (!notReady) return title;
+  return `${title} · ${notReady} of ${bookings.length} not ready`;
 }
 
 /** Group raw rows into pending / today / tomorrow / upcoming (days 2–7). */
