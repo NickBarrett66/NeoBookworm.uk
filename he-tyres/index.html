@@ -7,6 +7,14 @@
        feature — fixed via the Document-Policy: force-load-at-top header in worker/index.js.) -->
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CookieConsent v3 styles (self-hosted) — non-blocking. Without this, the
+       consent bar renders unstyled (not position:fixed) and sits in normal
+       document flow; when the library focuses it for accessibility, the
+       browser auto-scrolls the page down to bring it into view. -->
+  <link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css"
+        media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css"></noscript>
   <title>HEtyres Swindon | Mobile &amp; Depot Tyre Fitting | Cars, Vans &amp; Caravans</title>
   <meta name="description" content="Family-run mobile and depot tyre fitting in Swindon. We come to you, or fit you in at the depot where you watch the work over a coffee. Cars, vans, caravans. Call 01793 876 969.">
   <link rel="canonical" href="https://hetyres.co.uk/">
