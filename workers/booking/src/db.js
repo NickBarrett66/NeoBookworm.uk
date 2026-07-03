@@ -111,3 +111,23 @@ export async function countRecentBookingsByEmail(db, slug, email, sinceIso) {
     .first();
   return row?.count ?? 0;
 }
+
+/** Read-only workbench list — pending mobile + confirmed in [fromDate, toDate]. */
+export async function getWorkbenchBookings(db, slug, fromDate, toDate) {
+  const { results } = await db
+    .prepare(
+      `SELECT id, slot_start, slot_end, name, email, phone, note, reg,
+              address, postcode, type, band, arrival_window, status
+       FROM bookings
+       WHERE slug = ?
+         AND status != 'cancelled'
+         AND (
+           (status = 'pending' AND type = 'mobile')
+           OR (status = 'confirmed' AND substr(slot_start, 1, 10) >= ? AND substr(slot_start, 1, 10) <= ?)
+         )
+       ORDER BY slot_start ASC`,
+    )
+    .bind(slug, fromDate, toDate)
+    .all();
+  return results || [];
+}

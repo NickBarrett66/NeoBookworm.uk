@@ -71,6 +71,7 @@ const BOOLEAN_CONFIG_KEYS = [
   'noteEnabled',
   'noteRequired',
   'regLookup',
+  'workbenchEnabled',
 ];
 
 function normalizeConfig(config) {

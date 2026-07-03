@@ -91,6 +91,10 @@ export const CONFIG_SCHEMA = [
     hint: 'Free: validates the postcode and shows the area. Full: customers pick their exact address (Postcoder, 2 credits/UK lookup; needs POSTCODER_API_KEY secret).' },
   { key: 'customQuestions', label: 'Custom questions', type: 'questions', scope: 'client', phase: 4, default: [],
     hint: 'Extra questions shown on the booking form. Answers appear in the calendar event and your email.' },
+  { key: 'workbenchEnabled', label: 'Staff workbench', type: 'bool', scope: 'nick', phase: 'workbench', default: false,
+    hint: 'Enables the read-only day-view page for staff (bookmark URL with ?key=…).' },
+  { key: 'workbenchToken', label: 'Workbench link token', type: 'text', scope: 'nick', phase: 'workbench', nullable: true, min: 32, max: 128, secret: true,
+    hint: 'Secret token for the staff workbench URL (?key=…). At least 32 characters. Rotate if leaked.' },
 ];
 
 const FIELD_BY_KEY = new Map(CONFIG_SCHEMA.map((f) => [f.key, f]));
@@ -110,6 +114,7 @@ const TYPE_VALIDATORS = {
     }
     if (typeof value !== 'string') return { error: `${field.label} must be text` };
     const v = value.trim();
+    if (field.min != null && v.length < field.min) return { error: `${field.label} must be at least ${field.min} characters` };
     if (field.max && v.length > field.max) return { error: `${field.label} must be ${field.max} characters or fewer` };
     return { value: v };
   },

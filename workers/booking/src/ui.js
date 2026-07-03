@@ -2892,3 +2892,289 @@ export function renderConfirmPage(booking, state, config) {
 </body>
 </html>`;
 }
+
+// ── Staff workbench (read-only day view) ────────────────────────────────────
+
+function workbenchThemeCss(config) {
+  const t = config?.theme || {};
+  return `
+    :root {
+      --bg:         ${t.bg        || '#0f1f3d'};
+      --accent:     ${t.accent    || '#f5a623'};
+      --accent-h:   ${t.accentH   || '#d4891a'};
+      --accent-fg:  ${t.accentFg  || '#0f1f3d'};
+      --accent-rgb: ${t.accentRgb || '245, 166, 35'};
+    }`;
+}
+
+function renderWorkbenchBookingRowHtml(b) {
+  const typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
+  const pendingClass = b.isPending ? ' wb-pending-row' : '';
+
+  const regHtml = b.reg
+    ? `<div class="wb-reg">${escHtml(b.reg)}</div>`
+    : '';
+
+  const phoneHtml = b.telHref
+    ? `<a class="wb-link" href="${escHtml(b.telHref)}">${escHtml(b.phone)}</a>`
+    : (b.phone ? `<span>${escHtml(b.phone)}</span>` : '');
+
+  const emailHtml = b.email
+    ? `<a class="wb-link" href="mailto:${escHtml(b.email)}">${escHtml(b.email)}</a>`
+    : '';
+
+  const bandHtml = b.band
+    ? `<span class="wb-band">Band ${escHtml(b.band)}</span>`
+    : '';
+
+  let addressHtml = '';
+  if (b.type === 'mobile' && (b.address || b.postcode)) {
+    const addrText = [b.address, b.postcode].filter(Boolean).join(', ');
+    if (b.mapsUrl) {
+      addressHtml = `<a class="wb-link wb-address" href="${escHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer">${escHtml(addrText)}</a>`;
+    } else {
+      addressHtml = `<div class="wb-address">${escHtml(addrText)}</div>`;
+    }
+  }
+
+  const noteHtml = b.note
+    ? `<div class="wb-note"><span class="wb-note-label">Customer note</span> ${escHtml(b.note)}</div>`
+    : '';
+
+  return `
+    <article class="wb-card${pendingClass}">
+      <div class="wb-card-top">
+        <span class="wb-time">${escHtml(b.timeLabel)}</span>
+        <span class="wb-type ${typeClass}">${escHtml(b.typeLabel)}</span>
+        ${bandHtml}
+      </div>
+      <div class="wb-name">${escHtml(b.name)}</div>
+      ${regHtml}
+      <div class="wb-contact">${phoneHtml}${phoneHtml && emailHtml ? ' · ' : ''}${emailHtml}</div>
+      ${addressHtml}
+      ${noteHtml}
+    </article>`;
+}
+
+function renderWorkbenchSectionHtml(title, bookings, emptyMessage) {
+  const body = bookings.length
+    ? bookings.map(renderWorkbenchBookingRowHtml).join('')
+    : `<p class="wb-empty">${escHtml(emptyMessage)}</p>`;
+  return `
+    <section class="wb-section">
+      <h2 class="wb-heading">${escHtml(title)}</h2>
+      <div class="wb-list">${body}</div>
+    </section>`;
+}
+
+/** Generic refusal — no tenant name, same for unknown slug or bad key. */
+export function renderWorkbenchRefusalPage() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link not recognised</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/x-icon" href="https://neobookworm.uk/favicon.ico">
+  <style>
+    :root { --bg: #0f1f3d; --accent: #f5a623; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.5; }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 3rem 1.25rem; text-align: center; }
+    h1 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.75rem; }
+    p { margin: 0; opacity: 0.85; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Link not recognised</h1>
+    <p>Ask Nick for a fresh link.</p>
+  </div>
+</body>
+</html>`;
+}
+
+export function renderWorkbenchPage(config, slug, key, data) {
+  const displayName = escHtml(config.displayName);
+  const themeCss = workbenchThemeCss(config);
+
+  const pendingNote = `
+    <p class="wb-pending-note">Confirm or decline via the link in your email — inline buttons coming soon.</p>`;
+
+  const pendingSection = data.pending.length
+    ? `
+    <section class="wb-section wb-section-pending">
+      <h2 class="wb-heading">Pending mobile requests</h2>
+      ${pendingNote}
+      <div class="wb-list">${data.pending.map(renderWorkbenchBookingRowHtml).join('')}</div>
+    </section>`
+    : '';
+
+  const sectionsHtml =
+    pendingSection
+    + renderWorkbenchSectionHtml('Today', data.today, 'Nothing booked today')
+    + renderWorkbenchSectionHtml('Tomorrow', data.tomorrow, 'Nothing booked tomorrow')
+    + renderWorkbenchSectionHtml('Next 7 days', data.upcoming, 'Nothing booked in the next week');
+
+  const slugJson = JSON.stringify(slug);
+  const keyJson = JSON.stringify(key);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workbench | ${displayName}</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/x-icon" href="https://neobookworm.uk/favicon.ico">
+  <link rel="stylesheet" href="https://neobookworm.uk/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://neobookworm.uk/fonts.css"></noscript>
+  <style>
+    ${themeCss}
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: #fff;
+      font-family: 'DM Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.45;
+      -webkit-font-smoothing: antialiased; }
+    .biz-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      padding: 0.875rem 1rem; background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 10; }
+    .biz-name { font-weight: 700; font-size: 1.0625rem; }
+    .biz-meta { font-size: 0.8125rem; opacity: 0.65; white-space: nowrap; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+    .wb-section { margin-bottom: 1.75rem; }
+    .wb-section-pending { padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.12); }
+    .wb-heading { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; opacity: 0.7; margin: 0 0 0.75rem; }
+    .wb-pending-note { font-size: 0.875rem; opacity: 0.8; margin: -0.35rem 0 0.85rem; line-height: 1.4; }
+    .wb-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .wb-empty { margin: 0; padding: 1rem 1.125rem; border-radius: 10px;
+      background: rgba(255,255,255,0.04); font-size: 0.9375rem; opacity: 0.75; }
+    .wb-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 1rem 1.125rem; }
+    .wb-pending-row { border-color: rgba(var(--accent-rgb), 0.45); }
+    .wb-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .wb-time { font-weight: 700; font-size: 1.0625rem; }
+    .wb-type { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 0.2rem 0.5rem; border-radius: 4px; }
+    .wb-type-depot { background: rgba(255,255,255,0.12); }
+    .wb-type-mobile { background: rgba(var(--accent-rgb), 0.25); color: #fff; }
+    .wb-band { font-size: 0.75rem; opacity: 0.7; }
+    .wb-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .wb-reg { font-size: 1rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.35rem;
+      font-variant-numeric: tabular-nums; }
+    .wb-contact { font-size: 1rem; margin-bottom: 0.25rem; }
+    .wb-link { color: var(--accent); text-decoration: none; font-weight: 600;
+      min-height: 44px; display: inline-flex; align-items: center; }
+    .wb-link:active { opacity: 0.85; }
+    .wb-address { display: block; font-size: 0.9375rem; margin-top: 0.35rem; line-height: 1.4; }
+    .wb-note { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9375rem; opacity: 0.9; line-height: 1.4; }
+    .wb-note-label { display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; opacity: 0.55; margin-bottom: 0.2rem; }
+    .wb-updated { text-align: center; font-size: 0.75rem; opacity: 0.45; margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header class="biz-header">
+    <span class="biz-name">${displayName}</span>
+    <span class="biz-meta" id="wbUpdated">Workbench</span>
+  </header>
+  <main class="wrap" id="wbMain">
+    ${sectionsHtml}
+    <p class="wb-updated" id="wbUpdatedFoot" hidden></p>
+  </main>
+  <script>
+(function () {
+  var SLUG = ${slugJson};
+  var KEY = ${keyJson};
+  var REFRESH_MS = 5 * 60 * 1000;
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function rowHtml(b) {
+    var typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
+    var pendingClass = b.isPending ? ' wb-pending-row' : '';
+    var regHtml = b.reg ? '<div class="wb-reg">' + esc(b.reg) + '</div>' : '';
+    var phoneHtml = b.telHref
+      ? '<a class="wb-link" href="' + esc(b.telHref) + '">' + esc(b.phone) + '</a>'
+      : (b.phone ? '<span>' + esc(b.phone) + '</span>' : '');
+    var emailHtml = b.email
+      ? '<a class="wb-link" href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a>'
+      : '';
+    var bandHtml = b.band ? '<span class="wb-band">Band ' + esc(b.band) + '</span>' : '';
+    var addressHtml = '';
+    if (b.type === 'mobile' && (b.address || b.postcode)) {
+      var addrText = [b.address, b.postcode].filter(Boolean).join(', ');
+      addressHtml = b.mapsUrl
+        ? '<a class="wb-link wb-address" href="' + esc(b.mapsUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(addrText) + '</a>'
+        : '<div class="wb-address">' + esc(addrText) + '</div>';
+    }
+    var noteHtml = b.note
+      ? '<div class="wb-note"><span class="wb-note-label">Customer note</span> ' + esc(b.note) + '</div>'
+      : '';
+    var contactSep = phoneHtml && emailHtml ? ' · ' : '';
+    return '<article class="wb-card' + pendingClass + '">' +
+      '<div class="wb-card-top"><span class="wb-time">' + esc(b.timeLabel) + '</span>' +
+      '<span class="wb-type ' + typeClass + '">' + esc(b.typeLabel) + '</span>' + bandHtml + '</div>' +
+      '<div class="wb-name">' + esc(b.name) + '</div>' + regHtml +
+      '<div class="wb-contact">' + phoneHtml + contactSep + emailHtml + '</div>' +
+      addressHtml + noteHtml + '</article>';
+  }
+
+  function sectionHtml(title, bookings, emptyMsg) {
+    var body = bookings.length
+      ? bookings.map(rowHtml).join('')
+      : '<p class="wb-empty">' + esc(emptyMsg) + '</p>';
+    return '<section class="wb-section"><h2 class="wb-heading">' + esc(title) + '</h2>' +
+      '<div class="wb-list">' + body + '</div></section>';
+  }
+
+  function renderAll(data) {
+    var pending = '';
+    if (data.pending && data.pending.length) {
+      pending = '<section class="wb-section wb-section-pending">' +
+        '<h2 class="wb-heading">Pending mobile requests</h2>' +
+        '<p class="wb-pending-note">Confirm or decline via the link in your email — inline buttons coming soon.</p>' +
+        '<div class="wb-list">' + data.pending.map(rowHtml).join('') + '</div></section>';
+    }
+    var html = pending +
+      sectionHtml('Today', data.today || [], 'Nothing booked today') +
+      sectionHtml('Tomorrow', data.tomorrow || [], 'Nothing booked tomorrow') +
+      sectionHtml('Next 7 days', data.upcoming || [], 'Nothing booked in the next week');
+    var foot = document.getElementById('wbUpdatedFoot');
+    if (data.updatedAt) {
+      foot.hidden = false;
+      foot.textContent = 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    }
+    return html;
+  }
+
+  async function refresh() {
+    try {
+      var res = await fetch('/' + SLUG + '/workbench/data?key=' + encodeURIComponent(KEY), { cache: 'no-store' });
+      var data = await res.json();
+      if (!data.ok) return;
+      document.getElementById('wbMain').innerHTML = renderAll(data) +
+        '<p class="wb-updated" id="wbUpdatedFoot"' + (data.updatedAt ? '' : ' hidden') + '>' +
+        (data.updatedAt ? 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '') +
+        '</p>';
+    } catch (_) { /* silent — keep last good render */ }
+  }
+
+  setInterval(refresh, REFRESH_MS);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') refresh();
+  });
+})();
+  <\/script>
+</body>
+</html>`;
+}

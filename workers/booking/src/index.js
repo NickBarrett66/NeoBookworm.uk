@@ -21,6 +21,7 @@ import {
   getBookingByConfirmToken,
   confirmMobileBooking,
   countRecentBookingsByEmail,
+  getWorkbenchBookings,
   SlotTakenError,
 } from './db.js';
 import {
@@ -30,7 +31,7 @@ import {
   sendMobileHoldingEmail,
   sendMobileConfirmRequestEmail,
 } from './email.js';
-import { renderBookingPage, renderManagePage, renderConfirmPage } from './ui.js';
+import { renderBookingPage, renderManagePage, renderConfirmPage, renderWorkbenchPage, renderWorkbenchRefusalPage } from './ui.js';
 import { getMobileWindowsForDay, validateAndPlaceMobileWindow, formatArrivalWindowLabel } from './mobile.js';
 import { travelMinForBand } from './geo.js';
 import { makeAdminKey, verifyAdminKey } from './signing.js';
@@ -40,6 +41,13 @@ import {
   handleAdminTenantPut,
   handleAdminOptions,
 } from './admin.js';
+import {
+  verifyWorkbenchKey,
+  groupWorkbenchBookings,
+  addDaysIso,
+  WORKBENCH_HEADERS_HTML,
+  WORKBENCH_HEADERS_JSON,
+} from './workbench.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -64,6 +72,53 @@ function jsonResponse(body, status = 200) {
 
 function htmlResponse(html) {
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
+function workbenchRefusal() {
+  return new Response(renderWorkbenchRefusalPage(), { headers: WORKBENCH_HEADERS_HTML });
+}
+
+async function loadWorkbenchData(slug, env) {
+  const config = await getConfig(slug, env);
+  if (!config) return null;
+  const today = getTodayLondon();
+  const endDate = addDaysIso(today, 7);
+  const rows = await getWorkbenchBookings(env.DB, slug, today, endDate);
+  const grouped = groupWorkbenchBookings(rows, today, config.timezone || 'Europe/London');
+  return { config, data: { ...grouped, updatedAt: new Date().toISOString() } };
+}
+
+async function handleWorkbenchPage(slug, url, env) {
+  const key = url.searchParams.get('key') || '';
+  const config = await getConfig(slug, env);
+  if (!config || !verifyWorkbenchKey(config, key)) return workbenchRefusal();
+  const loaded = await loadWorkbenchData(slug, env);
+  if (!loaded) return workbenchRefusal();
+  return new Response(
+    renderWorkbenchPage(loaded.config, slug, key, loaded.data),
+    { headers: WORKBENCH_HEADERS_HTML },
+  );
+}
+
+async function handleWorkbenchData(slug, url, env) {
+  const key = url.searchParams.get('key') || '';
+  const config = await getConfig(slug, env);
+  if (!config || !verifyWorkbenchKey(config, key)) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+  const loaded = await loadWorkbenchData(slug, env);
+  if (!loaded) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+  return new Response(JSON.stringify({ ok: true, ...loaded.data }), {
+    headers: WORKBENCH_HEADERS_JSON,
+  });
 }
 
 function getTodayLondon() {
@@ -832,6 +887,12 @@ export default {
 
     const confirmMatch = url.pathname.match(/^\/([^/]+)\/confirm\/([^/]+)$/);
     if (req.method === 'GET' && confirmMatch) return handleConfirm(confirmMatch[1], confirmMatch[2], req, env, ctx);
+
+    const workbenchDataMatch = url.pathname.match(/^\/([^/]+)\/workbench\/data$/);
+    if (req.method === 'GET' && workbenchDataMatch) return handleWorkbenchData(workbenchDataMatch[1], url, env);
+
+    const workbenchMatch = url.pathname.match(/^\/([^/]+)\/workbench$/);
+    if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env);
 
     if (req.method === 'GET' && url.pathname === '/favicon.ico') {
       return Response.redirect('https://neobookworm.uk/favicon.ico', 302);
