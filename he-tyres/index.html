@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Disable the browser's automatic scroll-position restoration so the page always
+       opens at the top instead of "shooting down" to wherever it was last scrolled
+       (amplified by html{scroll-behavior:smooth}). Runs before layout to beat restoration. -->
+  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HEtyres Swindon | Mobile &amp; Depot Tyre Fitting | Cars, Vans &amp; Caravans</title>
   <meta name="description" content="Family-run mobile and depot tyre fitting in Swindon. We come to you, or fit you in at the depot where you watch the work over a coffee. Cars, vans, caravans. Call 01793 876 969.">
