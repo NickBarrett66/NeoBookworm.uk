@@ -78,6 +78,16 @@ export default {
     }
 
     // ── Static assets fall-through ───────────────────────────────────────────
-    return env.ASSETS.fetch(request);
+    const assetRes = await env.ASSETS.fetch(request);
+    // Chrome's scroll-to-text-fragment (#:~:text=...) auto-scrolls the page to
+    // whatever phrase a link happens to encode (e.g. from a Google search result
+    // snippet), with no interaction — this header disables it site-wide so pages
+    // always open at the top.
+    if ((assetRes.headers.get('content-type') || '').includes('text/html')) {
+      const r = new Response(assetRes.body, assetRes);
+      r.headers.set('Document-Policy', 'force-load-at-top');
+      return r;
+    }
+    return assetRes;
   },
 };
