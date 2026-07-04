@@ -114,6 +114,7 @@ export function formatWorkbenchBooking(row, { timezone = 'Europe/London', showDa
 
   return {
     id: row.id,
+    manageToken: row.manage_token || null,
     timeLabel,
     type: isMobile ? 'mobile' : 'depot',
     typeLabel: isMobile ? 'Mobile' : 'Depot',

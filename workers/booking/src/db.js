@@ -85,6 +85,13 @@ export async function getBookingByConfirmToken(db, token) {
     .first();
 }
 
+export async function getBookingById(db, id, slug) {
+  return db
+    .prepare(`SELECT * FROM bookings WHERE id = ? AND slug = ?`)
+    .bind(id, slug)
+    .first();
+}
+
 export async function confirmMobileBooking(db, id) {
   await db
     .prepare(`UPDATE bookings SET status = 'confirmed' WHERE id = ? AND status = 'pending'`)
@@ -146,7 +153,7 @@ export async function getWorkbenchBookings(db, slug, fromDate, toDate) {
     .prepare(
       `SELECT id, slot_start, slot_end, name, email, phone, note, reg,
               address, postcode, type, band, arrival_window, status,
-              prep_status, internal_note
+              prep_status, internal_note, manage_token
        FROM bookings
        WHERE slug = ?
          AND status != 'cancelled'

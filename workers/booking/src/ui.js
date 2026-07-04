@@ -2909,6 +2909,25 @@ function workbenchThemeCss(config) {
     }`;
 }
 
+function renderWorkbenchActionsHtml(b) {
+  if (b.isPending) {
+    return `
+      <div class="wb-actions wb-actions-pending">
+        <button type="button" class="wb-action-btn wb-action-confirm" data-wb-confirm data-id="${escHtml(b.id)}">Confirm visit</button>
+        <button type="button" class="wb-action-btn wb-action-decline" data-wb-decline data-id="${escHtml(b.id)}">Decline</button>
+      </div>`;
+  }
+  if (b.manageToken && b.amendUrl) {
+    const keyAttr = b.adminKey ? ` data-admin-key="${escHtml(b.adminKey)}"` : '';
+    return `
+      <div class="wb-actions">
+        <a class="wb-action-btn wb-action-amend" href="${escHtml(b.amendUrl)}">Amend</a>
+        <button type="button" class="wb-action-btn wb-action-cancel" data-wb-cancel data-token="${escHtml(b.manageToken)}"${keyAttr}>Cancel</button>
+      </div>`;
+  }
+  return '';
+}
+
 function renderWorkbenchPrepHtml(b) {
   const isReady = b.prepStatus === 'ready';
   const advanceBtn = isReady
@@ -2977,7 +2996,8 @@ function renderWorkbenchBookingRowHtml(b, { highlightNotReady = false } = {}) {
       <div class="wb-contact">${phoneHtml}${phoneHtml && emailHtml ? ' · ' : ''}${emailHtml}</div>
       ${addressHtml}
       ${noteHtml}
-      ${renderWorkbenchPrepHtml(b)}
+      ${renderWorkbenchActionsHtml(b)}
+      ${b.isPending ? '' : renderWorkbenchPrepHtml(b)}
     </article>`;
 }
 
@@ -3027,14 +3047,10 @@ export function renderWorkbenchPage(config, slug, key, data) {
   const displayName = escHtml(config.displayName);
   const themeCss = workbenchThemeCss(config);
 
-  const pendingNote = `
-    <p class="wb-pending-note">Confirm or decline via the link in your email — inline buttons coming soon.</p>`;
-
   const pendingSection = data.pending.length
     ? `
     <section class="wb-section wb-section-pending">
       <h2 class="wb-heading">Pending mobile requests</h2>
-      ${pendingNote}
       <div class="wb-list">${data.pending.map((b) => renderWorkbenchBookingRowHtml(b)).join('')}</div>
     </section>`
     : '';
@@ -3123,6 +3139,16 @@ export function renderWorkbenchPage(config, slug, key, data) {
       border: 1px dashed rgba(180, 200, 255, 0.35); background: rgba(0, 0, 0, 0.22); color: #fff;
       font-family: inherit; font-size: 0.9375rem; line-height: 1.4; resize: vertical; }
     .wb-internal-note:focus { outline: 2px solid rgba(180, 200, 255, 0.5); outline-offset: 1px; }
+    .wb-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+    .wb-action-btn { flex: 1; min-height: 48px; min-width: 120px; padding: 0.65rem 1rem; border-radius: 10px;
+      font-family: inherit; font-size: 1rem; font-weight: 700; text-align: center; text-decoration: none;
+      cursor: pointer; touch-action: manipulation; display: inline-flex; align-items: center; justify-content: center; }
+    .wb-action-confirm { border: none; background: var(--accent); color: var(--accent-fg); }
+    .wb-action-confirm:active:not(:disabled) { background: var(--accent-h); }
+    .wb-action-decline, .wb-action-cancel { border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #fff; }
+    .wb-action-decline:active:not(:disabled), .wb-action-cancel:active:not(:disabled) { background: rgba(255,255,255,0.08); }
+    .wb-action-amend { border: 1px solid rgba(var(--accent-rgb), 0.5); background: rgba(var(--accent-rgb), 0.15); color: #fff; }
+    .wb-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .wb-updated { text-align: center; font-size: 0.75rem; opacity: 0.45; margin-top: 1.5rem; }
   </style>
 </head>
@@ -3159,6 +3185,21 @@ export function renderWorkbenchPage(config, slug, key, data) {
     var notReady = bookings.filter(function (b) { return b.prepStatus !== 'ready'; }).length;
     if (!notReady) return title;
     return title + ' · ' + notReady + ' of ' + bookings.length + ' not ready';
+  }
+
+  function actionsHtml(b) {
+    if (b.isPending) {
+      return '<div class="wb-actions wb-actions-pending">' +
+        '<button type="button" class="wb-action-btn wb-action-confirm" data-wb-confirm data-id="' + esc(b.id) + '">Confirm visit</button>' +
+        '<button type="button" class="wb-action-btn wb-action-decline" data-wb-decline data-id="' + esc(b.id) + '">Decline</button></div>';
+    }
+    if (b.manageToken && b.amendUrl) {
+      var keyAttr = b.adminKey ? ' data-admin-key="' + esc(b.adminKey) + '"' : '';
+      return '<div class="wb-actions">' +
+        '<a class="wb-action-btn wb-action-amend" href="' + esc(b.amendUrl) + '">Amend</a>' +
+        '<button type="button" class="wb-action-btn wb-action-cancel" data-wb-cancel data-token="' + esc(b.manageToken) + '"' + keyAttr + '>Cancel</button></div>';
+    }
+    return '';
   }
 
   function prepHtml(b) {
@@ -3204,7 +3245,7 @@ export function renderWorkbenchPage(config, slug, key, data) {
       '<span class="wb-type ' + typeClass + '">' + esc(b.typeLabel) + '</span>' + bandHtml + '</div>' +
       '<div class="wb-name">' + esc(b.name) + '</div>' + regHtml +
       '<div class="wb-contact">' + phoneHtml + contactSep + emailHtml + '</div>' +
-      addressHtml + noteHtml + prepHtml(b) + '</article>';
+      addressHtml + noteHtml + actionsHtml(b) + (b.isPending ? '' : prepHtml(b)) + '</article>';
   }
 
   function sectionHtml(title, bookings, emptyMsg, opts) {
@@ -3288,12 +3329,34 @@ export function renderWorkbenchPage(config, slug, key, data) {
     }
   }
 
+  async function postWorkbenchConfirm(bookingId, action) {
+    var res = await fetch('/' + SLUG + '/workbench/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: KEY, bookingId: bookingId, action: action }),
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'action_failed');
+    return data.outcome;
+  }
+
+  async function postCancel(manageToken, adminKey) {
+    var payload = { token: manageToken };
+    if (adminKey) payload.adminKey = adminKey;
+    var res = await fetch('/' + SLUG + '/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'cancel_failed');
+  }
+
   function renderAll(data) {
     var pending = '';
     if (data.pending && data.pending.length) {
       pending = '<section class="wb-section wb-section-pending">' +
         '<h2 class="wb-heading">Pending mobile requests</h2>' +
-        '<p class="wb-pending-note">Confirm or decline via the link in your email — inline buttons coming soon.</p>' +
         '<div class="wb-list">' + data.pending.map(function (b) { return rowHtml(b, false); }).join('') + '</div></section>';
     }
     return pending +
@@ -3315,6 +3378,40 @@ export function renderWorkbenchPage(config, slug, key, data) {
   }
 
   document.addEventListener('click', function (e) {
+    var confirmBtn = e.target.closest('[data-wb-confirm]');
+    if (confirmBtn) {
+      e.preventDefault();
+      if (!confirm('Confirm this mobile visit? The customer will receive their confirmation email.')) return;
+      var cid = confirmBtn.getAttribute('data-id');
+      confirmBtn.disabled = true;
+      postWorkbenchConfirm(cid, 'confirm').then(function () { refresh(); }).catch(function () {
+        confirmBtn.disabled = false;
+      });
+      return;
+    }
+    var declineBtn = e.target.closest('[data-wb-decline]');
+    if (declineBtn) {
+      e.preventDefault();
+      if (!confirm('Decline this request? The time will be freed and the customer will be emailed.')) return;
+      var did = declineBtn.getAttribute('data-id');
+      declineBtn.disabled = true;
+      postWorkbenchConfirm(did, 'decline').then(function () { refresh(); }).catch(function () {
+        declineBtn.disabled = false;
+      });
+      return;
+    }
+    var cancelBtn = e.target.closest('[data-wb-cancel]');
+    if (cancelBtn) {
+      e.preventDefault();
+      if (!confirm('Cancel this booking? The customer will be notified.')) return;
+      var token = cancelBtn.getAttribute('data-token');
+      var adminKey = cancelBtn.getAttribute('data-admin-key') || null;
+      cancelBtn.disabled = true;
+      postCancel(token, adminKey).then(function () { refresh(); }).catch(function () {
+        cancelBtn.disabled = false;
+      });
+      return;
+    }
     var adv = e.target.closest('[data-prep-advance]');
     if (adv) {
       e.preventDefault();

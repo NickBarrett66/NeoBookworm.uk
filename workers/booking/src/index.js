@@ -19,6 +19,7 @@ import {
   cancelBooking,
   getBookingByToken,
   getBookingByConfirmToken,
+  getBookingById,
   confirmMobileBooking,
   countRecentBookingsByEmail,
   getWorkbenchBookings,
@@ -31,6 +32,7 @@ import {
   sendBusinessNotificationEmail,
   sendMobileHoldingEmail,
   sendMobileConfirmRequestEmail,
+  sendMobileDeclineEmail,
 } from './email.js';
 import { renderBookingPage, renderManagePage, renderConfirmPage, renderWorkbenchPage, renderWorkbenchRefusalPage } from './ui.js';
 import { getMobileWindowsForDay, validateAndPlaceMobileWindow, formatArrivalWindowLabel } from './mobile.js';
@@ -81,21 +83,42 @@ function workbenchRefusal() {
   return new Response(renderWorkbenchRefusalPage(), { headers: WORKBENCH_HEADERS_HTML });
 }
 
-async function loadWorkbenchData(slug, env) {
+async function enrichWorkbenchBooking(booking, slug, req, env) {
+  if (!booking.manageToken) return booking;
+  const adminKey = await makeAdminKey(env, booking.manageToken);
+  const amendUrl = await adminManageUrl(req, env, slug, booking.manageToken);
+  return { ...booking, adminKey, amendUrl };
+}
+
+async function enrichWorkbenchGroup(bookings, slug, req, env) {
+  return Promise.all(bookings.map((b) => enrichWorkbenchBooking(b, slug, req, env)));
+}
+
+async function enrichWorkbenchData(data, slug, req, env) {
+  return {
+    pending: await enrichWorkbenchGroup(data.pending, slug, req, env),
+    today: await enrichWorkbenchGroup(data.today, slug, req, env),
+    tomorrow: await enrichWorkbenchGroup(data.tomorrow, slug, req, env),
+    upcoming: await enrichWorkbenchGroup(data.upcoming, slug, req, env),
+  };
+}
+
+async function loadWorkbenchData(slug, env, req) {
   const config = await getConfig(slug, env);
   if (!config) return null;
   const today = getTodayLondon();
   const endDate = addDaysIso(today, 7);
   const rows = await getWorkbenchBookings(env.DB, slug, today, endDate);
   const grouped = groupWorkbenchBookings(rows, today, config.timezone || 'Europe/London');
-  return { config, data: { ...grouped, updatedAt: new Date().toISOString() } };
+  const enriched = await enrichWorkbenchData(grouped, slug, req, env);
+  return { config, data: { ...enriched, updatedAt: new Date().toISOString() } };
 }
 
-async function handleWorkbenchPage(slug, url, env) {
+async function handleWorkbenchPage(slug, url, env, req) {
   const key = url.searchParams.get('key') || '';
   const config = await getConfig(slug, env);
   if (!config || !verifyWorkbenchKey(config, key)) return workbenchRefusal();
-  const loaded = await loadWorkbenchData(slug, env);
+  const loaded = await loadWorkbenchData(slug, env, req);
   if (!loaded) return workbenchRefusal();
   return new Response(
     renderWorkbenchPage(loaded.config, slug, key, loaded.data),
@@ -103,7 +126,7 @@ async function handleWorkbenchPage(slug, url, env) {
   );
 }
 
-async function handleWorkbenchData(slug, url, env) {
+async function handleWorkbenchData(slug, url, env, req) {
   const key = url.searchParams.get('key') || '';
   const config = await getConfig(slug, env);
   if (!config || !verifyWorkbenchKey(config, key)) {
@@ -112,7 +135,7 @@ async function handleWorkbenchData(slug, url, env) {
       headers: WORKBENCH_HEADERS_JSON,
     });
   }
-  const loaded = await loadWorkbenchData(slug, env);
+  const loaded = await loadWorkbenchData(slug, env, req);
   if (!loaded) {
     return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
       status: 403,
@@ -200,8 +223,90 @@ async function handleWorkbenchPrep(slug, req, env) {
 
   return new Response(JSON.stringify({
     ok: true,
-    booking: formatWorkbenchBooking(updated, { timezone: config.timezone || 'Europe/London' }),
+    booking: await enrichWorkbenchBooking(
+      formatWorkbenchBooking(updated, { timezone: config.timezone || 'Europe/London' }),
+      slug,
+      req,
+      env,
+    ),
   }), {
+    headers: WORKBENCH_HEADERS_JSON,
+  });
+}
+
+async function handleWorkbenchConfirm(slug, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  let body;
+  try { body = await req.json(); } catch {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_json' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const { key, bookingId, action } = body || {};
+  if (!verifyWorkbenchKey(config, key || '')) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (!bookingId || typeof bookingId !== 'string') {
+    return new Response(JSON.stringify({ ok: false, error: 'missing_booking_id' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (action !== 'confirm' && action !== 'decline') {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_action' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const booking = await getBookingById(env.DB, bookingId, slug);
+  if (!booking) {
+    return new Response(JSON.stringify({ ok: false, error: 'not_found' }), {
+      status: 404,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (booking.type !== 'mobile') {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_booking' }), {
+      status: 400,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (action === 'decline' && booking.status === 'confirmed') {
+    return new Response(JSON.stringify({ ok: false, error: 'already_confirmed' }), {
+      status: 409,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (action === 'confirm' && booking.status === 'cancelled') {
+    return new Response(JSON.stringify({ ok: false, error: 'already_declined' }), {
+      status: 409,
+      headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const outcome = action === 'confirm'
+    ? await confirmPendingBooking(booking, slug, config, req, env, ctx)
+    : await declinePendingBooking(booking, slug, config, req, env, ctx);
+
+  return new Response(JSON.stringify({ ok: true, outcome }), {
     headers: WORKBENCH_HEADERS_JSON,
   });
 }
@@ -843,22 +948,13 @@ async function handleMobileRequest(slug, req, env, ctx) {
   return jsonResponse({ ok: true, name, arrivalLabel, date, arrivalWindow });
 }
 
-async function handleConfirm(slug, token, req, env, ctx) {
-  const config = await getConfig(slug, env);
-  if (!config) return new Response('Not found', { status: 404 });
-
-  const booking = await getBookingByConfirmToken(env.DB, token);
-  if (!booking || booking.slug !== slug) {
-    return htmlResponse(renderConfirmPage(null, 'not_found', config));
-  }
-
-  if (booking.status === 'confirmed') {
-    return htmlResponse(renderConfirmPage(booking, 'already_confirmed', config));
-  }
-
-  if (booking.status !== 'pending') {
-    return htmlResponse(renderConfirmPage(booking, 'invalid', config));
-  }
+/**
+ * Core confirm logic — shared by the email link and the workbench.
+ * @returns {'confirmed' | 'already_confirmed' | 'invalid'}
+ */
+async function confirmPendingBooking(booking, slug, config, req, env, ctx) {
+  if (booking.status === 'confirmed') return 'already_confirmed';
+  if (booking.status !== 'pending') return 'invalid';
 
   await confirmMobileBooking(env.DB, booking.id);
 
@@ -903,6 +999,64 @@ async function handleConfirm(slug, token, req, env, ctx) {
     }),
   );
 
+  return 'confirmed';
+}
+
+/**
+ * Decline a pending mobile request — cancel row, free calendar, notify customer.
+ * @returns {'declined' | 'already_declined' | 'invalid'}
+ */
+async function declinePendingBooking(booking, slug, config, req, env, ctx) {
+  if (booking.status === 'cancelled') return 'already_declined';
+  if (booking.status === 'confirmed') return 'invalid';
+  if (booking.status !== 'pending') return 'invalid';
+
+  await cancelBooking(env.DB, booking.id);
+
+  if (booking.google_event_id) {
+    ctx.waitUntil(
+      deleteCalendarEvent(env, booking.google_event_id, config)
+        .catch((err) => console.error('[booking] decline calendar delete error:', err)),
+    );
+  }
+
+  const isoDate = (booking.slot_start || '').slice(0, 10);
+  const arrivalLabel = booking.arrival_window
+    ? formatArrivalWindowLabel(isoDate, booking.arrival_window, config.timezone || 'Europe/London')
+    : null;
+  const { origin } = new URL(req.url);
+  const bookingUrl = `${origin}/${slug}`;
+
+  ctx.waitUntil(
+    sendMobileDeclineEmail(env, {
+      to: booking.email,
+      name: booking.name,
+      arrivalLabel,
+      businessName: config.displayName,
+      bookingUrl,
+    }),
+  );
+
+  return 'declined';
+}
+
+async function handleConfirm(slug, token, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) return new Response('Not found', { status: 404 });
+
+  const booking = await getBookingByConfirmToken(env.DB, token);
+  if (!booking || booking.slug !== slug) {
+    return htmlResponse(renderConfirmPage(null, 'not_found', config));
+  }
+
+  const outcome = await confirmPendingBooking(booking, slug, config, req, env, ctx);
+
+  if (outcome === 'already_confirmed') {
+    return htmlResponse(renderConfirmPage(booking, 'already_confirmed', config));
+  }
+  if (outcome === 'invalid') {
+    return htmlResponse(renderConfirmPage(booking, 'invalid', config));
+  }
   return htmlResponse(renderConfirmPage(booking, 'confirmed', config));
 }
 
@@ -974,13 +1128,18 @@ export default {
     if (req.method === 'GET' && confirmMatch) return handleConfirm(confirmMatch[1], confirmMatch[2], req, env, ctx);
 
     const workbenchDataMatch = url.pathname.match(/^\/([^/]+)\/workbench\/data$/);
-    if (req.method === 'GET' && workbenchDataMatch) return handleWorkbenchData(workbenchDataMatch[1], url, env);
+    if (req.method === 'GET' && workbenchDataMatch) return handleWorkbenchData(workbenchDataMatch[1], url, env, req);
 
     const workbenchPrepMatch = url.pathname.match(/^\/([^/]+)\/workbench\/prep$/);
     if (req.method === 'POST' && workbenchPrepMatch) return handleWorkbenchPrep(workbenchPrepMatch[1], req, env);
 
+    const workbenchConfirmMatch = url.pathname.match(/^\/([^/]+)\/workbench\/confirm$/);
+    if (req.method === 'POST' && workbenchConfirmMatch) {
+      return handleWorkbenchConfirm(workbenchConfirmMatch[1], req, env, ctx);
+    }
+
     const workbenchMatch = url.pathname.match(/^\/([^/]+)\/workbench$/);
-    if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env);
+    if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env, req);
 
     if (req.method === 'GET' && url.pathname === '/favicon.ico') {
       return Response.redirect('https://neobookworm.uk/favicon.ico', 302);

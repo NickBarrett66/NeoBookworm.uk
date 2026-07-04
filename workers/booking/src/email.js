@@ -51,3 +51,7 @@ export async function sendMobileConfirmRequestEmail(env, {
     address, postcode, arrivalLabel, confirmUrl, manageUrl,
   });
 }
+
+export async function sendMobileDeclineEmail(env, { to, name, arrivalLabel, businessName, bookingUrl }) {
+  await postNotify(env, { type: 'mobile_decline', to, name, arrivalLabel, businessName, bookingUrl });
+}

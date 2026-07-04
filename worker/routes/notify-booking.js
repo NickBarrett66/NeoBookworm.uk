@@ -162,6 +162,21 @@ function renderMobileConfirmRequestEmail({
   return { subject, body: lines.join('\n') };
 }
 
+function renderMobileDeclineEmail({ name, arrivalLabel, businessName, bookingUrl }) {
+  const windowPart = arrivalLabel ? ` for ${arrivalLabel}` : '';
+  const subject = `Mobile fitting request${windowPart}`;
+  const lines = [
+    `Hi ${name},`,
+    '',
+    `Sorry — we can't make the mobile fitting visit you requested${windowPart}.`,
+    '',
+    'If you would like to try another day, please book again:',
+  ];
+  if (bookingUrl) lines.push(`  ${bookingUrl}`);
+  lines.push('', `— ${businessName}`);
+  return { subject, body: lines.join('\n') };
+}
+
 function renderCancellationEmail({ name, slotStart, businessName }) {
   const { dateLine, timeRange, subjectDay, startTime } = formatTimes(slotStart, null);
   const subject = `Booking cancelled — ${subjectDay} at ${startTime}`;
@@ -241,6 +256,16 @@ export async function handle(request, env) {
       if (!to || !name || !arrivalLabel || !businessName) return json({ ok: false, error: 'Missing fields' }, 400);
       const { subject, body: text } = renderMobileHoldingEmail({
         name: String(name), arrivalLabel: String(arrivalLabel), businessName: String(businessName),
+      });
+      await sendEmail(env, { to: String(to), subject, body: text, businessName: String(businessName) });
+    } else if (type === 'mobile_decline') {
+      const { to, name, arrivalLabel, businessName, bookingUrl } = body;
+      if (!to || !name || !businessName) return json({ ok: false, error: 'Missing fields' }, 400);
+      const { subject, body: text } = renderMobileDeclineEmail({
+        name: String(name),
+        arrivalLabel: arrivalLabel ? String(arrivalLabel) : null,
+        businessName: String(businessName),
+        bookingUrl: bookingUrl ? String(bookingUrl) : null,
       });
       await sendEmail(env, { to: String(to), subject, body: text, businessName: String(businessName) });
     } else if (type === 'mobile_confirm_request') {
