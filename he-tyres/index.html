@@ -1123,8 +1123,8 @@
         </div>
 
         <div class="contact-form">
-          <h3>Mobile fitting or other enquiry</h3>
-          <p class="lead">Need a mobile visit, a price for unusual tyres, or have a question? Tell us what you need and we'll get straight back. You can also <a href="#book" data-open-book>book depot or mobile fitting above</a>.</p>
+          <h3>Ask a question</h3>
+          <p class="lead">Ready to book? Use <a href="#book" data-open-book>Book fitting</a> above — it covers both depot and mobile visits. Just after a price or have a question first? Send it here and we'll get straight back.</p>
           <form id="enquiryForm" novalidate>
             <div class="form-hp" aria-hidden="true">
               <label for="enquiry-website">Website</label>
@@ -1132,76 +1132,7 @@
             </div>
             <div class="form-notice" id="formNotice" role="alert"></div>
 
-            <!-- Step 1: type selector -->
-            <div class="enquiry-type">
-              <p class="type-label">What do you need?</p>
-              <div class="type-cards" role="group" aria-label="Enquiry type">
-                <label class="type-card" id="typeCardMobile">
-                  <input type="radio" name="enquiry_type" value="mobile">
-                  <span class="type-icon" aria-hidden="true">🚐</span>
-                  <span class="type-title">Fit tyres at my home or work</span>
-                  <span class="type-sub">We come to you — driveway, car park or workplace</span>
-                </label>
-                <label class="type-card" id="typeCardGeneral">
-                  <input type="radio" name="enquiry_type" value="general">
-                  <span class="type-icon" aria-hidden="true">💬</span>
-                  <span class="type-title">Price or general question</span>
-                  <span class="type-sub">Unusual tyres, locking nuts, depot queries</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Step 2a: mobile fitting fields -->
-            <div class="form-section" id="mobileFittingFields" hidden>
-              <div class="form-group">
-                <label for="postcode">Fitting address postcode</label>
-                <div class="pc-hint">We'll use this to confirm we cover your area (15 miles of Swindon).</div>
-                <input type="text" id="postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. SN1 2BL" maxlength="10" style="text-transform:uppercase">
-                <div class="pc-msg" id="postcode-msg"></div>
-              </div>
-              <div class="form-group" id="addressGroup" hidden>
-                <label for="fitting_address">Fitting address <span class="field-opt">(optional)</span></label>
-                <select id="address-picker" hidden></select>
-                <div class="pc-hint" id="address-hint">Add your house number and street to help us find you.</div>
-                <textarea id="fitting_address" name="fitting_address" rows="2" placeholder="e.g. 42 Westmead Drive, Swindon"></textarea>
-              </div>
-              <div class="form-group">
-                <label for="reg">Vehicle registration <span class="field-opt">(optional)</span></label>
-                <div class="reg-row">
-                  <input type="text" id="reg" name="reg" placeholder="e.g. AB12 CDE" maxlength="9" autocomplete="off" class="reg-input">
-                  <button type="button" id="regLookupBtn" class="btn-lookup">Look up</button>
-                </div>
-                <div id="vehicleResult" class="vehicle-result" hidden></div>
-              </div>
-              <div class="form-group">
-                <label for="tyreSize">Tyre size <span class="field-opt">(optional — we'll confirm when we call)</span></label>
-                <input type="text" id="tyreSize" name="tyre_size" placeholder="e.g. 205/55 R16" autocomplete="off">
-              </div>
-              <div class="form-group">
-                <label for="tyreCount">How many tyres?</label>
-                <select id="tyreCount" name="tyre_count">
-                  <option value="">Select</option>
-                  <option value="1">1 tyre</option>
-                  <option value="2">2 tyres</option>
-                  <option value="3">3 tyres</option>
-                  <option value="4">4 tyres</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="timing">When suits you?</label>
-                <select id="timing" name="timing">
-                  <option value="">Select</option>
-                  <option value="Flexible">Flexible — no rush</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="mobileMessage">Anything else we should know? <span class="field-opt">(optional)</span></label>
-                <textarea id="mobileMessage" name="mobile_message" placeholder="e.g. it's a run-flat, gated car park, or I need a specific morning slot"></textarea>
-              </div>
-            </div>
-
-            <!-- Step 2b: general enquiry fields -->
-            <div class="form-section" id="generalEnquiryFields" hidden>
+            <div class="form-section">
               <div class="form-group">
                 <label for="regGeneral">Vehicle registration <span class="field-opt">(optional)</span></label>
                 <div class="reg-row">
@@ -1211,13 +1142,13 @@
                 <div id="vehicleResultGeneral" class="vehicle-result" hidden></div>
               </div>
               <div class="form-group">
+                <label for="tyreSizeGeneral">Tyre size <span class="field-opt">(optional)</span></label>
+                <input type="text" id="tyreSizeGeneral" name="tyre_size" placeholder="e.g. 205/55 R16" autocomplete="off">
+              </div>
+              <div class="form-group">
                 <label for="message">What do you need?</label>
                 <textarea id="message" name="message" placeholder="e.g. price for an unusual tyre size, or I've lost my locking nut key…"></textarea>
               </div>
-            </div>
-
-            <!-- Step 3: common contact fields — revealed after type is chosen -->
-            <div class="form-section" id="commonFields" hidden>
               <div class="form-group">
                 <label for="name">Your name</label>
                 <input type="text" id="name" name="name" autocomplete="name" placeholder="Jane Smith">
@@ -1590,94 +1521,8 @@
         ? ''
         : 'https://neobookworm.uk';
 
-      // ── Type selector ──
-      const typeCards = form.querySelectorAll('.type-card');
-      const mobileFittingFields = document.getElementById('mobileFittingFields');
-      const generalEnquiryFields = document.getElementById('generalEnquiryFields');
-      const commonFields = document.getElementById('commonFields');
-      let selectedType = null;
-
-      // Week-commencing timing options — three Mondays, rolling after Fri 17:00
-      (function () {
-        function ordinal(n) {
-          var s = ['th', 'st', 'nd', 'rd'];
-          var v = n % 100;
-          return n + (s[(v - 20) % 10] || s[v] || s[0]);
-        }
-        function fmtWC(d) {
-          var month = d.toLocaleDateString('en-GB', { month: 'long' });
-          return 'w/c ' + ordinal(d.getDate()) + ' ' + month;
-        }
-        function getFirstAvailableMonday() {
-          var now = new Date();
-          var daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
-          var monday = new Date(now);
-          monday.setHours(0, 0, 0, 0);
-          monday.setDate(now.getDate() - daysSinceMonday);
-          var fridayCutoff = new Date(monday);
-          fridayCutoff.setDate(monday.getDate() + 4);
-          fridayCutoff.setHours(17, 0, 0, 0);
-          if (now > fridayCutoff) {
-            monday.setDate(monday.getDate() + 7);
-          }
-          return monday;
-        }
-        var timingSel = document.getElementById('timing');
-        if (!timingSel) return;
-        var flexibleOpt = timingSel.querySelector('option[value="Flexible"]');
-        var firstMonday = getFirstAvailableMonday();
-        timingSel.innerHTML = '<option value="">Select</option>';
-        for (var i = 0; i < 3; i++) {
-          var d = new Date(firstMonday);
-          d.setDate(firstMonday.getDate() + i * 7);
-          var label = fmtWC(d);
-          var opt = document.createElement('option');
-          opt.value = label;
-          opt.textContent = label;
-          timingSel.appendChild(opt);
-        }
-        if (flexibleOpt) {
-          timingSel.appendChild(flexibleOpt);
-        } else {
-          var flex = document.createElement('option');
-          flex.value = 'Flexible';
-          flex.textContent = 'Flexible — no rush';
-          timingSel.appendChild(flex);
-        }
-      })();
-
-      // Pre-select a card when arriving via a data-select-enquiry link
-      document.querySelectorAll('[data-select-enquiry]').forEach(function (link) {
-        link.addEventListener('click', function () {
-          var type = link.getAttribute('data-select-enquiry');
-          setTimeout(function () {
-            var card = type === 'mobile' ? document.getElementById('typeCardMobile') : document.getElementById('typeCardGeneral');
-            if (card) card.click();
-          }, 600);
-        });
-      });
-
-      typeCards.forEach(function (card) {
-        card.addEventListener('click', function () {
-          const radio = card.querySelector('input[type=radio]');
-          if (!radio) return;
-          radio.checked = true;
-          selectedType = radio.value;
-
-          typeCards.forEach(function (c) { c.classList.remove('selected'); });
-          card.classList.add('selected');
-
-          mobileFittingFields.hidden = (selectedType !== 'mobile');
-          generalEnquiryFields.hidden = (selectedType !== 'general');
-          commonFields.hidden = false;
-
-          notice.className = 'form-notice';
-          notice.textContent = '';
-        });
-      });
-
-      // ── Reg lookup (shared by mobile + general enquiry sections) ──
-      const tyreSizeInput = document.getElementById('tyreSize');
+      // ── Reg lookup ──
+      const tyreSizeInput = document.getElementById('tyreSizeGeneral');
 
       function setupRegLookup(regInput, lookupBtn, vehicleResult, options) {
         const opts = options || {};
@@ -1740,126 +1585,12 @@
         return { getLookedUpVehicle: function () { return lookedUpVehicle; } };
       }
 
-      const mobileRegLookup = setupRegLookup(
-        document.getElementById('reg'),
-        document.getElementById('regLookupBtn'),
-        document.getElementById('vehicleResult'),
-        { tyreSizeInput: tyreSizeInput }
-      );
       const generalRegLookup = setupRegLookup(
         document.getElementById('regGeneral'),
         document.getElementById('regLookupBtnGeneral'),
-        document.getElementById('vehicleResultGeneral')
+        document.getElementById('vehicleResultGeneral'),
+        { tyreSizeInput: tyreSizeInput }
       );
-
-      // ── Postcode blur-validation + address picker ──
-      (function wirePostcode() {
-        const pcEl       = document.getElementById('postcode');
-        const msgEl      = document.getElementById('postcode-msg');
-        if (!pcEl || !msgEl) return;
-        const UK_PC_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
-
-        function setPcMsg(kind, text) {
-          msgEl.className = 'pc-msg' + (kind ? ' ' + kind : '');
-          msgEl.textContent = text;
-        }
-
-        // Free postcodes.io check — validates existence and returns area name. Fails open.
-        async function checkPostcode(pc) {
-          try {
-            const r = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(pc.replace(/\s+/g, '')));
-            if (r.status === 404) return { valid: false, area: null };
-            if (!r.ok) return { valid: true, area: null };
-            const d = await r.json();
-            if (!d || !d.result) return { valid: false, area: null };
-            const parts = [d.result.admin_district, d.result.region].filter(Boolean);
-            return { valid: true, area: parts.join(', ') };
-          } catch (e) { return { valid: true, area: null }; }
-        }
-
-        const addrGroup  = document.getElementById('addressGroup');
-        const addrEl     = document.getElementById('fitting_address');
-        const addrPicker = document.getElementById('address-picker');
-        const addrHint   = document.getElementById('address-hint');
-        let   pickerAddresses = [];
-
-        function setAddrHint(text) { if (addrHint) addrHint.textContent = text; }
-
-        function populatePicker(addresses) {
-          if (!addrPicker) return;
-          pickerAddresses = addresses;
-          let opts = '<option value="">— ' + addresses.length + ' addresses found — select yours —</option>';
-          addresses.forEach(function (a, i) {
-            opts += '<option value="' + i + '">' + a.summary.replace(/</g, '&lt;') + '</option>';
-          });
-          addrPicker.innerHTML = opts;
-          addrPicker.hidden = false;
-          setAddrHint('Select your address above, or type it in the box below.');
-        }
-
-        function resetPicker() {
-          if (addrPicker) { addrPicker.hidden = true; addrPicker.innerHTML = ''; addrPicker.value = ''; }
-          pickerAddresses = [];
-        }
-
-        if (addrPicker) {
-          addrPicker.addEventListener('change', function () {
-            const idx = parseInt(addrPicker.value, 10);
-            if (isNaN(idx)) return;
-            const a = pickerAddresses[idx];
-            if (!a || !addrEl) return;
-            addrEl.value = [a.line1, a.line2, a.town, a.county, a.postcode].filter(function (x) { return x; }).join('\n');
-          });
-        }
-
-        pcEl.addEventListener('blur', async function () {
-          const pc = pcEl.value.trim();
-          if (!pc) { setPcMsg('', ''); if (addrGroup) addrGroup.hidden = true; resetPicker(); return; }
-          if (!UK_PC_RE.test(pc)) { setPcMsg('bad', 'Please enter a valid UK postcode'); if (addrGroup) addrGroup.hidden = true; resetPicker(); return; }
-
-          const a = await checkPostcode(pc);
-          if (!a.valid) {
-            setPcMsg('bad', "We couldn't find that postcode — please check it");
-            if (addrGroup) addrGroup.hidden = true;
-            resetPicker();
-            return;
-          }
-
-          const areaText = a.area || '';
-          setPcMsg('ok', areaText ? '✓ ' + areaText : '✓ Postcode looks good');
-          if (addrGroup) addrGroup.hidden = false;
-          resetPicker();
-          setAddrHint('Looking up addresses…');
-
-          // Full address list from Postcoder proxy — 2 credits per lookup.
-          try {
-            const r = await fetch('/api/he-tyres-enquiry', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'address-lookup', postcode: pc }),
-            });
-            const d = await r.json().catch(function () { return null; });
-            if (r.ok && d && d.addresses && d.addresses.length) {
-              populatePicker(d.addresses);
-              // Pre-fill the textarea with area only if the user hasn't typed anything yet.
-              if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
-            } else {
-              // No addresses or service unavailable — fall back to manual entry.
-              setAddrHint('Add your house number and street to help us find you.');
-              if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
-            }
-          } catch (e) {
-            setAddrHint('Add your house number and street to help us find you.');
-            if (addrEl && !addrEl.value.trim()) addrEl.value = areaText;
-          }
-        });
-
-        pcEl.addEventListener('input', function () {
-          setPcMsg('', '');
-          if (addrGroup) addrGroup.hidden = true;
-          resetPicker();
-        });
-      })();
 
       // ── Submission ──
       form.addEventListener('submit', async function (e) {
@@ -1873,60 +1604,30 @@
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
 
-        if (!selectedType) {
-          notice.className = 'form-notice error';
-          notice.textContent = 'Please choose what you need — mobile fitting or a general question.';
-          return;
-        }
-
         if (!name || !phone) {
           notice.className = 'form-notice error';
           notice.textContent = 'Please fill in your name and phone number.';
           return;
         }
 
-        let payload = { enquiry_type: selectedType, name, phone, email, website };
+        const message = document.getElementById('message').value.trim();
+        if (!message) {
+          notice.className = 'form-notice error';
+          notice.textContent = 'Please tell us what you need.';
+          return;
+        }
 
-        if (selectedType === 'mobile') {
-          const postcode = document.getElementById('postcode').value.trim();
-          if (!postcode) {
-            notice.className = 'form-notice error';
-            notice.textContent = 'Please enter your postcode so we can check our coverage area.';
-            return;
-          }
-          payload.postcode = postcode;
-          const fittingAddrEl = document.getElementById('fitting_address');
-          if (fittingAddrEl) payload.fitting_address = fittingAddrEl.value.trim();
-          const regEl = document.getElementById('reg');
-          payload.reg = regEl ? regEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
-          const lookedUpVehicle = mobileRegLookup.getLookedUpVehicle();
-          if (lookedUpVehicle) {
-            payload.vehicle_make   = lookedUpVehicle.make   || '';
-            payload.vehicle_model  = lookedUpVehicle.model  || '';
-            payload.vehicle_year   = lookedUpVehicle.year   || '';
-            payload.vehicle_colour = lookedUpVehicle.colour || '';
-          }
-          payload.tyre_size   = document.getElementById('tyreSize').value.trim();
-          payload.tyre_count  = document.getElementById('tyreCount').value;
-          payload.timing      = document.getElementById('timing').value;
-          payload.mobile_message = document.getElementById('mobileMessage').value.trim();
-        } else {
-          const message = document.getElementById('message').value.trim();
-          if (!message) {
-            notice.className = 'form-notice error';
-            notice.textContent = 'Please tell us what you need.';
-            return;
-          }
-          const regGeneralEl = document.getElementById('regGeneral');
-          payload.reg = regGeneralEl ? regGeneralEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
-          const lookedUpVehicleGeneral = generalRegLookup.getLookedUpVehicle();
-          if (lookedUpVehicleGeneral) {
-            payload.vehicle_make   = lookedUpVehicleGeneral.make   || '';
-            payload.vehicle_model  = lookedUpVehicleGeneral.model  || '';
-            payload.vehicle_year   = lookedUpVehicleGeneral.year   || '';
-            payload.vehicle_colour = lookedUpVehicleGeneral.colour || '';
-          }
-          payload.message = message;
+        let payload = { enquiry_type: 'general', name, phone, email, website, message };
+
+        const regGeneralEl = document.getElementById('regGeneral');
+        payload.reg = regGeneralEl ? regGeneralEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+        payload.tyre_size = document.getElementById('tyreSizeGeneral').value.trim();
+        const lookedUpVehicleGeneral = generalRegLookup.getLookedUpVehicle();
+        if (lookedUpVehicleGeneral) {
+          payload.vehicle_make   = lookedUpVehicleGeneral.make   || '';
+          payload.vehicle_model  = lookedUpVehicleGeneral.model  || '';
+          payload.vehicle_year   = lookedUpVehicleGeneral.year   || '';
+          payload.vehicle_colour = lookedUpVehicleGeneral.colour || '';
         }
 
         btn.disabled = true;

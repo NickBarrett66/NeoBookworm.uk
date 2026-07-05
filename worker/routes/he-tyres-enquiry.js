@@ -102,7 +102,7 @@ function buildMobileEmail({ name, phone, email, postcode, fitting_address, reg, 
   ].join('\n');
 }
 
-function buildGeneralEmail({ name, phone, email, reg, vehicle_make, vehicle_model, vehicle_year, vehicle_colour, message }) {
+function buildGeneralEmail({ name, phone, email, reg, vehicle_make, vehicle_model, vehicle_year, vehicle_colour, tyre_size, message }) {
   const vehicleLine = (vehicle_make || vehicle_model)
     ? [vehicle_make, vehicle_model, vehicle_year, vehicle_colour].filter(Boolean).join(' ')
     : reg ? '(not looked up)' : '(not provided)';
@@ -115,6 +115,7 @@ function buildGeneralEmail({ name, phone, email, reg, vehicle_make, vehicle_mode
     `Email:         ${email || '(not provided)'}`,
     `Registration:  ${reg || '(not provided)'}`,
     `Vehicle:       ${vehicleLine}`,
+    `Tyre size:     ${tyre_size || '(not provided)'}`,
     '',
     'Message:',
     message,
@@ -168,6 +169,7 @@ async function handleEnquiry(request, env, data) {
       vehicle_model:  str(data.vehicle_model),
       vehicle_year:   str(data.vehicle_year),
       vehicle_colour: str(data.vehicle_colour),
+      tyre_size:      str(data.tyre_size),
       message,
     });
     subject = `HEtyres enquiry from ${name}${reg ? ' — ' + reg : ''}`;
