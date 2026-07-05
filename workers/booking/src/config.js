@@ -72,6 +72,7 @@ const BOOLEAN_CONFIG_KEYS = [
   'noteRequired',
   'regLookup',
   'workbenchEnabled',
+  'demoMode',
 ];
 
 function normalizeConfig(config) {

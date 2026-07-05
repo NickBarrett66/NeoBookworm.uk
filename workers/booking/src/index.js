@@ -571,6 +571,14 @@ async function handleBook(slug, req, env, ctx) {
   const slotStart = slot;
   const slotEnd = wallEndFromStart(slotStart, config.slotDuration, config.timezone);
 
+  // Demo tenants are fully ephemeral: return a realistic success without writing
+  // a booking row, locking the slot, touching Google Calendar or sending email.
+  // (The IP rate-limit above still guards against abuse.) This lets any number of
+  // visitors try the booking flow without degrading availability or leaving junk.
+  if (config.demoMode) {
+    return jsonResponse({ ok: true, name, slotStart, slotEnd });
+  }
+
   try {
     const available = await isSlotAvailable(env, slotStart, config);
     if (!available) return jsonResponse({ ok: false, error: 'slot_taken' }, 409);

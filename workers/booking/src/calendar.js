@@ -130,6 +130,8 @@ export async function getAccessToken(env) {
 }
 
 export async function getBusyPeriods(env, isoDate, config = SLUG_CONFIG.hetyres) {
+  // Demo tenants never touch Google Calendar — every working slot shows as free.
+  if (config?.demoMode) return [];
   const timeZone = config.timezone;
   const calendarId = calendarIdFor(env, config);
   const timeMin = londonWallToInstant(`${isoDate}T00:00:00`, timeZone).toISOString();
@@ -227,6 +229,7 @@ export function wallSlotsToLabels(wallSlots, timeZone = 'Europe/London') {
 }
 
 async function getBusyPeriodsRange(env, timeMin, timeMax, config) {
+  if (config?.demoMode) return [];
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
   const res = await fetch('https://www.googleapis.com/calendar/v3/freeBusy', {
@@ -285,6 +288,7 @@ export async function getAvailableDaysInMonth(env, month, config) {
 }
 
 export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.hetyres) {
+  if (config?.demoMode) return;
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
   const res = await fetch(
@@ -306,6 +310,8 @@ export async function createCalendarEvent(
   { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers, manageUrl },
   config = SLUG_CONFIG.hetyres,
 ) {
+  // Demo tenants: pretend the event was created, without calling Google.
+  if (config?.demoMode) return { id: `demo-${crypto.randomUUID()}` };
   const calendarId = calendarIdFor(env, config);
   const token = await getAccessToken(env);
 
