@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../../Neobookworm Tests"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../Neobookworm Demos"
+		},
+		{
+			"path": "../../Neobookworm Pipeline"
+		},
+		{
+			"path": "D:/NJB/iCloudDrive/07 Board Games/Great Western Trail"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "NeoBookworm.uk"
+	}
+}
