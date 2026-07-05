@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="TyreTrust">
+  <defs>
+    <linearGradient id="ttfold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0.5" stop-color="#f7b23b"/>
+      <stop offset="0.5" stop-color="#e2861f"/>
+    </linearGradient>
+  </defs>
+  <path d="M15 11 L29 11 L32 14.5 L35 11 L49 11
+           Q53 11 53 16 L53 31
+           Q53 45 32 55 Q11 45 11 31 L11 16
+           Q11 11 15 11 Z"
+        fill="url(#ttfold)" stroke="#14243f" stroke-width="2.6" stroke-linejoin="round"/>
+  <g fill="#14243f">
+    <rect x="18.5" y="21" width="27" height="5.6" rx="0.6"/>
+    <rect x="23.4" y="21" width="5.2" height="20" rx="0.6"/>
+    <rect x="35.4" y="21" width="5.2" height="20" rx="0.6"/>
+    <rect x="20.4" y="38.6" width="11.2" height="2.6" rx="0.6"/>
+    <rect x="32.4" y="38.6" width="11.2" height="2.6" rx="0.6"/>
+  </g>
+</svg>

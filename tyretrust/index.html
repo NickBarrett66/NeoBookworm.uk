@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TyreTrust — Websites built only for tyre fitters</title>
 <meta name="description" content="A working website made only for tyre fitters. See a real one running for HE Tyres, try the booking and reg look-up live, then pay me what you think it's worth. Take a look.">
-<link rel="canonical" href="https://tyretrust.uk/">
+<link rel="canonical" href="https://neobookworm.uk/tyretrust/">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://tyretrust.uk/">
+<meta property="og:url" content="https://neobookworm.uk/tyretrust/">
 <meta property="og:title" content="TyreTrust — Websites built only for tyre fitters">
 <meta property="og:description" content="See a real, working website for a tyre fitter. Try the booking and reg look-up yourself. Pay what you think it's worth.">
-<meta property="og:image" content="https://tyretrust.uk/og.webp">
+<meta property="og:image" content="https://neobookworm.uk/tyretrust/og.webp">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<link rel="icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/tyretrust/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/tyretrust/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/tyretrust/images/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/tyretrust/images/apple-touch-icon.png">
 
 <!-- Self-hosted fonts, non-blocking -->
 <link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
@@ -77,7 +80,7 @@
   .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
   .brand{display:flex;align-items:center;gap:11px;font-family:'Playfair Display',serif;font-weight:800;font-size:1.32rem;color:#fff}
   .brand:hover{text-decoration:none}
-  .brand .mark{width:34px;height:34px;flex:0 0 34px}
+  .brand .mark{width:40px;height:40px;flex:0 0 40px}
   .brand b{color:var(--orange)}
   .nav-cta{font-size:.95rem;font-weight:700;color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:8px 18px;border-radius:999px}
   .nav-cta:hover{background:var(--orange);border-color:var(--orange);text-decoration:none}
@@ -220,15 +223,9 @@
 
 <header class="site">
   <div class="container nav">
-    <a class="brand" href="/tyretrust/" aria-label="TyreTrust home">
-      <svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-        <circle cx="32" cy="32" r="30" fill="#10151d" stroke="#f5872a" stroke-width="3"/>
-        <circle cx="32" cy="32" r="12" fill="#14243f"/>
-        <g stroke="#f5872a" stroke-width="3" stroke-linecap="round">
-          <path d="M32 8v10M32 46v10M8 32h10M46 32h10M15 15l7 7M42 42l7 7M49 15l-7 7M22 42l-7 7"/>
-        </g>
-        <path d="M25 31l5 5 10-11" stroke="#12a06a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <a class="brand" href="/tyretrust/" aria-label="TyreTrust — websites for tyre fitters">
+      <img class="mark" src="/tyretrust/images/logo-shield.svg"
+           width="40" height="40" alt="TyreTrust" decoding="async" fetchpriority="high">
       Tyre<b>Trust</b>
     </a>
     <a class="nav-cta" href="#see-yours">See yours built free →</a>
@@ -514,7 +511,7 @@
     <h2>Want to see one wearing your name?</h2>
     <p class="lead center">Email me the name of your tyre business and your town. I'll build you a real site — like the HE Tyres one above — and send you a link. Free to look. Pay only if you like it.</p>
     <div class="final-actions">
-      <a class="btn btn-primary" href="mailto:nick@tyretrust.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Email me — build mine ✉️</a>
+      <a class="btn btn-primary" href="mailto:nick@neobookworm.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Email me — build mine ✉️</a>
       <a class="btn btn-ghost" href="/he-tyres/" target="_blank" rel="noopener">Look at the live example again ↗</a>
     </div>
     <p style="font-size:.88rem;color:#9fb0c7;margin-top:22px">Or just reply to my letter, or wait for my call — no rush, no pressure.</p>
@@ -526,13 +523,13 @@
 <footer class="site">
   <div class="container foot">
     <div>© <span id="yr"></span> TyreTrust — websites built only for tyre fitters. Based in Swindon.</div>
-    <div><a href="mailto:nick@tyretrust.uk">nick@tyretrust.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+    <div><a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
   </div>
 </footer>
 
 <!-- JSON-LD -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://tyretrust.uk/","email":"nick@tyretrust.uk"}
+{"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://neobookworm.uk/tyretrust/","email":"nick@neobookworm.uk"}
 </script>
 
 <script>

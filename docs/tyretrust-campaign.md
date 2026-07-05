@@ -185,8 +185,28 @@ Cheers, take care." (Leaves the door open, costs nothing.)
       call. The look-up cards on the page were already pure client-side mock-ups (£0).
       NOTE: the reg/tyre/address look-ups shown in the *feature menu* are illustrative JS only;
       the *real* paid look-ups only ever run inside a real client's live booking form.
-- [ ] Register tyretrust.uk / .co.uk and deploy the page there (currently in-repo under `/tyretrust/`).
+- [x] **Deployed to production** at `https://neobookworm.uk/tyretrust/` (5 Jul 2026) via the
+      `neobookworm-uk` Worker (`wrangler deploy` from repo root — static assets). Page + all logo
+      assets verified HTTP 200; clean URL `/tyretrust` works. **Two follow-ups before wide use:**
+      (1) `canonical` and `og:url` point at `https://tyretrust.uk/` which isn't live yet — either
+      register/point tyretrust.uk, or switch these to the neobookworm.uk URL if this stays the home;
+      (2) the CTA/letters use `nick@tyretrust.uk`, which has no mailbox yet — set up that address (or
+      swap to `nick@neobookworm.uk`) so replies don't bounce.
+- [ ] Register tyretrust.uk / .co.uk and deploy the page there (then flip asset paths `/tyretrust/images/…` → `/images/…`).
 - [ ] Confirm HE Tyres happy to be the named example.
 - [ ] Pick the top ~5 for bespoke pre-builds (need the prospect list).
 - [ ] Print letters + QR; post Tier 1 (bespoke) and Tier 2 (standard) batches.
-- [ ] Optional: OG image `tyretrust/og.webp` (1200×630) for link previews.
+- [x] **Brand logo** — Gemini-generated TyreTrust logo (tyre badge + amber "TT" shield +
+      "TyreTrust / websites for fitters"). Processed with Pillow into `tyretrust/images/`:
+      `logo-mark.png` (512², transparent circular badge, cropped from the lockup) + `-160`/`-80`
+      variants used as the header mark (reads well on the dark header); `favicon.ico` + 32/16 PNGs;
+      `logo-full.png` (original lockup); and OG `tyretrust/og.webp` (1200×630 cover-crop). Header
+      Source file: `~/Downloads/Gemini_Generated_Image_cz2546cz2546cz25 (1).png`.
+      **Header + favicons use a simplified vector mark** `logo-shield.svg` (just the two-tone
+      amber shield + navy "TT", no tyre ring) so it stays crisp at 16–40px — rendered via sharp to
+      `favicon.ico`/`-32`/`-16` and `apple-touch-icon.png` (shield on navy). The detailed tyre
+      badge (`logo-mark*.png`) and full lockup (`logo-full.png` / `og.webp`) are kept for hero/social
+      use. Header `<img>` points at the SVG at 40px.
+      **Path note (same as he-tyres):** asset links use `/tyretrust/images/…` so they resolve while
+      the page lives at `neobookworm.uk/tyretrust/`; switch to `/images/…` when deployed at the
+      `tyretrust.uk` domain root. `og:image` meta already uses the absolute `https://tyretrust.uk/og.webp`.
