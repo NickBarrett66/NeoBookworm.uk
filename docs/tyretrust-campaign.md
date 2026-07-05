@@ -187,11 +187,12 @@ Cheers, take care." (Leaves the door open, costs nothing.)
       the *real* paid look-ups only ever run inside a real client's live booking form.
 - [x] **Deployed to production** at `https://neobookworm.uk/tyretrust/` (5 Jul 2026) via the
       `neobookworm-uk` Worker (`wrangler deploy` from repo root — static assets). Page + all logo
-      assets verified HTTP 200; clean URL `/tyretrust` works. **Two follow-ups before wide use:**
-      (1) `canonical` and `og:url` point at `https://tyretrust.uk/` which isn't live yet — either
-      register/point tyretrust.uk, or switch these to the neobookworm.uk URL if this stays the home;
-      (2) the CTA/letters use `nick@tyretrust.uk`, which has no mailbox yet — set up that address (or
-      swap to `nick@neobookworm.uk`) so replies don't bounce.
+      assets verified HTTP 200; clean URL `/tyretrust` works. **Interim domain fix applied
+      (5 Jul 2026):** `canonical`, `og:url`, `og:image` and the page's CTA/footer/JSON-LD email now
+      all point at `neobookworm.uk` / `nick@neobookworm.uk` (was `tyretrust.uk` / `nick@tyretrust.uk`)
+      so nothing canonicalises to a dead URL and replies don't bounce. Revert to `tyretrust.uk`
+      once that domain + mailbox exist. **Note:** the printed letters still say `nick@tyretrust.uk`
+      and `tyretrust.uk` — decide whether to print those or use neobookworm.uk before mailing.
 - [ ] Register tyretrust.uk / .co.uk and deploy the page there (then flip asset paths `/tyretrust/images/…` → `/images/…`).
 - [ ] Confirm HE Tyres happy to be the named example.
 - [ ] Pick the top ~5 for bespoke pre-builds (need the prospect list).
