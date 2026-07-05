@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TyreTrust — Your Website Proposal</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/tyretrust/images/favicon.ico">
+<link rel="stylesheet" href="/fonts.css">
+<style>
+  :root{
+    --ink:#10151d; --navy:#14243f; --navy-2:#1c3357;
+    --orange:#f5872a; --orange-dk:#d86f18; --amber:#f5a623;
+    --green:#12a06a; --mist:#f3f6fa; --line:#d9e1ec; --body:#26313f; --muted:#5d6b7d;
+  }
+  @page{ size:A4; margin:14mm 15mm; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--body); line-height:1.55; font-size:11.2pt; background:#fff;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .sheet{ max-width:800px; margin:0 auto; padding:26px 30px 40px; }
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;color:var(--navy);margin:0}
+  h1{font-size:26pt;font-weight:800;letter-spacing:-.4px}
+  h2{font-size:16pt;font-weight:700;margin:0 0 6px}
+  p{margin:0 0 10px}
+  a{color:var(--orange-dk);text-decoration:none}
+  .muted{color:var(--muted)}
+  .accent{width:56px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--amber));margin:10px 0 0}
+
+  /* header */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--navy);padding-bottom:16px;margin-bottom:20px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{width:52px;height:52px}
+  .brand .name{font-family:'Playfair Display',serif;font-weight:800;font-size:20pt;color:var(--navy)}
+  .brand .name b{color:var(--orange)}
+  .brand .tag{font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .head .meta{text-align:right;font-size:9pt;color:var(--muted);line-height:1.5}
+  .head .meta b{color:var(--navy)}
+
+  .prepared{background:var(--mist);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:10pt}
+  .prepared b{color:var(--navy)}
+
+  .intro h1{margin-bottom:8px}
+  .intro .lead{font-size:12pt;color:var(--body);max-width:62ch}
+
+  .try-line{background:var(--navy);color:#eaf0f8;border-radius:10px;padding:11px 16px;margin:14px 0 16px;font-size:10pt}
+  .try-line b{color:var(--amber)}
+  .try-line a{color:#fff;text-decoration:underline}
+
+  /* tiers */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 4px}
+  .tier{border:1px solid var(--line);border-radius:12px;padding:13px 14px;display:flex;flex-direction:column;break-inside:avoid}
+  .tier.featured{border:2px solid var(--orange);background:#fffaf4}
+  .tier .tnum{font-size:8pt;font-weight:700;color:var(--orange);letter-spacing:.12em;text-transform:uppercase}
+  .tier .tname{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:13.5pt;margin:1px 0 0}
+  .tier .pop{display:inline-block;background:var(--orange);color:#fff;font-size:7pt;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:999px;text-transform:uppercase;margin-bottom:6px}
+  .tier .price{margin:8px 0 1px}
+  .tier .price .mo{font-family:'Playfair Display',serif;font-size:18pt;font-weight:800;color:var(--navy)}
+  .tier .price .per{color:var(--muted);font-size:9pt}
+  .tier .setup{font-size:8.6pt;color:var(--muted);margin:0 0 8px;padding-bottom:7px;border-bottom:1px solid var(--mist)}
+  .tier .setup b{color:var(--navy)}
+  .tier ul{list-style:none;padding:0;margin:0;flex:1}
+  .tier ul li{position:relative;padding-left:16px;margin-bottom:4px;font-size:8.9pt;line-height:1.38}
+  .tier ul li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900;font-size:8pt}
+  .tier ul li.head{padding-left:0;color:var(--muted);font-weight:700;font-size:7.6pt;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .tier ul li.head::before{content:""}
+  .tier ul li.allow{color:var(--muted);font-style:italic}
+  .tier ul li.allow::before{content:"★";color:var(--amber)}
+
+  .allplans{text-align:center;font-size:9pt;color:var(--muted);margin:12px 0 0}
+
+  .section{margin-top:18px;break-inside:avoid}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+  .step{background:var(--mist);border-radius:10px;padding:12px 14px}
+  .step .n{font-family:'Playfair Display',serif;font-size:15pt;font-weight:800;color:var(--orange)}
+  .step h3{font-size:11pt;margin:2px 0 3px}
+  .step p{font-size:9.2pt;color:var(--muted);margin:0}
+
+  .pwyt{background:linear-gradient(135deg,var(--ink),var(--navy));color:#eaf0f8;border-radius:12px;padding:15px 22px;margin-top:14px;break-inside:avoid}
+  .pwyt h2{color:#fff;margin-bottom:6px}
+  .pwyt p{color:#c3d0e2;margin:0;font-size:10.4pt}
+  .pwyt .big{font-family:'Playfair Display',serif;color:var(--amber);font-weight:800}
+
+  .foot{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:9pt;color:var(--muted)}
+  .foot .cta{font-size:10.5pt;color:var(--navy);font-weight:700}
+  .foot .cta b{color:var(--orange-dk)}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <div class="brand">
+      <img src="/tyretrust/images/logo-shield.svg" alt="TyreTrust">
+      <div>
+        <div class="name">Tyre<b>Trust</b></div>
+        <div class="tag">Websites for tyre fitters</div>
+      </div>
+    </div>
+    <div class="meta">
+      <b>Website proposal</b><br>
+      Prepared by Nick Barrett<br>
+      nick@neobookworm.uk<br>
+      07494 653 018<br>
+      <span>[ date ]</span>
+    </div>
+  </div>
+
+  <div class="prepared">Prepared for: <b>[ your tyre business ]</b> &nbsp;·&nbsp; A website built only for tyre fitters — free to look, and you only pay if you like it.</div>
+
+  <div class="intro">
+    <h1>A proper website for your tyre business.</h1>
+    <div class="accent"></div>
+    <p class="lead" style="margin-top:14px">Most of your work comes from people who already know you — and that's exactly how a good tyre business should run. A website simply helps the customers who <em>don't</em> know you yet find you when they search, lets them book while the workshop's shut, and gives your happy customers a proper place to send people. Here's what I'd build, and three simple ways to run it.</p>
+  </div>
+
+  <div class="try-line">
+    <b>See it working first.</b> There's a real, live example at <a href="https://neobookworm.uk/tyretrust">neobookworm.uk/tyretrust</a> — try the booking and reg look-up yourself. I built it for HE Tyres in Swindon; you're welcome to ask them about me.
+  </div>
+
+  <div class="tiers">
+    <div class="tier">
+      <div class="tnum">Tier 1</div>
+      <div class="tname">The Site</div>
+      <div class="price"><span class="mo">£9.99</span> <span class="per">/month</span></div>
+      <div class="setup">To build: <b>pay what you think it's worth</b></div>
+      <ul>
+        <li class="head">Your own tyre website</li>
+        <li>Services, tyre brands, reviews, coverage &amp; contact</li>
+        <li>Built to show up when people search for tyres near you</li>
+        <li>Works perfectly on a phone</li>
+        <li>A proper place to send word-of-mouth customers</li>
+        <li>Hosted &amp; looked after — I handle the technical side</li>
+      </ul>
+    </div>
+
+    <div class="tier featured">
+      <span class="pop">Most chosen</span>
+      <div class="tnum">Tier 2</div>
+      <div class="tname">The Booking Engine</div>
+      <div class="price"><span class="mo">£19.99</span> <span class="per">/month</span></div>
+      <div class="setup">To build: <b>£149</b> one-off</div>
+      <ul>
+        <li class="head">Everything in The Site, plus…</li>
+        <li>Online booking — depot or mobile, day or night</li>
+        <li>Email reminder the night before each job</li>
+        <li>One-tap reschedule link — a cancellation becomes a rebooking</li>
+        <li>Every booking drops into your calendar</li>
+      </ul>
+    </div>
+
+    <div class="tier">
+      <div class="tnum">Tier 3</div>
+      <div class="tname">The Full Bay</div>
+      <div class="price"><span class="mo">£49.99</span> <span class="per">/month</span></div>
+      <div class="setup">To build: <b>£349</b> one-off</div>
+      <ul>
+        <li class="head">Everything in The Booking Engine, plus…</li>
+        <li>Reg &amp; tyre-size look-up (plate → make, model, size)</li>
+        <li>Address look-up for mobile jobs</li>
+        <li>Text (SMS) reminders as well as email</li>
+        <li>Automatic review requests + live Google rating on the site</li>
+        <li>Your day on one page — a simple job dashboard</li>
+        <li class="allow">Monthly allowance of look-ups &amp; texts included — your bill stays predictable</li>
+      </ul>
+    </div>
+  </div>
+  <p class="allplans">Every plan is month-to-month — cancel any time, and your web address &amp; site files are always yours to keep. Running a busy multi-bay depot with hundreds of bookings a month? There's a higher-volume plan — just ask and I'll size it to you.</p>
+
+  <div class="section">
+    <h2>How it works</h2>
+    <div class="accent"></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>I build it first</h3><p>I put together a real, working site for your business before you pay a penny.</p></div>
+      <div class="step"><div class="n">2</div><h3>You have a look</h3><p>Try it on your phone, book a pretend slot, show your other half. Anything you'd change, I'll sort.</p></div>
+      <div class="step"><div class="n">3</div><h3>Go live</h3><p>If you like it, we go live — pay what you think for the site, then the simple monthly. Cancel any time.</p></div>
+    </div>
+  </div>
+
+  <div class="pwyt">
+    <h2>Why "pay what you think"?</h2>
+    <p>I'm building my business the same way you built yours — one honest job at a time. The starter site (Tier 1) would normally be £299 to build, but I'd rather it goes live for you than sits on my server. So look at it properly, use it, and <span class="big">pay me what feels fair.</span> No set-up fee on the starter site, no contract, no catch. You only add booking or the full kit later if you want to.</p>
+  </div>
+
+  <div class="foot">
+    <div class="cta">Ready to see yours? Email <b>nick@neobookworm.uk</b> or call <b>07494 653 018</b>.</div>
+    <div>TyreTrust · Swindon</div>
+  </div>
+
+</div>
+</body>
+</html>

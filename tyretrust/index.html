@@ -188,6 +188,29 @@
   .stack-total{background:var(--navy);color:#fff;border-radius:12px;margin:8px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center}
   .stack-total b{font-size:1.35rem;font-family:'Playfair Display',serif}
 
+  /* three tiers */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px;align-items:stretch}
+  .tier{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 24px 26px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);position:relative}
+  .tier.featured{border:2px solid var(--orange);box-shadow:var(--shadow)}
+  .tier .pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:5px 15px;border-radius:999px;text-transform:uppercase;white-space:nowrap}
+  .tier .tnum{font-size:.76rem;font-weight:700;color:var(--orange);letter-spacing:.12em;text-transform:uppercase}
+  .tier .tname{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:1.34rem;margin:2px 0 0}
+  .tier .price{margin:16px 0 2px;display:flex;align-items:baseline;gap:6px}
+  .tier .price .mo{font-family:'Playfair Display',serif;font-size:2.15rem;font-weight:800;color:var(--navy);line-height:1}
+  .tier .price .per{color:var(--muted);font-size:.95rem}
+  .tier .setup{font-size:.9rem;color:var(--muted);margin:0 0 18px;padding-bottom:16px;border-bottom:1px solid var(--mist)}
+  .tier .setup b{color:var(--navy)}
+  .tier ul{list-style:none;padding:0;margin:0 0 22px;flex:1}
+  .tier ul li{position:relative;padding-left:25px;margin-bottom:9px;font-size:.94rem;color:var(--body)}
+  .tier ul li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900}
+  .tier ul li.head{padding-left:0;color:var(--muted);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin:2px 0 10px}
+  .tier ul li.head::before{content:""}
+  .tier ul li.allow{padding-left:25px;color:var(--muted);font-size:.86rem;font-style:italic}
+  .tier ul li.allow::before{content:"★";color:var(--amber)}
+  .tier .btn{width:100%;justify-content:center}
+  .tiers-note{text-align:center;margin:24px auto 0;color:var(--muted);font-size:.93rem;max-width:60ch}
+  @media(max-width:860px){.tiers{grid-template-columns:1fr}}
+
   /* pay what you think */
   .pwyt{background:linear-gradient(135deg,var(--ink),var(--navy));color:#eaf0f8;border-radius:20px;padding:clamp(30px,5vw,52px);text-align:center;box-shadow:var(--shadow)}
   .pwyt h2{color:#fff}
@@ -325,7 +348,7 @@
       <!-- Core site -->
       <div class="feat">
         <div class="ico">🌐</div>
-        <div class="price-tag"><span class="free">FREE to build</span> · then <b>£9.99</b>/mo</div>
+        <div class="price-tag"><b>The Site</b> · from £9.99/mo</div>
         <h3>Your own tyre website</h3>
         <p class="desc">A proper one-page site: services, tyre brands you fit, real reviews, coverage area and a contact form. Built to turn up when someone Googles "tyre fitting near me".</p>
         <ul class="benefit">
@@ -339,7 +362,7 @@
       <!-- Booking -->
       <div class="feat">
         <div class="ico">📅</div>
-        <div class="price-tag">from <b>£6.99</b>/mo · £150 build</div>
+        <div class="price-tag">Included in <b>The Booking Engine</b></div>
         <h3>Online booking</h3>
         <p class="desc">Customers pick a depot or mobile slot, around booked times, day or night. Every web booking is one less call to answer with your hands full.</p>
         <ul class="benefit">
@@ -353,7 +376,7 @@
       <!-- Reg lookup -->
       <div class="feat">
         <div class="ico">🚗</div>
-        <div class="price-tag">£25 build · <b>£20</b>/100 lookups</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
         <h3>Reg look-up <small style="font-weight:400;color:var(--muted)">(TyreTrust RegFill)</small></h3>
         <p class="desc">The customer types their number plate. Make, model and colour fill themselves in — fewer mistakes, less typing, right details first time.</p>
         <div class="demo-box">
@@ -369,7 +392,7 @@
       <!-- Tyre lookup -->
       <div class="feat">
         <div class="ico">⭕</div>
-        <div class="price-tag">£25 build · <b>£75</b>/500 lookups</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
         <h3>Tyre-size look-up</h3>
         <p class="desc">From the same reg, the tyre size drops in too. No more "hang on, what size are you after?" — you get the right rubber lined up earlier.</p>
         <div class="demo-box">
@@ -385,7 +408,7 @@
       <!-- Address lookup -->
       <div class="feat">
         <div class="ico">📍</div>
-        <div class="price-tag">£25 build · <b>£40</b>/250 lookups</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
         <h3>Address look-up</h3>
         <p class="desc">For mobile jobs: the customer enters a postcode and picks their address from a list. Cleaner addresses, no wild-goose chases to the wrong street.</p>
         <div class="demo-box">
@@ -401,7 +424,7 @@
       <!-- Reminders -->
       <div class="feat">
         <div class="ico">🔔</div>
-        <div class="price-tag">£25 build · SMS from <b>£15</b></div>
+        <div class="price-tag">Email in <b>Booking Engine</b> · SMS in <b>Full Bay</b></div>
         <h3>Reminders &amp; reschedule links</h3>
         <p class="desc">The night before, every customer gets a "see you at 10:15" by email or text — with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
         <div class="demo-box">
@@ -417,7 +440,7 @@
       <!-- Reviews + rating -->
       <div class="feat">
         <div class="ico">⭐</div>
-        <div class="price-tag">£25 build each</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
         <h3>Auto review requests &amp; live Google rating</h3>
         <p class="desc">After each job, a review request goes out on its own. Your live Google score shows on the site — proof you're not cherry-picking, and it keeps Google seeing an active business.</p>
         <div class="demo-box">
@@ -431,7 +454,7 @@
       <!-- Tyre management -->
       <div class="feat wide">
         <div class="ico">🗓️</div>
-        <div class="price-tag">£150 build</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
         <h3>Your day, on one page</h3>
         <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
         <ul class="benefit" style="columns:2;column-gap:32px">
@@ -446,28 +469,70 @@
   </div>
 </section>
 
-<!-- HOW IT GROWS / PRICING -->
+<!-- THREE TIERS / PRICING -->
 <section id="pricing">
   <div class="container">
-    <div class="grows">
-      <div>
-        <span class="eyebrow">The honest bit about money</span>
-        <h2>Small monthly, big control.</h2>
-        <p class="lead">Nothing here is a scary lump sum. The site itself costs nothing to build and £9.99 a month to keep live. Add-ons are pounds, not hundreds — and you turn them on only when you want them.</p>
-        <p>A fair few fitters start with just the site. Some add booking a month later once they've felt how many calls it saves. That's the idea — it grows at your pace, and you can stop any of it whenever you like.</p>
-        <a class="btn btn-primary" href="#see-yours">See yours built free →</a>
-      </div>
-      <div>
-        <div class="stack">
-          <div class="stack-row"><div class="l"><b>Your tyre website</b><small>Free to build · always the core</small></div><div class="p">£9.99/mo</div></div>
-          <div class="stack-row"><div class="l"><b>+ Online booking</b><small>Optional — add when ready</small></div><div class="p">£6.99/mo</div></div>
-          <div class="stack-row"><div class="l"><b>+ Reg &amp; tyre look-up</b><small>Pay per lookups used</small></div><div class="p">from £20</div></div>
-          <div class="stack-row"><div class="l"><b>+ Reminders / reviews</b><small>Small one-off setups</small></div><div class="p">£25 each</div></div>
-        </div>
-        <div class="stack-total"><span>Typical fitter, site + booking</span><b>≈ £16.98/mo</b></div>
-        <p style="font-size:.85rem;color:var(--muted);text-align:center;margin:10px 4px 0">Cancel any part any time. Your web address and site files are yours to keep.</p>
-      </div>
+    <div class="center">
+      <span class="eyebrow">Simple plans, no lock-in</span>
+      <h2>Three ways to run it. Start wherever you like.</h2>
+      <div class="accent-bar"></div>
+      <p class="lead center" style="margin:18px auto 0">Most fitters begin with the site and add the rest when they're ready. Every plan is month-to-month — cancel any time, and your web address and files are always yours to keep.</p>
     </div>
+
+    <div class="tiers">
+
+      <!-- Tier 1 -->
+      <div class="tier">
+        <div class="tnum">Tier 1</div>
+        <div class="tname">The Site</div>
+        <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
+        <div class="setup">To build: <b>pay what you think it's worth</b></div>
+        <ul>
+          <li class="head">Your own tyre website</li>
+          <li>Services, tyre brands, reviews &amp; contact</li>
+          <li>Turns up when people search for tyres</li>
+          <li>Looks right on a phone</li>
+          <li>A proper place to send word-of-mouth</li>
+        </ul>
+        <a class="btn btn-dark" href="#see-yours">Start here — free to look</a>
+      </div>
+
+      <!-- Tier 2 (featured) -->
+      <div class="tier featured">
+        <span class="pop">Most popular</span>
+        <div class="tnum">Tier 2</div>
+        <div class="tname">The Booking Engine</div>
+        <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
+        <div class="setup">To build: <b>£149</b> one-off</div>
+        <ul>
+          <li class="head">Everything in The Site, plus…</li>
+          <li>Online booking — depot &amp; mobile, day or night</li>
+          <li>Email reminder the night before each job</li>
+          <li>One-tap reschedule link</li>
+          <li>Bookings land straight in your calendar</li>
+        </ul>
+        <a class="btn btn-primary" href="#see-yours">Add booking →</a>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="tier">
+        <div class="tnum">Tier 3</div>
+        <div class="tname">The Full Bay</div>
+        <div class="price"><span class="mo">£49.99</span><span class="per">/month</span></div>
+        <div class="setup">To build: <b>£349</b> one-off</div>
+        <ul>
+          <li class="head">Everything in The Booking Engine, plus…</li>
+          <li>Reg, tyre &amp; address look-ups</li>
+          <li>Text (SMS) reminders</li>
+          <li>Automatic review requests + live Google rating</li>
+          <li>Your day, on one page — the job dashboard</li>
+          <li class="allow">Monthly allowance of look-ups &amp; texts included — no surprise bills</li>
+        </ul>
+        <a class="btn btn-dark" href="#see-yours">Go all-in →</a>
+      </div>
+
+    </div>
+    <p class="tiers-note">Run a busy multi-bay depot doing hundreds of bookings a month? There's a higher-volume plan with a bigger allowance — just ask and I'll size it to you.</p>
   </div>
 </section>
 
@@ -477,8 +542,8 @@
     <div class="pwyt">
       <span class="eyebrow" style="color:var(--amber)">The offer</span>
       <div class="big-num">You decide.</div>
-      <h2 style="margin-top:.2em">Pay me what you think the build is worth.</h2>
-      <p>A site like this would normally be £299. But I'd rather it goes live for you than sits on my server. So look at it properly, use it, show your other half — then pay what feels right. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. No set-up fee, no contract, no catch.</p>
+      <h2 style="margin-top:.2em">Pay me what you think the starter site is worth.</h2>
+      <p>The Site (Tier 1) would normally be £299 to build. But I'd rather it goes live for you than sits on my server. So look at it properly, use it, show your other half — then pay what feels right. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. No set-up fee on the starter site, no contract, no catch — and you only add booking or the full kit later if you want to.</p>
       <a class="btn btn-primary" href="#see-yours" style="margin-top:8px">Get mine built →</a>
     </div>
   </div>

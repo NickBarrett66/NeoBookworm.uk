@@ -212,6 +212,19 @@ Cheers, take care." (Leaves the door open, costs nothing.)
       postcard and phone script are now switched to the same interim** (`neobookworm.uk/tyretrust`
       + `nick@neobookworm.uk`) so everything a prospect sees works today. Revert all of it to
       `tyretrust.uk` once that domain + mailbox exist.
+- [x] **3-tier landing section + close PDF (Proposal A build)** — deployed 5 Jul 2026.
+      • Landing `#pricing` section rebuilt from the à-la-carte "stack" into a **3-tier Good/Better/Best
+        comparison**: The Site (£9.99, pay-what-you-think build) · The Booking Engine (£149 / £19.99,
+        "Most popular", featured) · The Full Bay (£349 / from £49.99, allowance baked in + "higher-volume
+        plan, just ask" line). Feature-menu cards relabelled from per-feature prices to tier badges
+        ("Included in The Full Bay" etc.). Pay-what-you-think block scoped to the starter site (Tier 1).
+      • **Close PDF**: `tyretrust/proposal.html` (branded, A4 print CSS, noindex) → rendered to
+        `docs/TyreTrust-Proposal.pdf` via Chrome headless `--print-to-pdf`. Clean **2-page** layout
+        (cover+intro / tiers+how-it-works+pay-what-you-think+contact). Has `[ your tyre business ]` +
+        `[ date ]` placeholders for Nick to fill per prospect. Live (shareable, unlisted) at
+        **neobookworm.uk/tyretrust/proposal**; the PDF itself stays private (docs/ is not served).
+        Re-render after edits: serve locally then
+        `chrome --headless --print-to-pdf="docs/TyreTrust-Proposal.pdf" ".../tyretrust/proposal.html"`.
 - [ ] Register tyretrust.uk / .co.uk and deploy the page there (then flip asset paths `/tyretrust/images/…` → `/images/…`).
 - [ ] Confirm HE Tyres happy to be the named example.
 - [ ] Pick the top ~5 for bespoke pre-builds (need the prospect list).
