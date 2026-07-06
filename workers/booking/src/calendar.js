@@ -305,6 +305,32 @@ export async function deleteCalendarEvent(env, eventId, config = SLUG_CONFIG.het
   }
 }
 
+/**
+ * Fetch a single calendar event's liveness for reverse-sync (calendar → D1).
+ * Returns { gone: true } if the event has been deleted or cancelled in Google
+ * Calendar (404/410, or status 'cancelled'), { gone: false } if it still
+ * exists, and { gone: false, unknown: true } if the check itself failed (so
+ * callers never free a slot on a transient API error).
+ */
+export async function getCalendarEventStatus(env, eventId, config = SLUG_CONFIG.hetyres) {
+  if (config?.demoMode) return { gone: false, unknown: true };
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (res.status === 404 || res.status === 410) return { gone: true };
+  if (!res.ok) {
+    console.warn(`[booking] getCalendarEventStatus ${eventId}: ${res.status}`);
+    return { gone: false, unknown: true };
+  }
+  const data = await res.json();
+  // Google keeps cancelled events retrievable with status:'cancelled'.
+  if (data?.status === 'cancelled') return { gone: true };
+  return { gone: false };
+}
+
 export async function createCalendarEvent(
   env,
   { slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary, address, postcode, customAnswers, manageUrl },

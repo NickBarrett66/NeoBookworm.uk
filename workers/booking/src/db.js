@@ -93,10 +93,44 @@ export async function getBookingById(db, id, slug) {
 }
 
 export async function confirmMobileBooking(db, id) {
-  await db
-    .prepare(`UPDATE bookings SET status = 'confirmed' WHERE id = ? AND status = 'pending'`)
-    .bind(id)
-    .run();
+  try {
+    await db
+      .prepare(`UPDATE bookings SET status = 'confirmed' WHERE id = ? AND status = 'pending'`)
+      .bind(id)
+      .run();
+  } catch (err) {
+    // The partial unique index (slug, slot_start WHERE status='confirmed') fires
+    // if another booking already holds this slot — surface it as SlotTakenError
+    // so callers can show a friendly "slot no longer available" message instead
+    // of throwing an unhandled 1101.
+    if (isUniqueConstraintError(err)) throw new SlotTakenError();
+    throw err;
+  }
+}
+
+/**
+ * Active (confirmed/pending) future bookings that hold a Google Calendar event,
+ * for reverse-sync reconciliation. Restricted to slot_start >= now (in local
+ * wall-clock ISO, which sorts lexicographically) to keep the workload bounded —
+ * past bookings no longer lock a slot worth reclaiming. Pass a slug to scope to
+ * one tenant (used by the manual workbench reconcile button).
+ */
+export async function getActiveBookingsWithEvents(db, nowIso, slug = null) {
+  const base = `SELECT id, slug, google_event_id, slot_start, status, name, email
+                FROM bookings
+                WHERE status IN ('confirmed', 'pending')
+                  AND google_event_id IS NOT NULL
+                  AND slot_start >= ?`;
+  const stmt = slug
+    ? db.prepare(`${base} AND slug = ?`).bind(nowIso, slug)
+    : db.prepare(base).bind(nowIso);
+  const { results } = await stmt.all();
+  return results ?? [];
+}
+
+export async function listTenantSlugs(db) {
+  const { results } = await db.prepare(`SELECT slug FROM tenants`).all();
+  return (results ?? []).map((r) => r.slug);
 }
 
 export async function findBookingBySlot(db, slug, slotStart) {

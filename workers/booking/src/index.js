@@ -7,6 +7,7 @@ import {
   createPendingMobileEvent,
   confirmMobileCalendarEvent,
   deleteCalendarEvent,
+  getCalendarEventStatus,
   londonWallToInstant,
   getAvailableDaysInMonth,
 } from './calendar.js';
@@ -24,6 +25,8 @@ import {
   countRecentBookingsByEmail,
   getWorkbenchBookings,
   updateBookingPrep,
+  getActiveBookingsWithEvents,
+  listTenantSlugs,
   SlotTakenError,
 } from './db.js';
 import {
@@ -230,6 +233,33 @@ async function handleWorkbenchPrep(slug, req, env) {
       env,
     ),
   }), {
+    headers: WORKBENCH_HEADERS_JSON,
+  });
+}
+
+async function handleWorkbenchReconcile(slug, req, env) {
+  const config = await getConfig(slug, env);
+  if (!config) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403, headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  let body;
+  try { body = await req.json(); } catch {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_json' }), {
+      status: 400, headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  if (!verifyWorkbenchKey(config, body?.key || '')) {
+    return new Response(JSON.stringify({ ok: false, error: 'forbidden' }), {
+      status: 403, headers: WORKBENCH_HEADERS_JSON,
+    });
+  }
+
+  const result = await reconcileCalendar(env, slug);
+  return new Response(JSON.stringify({ ok: true, ...result }), {
     headers: WORKBENCH_HEADERS_JSON,
   });
 }
@@ -958,13 +988,19 @@ async function handleMobileRequest(slug, req, env, ctx) {
 
 /**
  * Core confirm logic — shared by the email link and the workbench.
- * @returns {'confirmed' | 'already_confirmed' | 'invalid'}
+ * @returns {'confirmed' | 'already_confirmed' | 'invalid' | 'slot_taken'}
  */
 async function confirmPendingBooking(booking, slug, config, req, env, ctx) {
   if (booking.status === 'confirmed') return 'already_confirmed';
   if (booking.status !== 'pending') return 'invalid';
 
-  await confirmMobileBooking(env.DB, booking.id);
+  try {
+    await confirmMobileBooking(env.DB, booking.id);
+  } catch (err) {
+    // Another booking already holds this slot (partial unique index fired).
+    if (err instanceof SlotTakenError) return 'slot_taken';
+    throw err;
+  }
 
   if (booking.google_event_id) {
     try {
@@ -1065,7 +1101,64 @@ async function handleConfirm(slug, token, req, env, ctx) {
   if (outcome === 'invalid') {
     return htmlResponse(renderConfirmPage(booking, 'invalid', config));
   }
+  if (outcome === 'slot_taken') {
+    return htmlResponse(renderConfirmPage(booking, 'slot_taken', config));
+  }
   return htmlResponse(renderConfirmPage(booking, 'confirmed', config));
+}
+
+// ── Reverse sync: Google Calendar → D1 ─────────────────────────────────────────
+
+// London wall-clock "now" as an ISO string (no offset), matching the format
+// bookings.slot_start is stored in, so a lexicographic >= compare is valid.
+function nowLondonIso() {
+  const dtf = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  });
+  const p = dtf.formatToParts(new Date()).reduce((a, x) => ((a[x.type] = x.value), a), {});
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}`;
+}
+
+/**
+ * Reconcile D1 against Google Calendar: any active future booking whose calendar
+ * event has been deleted/cancelled directly in Google is cancelled in D1 too,
+ * freeing its slot. Runs from the cron trigger (all tenants) and the manual
+ * workbench button (single slug). Demo tenants are skipped (no real calendar).
+ * We only ever cancel on a definitive "gone" — transient API errors are ignored
+ * so a Google blip can never mass-cancel real bookings.
+ * @returns {Promise<{checked:number, freed:number, errors:number}>}
+ */
+async function reconcileCalendar(env, slug = null) {
+  const nowIso = nowLondonIso();
+  const rows = await getActiveBookingsWithEvents(env.DB, nowIso, slug);
+  const configCache = new Map();
+  let checked = 0, freed = 0, errors = 0;
+
+  for (const row of rows) {
+    let config = configCache.get(row.slug);
+    if (config === undefined) {
+      config = await getConfig(row.slug, env);
+      configCache.set(row.slug, config);
+    }
+    if (!config || config.demoMode) continue;
+
+    checked++;
+    try {
+      const { gone } = await getCalendarEventStatus(env, row.google_event_id, config);
+      if (gone) {
+        await cancelBooking(env.DB, row.id);
+        freed++;
+        console.log(`[reconcile] freed ${row.slug} ${row.slot_start} (${row.id}) — event deleted in Google`);
+      }
+    } catch (err) {
+      errors++;
+      console.error(`[reconcile] check failed for ${row.id}:`, err?.message || err);
+    }
+  }
+
+  console.log(`[reconcile] slug=${slug || 'all'} checked=${checked} freed=${freed} errors=${errors}`);
+  return { checked, freed, errors };
 }
 
 // ── Router ────────────────────────────────────────────────────────────────────
@@ -1146,6 +1239,11 @@ export default {
       return handleWorkbenchConfirm(workbenchConfirmMatch[1], req, env, ctx);
     }
 
+    const workbenchReconcileMatch = url.pathname.match(/^\/([^/]+)\/workbench\/reconcile$/);
+    if (req.method === 'POST' && workbenchReconcileMatch) {
+      return handleWorkbenchReconcile(workbenchReconcileMatch[1], req, env);
+    }
+
     const workbenchMatch = url.pathname.match(/^\/([^/]+)\/workbench$/);
     if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env, req);
 
@@ -1168,5 +1266,15 @@ export default {
     return new Response(`NeoBookworm Booking — ${url.pathname}`, {
       headers: { 'Content-Type': 'text/plain' },
     });
+  },
+
+  // Cron trigger — reverse-sync every tenant's calendar back into D1 so events
+  // deleted directly in Google Calendar release their booked slot.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(
+      reconcileCalendar(env).catch((err) =>
+        console.error('[reconcile] scheduled run failed:', err?.message || err),
+      ),
+    );
   },
 };

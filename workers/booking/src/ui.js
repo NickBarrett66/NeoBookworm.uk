@@ -2853,6 +2853,13 @@ export function renderConfirmPage(booking, state, config) {
         <p>${escHtml(fmtArrival(booking))} — ${escHtml(booking.name)}</p>
         <p>The customer has already been sent their confirmation email.</p>
       </div>`;
+  } else if (state === 'slot_taken') {
+    bodyHtml = `
+      <div class="msg-card err">
+        <p><strong>That slot is no longer free.</strong></p>
+        <p>${escHtml(fmtArrival(booking))} — ${escHtml(booking.name)}</p>
+        <p>Another booking was confirmed for this time before you could confirm this one, so it hasn't been booked in. Nothing has been sent to the customer. Please contact them to arrange another time.</p>
+      </div>`;
   } else if (state === 'confirmed') {
     bodyHtml = `
       <div class="msg-card ok">
@@ -3150,12 +3157,17 @@ export function renderWorkbenchPage(config, slug, key, data) {
     .wb-action-amend { border: 1px solid rgba(var(--accent-rgb), 0.5); background: rgba(var(--accent-rgb), 0.15); color: #fff; }
     .wb-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .wb-updated { text-align: center; font-size: 0.75rem; opacity: 0.45; margin-top: 1.5rem; }
+    .wb-reconcile-btn { min-height: 40px; padding: 0.4rem 0.85rem; border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px; background: transparent; color: #fff; font-family: inherit; font-size: 0.8125rem;
+      font-weight: 600; cursor: pointer; touch-action: manipulation; white-space: nowrap; }
+    .wb-reconcile-btn:active:not(:disabled) { background: rgba(255,255,255,0.08); }
+    .wb-reconcile-btn:disabled { opacity: 0.55; cursor: default; }
   </style>
 </head>
 <body>
   <header class="biz-header">
     <span class="biz-name">${displayName}</span>
-    <span class="biz-meta" id="wbUpdated">Workbench</span>
+    <button type="button" class="wb-reconcile-btn" id="wbReconcile" title="Check for bookings deleted in Google Calendar and free their slots">Sync calendar</button>
   </header>
   <main class="wrap" id="wbMain">
     ${sectionsHtml}
@@ -3340,6 +3352,17 @@ export function renderWorkbenchPage(config, slug, key, data) {
     return data.outcome;
   }
 
+  async function postReconcile() {
+    var res = await fetch('/' + SLUG + '/workbench/reconcile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: KEY }),
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'reconcile_failed');
+    return data;
+  }
+
   async function postCancel(manageToken, adminKey) {
     var payload = { token: manageToken };
     if (adminKey) payload.adminKey = adminKey;
@@ -3375,6 +3398,23 @@ export function renderWorkbenchPage(config, slug, key, data) {
         (data.updatedAt ? 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '') +
         '</p>';
     } catch (_) { /* silent — keep last good render */ }
+  }
+
+  var reconcileBtn = document.getElementById('wbReconcile');
+  if (reconcileBtn) {
+    reconcileBtn.addEventListener('click', function () {
+      var original = reconcileBtn.textContent;
+      reconcileBtn.disabled = true;
+      reconcileBtn.textContent = 'Syncing…';
+      postReconcile().then(function (r) {
+        reconcileBtn.textContent = r.freed > 0 ? 'Freed ' + r.freed : 'Up to date';
+        refresh();
+        setTimeout(function () { reconcileBtn.textContent = original; reconcileBtn.disabled = false; }, 2500);
+      }).catch(function () {
+        reconcileBtn.textContent = 'Sync failed';
+        setTimeout(function () { reconcileBtn.textContent = original; reconcileBtn.disabled = false; }, 2500);
+      });
+    });
   }
 
   document.addEventListener('click', function (e) {
