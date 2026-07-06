@@ -14,8 +14,26 @@ const ALLOWED_ORIGINS = [
   'https://www.neobookworm.uk',
   'https://hetyres.co.uk',
   'https://www.hetyres.co.uk',
+  'https://hetyres-co-uk.pages.dev',
   'https://neobookworm-booking.nickbarrett.workers.dev',
 ];
+
+// Only the live HE Tyres domain routes enquiries to the client. Every other
+// origin (pages.dev previews, localhost, the neobookworm.uk/he-tyres demo) is
+// treated as a test and routed to HE_TYRES_TEST_EMAIL so real enquiries and
+// test submissions never mix.
+const PRODUCTION_ORIGINS = [
+  'https://hetyres.co.uk',
+  'https://www.hetyres.co.uk',
+];
+
+function resolveRecipient(env, origin) {
+  const isProduction = origin != null && PRODUCTION_ORIGINS.includes(origin);
+  const to = isProduction
+    ? (env.HE_TYRES_TO_EMAIL || DEFAULT_TO)
+    : (env.HE_TYRES_TEST_EMAIL || env.HE_TYRES_TO_EMAIL || DEFAULT_TO);
+  return { to, isProduction };
+}
 
 const UK_POSTCODE_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
 const DEFAULT_TO = 'nickbarrett@me.com';
@@ -25,6 +43,8 @@ function isAllowedOrigin(origin) {
   if (ALLOWED_ORIGINS.includes(origin)) return true;
   if (origin.startsWith('http://localhost:')) return true;
   if (origin.startsWith('http://127.0.0.1:')) return true;
+  // Cloudflare Pages per-commit preview deployments for the HE Tyres project
+  if (origin.endsWith('.hetyres-co-uk.pages.dev')) return true;
   return false;
 }
 
@@ -175,7 +195,8 @@ async function handleEnquiry(request, env, data) {
     subject = `HEtyres enquiry from ${name}${reg ? ' — ' + reg : ''}`;
   }
 
-  const toEmail = env.HE_TYRES_TO_EMAIL || DEFAULT_TO;
+  const { to: toEmail, isProduction } = resolveRecipient(env, origin);
+  if (!isProduction) subject = `[preview] ${subject}`;
 
   if (!gmailConfigured(env)) {
     console.log('Gmail not configured. Would have sent to', toEmail, ':\n' + emailBody);

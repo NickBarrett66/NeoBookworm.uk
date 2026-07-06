@@ -1022,12 +1022,12 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
           </div>` : ''}
           <div class="field">
             <label for="mob-address">Fitting address</label>
-            <div class="pc-hint">Enter your postcode and tap <strong>Find address</strong>, then pick yours from the list.</div>
+            ${addressLookup === 'full' ? `<div class="pc-hint">Enter your postcode and tap <strong>Find address</strong>, then pick yours from the list.</div>` : ''}
             <div class="pc-row">
               <input type="text" id="mob-fitting-postcode" name="postcode" required maxlength="10" autocomplete="postal-code" placeholder="e.g. SN1 2BL" style="text-transform:uppercase">
-              <button type="button" id="mob-address-find" class="pc-find-btn">Find address</button>
+              ${addressLookup === 'full' ? `<button type="button" id="mob-address-find" class="pc-find-btn">Find address</button>` : ''}
             </div>
-            <select id="mob-address-picker" class="address-picker" hidden></select>
+            ${addressLookup === 'full' ? `<select id="mob-address-picker" class="address-picker" hidden></select>` : ''}
             <div class="postcode-msg" id="mob-addr-msg" hidden></div>
             <textarea id="mob-address" name="address" required maxlength="300" autocomplete="street-address"></textarea>
           </div>

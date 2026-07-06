@@ -8,6 +8,13 @@ import {
   denyAnalyticsConsent,
 } from '/js/analytics-consent.js';
 
+// This script is shared across neobookworm.uk pages and site-specific pages
+// (e.g. /he-tyres/*) that reuse the same CookieConsent instance — the privacy
+// link must point at whichever site's own policy is currently loaded.
+const privacyHref = location.pathname.startsWith('/he-tyres/')
+  ? '/he-tyres/privacy.html'
+  : '/privacy.html';
+
 CookieConsent.run({
   cookie: {
     name: 'nb_cookie_consent',
@@ -71,7 +78,7 @@ CookieConsent.run({
           acceptAllBtn: 'Accept all',
           acceptNecessaryBtn: 'Decline',
           showPreferencesBtn: 'Manage preferences',
-          footer: '<a href="/privacy.html">Privacy policy</a>',
+          footer: '<a href="' + privacyHref + '">Privacy policy</a>',
         },
         preferencesModal: {
           title: 'Cookie preferences',

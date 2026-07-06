@@ -1133,7 +1133,7 @@
             <div class="form-notice" id="formNotice" role="alert"></div>
 
             <div class="form-section">
-              <div class="form-group">
+              <div class="form-group" id="regLookupField">
                 <label for="regGeneral">Vehicle registration <span class="field-opt">(optional)</span></label>
                 <div class="reg-row">
                   <input type="text" id="regGeneral" name="reg_general" placeholder="e.g. AB12 CDE" maxlength="9" autocomplete="off" class="reg-input">
@@ -1267,6 +1267,21 @@
   </dialog>
 
   <script defer>
+    // ── Paid feature flags — HE Tyres tenant ──
+    // Switch a feature on only once the client has paid for it; when off, it must
+    // disappear from every screen and page on their site, not just be hidden in one place.
+    // Reg lookup: the plain "Vehicle registration" text field always stays (it's just
+    // useful info for the fitter) — this flag only controls the paid DVLA/RegCheck
+    // lookup button + auto-filled make/model result.
+    var REG_LOOKUP_ENABLED = false;
+
+    if (!REG_LOOKUP_ENABLED) {
+      var regLookupBtn = document.getElementById('regLookupBtnGeneral');
+      var regResult = document.getElementById('vehicleResultGeneral');
+      if (regLookupBtn) regLookupBtn.remove();
+      if (regResult) regResult.remove();
+    }
+
     // ── Leaflet maps — load library/CSS only when each map nears viewport ──
     (function () {
       var areaEl = document.getElementById('areaMap');
@@ -1441,6 +1456,36 @@
     document.querySelectorAll('dialog.svc').forEach(dlg => {
       dlg.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => dlg.close()));
       dlg.addEventListener('cancel', () => dlg.close());
+    });
+
+    // ── Same-page section jumps ──
+    // Below-fold sections use content-visibility:auto for performance — until the browser
+    // actually lays one out, it reports an estimated placeholder height (contain-intrinsic-size),
+    // not its real height. A scrollIntoView() aimed at a target below several un-rendered
+    // sections is calculated against those placeholders and lands short. Force real layout on
+    // them first, then scroll — this also lets "auto" remember the correct size afterwards.
+    var lazySections = document.querySelectorAll('.services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us');
+    function smoothJumpTo(target) {
+      if (!target) return;
+      lazySections.forEach(el => { el.style.contentVisibility = 'visible'; });
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        lazySections.forEach(el => { el.style.contentVisibility = ''; });
+      });
+    }
+
+    // Header/footer nav links and "Get a quote" links — replace the native anchor jump with
+    // the fix above. Links with data-open-book keep their own dedicated handler below.
+    document.querySelectorAll('a[href^="#"]:not([data-open-book])').forEach(a => {
+      const id = a.getAttribute('href').slice(1);
+      if (!id || id === 'main') return; // leave the skip link native
+      a.addEventListener('click', e => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        e.preventDefault();
+        history.pushState(null, '', '#' + id);
+        smoothJumpTo(target);
+      });
     });
 
     // ── Book a depot slot — toggle + lazy-load + postMessage collapse ──
