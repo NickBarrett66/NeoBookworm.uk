@@ -89,7 +89,7 @@
   .hero{background:radial-gradient(120% 120% at 80% -10%,#1c3357 0%,var(--navy) 45%,var(--ink) 100%);color:#eaf0f8;padding:clamp(48px,7vw,88px) 0 clamp(56px,8vw,96px);position:relative;overflow:hidden}
   .hero::after{content:"";position:absolute;right:-140px;bottom:-160px;width:460px;height:460px;border-radius:50%;
     background:repeating-radial-gradient(circle,rgba(255,255,255,.05) 0 8px,transparent 8px 20px);opacity:.5;pointer-events:none}
-  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,4vw,56px);align-items:center;position:relative;z-index:1}
+  .hero-grid{display:grid;grid-template-columns:.86fr 1.14fr;gap:clamp(28px,4vw,56px);align-items:center;position:relative;z-index:1}
   .hero h1{color:#fff}
   .hero h1 em{font-style:italic;color:var(--amber);font-weight:800}
   .hero-sub{font-size:1.16rem;color:#c3d0e2;max-width:33ch}
@@ -104,7 +104,7 @@
   .dot{width:11px;height:11px;border-radius:50%;background:#3a4657}
   .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
   .browser-url{margin-left:10px;flex:1;background:#0c1219;color:#9fb0c7;font-size:.8rem;padding:6px 12px;border-radius:7px;font-family:ui-monospace,monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .browser-view{position:relative;background:#fff;aspect-ratio:16/11}
+  .browser-view{position:relative;background:#fff;aspect-ratio:16/15}
   .browser-view iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .browser-open{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:18px;
     background:linear-gradient(180deg,rgba(12,18,25,0) 55%,rgba(12,18,25,.55));text-decoration:none}
@@ -131,7 +131,7 @@
   .try-panel{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line)}
   .try-panel .head{background:var(--ink);color:#fff;padding:14px 20px;font-weight:700;display:flex;align-items:center;gap:10px}
   .book-wrap{padding:18px}
-  #bookFrame{width:100%;height:560px;border:0;border-radius:10px;background:var(--mist)}
+  #bookFrame{width:100%;height:680px;border:0;border-radius:10px;background:var(--mist)}
   .frame-hidden{display:none}
 
   /* feature menu */
@@ -237,7 +237,7 @@
     .how{grid-template-columns:1fr}
     .feat-grid{grid-template-columns:1fr}
     .hero-sub{max-width:none}
-    .hero .browser{max-width:520px}
+    .hero .browser{max-width:560px;margin:0 auto}
   }
 </style>
 </head>
@@ -297,174 +297,12 @@
 <section class="band-dark" id="how">
   <div class="container">
     <span class="eyebrow">How this works</span>
-    <h2>No forms. No sales pitch. Just look.</h2>
-    <p class="lead">You've been cold-called by "web people" before. This isn't that. The site already exists — your only job is to decide whether you like it.</p>
+    <h2>No forms. No sales pitch. Just have a look.</h2>
+    <p class="lead">You've been cold-called by "web people" before. This isn't that. I build your site first, then send you the finished thing to look over — a real, working site for your tyre business. Your only job is to decide whether you like it.</p>
     <div class="how">
       <div class="how-card"><div class="n">01</div><h3>I build it first</h3><p>I put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you pay a penny.</p></div>
       <div class="how-card"><div class="n">02</div><h3>You have a look</h3><p>Try it on your phone. Book a fake slot. Change your mind about the colours. It's yours to shape — words, photos, layout.</p></div>
       <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p>If you want to keep it, pay me what you think it's worth to build, then £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- SEE IT WORKING / LIVE BOOKING -->
-<section id="see-it">
-  <div class="container">
-    <div class="try">
-      <div>
-        <span class="eyebrow">Try it yourself</span>
-        <h2>Let a customer book you in — right now.</h2>
-        <p class="lead">This is the same booking system I built for HE Tyres, running in a sandbox. Pick a slot as if you were a customer with a nail in your tyre. Every booking that comes through here is one less phone call for you — and it works at 9pm when the workshop's shut.</p>
-        <ul class="benefit" style="margin-top:8px">
-          <li>Depot slot or mobile visit, customer's choice</li>
-          <li>Already-booked times disappear automatically</li>
-          <li>You get an email; it lands in your calendar</li>
-        </ul>
-        <button class="btn btn-dark" id="bookOpen" type="button">Open the live booking demo ↓</button>
-      </div>
-      <div class="try-panel">
-        <div class="head"><span class="pulse"></span> Live booking — HE Tyres</div>
-        <div class="book-wrap">
-          <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 14px">Tap the button and a real booking calendar loads here. It won't charge you or book a real slot for you to worry about — it's a working demo you can play with.</p>
-          <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURE MENU -->
-<section class="band-mist" id="menu">
-  <div class="container">
-    <div class="center">
-      <span class="eyebrow">Everything a tyre fitter needs — nothing they don't</span>
-      <h2>Start with the site. Bolt on the rest whenever you like.</h2>
-      <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">You don't buy this all at once. Land the £9.99 site, then add only the bits that earn their keep. Here's the menu — several you can try below.</p>
-    </div>
-
-    <div class="feat-grid">
-
-      <!-- Core site -->
-      <div class="feat">
-        <div class="ico">🌐</div>
-        <div class="price-tag"><b>The Site</b> · from £9.99/mo</div>
-        <h3>Your own tyre website</h3>
-        <p class="desc">A proper one-page site: services, tyre brands you fit, real reviews, coverage area and a contact form. Built to turn up when someone Googles "tyre fitting near me".</p>
-        <ul class="benefit">
-          <li>Designed around your business, not a template</li>
-          <li>Looks right on a phone (where they'll find you)</li>
-          <li>Somewhere to send word-of-mouth customers</li>
-        </ul>
-        <div class="demo-box"><label>See a live example</label><a class="btn btn-dark" href="/he-tyres/" target="_blank" rel="noopener" style="width:100%;justify-content:center">Open HE Tyres' site ↗</a></div>
-      </div>
-
-      <!-- Booking -->
-      <div class="feat">
-        <div class="ico">📅</div>
-        <div class="price-tag">Included in <b>The Booking Engine</b></div>
-        <h3>Online booking</h3>
-        <p class="desc">Customers pick a depot or mobile slot, around booked times, day or night. Every web booking is one less call to answer with your hands full.</p>
-        <ul class="benefit">
-          <li>Books itself while you're fitting</li>
-          <li>Fewer phone interruptions</li>
-          <li>Lands straight in your calendar</li>
-        </ul>
-        <div class="demo-box"><label>Try it</label><a class="btn btn-dark" href="#see-it" style="width:100%;justify-content:center">Open the live booking demo</a></div>
-      </div>
-
-      <!-- Reg lookup -->
-      <div class="feat">
-        <div class="ico">🚗</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Reg look-up <small style="font-weight:400;color:var(--muted)">(TyreTrust RegFill)</small></h3>
-        <p class="desc">The customer types their number plate. Make, model and colour fill themselves in — fewer mistakes, less typing, right details first time.</p>
-        <div class="demo-box">
-          <label>Type any reg and watch</label>
-          <div class="demo-row">
-            <input id="regInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate">
-            <button class="demo-btn" id="regBtn" type="button">Look up</button>
-          </div>
-          <div class="demo-out" id="regOut" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <!-- Tyre lookup -->
-      <div class="feat">
-        <div class="ico">⭕</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Tyre-size look-up</h3>
-        <p class="desc">From the same reg, the tyre size drops in too. No more "hang on, what size are you after?" — you get the right rubber lined up earlier.</p>
-        <div class="demo-box">
-          <label>Same reg, now the tyre</label>
-          <div class="demo-row">
-            <input id="tyreInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate for tyre">
-            <button class="demo-btn" id="tyreBtn" type="button">Find tyre</button>
-          </div>
-          <div class="demo-out" id="tyreOut" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <!-- Address lookup -->
-      <div class="feat">
-        <div class="ico">📍</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Address look-up</h3>
-        <p class="desc">For mobile jobs: the customer enters a postcode and picks their address from a list. Cleaner addresses, no wild-goose chases to the wrong street.</p>
-        <div class="demo-box">
-          <label>Enter a postcode</label>
-          <div class="demo-row">
-            <input id="pcInput" maxlength="8" placeholder="e.g. SN5 8ZW" aria-label="Postcode">
-            <button class="demo-btn" id="pcBtn" type="button">Find address</button>
-          </div>
-          <div class="demo-out" id="pcOut" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <!-- Reminders -->
-      <div class="feat">
-        <div class="ico">🔔</div>
-        <div class="price-tag">Email in <b>Booking Engine</b> · SMS in <b>Full Bay</b></div>
-        <h3>Reminders &amp; reschedule links</h3>
-        <p class="desc">The night before, every customer gets a "see you at 10:15" by email or text — with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
-        <div class="demo-box">
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="bubble"><div class="from">HE Tyres</div>See you tomorrow at 10:15 for your 2 front tyres 👍 Can't make it? Rebook here: <a href="#see-it">hetyres.uk/rebook</a></div>
-              <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reviews + rating -->
-      <div class="feat">
-        <div class="ico">⭐</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Auto review requests &amp; live Google rating</h3>
-        <p class="desc">After each job, a review request goes out on its own. Your live Google score shows on the site — proof you're not cherry-picking, and it keeps Google seeing an active business.</p>
-        <div class="demo-box">
-          <div class="rating-live">
-            <span class="big">4.9</span>
-            <div><div class="stars">★★★★★</div><small style="color:var(--muted)"><span class="pulse" style="display:inline-block;vertical-align:middle"></span> Live from Google · 62 reviews</small></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tyre management -->
-      <div class="feat wide">
-        <div class="ico">🗓️</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Your day, on one page</h3>
-        <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
-        <ul class="benefit" style="columns:2;column-gap:32px">
-          <li>Today &amp; this week at a glance</li>
-          <li>See where each job is in the flow</li>
-          <li>Pending mobile requests pinned to the top</li>
-          <li>Built for you and whoever does the books</li>
-        </ul>
-      </div>
-
     </div>
   </div>
 </section>
@@ -545,6 +383,168 @@
       <h2 style="margin-top:.2em">Pay me what you think the starter site is worth.</h2>
       <p>The Site (Tier 1) would normally be £299 to build. But I'd rather it goes live for you than sits on my server. So look at it properly, use it, show your other half — then pay what feels right. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. No set-up fee on the starter site, no contract, no catch — and you only add booking or the full kit later if you want to.</p>
       <a class="btn btn-primary" href="#see-yours" style="margin-top:8px">Get mine built →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SEE IT WORKING / LIVE BOOKING -->
+<section id="see-it">
+  <div class="container">
+    <div class="try">
+      <div>
+        <span class="eyebrow">Try it yourself</span>
+        <h2>See how a customer books in — day or night.</h2>
+        <p class="lead">This is the same booking system I built for HE Tyres, running in a sandbox. Pick a slot as if you were a customer with a nail in your tyre. Every booking that comes through here is one less phone call for you — and it works at 9pm when the workshop's shut.</p>
+        <ul class="benefit" style="margin-top:8px">
+          <li>Depot slot or mobile visit, customer's choice</li>
+          <li>Already-booked times disappear automatically</li>
+          <li>You get an email; it lands in your calendar</li>
+        </ul>
+        <button class="btn btn-dark" id="bookOpen" type="button">Open the live booking demo ↓</button>
+      </div>
+      <div class="try-panel">
+        <div class="head"><span class="pulse"></span> Live booking — HE Tyres</div>
+        <div class="book-wrap">
+          <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 14px">Tap the button and a real booking calendar loads here. It won't charge you or book a real slot for you to worry about — it's a working demo you can play with.</p>
+          <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE MENU -->
+<section class="band-mist" id="menu">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">Feature by feature</span>
+      <h2>Everything a tyre fitter needs — nothing they don't.</h2>
+      <div class="accent-bar"></div>
+      <p class="lead center" style="margin:18px auto 0">Every feature in plain English, and which plan it comes with. Several you can try for yourself right here.</p>
+    </div>
+
+    <div class="feat-grid">
+
+      <!-- Core site -->
+      <div class="feat">
+        <div class="ico">🌐</div>
+        <div class="price-tag"><b>The Site</b> · from £9.99/mo</div>
+        <h3>Your own tyre website</h3>
+        <p class="desc">A proper one-page site: services, tyre brands you fit, real reviews, coverage area and a contact form. Built to turn up when someone Googles "tyre fitting near me".</p>
+        <ul class="benefit">
+          <li>Designed around your business, not a template</li>
+          <li>Looks right on a phone (where they'll find you)</li>
+          <li>Somewhere to send word-of-mouth customers</li>
+        </ul>
+        <div class="demo-box"><label>See a live example</label><a class="btn btn-dark" href="/he-tyres/" target="_blank" rel="noopener" style="width:100%;justify-content:center">Open HE Tyres' site ↗</a></div>
+      </div>
+
+      <!-- Booking -->
+      <div class="feat">
+        <div class="ico">📅</div>
+        <div class="price-tag">Included in <b>The Booking Engine</b></div>
+        <h3>Online booking</h3>
+        <p class="desc">Customers pick a depot or mobile slot, around booked times, day or night. Every web booking is one less call to answer with your hands full.</p>
+        <ul class="benefit">
+          <li>Books itself while you're fitting</li>
+          <li>Fewer phone interruptions</li>
+          <li>Lands straight in your calendar</li>
+        </ul>
+        <div class="demo-box"><label>Try it</label><a class="btn btn-dark" href="#see-it" style="width:100%;justify-content:center">Open the live booking demo</a></div>
+      </div>
+
+      <!-- Reminders -->
+      <div class="feat">
+        <div class="ico">🔔</div>
+        <div class="price-tag">Email in <b>Booking Engine</b> · SMS in <b>Full Bay</b></div>
+        <h3>Reminders &amp; reschedule links</h3>
+        <p class="desc">The night before, every customer gets a "see you at 10:15" by email or text — with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
+        <div class="demo-box">
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="bubble"><div class="from">HE Tyres</div>See you tomorrow at 10:15 for your 2 front tyres 👍 Can't make it? Rebook here: <a href="#see-it">hetyres.uk/rebook</a></div>
+              <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reg lookup -->
+      <div class="feat">
+        <div class="ico">🚗</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Reg look-up <small style="font-weight:400;color:var(--muted)">(TyreTrust RegFill)</small></h3>
+        <p class="desc">The customer types their number plate. Make, model and colour fill themselves in — fewer mistakes, less typing, right details first time.</p>
+        <div class="demo-box">
+          <label>Type any reg and watch</label>
+          <div class="demo-row">
+            <input id="regInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate">
+            <button class="demo-btn" id="regBtn" type="button">Look up</button>
+          </div>
+          <div class="demo-out" id="regOut" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Tyre lookup -->
+      <div class="feat">
+        <div class="ico">⭕</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Tyre-size look-up</h3>
+        <p class="desc">From the same reg, the tyre size drops in too. No more "hang on, what size are you after?" — you get the right rubber lined up earlier.</p>
+        <div class="demo-box">
+          <label>Same reg, now the tyre</label>
+          <div class="demo-row">
+            <input id="tyreInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate for tyre">
+            <button class="demo-btn" id="tyreBtn" type="button">Find tyre</button>
+          </div>
+          <div class="demo-out" id="tyreOut" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Address lookup -->
+      <div class="feat">
+        <div class="ico">📍</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Address look-up</h3>
+        <p class="desc">For mobile jobs: the customer enters a postcode and picks their address from a list. Cleaner addresses, no wild-goose chases to the wrong street.</p>
+        <div class="demo-box">
+          <label>Enter a postcode</label>
+          <div class="demo-row">
+            <input id="pcInput" maxlength="8" placeholder="e.g. SN5 8ZW" aria-label="Postcode">
+            <button class="demo-btn" id="pcBtn" type="button">Find address</button>
+          </div>
+          <div class="demo-out" id="pcOut" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Reviews + rating -->
+      <div class="feat">
+        <div class="ico">⭐</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Auto review requests &amp; live Google rating</h3>
+        <p class="desc">After each job, a review request goes out on its own. Your live Google score shows on the site — proof you're not cherry-picking, and it keeps Google seeing an active business.</p>
+        <div class="demo-box">
+          <div class="rating-live">
+            <span class="big">4.9</span>
+            <div><div class="stars">★★★★★</div><small style="color:var(--muted)"><span class="pulse" style="display:inline-block;vertical-align:middle"></span> Live from Google · 62 reviews</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tyre management -->
+      <div class="feat wide">
+        <div class="ico">🗓️</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Your day, on one page</h3>
+        <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
+        <ul class="benefit" style="columns:2;column-gap:32px">
+          <li>Today &amp; this week at a glance</li>
+          <li>See where each job is in the flow</li>
+          <li>Pending mobile requests pinned to the top</li>
+          <li>Built for you and whoever does the books</li>
+        </ul>
+      </div>
+
     </div>
   </div>
 </section>
