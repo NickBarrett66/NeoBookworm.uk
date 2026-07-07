@@ -240,8 +240,9 @@
 
   /* proof */
   .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
-  .quote{background:var(--paper);border-left:5px solid var(--orange);border-radius:0 14px 14px 0;padding:26px 30px;box-shadow:var(--shadow-sm);font-size:1.14rem;color:var(--navy);font-style:italic}
-  .quote cite{display:block;margin-top:12px;font-style:normal;font-weight:700;font-size:.95rem;color:var(--muted)}
+  .me-card{margin:0 auto;max-width:380px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow-sm)}
+  .me-card img{display:block;width:100%;height:auto;border-radius:10px}
+  .me-card figcaption{padding:12px 8px 4px;font-size:.9rem;color:var(--muted);text-align:center}
 
   /* final CTA */
   .final{background:radial-gradient(120% 120% at 20% 0%,#1c3357,var(--navy) 55%,var(--ink));color:#eaf0f8;text-align:center}
@@ -592,16 +593,20 @@
   <div class="container">
     <div class="proof">
       <div>
-        <span class="eyebrow">Don't take my word for it</span>
-        <h2>Ask HE Tyres yourself.</h2>
-        <p class="lead">I walked into HE Tyres in Swindon as a customer, got looked after properly, and thought a business this good deserved a website to match — so I built them one on spec. They're real, they're local to you, and their site is live at the top of this page. If you want a straight answer about whether I'm worth dealing with, they'll give you one.</p>
+        <span class="eyebrow">Who you'd be dealing with</span>
+        <h2>It started with one good tyre business.</h2>
+        <p>HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one. It's live at the top of this page: click around it and judge it the way a customer would.</p>
+        <p>They're now trying out the online booking to go with it. The rest of the kit — the look-ups, the reminders, the job board — is built and working, and every piece is on this page for you to try. What I don't have yet is a fitter running the lot, which is exactly why you set the build price: I'd rather prove it in a real tyre bay than keep polishing it on my own.</p>
         <p>I'm Nick — I'm building my thing the same way you built yours: one honest job at a time. I'm based in Swindon, right in the middle of your patch, so I'm not some faceless agency in a call centre.</p>
       </div>
       <div>
-        <blockquote class="quote">
-          I came in expecting the usual tyre-place experience and got a coffee, a comfy lounge and a screen showing me exactly what was happening with my car. So I built them the website they didn't have.
-          <cite>— Nick, TyreTrust · on why HE Tyres got a site</cite>
-        </blockquote>
+        <figure class="me-card">
+          <img src="/tyretrust/images/nick-794.webp"
+               srcset="/tyretrust/images/nick-480.webp 480w, /tyretrust/images/nick-794.webp 794w"
+               sizes="(max-width:860px) 86vw, 380px"
+               width="794" height="1024" alt="Nick Barrett — TyreTrust" loading="lazy" decoding="async">
+          <figcaption>Nick — TyreTrust, Swindon. When you email, this is who replies — not a ticket queue.</figcaption>
+        </figure>
       </div>
     </div>
   </div>
