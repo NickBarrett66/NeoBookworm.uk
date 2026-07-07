@@ -215,17 +215,6 @@
   .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(18,160,106,.6);animation:pulse 2s infinite}
   @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(18,160,106,0)}100%{box-shadow:0 0 0 0 rgba(18,160,106,0)}}
 
-  /* pricing / grows */
-  .grows{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
-  .stack{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:8px 8px;box-shadow:var(--shadow-sm)}
-  .stack-row{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--mist)}
-  .stack-row:last-child{border:0}
-  .stack-row .l b{color:var(--navy)}
-  .stack-row .l small{display:block;color:var(--muted);font-size:.85rem}
-  .stack-row .p{font-weight:800;color:var(--orange-dk);white-space:nowrap}
-  .stack-total{background:var(--navy);color:#fff;border-radius:12px;margin:8px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center}
-  .stack-total b{font-size:1.35rem;font-family:'Playfair Display',serif}
-
   /* three tiers */
   .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px;align-items:stretch}
   .tier{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 24px 26px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);position:relative}
@@ -248,12 +237,6 @@
   .tier .btn{width:100%;justify-content:center}
   .tiers-note{text-align:center;margin:24px auto 0;color:var(--muted);font-size:.93rem;max-width:60ch}
   @media(max-width:860px){.tiers{grid-template-columns:1fr}}
-
-  /* pay what you think */
-  .pwyt{background:linear-gradient(135deg,var(--ink),var(--navy));color:#eaf0f8;border-radius:20px;padding:clamp(30px,5vw,52px);text-align:center;box-shadow:var(--shadow)}
-  .pwyt h2{color:#fff}
-  .pwyt .big-num{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,6vw,3.6rem);color:var(--amber);font-weight:800;line-height:1}
-  .pwyt p{color:#c3d0e2;max-width:52ch;margin-left:auto;margin-right:auto}
 
   /* proof */
   .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
@@ -286,7 +269,7 @@
   footer.site a{color:#c3d0e2}
 
   @media(max-width:860px){
-    .hero-grid,.try,.grows,.proof{grid-template-columns:1fr}
+    .hero-grid,.try,.proof{grid-template-columns:1fr}
     .how{grid-template-columns:1fr}
     .feat-grid{grid-template-columns:1fr}
     .hero-sub{max-width:none}
@@ -355,19 +338,20 @@
     <div class="how">
       <div class="how-card"><div class="n">01</div><h3>I build it first</h3><p>I put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you pay a penny.</p></div>
       <div class="how-card"><div class="n">02</div><h3>You have a look</h3><p>Try it on your phone. Book a fake slot. Change your mind about the colours. It's yours to shape — words, photos, layout.</p></div>
-      <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p>If you want to keep it, pay me what you think it's worth to build, then £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
+      <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p>If you want to keep it, pay me what you think it's worth to build, then from £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
     </div>
   </div>
 </section>
 
 <!-- THREE TIERS / PRICING -->
-<section id="pricing">
+<section class="band-mist" id="pricing">
   <div class="container">
     <div class="center">
-      <span class="eyebrow">Simple plans, no lock-in</span>
-      <h2>Three ways to run it. Start wherever you like.</h2>
+      <span class="eyebrow">The offer</span>
+      <h2>Three ways to run it. You set the build price on all of them.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Most fitters begin with the site and add the rest when they're ready. Every plan is month-to-month — cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" style="margin:18px auto 0">Whichever plan you pick, the deal is the same: I build it first, you look it over properly, and you pay what you think the build was worth. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. After that it's just the monthly — no contract, cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
     </div>
 
     <div class="tiers">
@@ -390,11 +374,11 @@
 
       <!-- Tier 2 (featured) -->
       <div class="tier featured">
-        <span class="pop">Most popular</span>
+        <span class="pop">My pick for most fitters</span>
         <div class="tnum">Tier 2</div>
         <div class="tname">The Booking Engine</div>
         <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>£149</b> one-off</div>
+        <div class="setup">To build: <b>pay what you think it's worth</b></div>
         <ul>
           <li class="head">Everything in The Site, plus…</li>
           <li>Online booking — depot &amp; mobile, day or night</li>
@@ -410,7 +394,7 @@
         <div class="tnum">Tier 3</div>
         <div class="tname">The Full Bay</div>
         <div class="price"><span class="mo">£49.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>£349</b> one-off</div>
+        <div class="setup">To build: <b>pay what you think it's worth</b></div>
         <ul>
           <li class="head">Everything in The Booking Engine, plus…</li>
           <li>Reg, tyre &amp; address look-ups</li>
@@ -423,20 +407,8 @@
       </div>
 
     </div>
+    <p class="tiers-note">Not sure which? Start with The Site — you can add booking or the full kit any time, no rebuild needed.</p>
     <p class="tiers-note">Run a busy multi-bay depot doing hundreds of bookings a month? There's a higher-volume plan with a bigger allowance — just ask and I'll size it to you.</p>
-  </div>
-</section>
-
-<!-- PAY WHAT YOU THINK -->
-<section class="band-mist">
-  <div class="container">
-    <div class="pwyt">
-      <span class="eyebrow" style="color:var(--amber)">The offer</span>
-      <div class="big-num">You decide.</div>
-      <h2 style="margin-top:.2em">Pay me what you think the starter site is worth.</h2>
-      <p>The Site (Tier 1) would normally be £299 to build. But I'd rather it goes live for you than sits on my server. So look at it properly, use it, show your other half — then pay what feels right. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. No set-up fee on the starter site, no contract, no catch — and you only add booking or the full kit later if you want to.</p>
-      <a class="btn btn-primary" href="#see-yours" style="margin-top:8px">Get mine built →</a>
-    </div>
   </div>
 </section>
 
