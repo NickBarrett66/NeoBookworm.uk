@@ -24,6 +24,41 @@
 <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
 
+<!-- CookieConsent v3 styles (self-hosted) — non-blocking -->
+<link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/vendor/cookieconsent/cookieconsent.css"></noscript>
+
+<!-- CookieConsent colour overrides — TyreTrust palette -->
+<style>
+#cc-main {
+  --cc-bg: #14243f;
+  --cc-primary-color: #f5872a;
+  --cc-secondary-color: #ffffff;
+  --cc-text-color: #ffffff;
+  --cc-text-color-headline: #ffffff;
+  --cc-separator-border-color: rgba(245, 135, 42, 0.2);
+  --cc-btn-primary-bg: #f5872a;
+  --cc-btn-primary-color: #14243f;
+  --cc-btn-primary-hover-bg: #d86f18;
+  --cc-btn-primary-hover-color: #14243f;
+  --cc-btn-secondary-bg: transparent;
+  --cc-btn-secondary-color: #ffffff;
+  --cc-btn-secondary-border-color: rgba(255,255,255,0.3);
+  --cc-btn-secondary-hover-bg: rgba(255,255,255,0.08);
+  --cc-btn-secondary-hover-color: #ffffff;
+  --cc-toggle-on-bg: #f5872a;
+  --cc-toggle-off-bg: rgba(255,255,255,0.2);
+  --cc-toggle-enabled-icon-color: #14243f;
+  --cc-toggle-readonly-bg: rgba(245, 135, 42, 0.35);
+  --cc-cookie-category-block-bg: rgba(255,255,255,0.05);
+  --cc-cookie-category-block-border: rgba(245,135,42,0.15);
+  --cc-overlay-bg: rgba(0,0,0,0.5);
+  --cc-modal-border-radius: 4px;
+  --cc-btn-border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+}
+</style>
+
 <style>
   :root{
     --ink:#10151d;          /* tyre black */
@@ -155,12 +190,15 @@
   .demo-btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:0 18px;font-weight:700;cursor:pointer}
   .demo-btn:hover{background:var(--navy-2)}
   .demo-out{margin-top:12px;font-size:.95rem;min-height:1.4em}
-  .plate{display:inline-block;background:#f9d616;color:#111;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:6px;border:1px solid #cbae00;font-family:ui-monospace,monospace;text-transform:uppercase}
-  .result-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:12px;animation:pop .3s ease}
-  .result-card .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--mist-2);font-size:.94rem}
-  .result-card .row:last-child{border:0}
-  .result-card .row span:first-child{color:var(--muted)}
-  .result-card .row b{color:var(--navy)}
+  .lookup-examples{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+  .lookup-chip{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font:inherit;font-size:.8rem;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:.03em;color:var(--navy);cursor:pointer}
+  .lookup-chip:hover{border-color:var(--orange);color:var(--orange-dk)}
+  .vresult{background:#fff;border:1.5px solid #cfe3fb;border-radius:10px;padding:14px 16px;margin-top:12px;animation:pop .3s ease}
+  .vresult .vplate{font-weight:800;color:var(--navy);font-size:1.05rem;letter-spacing:.03em;font-family:ui-monospace,monospace}
+  .vresult .vdesc{color:var(--muted);font-size:.92rem;margin-top:4px}
+  .vresult .vtyre{margin-top:8px;padding-top:8px;border-top:1px dashed var(--mist-2);font-size:.94rem;color:var(--navy)}
+  .vresult .vtyre b{color:var(--green)}
+  .vnote{font-size:.8rem;color:var(--muted);margin:8px 0 0;font-style:italic}
   @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
   /* phone mock for reminders */
@@ -227,6 +265,21 @@
   .final h2{color:#fff}
   .final .lead{margin:0 auto 26px;color:#c3d0e2}
   .final-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* lead form */
+  .lf-card{background:#fff;color:var(--body);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(22px,4vw,34px);max-width:600px;margin:0 auto 28px;text-align:left}
+  .lf-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .lf-card .field{margin-bottom:16px}
+  .lf-card label{display:block;font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .lf-hint{font-weight:400;color:var(--muted);font-size:.82rem}
+  .lf-card input,.lf-card select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font:inherit;font-size:1rem;background:#fff;color:var(--body)}
+  .lf-card input:focus,.lf-card select:focus{outline:2px solid var(--orange);outline-offset:1px}
+  .lf-submit{width:100%;justify-content:center;margin-top:6px}
+  .lf-note{font-size:.85rem;color:var(--muted);text-align:center;margin:14px 0 0}
+  .lf-error{background:#fdecea;border:1px solid #f3b7ae;color:#8a2e22;border-radius:9px;padding:12px 14px;margin-top:14px;font-size:.9rem}
+  .lf-thanks{text-align:center;padding:6px 0}
+  .lf-thanks h3{color:var(--navy);font-family:'Playfair Display',serif;font-size:1.5rem;margin:0 0 8px}
+  @media(max-width:640px){.lf-row{grid-template-columns:1fr}}
 
   footer.site{background:var(--ink);color:#8ea0b8;padding:36px 0;font-size:.9rem}
   .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
@@ -481,6 +534,12 @@
             <input id="regInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate">
             <button class="demo-btn" id="regBtn" type="button">Look up</button>
           </div>
+          <div class="lookup-examples">
+            <button type="button" class="lookup-chip">HE12 TYR</button>
+            <button type="button" class="lookup-chip">AB12 CDE</button>
+            <button type="button" class="lookup-chip">LT68 VAN</button>
+            <button type="button" class="lookup-chip">YT19 CAR</button>
+          </div>
           <div class="demo-out" id="regOut" aria-live="polite"></div>
         </div>
       </div>
@@ -496,6 +555,12 @@
           <div class="demo-row">
             <input id="tyreInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate for tyre">
             <button class="demo-btn" id="tyreBtn" type="button">Find tyre</button>
+          </div>
+          <div class="lookup-examples">
+            <button type="button" class="lookup-chip">HE12 TYR</button>
+            <button type="button" class="lookup-chip">AB12 CDE</button>
+            <button type="button" class="lookup-chip">LT68 VAN</button>
+            <button type="button" class="lookup-chip">YT19 CAR</button>
           </div>
           <div class="demo-out" id="tyreOut" aria-live="polite"></div>
         </div>
@@ -574,9 +639,50 @@
   <div class="container">
     <span class="eyebrow" style="color:var(--amber)">Your move</span>
     <h2>Want to see one wearing your name?</h2>
-    <p class="lead center">Email me the name of your tyre business and your town. I'll build you a real site — like the HE Tyres one above — and send you a link. Free to look. Pay only if you like it.</p>
+    <p class="lead center">Give me your details below. I'll build you a real site — like the HE Tyres one above — and email you a link. Free to look. Pay only if you like it.</p>
+
+    <div class="lf-card">
+      <form id="leadForm">
+        <div class="lf-row">
+          <div class="field">
+            <label for="ltName">Your name</label>
+            <input id="ltName" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="ltBiz">Business name</label>
+            <input id="ltBiz" name="biz" type="text" autocomplete="organization" required>
+          </div>
+        </div>
+        <div class="lf-row">
+          <div class="field">
+            <label for="ltTown">Town</label>
+            <input id="ltTown" name="town" type="text" autocomplete="address-level2" required>
+          </div>
+          <div class="field">
+            <label for="ltWhat">What you do</label>
+            <select id="ltWhat" name="what">
+              <option value="Depot only">Depot only</option>
+              <option value="Mobile only">Mobile only</option>
+              <option value="Both depot &amp; mobile" selected>Both depot &amp; mobile</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="ltEmail">Email address <span class="lf-hint">— I'll send your finished site here</span></label>
+          <input id="ltEmail" name="email" type="email" autocomplete="email" required>
+        </div>
+        <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Build my site — free to look →</button>
+        <p class="lf-note">I'll build your site and email you a link within a few days. No forms, no calls unless you want one.</p>
+        <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@neobookworm.uk">email me directly</a>.</p>
+      </form>
+      <div class="lf-thanks" id="ltThanks" hidden>
+        <h3>Done — I'm on it.</h3>
+        <p>I'll build your site and email you a link within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
+      </div>
+    </div>
+
     <div class="final-actions">
-      <a class="btn btn-primary" href="mailto:nick@neobookworm.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Email me — build mine ✉️</a>
+      <a class="btn btn-ghost" href="mailto:nick@neobookworm.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Prefer email? Send me a message ✉️</a>
       <a class="btn btn-ghost" href="/he-tyres/" target="_blank" rel="noopener">Look at the live example again ↗</a>
     </div>
     <p style="font-size:.88rem;color:#9fb0c7;margin-top:22px">Or just reply to my letter, or wait for my call — no rush, no pressure.</p>
@@ -597,6 +703,10 @@
 {"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://neobookworm.uk/tyretrust/","email":"nick@neobookworm.uk"}
 </script>
 
+<!-- TyreTrust runs its own GA4 property, separate from the main NeoBookworm site -->
+<script>window.__NB_GA_ID = 'G-84ZR6LQ0GQ';</script>
+<script type="module" src="/cookieconsent-config.js"></script>
+
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -614,26 +724,29 @@
 
   // Sample data for the look-up demos (illustrative — the real thing calls DVLA/postcode services)
   var REGS={
-    'HE12TYR':{make:'Ford',model:'Transit Custom',colour:'White',year:'2019',tyre:'215/65 R16 109T'},
-    'AB12CDE':{make:'Volkswagen',model:'Golf',colour:'Grey',year:'2018',tyre:'205/55 R16 91V'},
-    'LT68VAN':{make:'Mercedes-Benz',model:'Sprinter',colour:'Silver',year:'2018',tyre:'235/65 R16C 115R'},
-    'YT19CAR':{make:'BMW',model:'3 Series',colour:'Black',year:'2019',tyre:'225/45 R18 95Y'}
+    'HE12TYR':{make:'Ford',model:'Transit Custom',trim:'Limited',colour:'White',year:'2019',fuel:'Diesel',tyre:'215/65 R16 109T'},
+    'AB12CDE':{make:'Volkswagen',model:'Golf',trim:'GT',colour:'Grey',year:'2018',fuel:'Petrol',tyre:'205/55 R16 91V'},
+    'LT68VAN':{make:'Mercedes-Benz',model:'Sprinter',trim:'314CDI',colour:'Silver',year:'2018',fuel:'Diesel',tyre:'235/65 R16C 115R'},
+    'YT19CAR':{make:'BMW',model:'3 Series',trim:'M Sport',colour:'Black',year:'2019',fuel:'Petrol',tyre:'225/45 R18 95Y'}
   };
-  var MAKES=['Ford Fiesta|185/65 R15 88H','Vauxhall Corsa|195/55 R16 87V','Audi A3|225/40 R18 92Y',
-             'Nissan Qashqai|215/60 R17 96H','Tesla Model 3|235/45 R18 98W','Land Rover Discovery|255/55 R19 111W'];
+  var MAKES=['Ford Fiesta|Zetec|Petrol|185/65 R15 88H','Vauxhall Corsa|SRi|Petrol|195/55 R16 87V','Audi A3|S Line|Petrol|225/40 R18 92Y',
+             'Nissan Qashqai|Acenta|Diesel|215/60 R17 96H','Tesla Model 3|Long Range AWD|Electric|235/45 R18 98W','Land Rover Discovery|HSE|Diesel|255/55 R19 111W'];
   var COLOURS=['Blue','Red','Grey','White','Black','Silver'];
 
   function clean(v){return (v||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
   function pseudo(reg){ // deterministic plausible result for any plate
     var s=0;for(var i=0;i<reg.length;i++)s+=reg.charCodeAt(i);
-    var mm=MAKES[s%MAKES.length].split('|');
-    return {make:mm[0].split(' ')[0],model:mm[0].split(' ').slice(1).join(' '),colour:COLOURS[s%COLOURS.length],year:String(2015+(s%9)),tyre:mm[1]};
+    var parts=MAKES[s%MAKES.length].split('|');
+    var nameParts=parts[0].split(' ');
+    return {make:nameParts[0],model:nameParts.slice(1).join(' '),trim:parts[1],fuel:parts[2],colour:COLOURS[s%COLOURS.length],year:String(2015+(s%9)),tyre:parts[3]};
   }
   function lookup(reg){reg=clean(reg);if(!reg)return null;return REGS[reg]||pseudo(reg);}
 
-  function card(rows){
-    return '<div class="result-card">'+rows.map(function(r){
-      return '<div class="row"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>';}).join('')+'</div>';
+  function vresult(reg,d,mode){
+    var descBits=[[d.make,d.model,d.trim].filter(Boolean).join(' '),d.year,d.colour,mode==='tyre'?null:d.fuel].filter(Boolean);
+    var tyreRow=mode==='tyre'?'<div class="vtyre">Tyre size: <b>'+d.tyre+'</b></div>':'';
+    return '<div class="vresult"><div class="vplate">'+reg+'</div><div class="vdesc">'+descBits.join(' · ')+'</div>'+tyreRow+'</div>'+
+      '<p class="vnote">Sample data for the demo — the real thing pulls straight from the DVLA.</p>';
   }
   function busy(out,cb){out.innerHTML='<em style="color:var(--muted)">Looking up…</em>';setTimeout(cb,550);}
 
@@ -641,17 +754,10 @@
     var inp=document.getElementById(inId),b=document.getElementById(btnId),out=document.getElementById(outId);
     function go(){
       var v=inp.value.trim();
-      if(!clean(v)){out.innerHTML='<em style="color:var(--muted)">Pop a reg in — try any you like.</em>';return;}
+      if(!clean(v)){out.innerHTML='<em style="color:var(--muted)">Pop a reg in — or try a sample plate above.</em>';return;}
       busy(out,function(){
         var d=lookup(v);
-        var plate='<div style="margin-bottom:10px"><span class="plate">'+(inp.value.toUpperCase())+'</span></div>';
-        if(mode==='tyre'){
-          out.innerHTML=plate+card([['Vehicle',d.make+' '+d.model],['Tyre size','<span style="color:var(--green)">'+d.tyre+'</span>']])+
-            '<p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Filled in from the plate — no more guessing sizes.</p>';
-        }else{
-          out.innerHTML=plate+card([['Make',d.make],['Model',d.model],['Colour',d.colour],['Year',d.year]])+
-            '<p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">All from the number plate. Customer types nothing else.</p>';
-        }
+        out.innerHTML=vresult(inp.value.toUpperCase(),d,mode);
       });
     }
     b.addEventListener('click',go);
@@ -659,6 +765,66 @@
   }
   wireReg('regInput','regBtn','regOut','reg');
   wireReg('tyreInput','tyreBtn','tyreOut','tyre');
+
+  // Sample-plate chips — fill the nearest input and run its look-up
+  document.querySelectorAll('.lookup-chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      var box=chip.closest('.demo-box');
+      var input=box.querySelector('input');
+      var btn=box.querySelector('.demo-btn');
+      input.value=chip.textContent;
+      btn.click();
+    });
+  });
+
+  // Lead form — POSTs into the same landing-enquiry pipeline as the trade pages
+  (function(){
+    var form=document.getElementById('leadForm');
+    if(!form) return;
+    var errBox=document.getElementById('ltError');
+    var thanks=document.getElementById('ltThanks');
+    var submitBtn=document.getElementById('ltSubmit');
+
+    form.addEventListener('submit',function(ev){
+      ev.preventDefault();
+      errBox.hidden=true;
+      submitBtn.disabled=true;
+      submitBtn.textContent='Sending…';
+
+      var payload={
+        fullName: document.getElementById('ltName').value.trim(),
+        bizName:  document.getElementById('ltBiz').value.trim(),
+        email:    document.getElementById('ltEmail').value.trim(),
+        startOption: 'leave_it_with_me',
+        details:  'Town: '+document.getElementById('ltTown').value.trim()+'\nWhat they do: '+document.getElementById('ltWhat').value,
+        source:   'tyretrust-landing'
+      };
+
+      fetch('https://neobookworm-landing-enquiry.nickbarrett.workers.dev',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload)
+      })
+      .then(function(res){
+        return res.json().then(function(j){
+          if(!res.ok) throw new Error(j.error||('HTTP '+res.status));
+          return j;
+        });
+      })
+      .then(function(){
+        if(typeof window.gtag==='function'){window.gtag('event','generate_lead',{source:'tyretrust-landing'});}
+        form.hidden=true;
+        thanks.hidden=false;
+        thanks.scrollIntoView({behavior:'smooth',block:'center'});
+      })
+      .catch(function(err){
+        submitBtn.disabled=false;
+        submitBtn.textContent='Build my site — free to look →';
+        errBox.hidden=false;
+        if(window.console&&console.warn) console.warn(err);
+      });
+    });
+  })();
 
   // Address lookup demo
   (function(){

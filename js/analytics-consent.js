@@ -1,5 +1,6 @@
 // Load Google Analytics only after the visitor accepts analytics cookies.
-const GA_ID = 'G-FM1VG68GKQ';
+// Pages can run their own GA4 property by setting window.__NB_GA_ID before this module loads.
+const GA_ID = window.__NB_GA_ID || 'G-FM1VG68GKQ';
 
 let loadPromise = null;
 
