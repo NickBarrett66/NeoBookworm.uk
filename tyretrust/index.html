@@ -244,6 +244,18 @@
   .me-card img{display:block;width:100%;height:auto;border-radius:10px}
   .me-card figcaption{padding:12px 8px 4px;font-size:.9rem;color:var(--muted);text-align:center}
 
+  /* FAQ */
+  .faq-list{max-width:760px;margin:32px auto 0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .faq-item{border-bottom:1px solid var(--mist)}
+  .faq-item:last-child{border-bottom:0}
+  .faq-item summary{cursor:pointer;list-style:none;padding:18px 52px 18px 22px;font-weight:700;color:var(--navy);font-size:1rem;position:relative}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);color:var(--orange);font-size:1.4rem;font-weight:700;line-height:1;transition:transform .2s ease}
+  .faq-item[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+  .faq-item summary:hover{color:var(--orange-dk)}
+  .faq-a{padding:0 52px 20px 22px}
+  .faq-a p{margin:0;color:var(--muted);font-size:.96rem}
+
   /* final CTA */
   .final{background:radial-gradient(120% 120% at 20% 0%,#1c3357,var(--navy) 55%,var(--ink));color:#eaf0f8;text-align:center}
   .final h2{color:#fff}
@@ -608,6 +620,39 @@
           <figcaption>Nick — TyreTrust, Swindon. When you email, this is who replies — not a ticket queue.</figcaption>
         </figure>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="band-mist" id="faq">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">Before you ask</span>
+      <h2>The questions I'd ask, in your shoes.</h2>
+      <div class="accent-bar"></div>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>I've already got a Facebook page — why do I need a website too?</summary>
+        <div class="faq-a"><p>Facebook's good for photos and quick updates, but you don't own that page — Facebook does, and its algorithm decides who sees your posts. A website is yours, it's what turns up when someone Googles "tyre fitting near [your town]" rather than searches Facebook, and it still works for the customers who don't have an account. Most fitters end up running both — the website's usually what a stranger finds first.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if I want to cancel?</summary>
+        <div class="faq-a"><p>No exit fee either way, just a month's notice. For The Site, that's simple — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. Booking and the look-up tools are different: they run on systems I host — the calendar connection, the DVLA and tyre-size services — so those switch off when you cancel rather than transferring as files. Your site itself keeps working; you just lose that extra machinery.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>How long does this take?</summary>
+        <div class="faq-a"><p>I build a first version from what I can find about your business, usually within a few days of you getting in touch. You look it over and tell me what to change, and we go back and forth until it's right — there's no meeting to book or form to fill in first.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What do you actually need from me?</summary>
+        <div class="faq-a"><p>To get started: your business name and town. I'll see what I can find online for a first draft — but tyre fitters aren't always easy to research from scratch, especially if you're not on Google or Facebook much. If there's not enough out there, I'll come back with a couple of quick questions rather than guess — what you do, what you don't, roughly what you charge. Photos of your van, your bay or your work help too, but nothing's required just to get going.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>I'm not techy — will I be able to keep it going?</summary>
+        <div class="faq-a"><p>Yes. Once it's live you don't need to touch anything — it just sits there working. If you ever want something changed, you email me and I do it; you're not learning software or logging into a dashboard. That's what the monthly's for.</p></div>
+      </details>
     </div>
   </div>
 </section>
