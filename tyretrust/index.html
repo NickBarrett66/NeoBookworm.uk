@@ -278,6 +278,10 @@
   .lf-thanks h3{color:var(--navy);font-family:'Playfair Display',serif;font-size:1.5rem;margin:0 0 8px}
   @media(max-width:640px){.lf-row{grid-template-columns:1fr}}
 
+  /* personalised banner (shown only when ?p= matches a known mailshot code) */
+  .pbanner{background:var(--amber);color:var(--ink);text-align:center;padding:12px 0;font-weight:700;font-size:.96rem}
+  .pbanner .container{padding:0 clamp(18px,4vw,32px)}
+
   footer.site{background:var(--ink);color:#8ea0b8;padding:36px 0;font-size:.9rem}
   .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
   footer.site a{color:#c3d0e2}
@@ -311,6 +315,10 @@
     <a class="nav-cta" href="#see-yours">See yours built free →</a>
   </div>
 </header>
+
+<div class="pbanner" id="pbanner" hidden>
+  <div class="container"><span id="pbannerText"></span></div>
+</div>
 
 <main id="main">
 
@@ -882,6 +890,56 @@
     }
     b.addEventListener('click',go);
     inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+  })();
+
+  // Personalised banner — matches ?p= mailshot code to a business/town (and first name, once known)
+  (function(){
+    var MAILSHOT={
+      "kingswood-tyre-service":{business:"Kingswood Tyre & Service",town:"Bristol",first:""},
+      "pav-s-mobile-tyres":{business:"Pav's Mobile Tyres",town:"Bristol",first:""},
+      "sinan-s-tyre":{business:"Sinan's Tyre",town:"Bristol",first:""},
+      "js-automotive":{business:"JS Automotive Repairs Centre",town:"Bristol",first:""},
+      "ford-rapid-fit-bath":{business:"Ford Rapid Fit (Bath)",town:"Bath",first:""},
+      "farmborough-tyres-service":{business:"Farmborough Tyres Service",town:"Bath",first:""},
+      "spraytech-mechanics":{business:"Spraytech Mechanics",town:"Bath",first:""},
+      "turner-brace-tyres-clevedon":{business:"Turner Brace Tyres (Clevedon)",town:"Clevedon",first:""},
+      "heathend-garage":{business:"Heathend Garage",town:"Wotton-under-Edge",first:""},
+      "mobile-tyres-oxford":{business:"Mobile Tyres Services Oxford Ltd 24/7",town:"Oxford",first:""},
+      "urgent-fast-reading":{business:"Urgent Fast Tyre Fitting Reading 24/7",town:"Reading",first:""},
+      "premier-mobile-tyres":{business:"Premier Mobile Tyres",town:"Reading",first:""},
+      "city-tyres-reading":{business:"City Tyres & Auto Centre",town:"Reading",first:""},
+      "mobile-tyre-woodley":{business:"Mobile Tyre Repair Response Woodley",town:"Reading",first:""},
+      "smh-mobile-tyres":{business:"SMH Mobile Tyres 24/7",town:"Reading",first:""},
+      "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
+      "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
+      "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
+      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:""},
+      "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
+      "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
+      "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
+      "mobile-fast-tyre-fitting":{business:"Mobile Fast Tyre Fitting",town:"Basingstoke",first:""},
+      "tyre-fitting-near-you":{business:"Tyre Fitting Near You",town:"Basingstoke",first:""},
+      "oakley-car-repairs":{business:"Oakley Car Repairs",town:"Basingstoke",first:""},
+      "whitchurch-service":{business:"Whitchurch Service & Repairs",town:"Whitchurch",first:""},
+      "haytov-sons":{business:"Haytov & Sons Auto Repairs",town:"Whitchurch",first:""},
+      "gs-tyres":{business:"G&S Tyres",town:"Chippenham",first:""},
+      "mobile-salisbury":{business:"Mobile Salisbury",town:"Salisbury",first:""}
+    };
+    var code=new URLSearchParams(window.location.search).get('p');
+    if(!code) return;
+    var d=MAILSHOT[code.toLowerCase()];
+    if(!d) return;
+    var text = d.first
+      ? 'Thanks for stopping by, '+d.first+' — I’d love to build a website like this one for '+d.business+' in '+d.town+'.'
+      : 'Thanks for stopping by — I’d love to build a website like this one for '+d.business+' in '+d.town+'.';
+    var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
+    span.textContent = text;
+    banner.hidden=false;
+    // gtag is set up by the deferred cookieconsent module, which hasn't run yet at this
+    // point in page load — wait for 'load' so consented returning visitors are tracked.
+    window.addEventListener('load',function(){
+      if(typeof window.gtag==='function'){window.gtag('event','mailshot_view',{mailshot_code:code.toLowerCase(),business:d.business,town:d.town});}
+    });
   })();
 </script>
 </body>
