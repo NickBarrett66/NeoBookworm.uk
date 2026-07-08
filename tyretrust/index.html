@@ -20,7 +20,7 @@
 <link rel="apple-touch-icon" href="/tyretrust/images/apple-touch-icon.png">
 
 <!-- Self-hosted fonts, non-blocking -->
-<link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
 
@@ -85,9 +85,9 @@
     margin:0;font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     color:var(--body);background:var(--paper);line-height:1.62;-webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;color:var(--navy);line-height:1.1;margin:0 0 .4em}
-  h1{font-size:clamp(2.1rem,5.2vw,3.55rem);font-weight:800;letter-spacing:-.5px}
-  h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:700}
+  h1,h2,h3{font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--navy);line-height:1.1;margin:0 0 .4em;letter-spacing:-0.02em}
+  h1{font-size:clamp(2.1rem,5.2vw,3.55rem);font-weight:900}
+  h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800}
   h3{font-size:1.24rem;font-weight:700}
   p{margin:0 0 1rem}
   a{color:var(--orange-dk);text-decoration:none}
@@ -113,7 +113,7 @@
   /* header */
   header.site{position:sticky;top:0;z-index:100;background:rgba(16,21,29,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
-  .brand{display:flex;align-items:center;gap:11px;font-family:'Playfair Display',serif;font-weight:800;font-size:1.32rem;color:#fff}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'DM Sans',sans-serif;font-weight:900;font-size:1.32rem;color:#fff}
   .brand:hover{text-decoration:none}
   .brand .mark{width:40px;height:40px;flex:0 0 40px}
   .brand b{color:var(--orange)}
@@ -126,7 +126,7 @@
     background:repeating-radial-gradient(circle,rgba(255,255,255,.05) 0 8px,transparent 8px 20px);opacity:.5;pointer-events:none}
   .hero-grid{display:grid;grid-template-columns:.86fr 1.14fr;gap:clamp(28px,4vw,56px);align-items:center;position:relative;z-index:1}
   .hero h1{color:#fff}
-  .hero h1 em{font-style:italic;color:var(--amber);font-weight:800}
+  .hero h1 em{font-style:normal;color:var(--amber);font-weight:900}
   .hero-sub{font-size:1.16rem;color:#c3d0e2;max-width:33ch}
   .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 14px}
   .hero-secondary{display:inline-block;color:#c3d0e2;font-size:.95rem;font-weight:700;margin:0 0 18px}
@@ -157,7 +157,7 @@
   /* how it works strip */
   .how{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:14px}
   .how-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:26px 24px}
-  .how-card .n{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--amber);font-weight:800}
+  .how-card .n{font-family:'DM Sans',sans-serif;font-size:1.5rem;color:var(--amber);font-weight:900}
   .how-card h3{color:#fff;margin:.35em 0 .3em}
   .how-card p{color:#b8c6dc;margin:0;font-size:.98rem}
 
@@ -201,7 +201,7 @@
   /* star rating widget */
   .stars{color:#f5a623;font-size:1.3rem;letter-spacing:2px}
   .rating-live{display:flex;align-items:center;flex-wrap:wrap;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-top:12px;min-width:0}
-  .rating-live .big{font-size:2rem;font-weight:800;color:var(--navy);font-family:'Playfair Display',serif}
+  .rating-live .big{font-size:2rem;font-weight:900;color:var(--navy);font-family:'DM Sans',sans-serif}
   .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(18,160,106,.6);animation:pulse 2s infinite}
   @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(18,160,106,0)}100%{box-shadow:0 0 0 0 rgba(18,160,106,0)}}
 
@@ -212,9 +212,9 @@
   .tier.featured{border:2px solid var(--orange);box-shadow:var(--shadow)}
   .tier .pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:5px 15px;border-radius:999px;text-transform:uppercase;white-space:nowrap}
   .tier .tnum{font-size:.76rem;font-weight:700;color:var(--orange);letter-spacing:.12em;text-transform:uppercase}
-  .tier .tname{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:1.34rem;margin:2px 0 0}
+  .tier .tname{font-family:'DM Sans',sans-serif;font-weight:800;color:var(--navy);font-size:1.34rem;margin:2px 0 0}
   .tier .price{margin:16px 0 2px;display:flex;align-items:baseline;gap:6px}
-  .tier .price .mo{font-family:'Playfair Display',serif;font-size:2.15rem;font-weight:800;color:var(--navy);line-height:1}
+  .tier .price .mo{font-family:'DM Sans',sans-serif;font-size:2.15rem;font-weight:900;color:var(--navy);line-height:1}
   .tier .price .per{color:var(--muted);font-size:.95rem}
   .tier .setup{font-size:.9rem;color:var(--muted);margin:0 0 18px;padding-bottom:16px;border-bottom:1px solid var(--mist)}
   .tier .setup b{color:var(--navy)}
@@ -227,7 +227,7 @@
   .tier ul li.allow::before{content:"★";color:var(--amber)}
   .tier .btn{width:100%;justify-content:center}
   /* pay-as-you-go packs (Tier 3) */
-  .tier .price .payg{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--navy);line-height:1}
+  .tier .price .payg{font-family:'DM Sans',sans-serif;font-size:1.6rem;font-weight:900;color:var(--navy);line-height:1}
   .pack{background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:12px}
   .pack-opt{border-style:dashed}
   .pack-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
@@ -278,7 +278,7 @@
   .lf-note{font-size:.85rem;color:var(--muted);text-align:center;margin:14px 0 0}
   .lf-error{background:#fdecea;border:1px solid #f3b7ae;color:#8a2e22;border-radius:9px;padding:12px 14px;margin-top:14px;font-size:.9rem}
   .lf-thanks{text-align:center;padding:6px 0}
-  .lf-thanks h3{color:var(--navy);font-family:'Playfair Display',serif;font-size:1.5rem;margin:0 0 8px}
+  .lf-thanks h3{color:var(--navy);font-family:'DM Sans',sans-serif;font-size:1.5rem;margin:0 0 8px}
   @media(max-width:640px){.lf-row{grid-template-columns:1fr}}
 
   /* personalised banner (shown only when ?p= matches a known mailshot code) */
@@ -337,7 +337,7 @@
       <a class="hero-secondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
         <span><i class="tick">✓</i> £0 to build — pay what you think it's worth</span>
-        <span><i class="tick">✓</i> £9.99/mo, cancel any time</span>
+        <span><i class="tick">✓</i> from £9.99/mo, cancel at any time</span>
         <span><i class="tick">✓</i> No agency, no jargon</span>
       </div>
     </div>
