@@ -128,7 +128,9 @@
   .hero h1{color:#fff}
   .hero h1 em{font-style:italic;color:var(--amber);font-weight:800}
   .hero-sub{font-size:1.16rem;color:#c3d0e2;max-width:33ch}
-  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 18px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 14px}
+  .hero-secondary{display:inline-block;color:#c3d0e2;font-size:.95rem;font-weight:700;margin:0 0 18px}
+  .hero-secondary:hover{color:#fff}
   .hero-trust{display:flex;flex-wrap:wrap;gap:16px;font-size:.92rem;color:#a9bad2}
   .hero-trust span{display:inline-flex;align-items:center;gap:6px}
   .tick{color:var(--green);font-weight:900}
@@ -144,7 +146,8 @@
   .browser-open{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:18px;
     background:linear-gradient(180deg,rgba(12,18,25,0) 55%,rgba(12,18,25,.55));text-decoration:none}
   .browser-open .btn{pointer-events:auto}
-  .mock-tag{flex-shrink:0;background:var(--green);color:#fff;font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+  .mock-tag{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;color:#8ea0b8;font-size:.72rem;font-weight:700;letter-spacing:.03em;white-space:nowrap}
+  .mock-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
 
   /* section shells */
   section{padding:clamp(52px,7vw,88px) 0}
@@ -315,7 +318,6 @@
            width="40" height="40" alt="TyreTrust" decoding="async" fetchpriority="high">
       Tyre<b>Trust</b>
     </a>
-    <a class="nav-cta" href="#see-yours">See yours built free →</a>
   </div>
 </header>
 
@@ -331,11 +333,11 @@
     <div>
       <span class="eyebrow">For tyre fitters — and only tyre fitters</span>
       <h1>The website that <em>works</em> while you're under the car.</h1>
-      <p class="hero-sub">I build one thing: proper websites for tyre fitters. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your name.</p>
+      <p class="hero-sub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your business name.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#see-it">See it working →</a>
-        <a class="btn btn-ghost" href="#see-yours">Get yours built free</a>
+        <a class="btn btn-primary" href="#see-yours">Get yours built free</a>
       </div>
+      <a class="hero-secondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
         <span><i class="tick">✓</i> £0 to build — pay what you think it's worth</span>
         <span><i class="tick">✓</i> £9.99/mo, cancel any time</span>
@@ -347,7 +349,7 @@
         <div class="browser-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
           <span class="browser-url">hetyres.uk</span>
-          <span class="mock-tag">● Live site</span>
+          <span class="mock-tag">Live site</span>
         </div>
         <div class="browser-view">
           <picture>
