@@ -540,6 +540,7 @@
         </div>
         <div class="demo-box">
           <label>Type any reg and watch</label>
+          <p class="vnote" style="margin:0 0 10px">Illustrative demo — not real DVLA data.</p>
           <div class="demo-row">
             <input id="regInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate">
             <button class="demo-btn" id="regBtn" type="button">Look up</button>
@@ -562,6 +563,7 @@
         </div>
         <div class="demo-box">
           <label>Same reg, now the tyre</label>
+          <p class="vnote" style="margin:0 0 10px">Illustrative demo — not real DVLA data.</p>
           <div class="demo-row">
             <input id="tyreInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate for tyre">
             <button class="demo-btn" id="tyreBtn" type="button">Find tyre</button>
@@ -584,9 +586,16 @@
         </div>
         <div class="demo-box">
           <label>Enter a postcode</label>
+          <p class="vnote" style="margin:0 0 10px">Illustrative demo — not a real address look-up.</p>
           <div class="demo-row">
             <input id="pcInput" maxlength="8" placeholder="e.g. SN5 8ZW" aria-label="Postcode">
             <button class="demo-btn" id="pcBtn" type="button">Find address</button>
+          </div>
+          <div class="lookup-examples">
+            <button type="button" class="lookup-chip">SN5 8ZW</button>
+            <button type="button" class="lookup-chip">SN1 2QN</button>
+            <button type="button" class="lookup-chip">BS1 4ST</button>
+            <button type="button" class="lookup-chip">OX1 1AA</button>
           </div>
           <div class="demo-out" id="pcOut" aria-live="polite"></div>
         </div>
@@ -743,7 +752,7 @@
 <section class="final" id="see-yours">
   <div class="container">
     <span class="eyebrow" style="color:var(--amber)">Your move</span>
-    <h2>Want to see one wearing your name?</h2>
+    <h2>Want to see one wearing your business name?</h2>
     <p class="lead center">Give me your details below. I'll build you a real site — like the HE Tyres one above — and email you a link. Free to look. Pay only if you like it.</p>
 
     <div class="lf-card">
@@ -944,7 +953,8 @@
         var opts=['1 High Street','2 High Street','14 High Street','Rose Cottage, High Street','Flat 3, The Maltings']
           .map(function(a){return '<option>'+a+', '+P+'</option>';}).join('');
         out.innerHTML='<select style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font:inherit;background:#fff"><option>Pick your address…</option>'+opts+'</select>'+
-          '<p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Customer picks — full address filled, cleanly, first time.</p>';
+          '<p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Customer picks — full address filled, cleanly, first time.</p>'+
+          '<p class="vnote">Sample data for the demo — the real thing pulls from a postcode look-up service.</p>';
       });
     }
     b.addEventListener('click',go);

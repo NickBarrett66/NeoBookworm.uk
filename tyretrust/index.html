@@ -611,7 +611,7 @@
 <section class="final" id="see-yours">
   <div class="container">
     <span class="eyebrow" style="color:var(--amber)">Your move</span>
-    <h2>Want to see one wearing your name?</h2>
+    <h2>Want to see one wearing your business name?</h2>
     <p class="lead center">Give me your details below. I'll build you a real site — like the HE Tyres one above — and email you a link. Free to look. Pay only if you like it.</p>
 
     <div class="lf-card">
@@ -789,6 +789,13 @@
     var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
     span.textContent = text;
     banner.hidden=false;
+
+    // Pre-fill the lead form with what the mailshot already knows — still fully editable,
+    // in case the letter's details are wrong or out of date.
+    var bizField=document.getElementById('ltBiz'), townField=document.getElementById('ltTown'), nameField=document.getElementById('ltName');
+    if(bizField && !bizField.value) bizField.value=d.business;
+    if(townField && !townField.value) townField.value=d.town;
+    if(nameField && d.first && !nameField.value) nameField.value=d.first;
     // gtag is set up by the deferred cookieconsent module, which hasn't run yet at this
     // point in page load — wait for 'load' so consented returning visitors are tracked.
     window.addEventListener('load',function(){
