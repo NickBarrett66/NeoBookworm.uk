@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TyreTrust — Websites built only for tyre fitters</title>
 <meta name="description" content="A working website made only for tyre fitters. See a real one running for HE Tyres, try the booking and reg look-up live, then pay me what you think it's worth. Take a look.">
-<link rel="canonical" href="https://neobookworm.uk/tyretrust/">
+<link rel="canonical" href="https://neobookworm.uk/tyretrust/full/">
+<meta name="robots" content="noindex, nofollow">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://neobookworm.uk/tyretrust/">
+<meta property="og:url" content="https://neobookworm.uk/tyretrust/full/">
 <meta property="og:title" content="TyreTrust — Websites built only for tyre fitters">
 <meta property="og:description" content="See a real, working website for a tyre fitter. Try the booking and reg look-up yourself. Pay what you think it's worth.">
 <meta property="og:image" content="https://neobookworm.uk/tyretrust/og.webp">
@@ -191,6 +192,17 @@
   .demo-btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:0 18px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap}
   .demo-btn:hover{background:var(--navy-2)}
   .demo-out{margin-top:12px;font-size:.95rem;min-height:1.4em}
+  .lookup-examples{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+  .lookup-chip{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font:inherit;font-size:.8rem;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:.03em;color:var(--navy);cursor:pointer}
+  .lookup-chip:hover{border-color:var(--orange);color:var(--orange-dk)}
+  .vresult{background:#fff;border:1.5px solid #cfe3fb;border-radius:10px;padding:14px 16px;margin-top:12px;animation:pop .3s ease}
+  .vresult .vplate{font-weight:800;color:var(--navy);font-size:1.05rem;letter-spacing:.03em;font-family:ui-monospace,monospace}
+  .vresult .vdesc{color:var(--muted);font-size:.92rem;margin-top:4px}
+  .vresult .vtyre{margin-top:8px;padding-top:8px;border-top:1px dashed var(--mist-2);font-size:.94rem;color:var(--navy)}
+  .vresult .vtyre b{color:var(--green)}
+  .vnote{font-size:.8rem;color:var(--muted);margin:8px 0 0;font-style:italic}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
   /* phone mock for reminders */
   .phone{max-width:280px;margin:6px auto 0;background:#0c1219;border-radius:26px;padding:12px;box-shadow:var(--shadow)}
   .phone-screen{background:#e9eef4;border-radius:16px;padding:16px;min-height:180px}
@@ -238,6 +250,26 @@
   .pack-meter span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#7bc47f)}
   .pack-d{font-size:.85rem;color:var(--body);line-height:1.45}
   .pack-d b{color:var(--navy)}
+  /* Full Bay band */
+  .fullbay{margin-top:30px;background:var(--navy);border-radius:var(--radius);padding:30px 30px 28px;box-shadow:var(--shadow);color:#fff}
+  .fullbay-head{max-width:78ch}
+  .fullbay-tag{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+  .fullbay-head h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin:0 0 8px;color:#fff}
+  .fullbay-head p{color:#cdd6e4;font-size:.98rem;line-height:1.55;margin:0}
+  .fullbay-head p b{color:#fff}
+  .fullbay .packs-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:22px 0 20px}
+  .fullbay .pack{background:#16294a;border-color:#274063}
+  .fullbay .pack-opt{border-color:#3a5680;border-style:dashed}
+  .fullbay .pack-name{color:#fff}
+  .fullbay .pack-name em{color:#9fb0c9}
+  .fullbay .pack-meter{background:#0b1830}
+  .fullbay .pack-d{color:#cdd6e4}
+  .fullbay .pack-d b{color:#fff}
+  .fullbay-list{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:8px}
+  .fullbay-list li{position:relative;padding-left:25px;font-size:.94rem;color:#e4eaf3}
+  .fullbay-list li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900}
+  .fullbay > .btn{width:auto}
+  @media(max-width:620px){.fullbay .packs-2{grid-template-columns:1fr}.fullbay{padding:26px 20px 24px}}
   .tiers-note{text-align:center;margin:24px auto 0;color:var(--muted);font-size:.93rem;max-width:60ch}
   @media(max-width:860px){.tiers{grid-template-columns:1fr}}
   @media(max-width:620px){.plans{grid-template-columns:1fr}}
@@ -319,10 +351,6 @@
   </div>
 </header>
 
-<div class="pbanner" id="pbanner" hidden>
-  <div class="container"><span id="pbannerText"></span></div>
-</div>
-
 <main id="main">
 
 <!-- HERO -->
@@ -382,12 +410,12 @@
   </div>
 </section>
 
-<!-- PRICING — two plans -->
+<!-- PRICING — two plans + Full Bay pay-as-you-go add-on -->
 <section class="band-mist" id="pricing">
   <div class="container">
     <div class="center">
       <span class="eyebrow">The offer</span>
-      <h2>Pick a plan. You set the build price.</h2>
+      <h2>Pick a plan. Add the clever bit when you're ready. You set the build price.</h2>
       <div class="accent-bar"></div>
       <p class="lead center" style="margin:18px auto 0">Whichever plan you pick, the deal is the same: I build it first, you look it over properly, and you pay what you think the build was worth. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. After that it's just the small monthly — no contract, cancel any time, and your web address and files are always yours to keep.</p>
       <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
@@ -431,7 +459,41 @@
 
     </div>
 
-    <p class="tiers-note">Not sure? Start with The Site — you can add booking any time, no rebuild needed.</p>
+    <!-- THE FULL BAY — pay-as-you-go add-on -->
+    <div class="fullbay">
+      <div class="fullbay-head">
+        <span class="fullbay-tag">The Full Bay · the clever bit</span>
+        <h3>Add the smart look-ups to your Booking Engine.</h3>
+        <p>This bolts on to <b>The Booking Engine (£19.99/mo)</b> — it's the extra, not a replacement. And it's not another monthly bill: you top up in advance, like a pay-as-you-go phone, and always see what's left.</p>
+      </div>
+
+      <div class="packs-2">
+
+        <div class="pack">
+          <div class="pack-h"><span class="pack-name">Customer look-ups</span><span class="pack-start">£74.99 to start</span></div>
+          <div class="pack-meter"><span style="width:100%"></span></div>
+          <div class="pack-d"><b>150 customers</b> covered, and they last a <b>full year</b>. Then top up <b>£30 for 50 more</b> — only when you're running low. A quiet month costs you nothing.</div>
+        </div>
+
+        <div class="pack pack-opt">
+          <div class="pack-h"><span class="pack-name">Text reminders <em>optional</em></span><span class="pack-start">£14.99 to start</span></div>
+          <div class="pack-meter"><span style="width:100%"></span></div>
+          <div class="pack-d"><b>150 texts</b> to begin, then top up <b>£10 for 100</b>. Texts <b>never expire</b> — buy them once and use them whenever. Reg look-ups keep working without them.</div>
+        </div>
+
+      </div>
+
+      <ul class="fullbay-list">
+        <li>Reg, tyre &amp; address look-ups that fill themselves in</li>
+        <li>A running balance — always see exactly what's left</li>
+        <li>Nothing charged without you choosing to</li>
+      </ul>
+
+      <a class="btn btn-dark" href="#see-yours">For a busy bay →</a>
+    </div>
+
+    <p class="tiers-note">Not sure? Start with The Site — you can add booking, then the Full Bay look-ups, any time, no rebuild needed.</p>
+    <p class="tiers-note">Two kinds of top-up, two rules: <b>look-up credits last 12 months</b> from the day you buy them (a year is plenty for even a busy bay); <b>text credits never expire</b>. If the look-ups ever run out, the site keeps working — the number plate just gets typed in by hand instead. Busy multi-bay depot? Ask and I'll size a bigger top-up to you.</p>
   </div>
 </section>
 
@@ -504,9 +566,9 @@
       <!-- Reminders -->
       <div class="feat">
         <div class="ico">🔔</div>
-        <div class="price-tag">Included in <b>The Booking Engine</b></div>
+        <div class="price-tag">Email in <b>Booking Engine</b> · SMS in <b>Full Bay</b></div>
         <h3>Reminders &amp; reschedule links</h3>
-        <p class="desc">The night before, every customer gets a "see you at 10:15" by email, with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
+        <p class="desc">The night before, every customer gets a "see you at 10:15" by email or text — with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
         <div class="demo-box">
           <div class="phone">
             <div class="phone-screen">
@@ -514,6 +576,66 @@
               <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Reg lookup -->
+      <div class="feat">
+        <div class="ico">🚗</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Reg look-up <small style="font-weight:400;color:var(--muted)">(TyreTrust RegFill)</small></h3>
+        <p class="desc">The customer types their number plate. Make, model and colour fill themselves in — fewer mistakes, less typing, right details first time.</p>
+        <div class="demo-box">
+          <label>Type any reg and watch</label>
+          <div class="demo-row">
+            <input id="regInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate">
+            <button class="demo-btn" id="regBtn" type="button">Look up</button>
+          </div>
+          <div class="lookup-examples">
+            <button type="button" class="lookup-chip">HE12 TYR</button>
+            <button type="button" class="lookup-chip">AB12 CDE</button>
+            <button type="button" class="lookup-chip">LT68 VAN</button>
+            <button type="button" class="lookup-chip">YT19 CAR</button>
+          </div>
+          <div class="demo-out" id="regOut" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Tyre lookup -->
+      <div class="feat">
+        <div class="ico">⭕</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Tyre-size look-up</h3>
+        <p class="desc">From the same reg, the tyre size drops in too. No more "hang on, what size are you after?" — you get the right rubber lined up earlier.</p>
+        <div class="demo-box">
+          <label>Same reg, now the tyre</label>
+          <div class="demo-row">
+            <input id="tyreInput" maxlength="8" placeholder="e.g. AB12 CDE" aria-label="Number plate for tyre">
+            <button class="demo-btn" id="tyreBtn" type="button">Find tyre</button>
+          </div>
+          <div class="lookup-examples">
+            <button type="button" class="lookup-chip">HE12 TYR</button>
+            <button type="button" class="lookup-chip">AB12 CDE</button>
+            <button type="button" class="lookup-chip">LT68 VAN</button>
+            <button type="button" class="lookup-chip">YT19 CAR</button>
+          </div>
+          <div class="demo-out" id="tyreOut" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Address lookup -->
+      <div class="feat">
+        <div class="ico">📍</div>
+        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <h3>Address look-up</h3>
+        <p class="desc">For mobile jobs: the customer enters a postcode and picks their address from a list. Cleaner addresses, no wild-goose chases to the wrong street.</p>
+        <div class="demo-box">
+          <label>Enter a postcode</label>
+          <div class="demo-row">
+            <input id="pcInput" maxlength="8" placeholder="e.g. SN5 8ZW" aria-label="Postcode">
+            <button class="demo-btn" id="pcBtn" type="button">Find address</button>
+          </div>
+          <div class="demo-out" id="pcOut" aria-live="polite"></div>
         </div>
       </div>
 
@@ -543,7 +665,7 @@
         <span class="eyebrow">Who you'd be dealing with</span>
         <h2>It started with one good tyre business.</h2>
         <p>HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one. It's live at the top of this page: click around it and judge it the way a customer would.</p>
-        <p>They're now trying out the online booking to go with it — reminders, reschedule links, the job board, all built and working, and every piece is on this page for you to try. What I don't have yet is a fitter running it day in, day out, which is exactly why you set the build price: I'd rather prove it in a real tyre bay than keep polishing it on my own.</p>
+        <p>They're now trying out the online booking to go with it. The rest of the kit — the look-ups, the reminders, the job board — is built and working, and every piece is on this page for you to try. What I don't have yet is a fitter running the lot, which is exactly why you set the build price: I'd rather prove it in a real tyre bay than keep polishing it on my own.</p>
         <p>I'm Nick — I'm building my thing the same way you built yours: one honest job at a time. I'm based in Swindon, right in the middle of your patch, so I'm not some faceless agency in a call centre.</p>
       </div>
       <div>
@@ -574,7 +696,7 @@
       </details>
       <details class="faq-item">
         <summary>What happens if I want to cancel?</summary>
-        <div class="faq-a"><p>No exit fee either way, just a month's notice. For The Site, that's simple — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. Booking is different: it runs on a calendar connection I host, so that switches off when you cancel rather than transferring as files. Your site itself keeps working; you just lose that extra machinery.</p></div>
+        <div class="faq-a"><p>No exit fee either way, just a month's notice. For The Site, that's simple — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. Booking and the look-up tools are different: they run on systems I host — the calendar connection, the DVLA and tyre-size services — so those switch off when you cancel rather than transferring as files. Your site itself keeps working; you just lose that extra machinery.</p></div>
       </details>
       <details class="faq-item">
         <summary>How long does this take?</summary>
@@ -683,6 +805,61 @@
     });}
   })();
 
+  // Sample data for the look-up demos (illustrative — the real thing calls DVLA/postcode services)
+  var REGS={
+    'HE12TYR':{make:'Ford',model:'Transit Custom',trim:'Limited',colour:'White',year:'2019',fuel:'Diesel',tyre:'215/65 R16 109T'},
+    'AB12CDE':{make:'Volkswagen',model:'Golf',trim:'GT',colour:'Grey',year:'2018',fuel:'Petrol',tyre:'205/55 R16 91V'},
+    'LT68VAN':{make:'Mercedes-Benz',model:'Sprinter',trim:'314CDI',colour:'Silver',year:'2018',fuel:'Diesel',tyre:'235/65 R16C 115R'},
+    'YT19CAR':{make:'BMW',model:'3 Series',trim:'M Sport',colour:'Black',year:'2019',fuel:'Petrol',tyre:'225/45 R18 95Y'}
+  };
+  var MAKES=['Ford Fiesta|Zetec|Petrol|185/65 R15 88H','Vauxhall Corsa|SRi|Petrol|195/55 R16 87V','Audi A3|S Line|Petrol|225/40 R18 92Y',
+             'Nissan Qashqai|Acenta|Diesel|215/60 R17 96H','Tesla Model 3|Long Range AWD|Electric|235/45 R18 98W','Land Rover Discovery|HSE|Diesel|255/55 R19 111W'];
+  var COLOURS=['Blue','Red','Grey','White','Black','Silver'];
+
+  function clean(v){return (v||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
+  function pseudo(reg){ // deterministic plausible result for any plate
+    var s=0;for(var i=0;i<reg.length;i++)s+=reg.charCodeAt(i);
+    var parts=MAKES[s%MAKES.length].split('|');
+    var nameParts=parts[0].split(' ');
+    return {make:nameParts[0],model:nameParts.slice(1).join(' '),trim:parts[1],fuel:parts[2],colour:COLOURS[s%COLOURS.length],year:String(2015+(s%9)),tyre:parts[3]};
+  }
+  function lookup(reg){reg=clean(reg);if(!reg)return null;return REGS[reg]||pseudo(reg);}
+
+  function vresult(reg,d,mode){
+    var descBits=[[d.make,d.model,d.trim].filter(Boolean).join(' '),d.year,d.colour,mode==='tyre'?null:d.fuel].filter(Boolean);
+    var tyreRow=mode==='tyre'?'<div class="vtyre">Tyre size: <b>'+d.tyre+'</b></div>':'';
+    return '<div class="vresult"><div class="vplate">'+reg+'</div><div class="vdesc">'+descBits.join(' · ')+'</div>'+tyreRow+'</div>'+
+      '<p class="vnote">Sample data for the demo — the real thing pulls straight from the DVLA.</p>';
+  }
+  function busy(out,cb){out.innerHTML='<em style="color:var(--muted)">Looking up…</em>';setTimeout(cb,550);}
+
+  function wireReg(inId,btnId,outId,mode){
+    var inp=document.getElementById(inId),b=document.getElementById(btnId),out=document.getElementById(outId);
+    function go(){
+      var v=inp.value.trim();
+      if(!clean(v)){out.innerHTML='<em style="color:var(--muted)">Pop a reg in — or try a sample plate above.</em>';return;}
+      busy(out,function(){
+        var d=lookup(v);
+        out.innerHTML=vresult(inp.value.toUpperCase(),d,mode);
+      });
+    }
+    b.addEventListener('click',go);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+  }
+  wireReg('regInput','regBtn','regOut','reg');
+  wireReg('tyreInput','tyreBtn','tyreOut','tyre');
+
+  // Sample-plate chips — fill the nearest input and run its look-up
+  document.querySelectorAll('.lookup-chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      var box=chip.closest('.demo-box');
+      var input=box.querySelector('input');
+      var btn=box.querySelector('.demo-btn');
+      input.value=chip.textContent;
+      btn.click();
+    });
+  });
+
   // Lead form — POSTs into the same landing-enquiry pipeline as the trade pages
   (function(){
     var form=document.getElementById('leadForm');
@@ -703,7 +880,7 @@
         email:    document.getElementById('ltEmail').value.trim(),
         startOption: 'leave_it_with_me',
         details:  'Town: '+document.getElementById('ltTown').value.trim()+'\nWhat they do: '+document.getElementById('ltWhat').value,
-        source:   'tyretrust-landing'
+        source:   'tyretrust-landing-full'
       };
 
       fetch('https://neobookworm-landing-enquiry.nickbarrett.workers.dev',{
@@ -732,55 +909,24 @@
     });
   })();
 
-  // Personalised banner — matches ?p= mailshot code to a business/town (and first name, once known)
+  // Address lookup demo
   (function(){
-    var MAILSHOT={
-      "kingswood-tyre-service":{business:"Kingswood Tyre & Service",town:"Bristol",first:""},
-      "pav-s-mobile-tyres":{business:"Pav's Mobile Tyres",town:"Bristol",first:""},
-      "sinan-s-tyre":{business:"Sinan's Tyre",town:"Bristol",first:""},
-      "js-automotive":{business:"JS Automotive Repairs Centre",town:"Bristol",first:""},
-      "ford-rapid-fit-bath":{business:"Ford Rapid Fit (Bath)",town:"Bath",first:""},
-      "farmborough-tyres-service":{business:"Farmborough Tyres Service",town:"Bath",first:""},
-      "spraytech-mechanics":{business:"Spraytech Mechanics",town:"Bath",first:""},
-      "turner-brace-tyres-clevedon":{business:"Turner Brace Tyres (Clevedon)",town:"Clevedon",first:""},
-      "heathend-garage":{business:"Heathend Garage",town:"Wotton-under-Edge",first:""},
-      "mobile-tyres-oxford":{business:"Mobile Tyres Services Oxford Ltd 24/7",town:"Oxford",first:""},
-      "urgent-fast-reading":{business:"Urgent Fast Tyre Fitting Reading 24/7",town:"Reading",first:""},
-      "premier-mobile-tyres":{business:"Premier Mobile Tyres",town:"Reading",first:""},
-      "city-tyres-reading":{business:"City Tyres & Auto Centre",town:"Reading",first:""},
-      "mobile-tyre-woodley":{business:"Mobile Tyre Repair Response Woodley",town:"Reading",first:""},
-      "smh-mobile-tyres":{business:"SMH Mobile Tyres 24/7",town:"Reading",first:""},
-      "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
-      "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
-      "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
-      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:""},
-      "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
-      "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
-      "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
-      "mobile-fast-tyre-fitting":{business:"Mobile Fast Tyre Fitting",town:"Basingstoke",first:""},
-      "tyre-fitting-near-you":{business:"Tyre Fitting Near You",town:"Basingstoke",first:""},
-      "oakley-car-repairs":{business:"Oakley Car Repairs",town:"Basingstoke",first:""},
-      "whitchurch-service":{business:"Whitchurch Service & Repairs",town:"Whitchurch",first:""},
-      "haytov-sons":{business:"Haytov & Sons Auto Repairs",town:"Whitchurch",first:""},
-      "gs-tyres":{business:"G&S Tyres",town:"Chippenham",first:""},
-      "mobile-salisbury":{business:"Mobile Salisbury",town:"Salisbury",first:""}
-    };
-    var code=new URLSearchParams(window.location.search).get('p');
-    if(!code) return;
-    var d=MAILSHOT[code.toLowerCase()];
-    if(!d) return;
-    var text = d.first
-      ? 'Thanks for stopping by, '+d.first+' — I’d love to build a website like this one for '+d.business+' in '+d.town+'.'
-      : 'Thanks for stopping by — I’d love to build a website like this one for '+d.business+' in '+d.town+'.';
-    var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
-    span.textContent = text;
-    banner.hidden=false;
-    // gtag is set up by the deferred cookieconsent module, which hasn't run yet at this
-    // point in page load — wait for 'load' so consented returning visitors are tracked.
-    window.addEventListener('load',function(){
-      if(typeof window.gtag==='function'){window.gtag('event','mailshot_view',{mailshot_code:code.toLowerCase(),business:d.business,town:d.town});}
-    });
+    var inp=document.getElementById('pcInput'),b=document.getElementById('pcBtn'),out=document.getElementById('pcOut');
+    function go(){
+      var pc=inp.value.trim();
+      if(!pc){out.innerHTML='<em style="color:var(--muted)">Enter a postcode to see the address list.</em>';return;}
+      busy(out,function(){
+        var P=pc.toUpperCase();
+        var opts=['1 High Street','2 High Street','14 High Street','Rose Cottage, High Street','Flat 3, The Maltings']
+          .map(function(a){return '<option>'+a+', '+P+'</option>';}).join('');
+        out.innerHTML='<select style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font:inherit;background:#fff"><option>Pick your address…</option>'+opts+'</select>'+
+          '<p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Customer picks — full address filled, cleanly, first time.</p>';
+      });
+    }
+    b.addEventListener('click',go);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
   })();
+
 </script>
 </body>
 </html>
