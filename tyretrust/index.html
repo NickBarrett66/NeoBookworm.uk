@@ -216,7 +216,8 @@
   .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(18,160,106,.6);animation:pulse 2s infinite}
   @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(18,160,106,0)}100%{box-shadow:0 0 0 0 rgba(18,160,106,0)}}
 
-  /* three tiers */
+  /* plans (2-col) + Full Bay band */
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:36px;align-items:stretch;max-width:760px;margin-left:auto;margin-right:auto}
   .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px;align-items:stretch}
   .tier{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 24px 26px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);position:relative}
   .tier.featured{border:2px solid var(--orange);box-shadow:var(--shadow)}
@@ -236,8 +237,41 @@
   .tier ul li.allow{padding-left:25px;color:var(--muted);font-size:.86rem;font-style:italic}
   .tier ul li.allow::before{content:"★";color:var(--amber)}
   .tier .btn{width:100%;justify-content:center}
+  /* pay-as-you-go packs (Tier 3) */
+  .tier .price .payg{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--navy);line-height:1}
+  .pack{background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:12px}
+  .pack-opt{border-style:dashed}
+  .pack-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+  .pack-h .pack-name{font-weight:700;color:var(--navy);font-size:.95rem}
+  .pack-h .pack-name em{font-style:normal;font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-left:5px}
+  .pack-h .pack-start{color:var(--orange);font-weight:800;font-size:.9rem;white-space:nowrap}
+  .pack-meter{height:7px;border-radius:999px;background:#e2e6ec;overflow:hidden;margin-bottom:8px}
+  .pack-meter span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#7bc47f)}
+  .pack-d{font-size:.85rem;color:var(--body);line-height:1.45}
+  .pack-d b{color:var(--navy)}
+  /* Full Bay band */
+  .fullbay{margin-top:30px;background:var(--navy);border-radius:var(--radius);padding:30px 30px 28px;box-shadow:var(--shadow);color:#fff}
+  .fullbay-head{max-width:78ch}
+  .fullbay-tag{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+  .fullbay-head h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin:0 0 8px;color:#fff}
+  .fullbay-head p{color:#cdd6e4;font-size:.98rem;line-height:1.55;margin:0}
+  .fullbay-head p b{color:#fff}
+  .fullbay .packs-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:22px 0 20px}
+  .fullbay .pack{background:#16294a;border-color:#274063}
+  .fullbay .pack-opt{border-color:#3a5680;border-style:dashed}
+  .fullbay .pack-name{color:#fff}
+  .fullbay .pack-name em{color:#9fb0c9}
+  .fullbay .pack-meter{background:#0b1830}
+  .fullbay .pack-d{color:#cdd6e4}
+  .fullbay .pack-d b{color:#fff}
+  .fullbay-list{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:8px}
+  .fullbay-list li{position:relative;padding-left:25px;font-size:.94rem;color:#e4eaf3}
+  .fullbay-list li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900}
+  .fullbay > .btn{width:auto}
+  @media(max-width:620px){.fullbay .packs-2{grid-template-columns:1fr}.fullbay{padding:26px 20px 24px}}
   .tiers-note{text-align:center;margin:24px auto 0;color:var(--muted);font-size:.93rem;max-width:60ch}
   @media(max-width:860px){.tiers{grid-template-columns:1fr}}
+  @media(max-width:620px){.plans{grid-template-columns:1fr}}
 
   /* proof */
   .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
@@ -379,22 +413,22 @@
   </div>
 </section>
 
-<!-- THREE TIERS / PRICING -->
+<!-- PRICING — two plans + Full Bay pay-as-you-go add-on -->
 <section class="band-mist" id="pricing">
   <div class="container">
     <div class="center">
       <span class="eyebrow">The offer</span>
-      <h2>Three ways to run it. You set the build price on all of them.</h2>
+      <h2>Pick a plan. Add the clever bit when you're ready. You set the build price.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Whichever plan you pick, the deal is the same: I build it first, you look it over properly, and you pay what you think the build was worth. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. After that it's just the monthly — no contract, cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" style="margin:18px auto 0">Whichever plan you pick, the deal is the same: I build it first, you look it over properly, and you pay what you think the build was worth. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. After that it's just the small monthly — no contract, cancel any time, and your web address and files are always yours to keep.</p>
       <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
     </div>
 
-    <div class="tiers">
+    <div class="plans">
 
-      <!-- Tier 1 -->
+      <!-- Plan 1 -->
       <div class="tier">
-        <div class="tnum">Tier 1</div>
+        <div class="tnum">Plan 1</div>
         <div class="tname">The Site</div>
         <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
         <div class="setup">To build: <b>pay what you think it's worth</b></div>
@@ -408,10 +442,10 @@
         <a class="btn btn-dark" href="#see-yours">Start here — free to look</a>
       </div>
 
-      <!-- Tier 2 (featured) -->
+      <!-- Plan 2 (featured) -->
       <div class="tier featured">
         <span class="pop">My pick for most fitters</span>
-        <div class="tnum">Tier 2</div>
+        <div class="tnum">Plan 2</div>
         <div class="tname">The Booking Engine</div>
         <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
         <div class="setup">To build: <b>pay what you think it's worth</b></div>
@@ -421,30 +455,48 @@
           <li>Email reminder the night before each job</li>
           <li>One-tap reschedule link</li>
           <li>Bookings land straight in your calendar</li>
+          <li>Your day, on one page — the job dashboard</li>
         </ul>
         <a class="btn btn-primary" href="#see-yours">Add booking →</a>
       </div>
 
-      <!-- Tier 3 -->
-      <div class="tier">
-        <div class="tnum">Tier 3</div>
-        <div class="tname">The Full Bay</div>
-        <div class="price"><span class="mo">£74.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>pay what you think it's worth</b></div>
-        <ul>
-          <li class="head">Everything in The Booking Engine, plus…</li>
-          <li>Reg, tyre &amp; address look-ups</li>
-          <li>Text (SMS) reminders</li>
-          <li>Automatic review requests + live Google rating</li>
-          <li>Your day, on one page — the job dashboard</li>
-          <li class="allow">Covers 150 customers a month — top up when you're busier, and you'll always see what's left</li>
-        </ul>
-        <a class="btn btn-dark" href="#see-yours">For a busy bay →</a>
+    </div>
+
+    <!-- THE FULL BAY — pay-as-you-go add-on -->
+    <div class="fullbay">
+      <div class="fullbay-head">
+        <span class="fullbay-tag">The Full Bay · the clever bit</span>
+        <h3>Add the smart look-ups to your Booking Engine.</h3>
+        <p>This bolts on to <b>The Booking Engine (£19.99/mo)</b> — it's the extra, not a replacement. And it's not another monthly bill: you top up in advance, like a pay-as-you-go phone, and always see what's left.</p>
       </div>
 
+      <div class="packs-2">
+
+        <div class="pack">
+          <div class="pack-h"><span class="pack-name">Customer look-ups</span><span class="pack-start">£74.99 to start</span></div>
+          <div class="pack-meter"><span style="width:100%"></span></div>
+          <div class="pack-d"><b>150 customers</b> covered, and they last a <b>full year</b>. Then top up <b>£30 for 50 more</b> — only when you're running low. A quiet month costs you nothing.</div>
+        </div>
+
+        <div class="pack pack-opt">
+          <div class="pack-h"><span class="pack-name">Text reminders <em>optional</em></span><span class="pack-start">£14.99 to start</span></div>
+          <div class="pack-meter"><span style="width:100%"></span></div>
+          <div class="pack-d"><b>150 texts</b> to begin, then top up <b>£10 for 100</b>. Texts <b>never expire</b> — buy them once and use them whenever. Reg look-ups keep working without them.</div>
+        </div>
+
+      </div>
+
+      <ul class="fullbay-list">
+        <li>Reg, tyre &amp; address look-ups that fill themselves in</li>
+        <li>A running balance — always see exactly what's left</li>
+        <li>Nothing charged without you choosing to</li>
+      </ul>
+
+      <a class="btn btn-dark" href="#see-yours">For a busy bay →</a>
     </div>
-    <p class="tiers-note">Not sure which? Start with The Site — you can add booking or the full kit any time, no rebuild needed.</p>
-    <p class="tiers-note">On The Full Bay, the look-ups and text reminders run on credits — 150 customers a month are included, and if you're busier you top up in your own time, like a pay-as-you-go phone. You always see what's left, and nothing gets charged without you choosing to. Running a busy multi-bay depot? Just ask and I'll size a bigger bundle to you.</p>
+
+    <p class="tiers-note">Not sure? Start with The Site — you can add booking, then the Full Bay look-ups, any time, no rebuild needed.</p>
+    <p class="tiers-note">Two kinds of top-up, two rules: <b>look-up credits last 12 months</b> from the day you buy them (a year is plenty for even a busy bay); <b>text credits never expire</b>. If the look-ups ever run out, the site keeps working — the number plate just gets typed in by hand instead. Busy multi-bay depot? Ask and I'll size a bigger top-up to you.</p>
   </div>
 </section>
 
@@ -590,24 +642,10 @@
         </div>
       </div>
 
-      <!-- Reviews + rating -->
-      <div class="feat">
-        <div class="ico">⭐</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
-        <h3>Auto review requests &amp; live Google rating</h3>
-        <p class="desc">After each job, a review request goes out on its own. Your live Google score shows on the site — proof you're not cherry-picking, and it keeps Google seeing an active business.</p>
-        <div class="demo-box">
-          <div class="rating-live">
-            <span class="big">4.9</span>
-            <div><div class="stars">★★★★★</div><small style="color:var(--muted)"><span class="pulse" style="display:inline-block;vertical-align:middle"></span> Live from Google · 62 reviews</small></div>
-          </div>
-        </div>
-      </div>
-
       <!-- Tyre management -->
       <div class="feat wide">
         <div class="ico">🗓️</div>
-        <div class="price-tag">Included in <b>The Full Bay</b></div>
+        <div class="price-tag">Included in <b>The Booking Engine</b></div>
         <h3>Your day, on one page</h3>
         <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
         <ul class="benefit">
