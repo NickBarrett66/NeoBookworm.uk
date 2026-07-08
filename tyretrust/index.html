@@ -138,13 +138,13 @@
   .browser-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#111a26;border-bottom:1px solid rgba(255,255,255,.08)}
   .dot{width:11px;height:11px;border-radius:50%;background:#3a4657}
   .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
-  .browser-url{margin-left:10px;flex:1;background:#0c1219;color:#9fb0c7;font-size:.8rem;padding:6px 12px;border-radius:7px;font-family:ui-monospace,monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .browser-url{margin-left:10px;flex:1;min-width:0;background:#0c1219;color:#9fb0c7;font-size:.8rem;padding:6px 12px;border-radius:7px;font-family:ui-monospace,monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
   .browser-view{position:relative;background:#fff;aspect-ratio:16/15;overflow:hidden}
   .browser-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
   .browser-open{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:18px;
     background:linear-gradient(180deg,rgba(12,18,25,0) 55%,rgba(12,18,25,.55));text-decoration:none}
   .browser-open .btn{pointer-events:auto}
-  .mock-tag{position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:999px;letter-spacing:.03em;z-index:2}
+  .mock-tag{flex-shrink:0;background:var(--green);color:#fff;font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
 
   /* section shells */
   section{padding:clamp(52px,7vw,88px) 0}
@@ -336,9 +336,9 @@
         <div class="browser-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
           <span class="browser-url">hetyres.uk</span>
+          <span class="mock-tag">● Live site</span>
         </div>
         <div class="browser-view">
-          <span class="mock-tag">● Live site</span>
           <picture>
             <source media="(max-width:860px)" srcset="/tyretrust/images/hero-hetyres-mobile-485.webp">
             <img class="browser-poster"
