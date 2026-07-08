@@ -170,7 +170,9 @@
   .frame-hidden{display:none}
 
   /* feature menu */
-  .feat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:34px}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:34px}
+  .feat.wide .try-panel{box-shadow:none;border-color:var(--line)}
+  @media(min-width:861px){.feat.wide .try{grid-template-columns:1.1fr 1fr;gap:28px}}
   .feat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-width:0;overflow-wrap:break-word}
   .feat.wide{grid-column:1/-1}
   .feat.wide .benefit{columns:2;column-gap:32px}
@@ -191,6 +193,24 @@
   .demo-btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:0 18px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap}
   .demo-btn:hover{background:var(--navy-2)}
   .demo-out{margin-top:12px;font-size:.95rem;min-height:1.4em}
+  /* tier blocks — features grouped by plan (basic → complex) */
+  .tier-block{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:clamp(24px,3.5vw,40px);margin-top:24px}
+  .tier-block-head h3{font-size:clamp(1.4rem,2.6vw,1.85rem);margin:12px 0 8px}
+  .tier-block-head p{color:var(--muted);margin:0;max-width:70ch}
+  .tier-section{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,4vw,44px);align-items:start;padding-top:26px;margin-top:26px;border-top:1px solid var(--mist)}
+  .tier-section h4{font-family:'DM Sans',sans-serif;font-size:1.12rem;font-weight:800;color:var(--navy);margin:0 0 8px}
+  .tier-section .desc{color:var(--body);margin-bottom:14px}
+  .tier-section .try-panel{box-shadow:none;border-color:var(--line)}
+  .tier-section .benefit{margin-bottom:16px}
+  @media(max-width:860px){.tier-section{grid-template-columns:1fr;gap:20px}}
+  /* job-board mock */
+  .board-mock{background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .board-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px;font-size:.9rem}
+  .board-row:last-child{margin-bottom:0}
+  .board-time{font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+  .board-job{flex:1;color:var(--body);min-width:0}
+  .board-tag{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#e7f6ef;color:var(--green);white-space:nowrap}
+  .board-tag.pend{background:#fff3e0;color:var(--orange-dk)}
   /* phone mock for reminders */
   .phone{max-width:280px;margin:6px auto 0;background:#0c1219;border-radius:26px;padding:12px;box-shadow:var(--shadow)}
   .phone-screen{background:#e9eef4;border-radius:16px;padding:16px;min-height:180px}
@@ -332,7 +352,7 @@
       <h1>The website that <em>works</em> while you're under the car.</h1>
       <p class="hero-sub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your business name.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#see-yours">Get yours built free</a>
+        <a class="btn btn-primary" href="#see-yours">Get yours built — free to look</a>
       </div>
       <a class="hero-secondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
@@ -378,155 +398,99 @@
   </div>
 </section>
 
-<!-- PRICING — two plans -->
-<section class="band-mist" id="pricing">
-  <div class="container">
-    <div class="center">
-      <span class="eyebrow">The offer</span>
-      <h2>Pick a plan. You set the build price.</h2>
-      <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Whichever plan you pick, the deal is the same: I build it first, you look it over properly, and you pay what you think the build was worth. Love it and feel generous? I won't argue. Think it's worth less? That's honestly fine. After that it's just the small monthly — no contract, cancel any time, and your web address and files are always yours to keep.</p>
-      <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
-    </div>
-
-    <div class="plans">
-
-      <!-- Plan 1 -->
-      <div class="tier">
-        <div class="tnum">Plan 1</div>
-        <div class="tname">The Site</div>
-        <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — pay less if times are tight. I won't argue.</div>
-        <ul>
-          <li class="head">Your own tyre website</li>
-          <li>Services, tyre brands, reviews &amp; contact</li>
-          <li>Turns up when people search for tyres</li>
-          <li>Looks right on a phone</li>
-          <li>A proper place to send word-of-mouth</li>
-        </ul>
-        <a class="btn btn-dark" href="#see-yours">Start here — free to look</a>
-      </div>
-
-      <!-- Plan 2 (featured) -->
-      <div class="tier featured">
-        <span class="pop">My pick for most fitters</span>
-        <div class="tnum">Plan 2</div>
-        <div class="tname">The Booking Engine</div>
-        <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — pay less if times are tight. I won't argue.</div>
-        <ul>
-          <li class="head">Everything in The Site, plus…</li>
-          <li>Online booking — depot &amp; mobile, day or night</li>
-          <li>Email reminder the night before each job</li>
-          <li>One-tap reschedule link</li>
-          <li>Bookings land straight in your calendar</li>
-          <li>Your day, on one page — the job board</li>
-        </ul>
-        <a class="btn btn-primary" href="#see-yours">Add booking →</a>
-      </div>
-
-    </div>
-
-    <p class="tiers-note">Not sure? Start with The Site — you can add booking any time, no rebuild needed.</p>
-  </div>
-</section>
-
-<!-- SEE IT WORKING / LIVE BOOKING -->
-<section id="see-it">
-  <div class="container">
-    <div class="try">
-      <div>
-        <span class="eyebrow">Try it yourself</span>
-        <h2>See how a customer books in — day or night.</h2>
-        <p class="lead">This is the same booking system I built for HE Tyres, running in a sandbox. Pick a slot as if you were a customer with a nail in your tyre. Every booking that comes through here is one less phone call for you — and it works at 9pm when the workshop's shut.</p>
-        <ul class="benefit" style="margin-top:8px">
-          <li>Depot slot or mobile visit, customer's choice</li>
-          <li>Already-booked times disappear automatically</li>
-          <li>You get an email; it lands in your calendar</li>
-        </ul>
-        <button class="btn btn-dark" id="bookOpen" type="button">Open the live booking demo ↓</button>
-      </div>
-      <div class="try-panel">
-        <div class="head"><span class="pulse"></span> Live booking — HE Tyres</div>
-        <div class="book-wrap">
-          <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 14px">Tap the button and a real booking calendar loads here. It won't charge you or book a real slot for you to worry about — it's a working demo you can play with.</p>
-          <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURE MENU -->
+<!-- FEATURE MENU (includes the live booking demo as the lead feature) -->
 <section class="band-mist" id="menu">
   <div class="container">
     <div class="center">
       <span class="eyebrow">Feature by feature</span>
       <h2>Everything a tyre fitter needs — nothing they don't.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Every feature in plain English, and which plan it comes with. Several you can try for yourself right here.</p>
+      <p class="lead center" style="margin:18px auto 0">Here's what you get, plan by plan — starting simple and building up. The booking demo is live, so have a play.</p>
     </div>
 
-    <div class="feat-grid">
-
-      <!-- Core site -->
-      <div class="feat">
-        <div class="ico">🌐</div>
-        <div class="price-tag"><b>The Site</b> · from £9.99/mo</div>
+    <!-- THE SITE -->
+    <div class="tier-block">
+      <div class="tier-block-head">
+        <span class="price-tag"><b>The Site</b> · from £9.99/mo</span>
         <h3>Your own tyre website</h3>
-        <p class="desc">A proper one-page site: services, tyre brands you fit, real reviews, coverage area and a contact form. Built to turn up when someone Googles "tyre fitting near me".</p>
-        <ul class="benefit">
-          <li>Designed around your business, not a template</li>
-          <li>Looks right on a phone (where they'll find you)</li>
-          <li>Somewhere to send word-of-mouth customers</li>
-        </ul>
-        <div class="demo-box"><label>See a live example</label><p style="margin:0;font-size:.95rem;color:var(--body)">A real one is live at <b>hetyres.co.uk</b> — the tyre fitters this whole project started with.</p></div>
+        <p>The foundation — a proper site that turns up when someone Googles you, and gives word-of-mouth somewhere to land.</p>
+      </div>
+      <div class="tier-section">
+        <div>
+          <h4>A proper one-page site, built around your business</h4>
+          <p class="desc">Services, tyre brands you fit, real reviews, coverage area and a contact form — built to turn up when someone Googles "tyre fitting near me".</p>
+          <ul class="benefit">
+            <li>Designed around your business, not a template</li>
+            <li>Looks right on a phone (where they'll find you)</li>
+            <li>Somewhere to send word-of-mouth customers</li>
+          </ul>
+        </div>
+        <div class="demo-box" style="margin-top:0"><label>See a live example</label><p style="margin:0;font-size:.95rem;color:var(--body)">A real one is live at <b>hetyres.co.uk</b> — the tyre fitters this whole project started with.</p></div>
+      </div>
+    </div>
+
+    <!-- THE BOOKING ENGINE -->
+    <div class="tier-block">
+      <div class="tier-block-head">
+        <span class="price-tag">Steps up to <b>The Booking Engine</b> · £19.99/mo</span>
+        <h3>A booking system that runs itself</h3>
+        <p>Everything in The Site, plus the machinery that turns your website into a member of staff — taking bookings, chasing reminders, and keeping your day straight.</p>
       </div>
 
-      <!-- Booking -->
-      <div class="feat">
-        <div class="ico">📅</div>
-        <div class="price-tag">Included in <b>The Booking Engine</b></div>
-        <h3>Online booking</h3>
-        <p class="desc">Customers pick a depot or mobile slot, around booked times, day or night. Every web booking is one less call to answer with your hands full.</p>
-        <ul class="benefit">
-          <li>Books itself while you're fitting</li>
-          <li>Fewer phone interruptions</li>
-          <li>Lands straight in your calendar</li>
-        </ul>
-        <div class="demo-box"><label>Try it</label><a class="btn btn-dark" href="#see-it" style="width:100%;justify-content:center">Open the live booking demo</a></div>
-      </div>
-
-      <!-- Reminders -->
-      <div class="feat">
-        <div class="ico">🔔</div>
-        <div class="price-tag">Included in <b>The Booking Engine</b></div>
-        <h3>Reminders &amp; reschedule links</h3>
-        <p class="desc">The night before, every customer gets a "see you at 10:15" by email, with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
-        <div class="demo-box">
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="bubble"><div class="from">HE Tyres</div>See you tomorrow at 10:15 for your 2 front tyres 👍 Can't make it? Rebook here: <a href="#see-it">hetyres.co.uk/rebook</a></div>
-              <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
-            </div>
+      <!-- Section 1: Online booking + live demo -->
+      <div class="tier-section" id="see-it">
+        <div>
+          <h4>Online booking — day or night</h4>
+          <p class="desc">This is the same booking system running live for HE Tyres — try it for yourself, pick a slot as if you were a customer with a nail in your tyre. Customers choose depot or mobile, and every booking is one less call to answer with your hands full.</p>
+          <ul class="benefit">
+            <li>Depot slot or mobile visit, customer's choice</li>
+            <li>Already-booked times disappear automatically</li>
+            <li>Books itself while you're fitting</li>
+            <li>Lands straight in your calendar, with an email to you</li>
+          </ul>
+          <button class="btn btn-dark" id="bookOpen" type="button">Open the live booking demo ↓</button>
+        </div>
+        <div class="try-panel">
+          <div class="head"><span class="pulse"></span> Live booking — HE Tyres</div>
+          <div class="book-wrap">
+            <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 14px">Tap the button and a real booking calendar loads here. It won't charge you or book a real slot for you to worry about — it's a working demo you can play with.</p>
+            <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
           </div>
         </div>
       </div>
 
-      <!-- Tyre management -->
-      <div class="feat wide">
-        <div class="ico">🗓️</div>
-        <div class="price-tag">Included in <b>The Booking Engine</b></div>
-        <h3>Your day, on one page</h3>
-        <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
-        <ul class="benefit">
-          <li>Today &amp; this week at a glance</li>
-          <li>See where each job is in the flow</li>
-          <li>Pending mobile requests pinned to the top</li>
-          <li>Built for you and whoever does the books</li>
-        </ul>
+      <!-- Section 2: Reminders -->
+      <div class="tier-section">
+        <div>
+          <h4>Reminders &amp; reschedule links</h4>
+          <p class="desc">The night before, every customer gets a "see you at 10:15" by email, with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
+        </div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="bubble"><div class="from">HE Tyres</div>See you tomorrow at 10:15 for your 2 front tyres 👍 Can't make it? Rebook here: <a href="#see-it">hetyres.co.uk/rebook</a></div>
+            <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
+          </div>
+        </div>
       </div>
 
+      <!-- Section 3: Your day -->
+      <div class="tier-section">
+        <div>
+          <h4>Your day, on one page</h4>
+          <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
+          <ul class="benefit">
+            <li>Today &amp; this week at a glance</li>
+            <li>See where each job is in the flow</li>
+            <li>Pending mobile requests pinned to the top</li>
+            <li>Built for you and whoever does the books</li>
+          </ul>
+        </div>
+        <div class="board-mock">
+          <div class="board-row"><span class="board-time">09:00</span><span class="board-job">Two front tyres — depot</span><span class="board-tag">Ready</span></div>
+          <div class="board-row"><span class="board-time">10:15</span><span class="board-job">Puncture repair — mobile, SN5</span><span class="board-tag pend">Pending</span></div>
+          <div class="board-row"><span class="board-time">13:30</span><span class="board-job">Full set — depot</span><span class="board-tag">Ordered</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -552,6 +516,61 @@
         </figure>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- PRICING — two plans -->
+<section class="band-mist" id="pricing">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">The offer</span>
+      <h2>Pick a plan. You set the build price.</h2>
+      <div class="accent-bar"></div>
+      <p class="lead center" style="margin:18px auto 0">Both plans work the same way: I build it first, you pay what you think it's worth to keep it, then a small monthly to stay live — cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
+    </div>
+
+    <div class="plans">
+
+      <!-- Plan 1 -->
+      <div class="tier">
+        <div class="tnum">Plan 1</div>
+        <div class="tname">The Site</div>
+        <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
+        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — pay less if times are tight. I won't argue.</div>
+        <ul>
+          <li class="head">Your own tyre website</li>
+          <li>Services, tyre brands, reviews &amp; contact</li>
+          <li>Turns up when people search for tyres</li>
+          <li>Looks right on a phone</li>
+          <li>A proper place to send word-of-mouth</li>
+        </ul>
+      </div>
+
+      <!-- Plan 2 (featured) -->
+      <div class="tier featured">
+        <span class="pop">My pick for most fitters</span>
+        <div class="tnum">Plan 2</div>
+        <div class="tname">The Booking Engine</div>
+        <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
+        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — pay less if times are tight. I won't argue.</div>
+        <ul>
+          <li class="head">Everything in The Site, plus…</li>
+          <li>Online booking — depot &amp; mobile, day or night</li>
+          <li>Email reminder the night before each job</li>
+          <li>One-tap reschedule link</li>
+          <li>Bookings land straight in your calendar</li>
+          <li>Your day, on one page — the job board</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="center" style="margin-top:30px">
+      <a class="btn btn-primary" href="#see-yours">Get yours built — free to look</a>
+    </div>
+
+    <p class="tiers-note">Not sure? Start with The Site — you can add booking any time, no rebuild needed.</p>
   </div>
 </section>
 
@@ -625,7 +644,7 @@
           <label for="ltEmail">Email address <span class="lf-hint">— I'll send your finished site here</span></label>
           <input id="ltEmail" name="email" type="email" autocomplete="email" required>
         </div>
-        <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Build my site — free to look →</button>
+        <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Get yours built — free to look →</button>
         <p class="lf-note">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
         <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@neobookworm.uk">email me directly</a>.</p>
       </form>
@@ -720,7 +739,7 @@
       })
       .catch(function(err){
         submitBtn.disabled=false;
-        submitBtn.textContent='Build my site — free to look →';
+        submitBtn.textContent='Get yours built — free to look →';
         errBox.hidden=false;
         if(window.console&&console.warn) console.warn(err);
       });
