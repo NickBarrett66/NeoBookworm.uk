@@ -344,7 +344,7 @@ export async function createCalendarEvent(
   const summary = reg ? `Booking: ${name} (${reg})` : `Booking: ${name}`;
   const description = [
     `Name: ${name}`,
-    `Email: ${email}`,
+    email ? `Email: ${email}` : null,
     phone ? `Phone: ${phone}` : null,
     reg ? `Reg: ${reg}` : null,
     vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
@@ -370,8 +370,10 @@ export async function createCalendarEvent(
     description,
     start: { dateTime: slotStart, timeZone: config.timezone },
     end: { dateTime: slotEnd, timeZone: config.timezone },
-    attendees: [{ email }],
   };
+  // Staff walk-ins may have no customer email yet — omit the attendee rather than
+  // sending Google an empty address (which it rejects).
+  if (email) event.attendees = [{ email }];
   if (eventLocation) event.location = eventLocation;
 
   const res = await fetch(
@@ -391,6 +393,56 @@ export async function createCalendarEvent(
     throw new Error(`Google Calendar event create failed: ${res.status} ${text}`);
   }
 
+  return res.json();
+}
+
+/**
+ * Patch an existing event's customer-facing detail fields (summary, description,
+ * attendee) without moving its time. Used when staff enhance a pencilled-in
+ * walk-in from the workbench so the Google Calendar event reflects the real
+ * customer instead of the "Phone booking" placeholder. Start/end untouched.
+ * No-op for demo tenants or a missing event id.
+ */
+export async function patchCalendarEventDetails(
+  env,
+  eventId,
+  { slotStart, name, email, phone, note, reg, vehicleSummary, manageUrl },
+  config = SLUG_CONFIG.hetyres,
+) {
+  if (config?.demoMode || !eventId) return null;
+  const calendarId = calendarIdFor(env, config);
+  const token = await getAccessToken(env);
+
+  const summary = reg ? `Booking: ${name} (${reg})` : `Booking: ${name}`;
+  const description = [
+    `Name: ${name}`,
+    email ? `Email: ${email}` : null,
+    phone ? `Phone: ${phone}` : null,
+    reg ? `Reg: ${reg}` : null,
+    vehicleSummary ? `Vehicle: ${vehicleSummary}` : null,
+    note ? `Note: ${note}` : null,
+    `Phone/walk-in booking taken at the depot`,
+    `Booked: ${bookedAtLabel(new Date(), config.timezone)}`,
+    manageUrl ? `\n⚙ Cancel / amend this booking: ${manageUrl}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const patch = { summary, description };
+  if (email) patch.attendees = [{ email }];
+
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+    {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    },
+  );
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Google Calendar event patch failed: ${res.status} ${text}`);
+  }
   return res.json();
 }
 

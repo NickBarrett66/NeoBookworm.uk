@@ -155,12 +155,17 @@ describe('workbench pages', () => {
         updatedAt: '2026-07-03T12:00:00.000Z',
       },
     );
-    expect(html).toContain('Pending mobile requests');
-    expect(html).toContain('tel:07700900000');
-    expect(html).toContain('mailto:p@x.com');
+    // Bench mode renders client-side from an inlined data blob, so assert the
+    // page ships the data and the renderer's key labels/behaviour rather than
+    // pre-rendered card markup.
+    expect(html).toContain('Waiting on your yes');   // pending section heading
+    expect(html).toContain('p@x.com');               // customer data inlined for the client renderer
+    expect(html).toContain('07700900000');
     expect(html).toContain('Nothing booked today');
     expect(html).toContain('visibilitychange');
     expect(html).toContain('Private staff note');
     expect(html).toContain('Check stock');
+    expect(html).toContain('Add a phone booking');   // walk-in / phone-booking flow
+    expect(html).toContain('noindex');
   });
 });

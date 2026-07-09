@@ -4,6 +4,7 @@ import {
   filterAvailableSlots,
   wallSlotsToLabels,
   createCalendarEvent,
+  patchCalendarEventDetails,
   createPendingMobileEvent,
   confirmMobileCalendarEvent,
   deleteCalendarEvent,
@@ -25,6 +26,10 @@ import {
   countRecentBookingsByEmail,
   getWorkbenchBookings,
   updateBookingPrep,
+  insertWalkinBooking,
+  updateWalkinDetails,
+  markWalkinNotified,
+  setBookingOutcome,
   getActiveBookingsWithEvents,
   listTenantSlugs,
   SlotTakenError,
@@ -53,6 +58,7 @@ import {
   addDaysIso,
   formatWorkbenchBooking,
   isValidPrepStatus,
+  normaliseOutcome,
   WORKBENCH_HEADERS_HTML,
   WORKBENCH_HEADERS_JSON,
 } from './workbench.js';
@@ -114,7 +120,13 @@ async function loadWorkbenchData(slug, env, req) {
   const rows = await getWorkbenchBookings(env.DB, slug, today, endDate);
   const grouped = groupWorkbenchBookings(rows, today, config.timezone || 'Europe/London');
   const enriched = await enrichWorkbenchData(grouped, slug, req, env);
-  return { config, data: { ...enriched, updatedAt: new Date().toISOString() } };
+  let freeToday = [];
+  try {
+    freeToday = await computeFreeSlots(env, today, config);
+  } catch (err) {
+    console.error('[workbench] free-slots error:', err?.message || err);
+  }
+  return { config, data: { ...enriched, freeToday, updatedAt: new Date().toISOString() } };
 }
 
 async function handleWorkbenchPage(slug, url, env, req) {
@@ -341,6 +353,219 @@ async function handleWorkbenchConfirm(slug, req, env, ctx) {
   });
 }
 
+function wbErr(error, status) {
+  return new Response(JSON.stringify({ ok: false, error }), { status, headers: WORKBENCH_HEADERS_JSON });
+}
+function wbOk(obj) {
+  return new Response(JSON.stringify({ ok: true, ...obj }), { headers: WORKBENCH_HEADERS_JSON });
+}
+
+async function formatWbBooking(row, slug, req, env, config) {
+  return enrichWorkbenchBooking(
+    formatWorkbenchBooking(row, { timezone: config.timezone || 'Europe/London' }),
+    slug, req, env,
+  );
+}
+
+// GET /:slug/workbench/slots?key=…&date=YYYY-MM-DD — genuinely-free slots for the
+// walk-in / phone-booking form (same availability path as the public widget).
+async function handleWorkbenchSlots(slug, url, env) {
+  const key = url.searchParams.get('key') || '';
+  const config = await getConfig(slug, env);
+  if (!config || !verifyWorkbenchKey(config, key)) return wbErr('forbidden', 403);
+  const date = url.searchParams.get('date');
+  const dateError = validateDateParam(date, config);
+  if (dateError) return wbErr(dateError.error, dateError.status);
+  try {
+    const slots = await computeFreeSlots(env, date, config);
+    return wbOk({ date, slots });
+  } catch (err) {
+    console.error('[workbench] slots error:', err?.message || err);
+    return wbErr('calendar_error', 502);
+  }
+}
+
+// POST /:slug/workbench/walkin — staff create a phone/walk-in booking. Blocks the
+// Google Calendar slot. No customer email unless sendNotify (and an email) given.
+async function handleWorkbenchWalkin(slug, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) return wbErr('forbidden', 403);
+
+  let body;
+  try { body = await req.json(); } catch { return wbErr('invalid_json', 400); }
+
+  const { key, slot, name, email, phone, reg, note, sendNotify } = body || {};
+  if (!verifyWorkbenchKey(config, key || '')) return wbErr('forbidden', 403);
+  if (!slot || typeof slot !== 'string' || !ISO_SLOT_RE.test(slot)) return wbErr('invalid_slot', 400);
+
+  const cleanName = (typeof name === 'string' && name.trim()) ? name.trim().slice(0, 80) : 'Phone booking';
+  let cleanEmail = '';
+  if (email != null && email !== '') {
+    if (typeof email !== 'string' || !EMAIL_RE.test(email.trim())) return wbErr('invalid_email', 400);
+    cleanEmail = email.trim().toLowerCase();
+  }
+  let cleanPhone = '';
+  if (phone != null && phone !== '') {
+    if (typeof phone !== 'string' || phone.length > 30) return wbErr('invalid_phone', 400);
+    cleanPhone = phone.trim();
+  }
+  const cleanReg = reg ? String(reg).trim().toUpperCase().replace(/\s+/g, '').slice(0, 10) : null;
+  let cleanNote = null;
+  if (note != null && note !== '') {
+    if (typeof note !== 'string' || note.length > 500) return wbErr('note_too_long', 400);
+    cleanNote = note.trim();
+  }
+  if (sendNotify && !cleanEmail) return wbErr('email_required_to_notify', 400);
+
+  const slotDate = slot.slice(0, 10);
+  const dateError = validateDateParam(slotDate, config);
+  if (dateError) return wbErr(dateError.error, dateError.status);
+  const slotEnd = wallEndFromStart(slot, config.slotDuration, config.timezone);
+
+  // Demo tenants never write or touch Google — return an ephemeral success.
+  if (config.demoMode) return wbOk({ demo: true });
+
+  try {
+    const available = await isSlotAvailable(env, slot, config);
+    if (!available) return wbErr('slot_taken', 409);
+  } catch (err) {
+    console.error('[workbench] walkin availability error:', err?.message || err);
+    return wbErr('calendar_error', 502);
+  }
+
+  let bookingId, manageToken;
+  try {
+    ({ id: bookingId, manageToken } = await insertWalkinBooking(env.DB, {
+      slug, slotStart: slot, slotEnd, name: cleanName, email: cleanEmail,
+      phone: cleanPhone, note: cleanNote, reg: cleanReg, vehicleSummary: null,
+    }));
+  } catch (err) {
+    if (err instanceof SlotTakenError) return wbErr('slot_taken', 409);
+    console.error('[workbench] walkin insert error:', err);
+    throw err;
+  }
+
+  const adminUrl = await adminManageUrl(req, env, slug, manageToken);
+  let googleEvent;
+  try {
+    googleEvent = await createCalendarEvent(env, {
+      slotStart: slot, slotEnd, name: cleanName, email: cleanEmail, phone: cleanPhone,
+      note: cleanNote, reg: cleanReg, vehicleSummary: null, address: null, postcode: null,
+      customAnswers: null, manageUrl: adminUrl,
+    }, config);
+  } catch (err) {
+    console.error('[workbench] walkin calendar error:', err?.message || err);
+    await markBookingFailed(env.DB, bookingId);
+    return wbErr('calendar_error', 502);
+  }
+  await updateBookingEvent(env.DB, bookingId, googleEvent.id);
+
+  let notified = false;
+  if (sendNotify && cleanEmail) {
+    const mUrl = manageUrl(req, slug, manageToken);
+    ctx.waitUntil(sendConfirmationEmail(env, {
+      to: cleanEmail, name: cleanName, slotStart: slot, slotEnd,
+      businessName: config.displayName, manageUrl: mUrl,
+    }));
+    await markWalkinNotified(env.DB, bookingId);
+    notified = true;
+  }
+
+  const row = await getBookingById(env.DB, bookingId, slug);
+  return wbOk({ booking: await formatWbBooking(row, slug, req, env, config), notified });
+}
+
+// POST /:slug/workbench/details — enhance a pencilled walk-in (name/email/phone/
+// reg/note), optionally send the customer their confirmation now (sendNotify).
+async function handleWorkbenchDetails(slug, req, env, ctx) {
+  const config = await getConfig(slug, env);
+  if (!config) return wbErr('forbidden', 403);
+
+  let body;
+  try { body = await req.json(); } catch { return wbErr('invalid_json', 400); }
+
+  const { key, bookingId, name, email, phone, reg, note, sendNotify } = body || {};
+  if (!verifyWorkbenchKey(config, key || '')) return wbErr('forbidden', 403);
+  if (!bookingId || typeof bookingId !== 'string') return wbErr('missing_booking_id', 400);
+
+  const patch = {};
+  if (name !== undefined) {
+    patch.name = (typeof name === 'string' && name.trim()) ? name.trim().slice(0, 80) : 'Phone booking';
+  }
+  if (email !== undefined) {
+    if (email === null || email === '') patch.email = '';
+    else if (typeof email !== 'string' || !EMAIL_RE.test(email.trim())) return wbErr('invalid_email', 400);
+    else patch.email = email.trim().toLowerCase();
+  }
+  if (phone !== undefined) {
+    if (phone && (typeof phone !== 'string' || phone.length > 30)) return wbErr('invalid_phone', 400);
+    patch.phone = phone ? phone.trim() : '';
+  }
+  if (reg !== undefined) {
+    patch.reg = reg ? String(reg).trim().toUpperCase().replace(/\s+/g, '').slice(0, 10) : null;
+  }
+  if (note !== undefined) {
+    if (note && (typeof note !== 'string' || note.length > 500)) return wbErr('note_too_long', 400);
+    patch.note = note ? note.trim() : null;
+  }
+  if (Object.keys(patch).length === 0 && !sendNotify) return wbErr('nothing_to_update', 400);
+
+  const updated = await updateWalkinDetails(env.DB, { slug, bookingId, ...patch });
+  if (!updated) return wbErr('not_found', 404);
+
+  // Keep the Google Calendar event in step with the enhanced details.
+  if (updated.google_event_id) {
+    const adminUrl = await adminManageUrl(req, env, slug, updated.manage_token);
+    ctx.waitUntil(
+      patchCalendarEventDetails(env, updated.google_event_id, {
+        slotStart: updated.slot_start, name: updated.name, email: updated.email,
+        phone: updated.phone, note: updated.note, reg: updated.reg,
+        vehicleSummary: updated.vehicle_summary, manageUrl: adminUrl,
+      }, config).catch((err) => console.error('[workbench] details calendar patch error:', err?.message || err)),
+    );
+  }
+
+  let notified = false;
+  if (sendNotify) {
+    if (!updated.email) return wbErr('email_required_to_notify', 400);
+    if (updated.notify_state === 'sent') {
+      notified = true; // already sent — idempotent, don't double-email
+    } else {
+      const mUrl = manageUrl(req, slug, updated.manage_token);
+      ctx.waitUntil(sendConfirmationEmail(env, {
+        to: updated.email, name: updated.name, slotStart: updated.slot_start,
+        slotEnd: updated.slot_end, businessName: config.displayName, manageUrl: mUrl,
+      }));
+      await markWalkinNotified(env.DB, updated.id);
+      notified = true;
+    }
+  }
+
+  const row = await getBookingById(env.DB, bookingId, slug);
+  return wbOk({ booking: await formatWbBooking(row, slug, req, env, config), notified });
+}
+
+// POST /:slug/workbench/outcome — mark a booking done / no-show (or clear).
+async function handleWorkbenchOutcome(slug, req, env) {
+  const config = await getConfig(slug, env);
+  if (!config) return wbErr('forbidden', 403);
+
+  let body;
+  try { body = await req.json(); } catch { return wbErr('invalid_json', 400); }
+
+  const { key, bookingId, outcome } = body || {};
+  if (!verifyWorkbenchKey(config, key || '')) return wbErr('forbidden', 403);
+  if (!bookingId || typeof bookingId !== 'string') return wbErr('missing_booking_id', 400);
+
+  const norm = normaliseOutcome(outcome);
+  if (norm === undefined) return wbErr('invalid_outcome', 400);
+
+  const updated = await setBookingOutcome(env.DB, { slug, bookingId, outcome: norm });
+  if (!updated) return wbErr('not_found', 404);
+
+  return wbOk({ booking: await formatWbBooking(updated, slug, req, env, config) });
+}
+
 function getTodayLondon() {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Europe/London',
@@ -366,6 +591,33 @@ function wallEndFromStart(slotStart, durationMinutes, timeZone) {
 
 function sqliteSince24h() {
   return new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+}
+
+// Human label ("8:30am") from a wall-clock slot string "YYYY-MM-DDThh:mm:ss".
+function wallToLabel(wall) {
+  const t = (String(wall).split('T')[1] || '').slice(0, 5); // "08:30"
+  const [hh, mm] = t.split(':');
+  const h = parseInt(hh, 10);
+  if (Number.isNaN(h)) return t;
+  const ampm = h < 12 ? 'am' : 'pm';
+  const h12 = h % 12 || 12;
+  return `${h12}:${mm}${ampm}`;
+}
+
+/**
+ * The genuinely-free bookable slots for a day, using the same availability path
+ * as the public widget (working hours minus Google freebusy, buffers, lead time).
+ * filterAvailableSlots yields wall-clock strings; we pair each with a label so
+ * the walk-in form can POST an exact slot and the workbench can show free-gap
+ * glances. Throws on Google error — callers guard so a calendar blip never
+ * breaks the workbench.
+ */
+async function computeFreeSlots(env, date, config) {
+  const workingSlots = getWorkingSlots(date, config);
+  if (!workingSlots.length) return [];
+  const busyPeriods = await getBusyPeriods(env, date, config);
+  const availableWall = filterAvailableSlots(workingSlots, busyPeriods, config);
+  return availableWall.map((wall) => ({ slot: wall, label: wallToLabel(wall) }));
 }
 
 function confirmUrl(req, slug, token) {
@@ -1252,6 +1504,18 @@ export default {
     if (req.method === 'POST' && workbenchReconcileMatch) {
       return handleWorkbenchReconcile(workbenchReconcileMatch[1], req, env);
     }
+
+    const workbenchSlotsMatch = url.pathname.match(/^\/([^/]+)\/workbench\/slots$/);
+    if (req.method === 'GET' && workbenchSlotsMatch) return handleWorkbenchSlots(workbenchSlotsMatch[1], url, env);
+
+    const workbenchWalkinMatch = url.pathname.match(/^\/([^/]+)\/workbench\/walkin$/);
+    if (req.method === 'POST' && workbenchWalkinMatch) return handleWorkbenchWalkin(workbenchWalkinMatch[1], req, env, ctx);
+
+    const workbenchDetailsMatch = url.pathname.match(/^\/([^/]+)\/workbench\/details$/);
+    if (req.method === 'POST' && workbenchDetailsMatch) return handleWorkbenchDetails(workbenchDetailsMatch[1], req, env, ctx);
+
+    const workbenchOutcomeMatch = url.pathname.match(/^\/([^/]+)\/workbench\/outcome$/);
+    if (req.method === 'POST' && workbenchOutcomeMatch) return handleWorkbenchOutcome(workbenchOutcomeMatch[1], req, env);
 
     const workbenchMatch = url.pathname.match(/^\/([^/]+)\/workbench$/);
     if (req.method === 'GET' && workbenchMatch) return handleWorkbenchPage(workbenchMatch[1], url, env, req);

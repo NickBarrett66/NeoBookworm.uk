@@ -53,6 +53,88 @@ export async function insertMobileBooking(db, {
   return { id, manageToken, confirmToken };
 }
 
+/**
+ * Staff-created walk-in / phone booking. A confirmed depot booking with
+ * source='walkin' and notify_state='none' — no customer email is sent at
+ * insert time (that is a later, explicit "send" from the bench). email/name
+ * may be placeholders when Howie pencils it in; Emma fills them in later.
+ * Reuses the same slot lock as a public booking (partial unique index), so a
+ * walk-in cannot double-book an occupied slot.
+ */
+export async function insertWalkinBooking(db, { slug, slotStart, slotEnd, name, email, phone, note, reg, vehicleSummary }) {
+  const id = crypto.randomUUID();
+  const manageToken = crypto.randomUUID();
+  try {
+    await db
+      .prepare(
+        `INSERT INTO bookings
+           (id, slug, slot_start, slot_end, name, email, phone, note, reg, vehicle_summary,
+            google_event_id, status, manage_token, type, source, notify_state)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'confirmed', ?, 'depot', 'walkin', 'none')`,
+      )
+      .bind(id, slug, slotStart, slotEnd, name, email ?? '', phone ?? '', note ?? null, reg ?? null, vehicleSummary ?? null, manageToken)
+      .run();
+    return { id, manageToken };
+  } catch (err) {
+    if (isUniqueConstraintError(err)) throw new SlotTakenError();
+    throw err;
+  }
+}
+
+/**
+ * Enhance a walk-in booking's customer details from the bench (Emma adds the
+ * name/email/phone/reg Howie didn't capture). Guarded to source='walkin' so a
+ * public online booking can never be edited into calendar drift. Only the
+ * provided fields are written. Returns the updated row, or null if no matching
+ * walk-in row exists.
+ */
+export async function updateWalkinDetails(db, { slug, bookingId, name, email, phone, reg, note }) {
+  const existing = await db
+    .prepare(`SELECT * FROM bookings WHERE id = ? AND slug = ? AND source = 'walkin'`)
+    .bind(bookingId, slug)
+    .first();
+  if (!existing) return null;
+
+  const sets = [];
+  const binds = [];
+  if (name !== undefined)  { sets.push('name = ?');  binds.push(name); }
+  if (email !== undefined) { sets.push('email = ?'); binds.push(email ?? ''); }
+  if (phone !== undefined) { sets.push('phone = ?'); binds.push(phone ?? ''); }
+  if (reg !== undefined)   { sets.push('reg = ?');   binds.push(reg || null); }
+  if (note !== undefined)  { sets.push('note = ?');  binds.push(note || null); }
+  if (!sets.length) return existing;
+
+  binds.push(bookingId, slug);
+  await db
+    .prepare(`UPDATE bookings SET ${sets.join(', ')} WHERE id = ? AND slug = ?`)
+    .bind(...binds)
+    .run();
+
+  return db.prepare(`SELECT * FROM bookings WHERE id = ?`).bind(bookingId).first();
+}
+
+/** Mark a walk-in customer as having been sent their confirmation email. */
+export async function markWalkinNotified(db, id) {
+  await db.prepare(`UPDATE bookings SET notify_state = 'sent' WHERE id = ?`).bind(id).run();
+}
+
+/**
+ * Post-appointment outcome (workbench-only): 'done' | 'no_show' | null (clear).
+ * Guarded to confirmed rows for the slug. Returns the updated row, or null.
+ */
+export async function setBookingOutcome(db, { slug, bookingId, outcome }) {
+  const existing = await db
+    .prepare(`SELECT * FROM bookings WHERE id = ? AND slug = ? AND status = 'confirmed'`)
+    .bind(bookingId, slug)
+    .first();
+  if (!existing) return null;
+  await db
+    .prepare(`UPDATE bookings SET outcome = ? WHERE id = ? AND slug = ?`)
+    .bind(outcome ?? null, bookingId, slug)
+    .run();
+  return db.prepare(`SELECT * FROM bookings WHERE id = ?`).bind(bookingId).first();
+}
+
 export async function updateBookingEvent(db, id, googleEventId) {
   await db
     .prepare(`UPDATE bookings SET google_event_id = ? WHERE id = ?`)
@@ -185,9 +267,9 @@ export async function updateBookingPrep(db, { slug, bookingId, prepStatus, inter
 export async function getWorkbenchBookings(db, slug, fromDate, toDate) {
   const { results } = await db
     .prepare(
-      `SELECT id, slot_start, slot_end, name, email, phone, note, reg,
+      `SELECT id, slot_start, slot_end, name, email, phone, note, reg, vehicle_summary,
               address, postcode, type, band, arrival_window, status,
-              prep_status, internal_note, manage_token
+              prep_status, internal_note, manage_token, source, outcome, notify_state
        FROM bookings
        WHERE slug = ?
          AND status != 'cancelled'

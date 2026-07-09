@@ -34,6 +34,15 @@ export function isValidPrepStatus(value) {
   return typeof value === 'string' && PREP_STATUSES.includes(value);
 }
 
+export const OUTCOMES = ['done', 'no_show'];
+
+/** Accepts 'done' | 'no_show' | null | '' (clear). Returns the normalised value or undefined if invalid. */
+export function normaliseOutcome(value) {
+  if (value === null || value === '' || value === undefined) return null;
+  if (typeof value === 'string' && OUTCOMES.includes(value)) return value;
+  return undefined; // signals invalid
+}
+
 export const WORKBENCH_HEADERS_HTML = {
   'Content-Type': 'text/html; charset=utf-8',
   'X-Robots-Tag': 'noindex',
@@ -111,16 +120,24 @@ export function formatWorkbenchBooking(row, { timezone = 'Europe/London', showDa
   const mapsUrl = isMobile ? mapsQuery(row.address, row.postcode) : null;
 
   const prepStatus = row.prep_status || 'new';
+  const isWalkin = row.source === 'walkin';
+  const outcome = row.outcome || null; // 'done' | 'no_show' | null
 
   return {
     id: row.id,
     manageToken: row.manage_token || null,
     timeLabel,
+    rawSlotStart: row.slot_start || null,
     type: isMobile ? 'mobile' : 'depot',
     typeLabel: isMobile ? 'Mobile' : 'Depot',
     isPending,
+    isWalkin,
+    source: row.source || 'online',
+    outcome,
+    notifyState: row.notify_state || 'none',
     name: row.name || '',
     reg: row.reg || null,
+    vehicleSummary: row.vehicle_summary || null,
     phone: row.phone || '',
     telHref: telHref(row.phone),
     email: row.email || '',

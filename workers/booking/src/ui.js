@@ -1,6 +1,4 @@
-﻿import { workbenchSectionTitle } from './workbench.js';
-
-function escHtml(str) {
+﻿function escHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -2902,7 +2900,10 @@ export function renderConfirmPage(booking, state, config) {
 </html>`;
 }
 
-// ── Staff workbench (read-only day view) ────────────────────────────────────
+// ── Staff workbench (Bench mode — live day dashboard) ───────────────────────
+// Rendered as a shell + inlined initial data; a single client-side renderer
+// draws the cards (used for both first paint and the 5-min auto-refresh) so
+// there is one source of truth for the markup. The URL key is the credential.
 
 function workbenchThemeCss(config) {
   const t = config?.theme || {};
@@ -2914,111 +2915,6 @@ function workbenchThemeCss(config) {
       --accent-fg:  ${t.accentFg  || '#0f1f3d'};
       --accent-rgb: ${t.accentRgb || '245, 166, 35'};
     }`;
-}
-
-function renderWorkbenchActionsHtml(b) {
-  if (b.isPending) {
-    return `
-      <div class="wb-actions wb-actions-pending">
-        <button type="button" class="wb-action-btn wb-action-confirm" data-wb-confirm data-id="${escHtml(b.id)}">Confirm visit</button>
-        <button type="button" class="wb-action-btn wb-action-decline" data-wb-decline data-id="${escHtml(b.id)}">Decline</button>
-      </div>`;
-  }
-  if (b.manageToken && b.amendUrl) {
-    const keyAttr = b.adminKey ? ` data-admin-key="${escHtml(b.adminKey)}"` : '';
-    return `
-      <div class="wb-actions">
-        <a class="wb-action-btn wb-action-amend" href="${escHtml(b.amendUrl)}">Amend</a>
-        <button type="button" class="wb-action-btn wb-action-cancel" data-wb-cancel data-token="${escHtml(b.manageToken)}"${keyAttr}>Cancel</button>
-      </div>`;
-  }
-  return '';
-}
-
-function renderWorkbenchPrepHtml(b) {
-  const isReady = b.prepStatus === 'ready';
-  const advanceBtn = isReady
-    ? `<button type="button" class="wb-prep-btn wb-prep-ready" disabled aria-label="Prep complete">${escHtml(b.prepLabel)} ✓</button>`
-    : `<button type="button" class="wb-prep-btn" data-prep-advance data-id="${escHtml(b.id)}" data-next="${escHtml(b.nextPrepStatus)}" aria-label="Advance prep to ${escHtml(b.advancePrepLabel)}">${escHtml(b.advancePrepLabel)}</button>`;
-  const backBtn = b.prevPrepStatus
-    ? `<button type="button" class="wb-prep-back" data-prep-back data-id="${escHtml(b.id)}" data-prev="${escHtml(b.prevPrepStatus)}" aria-label="Step prep back one stage">‹ Back</button>`
-    : '';
-  const statusPill = `<span class="wb-prep-status" data-prep-label>${escHtml(b.prepLabel)}</span>`;
-  const noteVal = b.internalNote ? escHtml(b.internalNote) : '';
-  return `
-    <div class="wb-prep-row">
-      ${statusPill}
-      <div class="wb-prep-actions">${advanceBtn}${backBtn}</div>
-    </div>
-    <label class="wb-internal-wrap">
-      <span class="wb-internal-label">Private staff note</span>
-      <textarea class="wb-internal-note" data-booking-id="${escHtml(b.id)}" data-saved="${noteVal}" rows="2" maxlength="500" placeholder="Sizes, supplier, due date — customers never see this">${noteVal}</textarea>
-    </label>`;
-}
-
-function renderWorkbenchBookingRowHtml(b, { highlightNotReady = false } = {}) {
-  const typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
-  const pendingClass = b.isPending ? ' wb-pending-row' : '';
-  const notReadyClass = (highlightNotReady && b.prepStatus !== 'ready') ? ' wb-card-not-ready' : '';
-
-  const regHtml = b.reg
-    ? `<div class="wb-reg">${escHtml(b.reg)}</div>`
-    : '';
-
-  const phoneHtml = b.telHref
-    ? `<a class="wb-link" href="${escHtml(b.telHref)}">${escHtml(b.phone)}</a>`
-    : (b.phone ? `<span>${escHtml(b.phone)}</span>` : '');
-
-  const emailHtml = b.email
-    ? `<a class="wb-link" href="mailto:${escHtml(b.email)}">${escHtml(b.email)}</a>`
-    : '';
-
-  const bandHtml = b.band
-    ? `<span class="wb-band">Band ${escHtml(b.band)}</span>`
-    : '';
-
-  let addressHtml = '';
-  if (b.type === 'mobile' && (b.address || b.postcode)) {
-    const addrText = [b.address, b.postcode].filter(Boolean).join(', ');
-    if (b.mapsUrl) {
-      addressHtml = `<a class="wb-link wb-address" href="${escHtml(b.mapsUrl)}" target="_blank" rel="noopener noreferrer">${escHtml(addrText)}</a>`;
-    } else {
-      addressHtml = `<div class="wb-address">${escHtml(addrText)}</div>`;
-    }
-  }
-
-  const noteHtml = b.note
-    ? `<div class="wb-note"><span class="wb-note-label">Customer note</span> ${escHtml(b.note)}</div>`
-    : '';
-
-  return `
-    <article class="wb-card${pendingClass}${notReadyClass}" data-booking-id="${escHtml(b.id)}">
-      <div class="wb-card-top">
-        <span class="wb-time">${escHtml(b.timeLabel)}</span>
-        <span class="wb-type ${typeClass}">${escHtml(b.typeLabel)}</span>
-        ${bandHtml}
-      </div>
-      <div class="wb-name">${escHtml(b.name)}</div>
-      ${regHtml}
-      <div class="wb-contact">${phoneHtml}${phoneHtml && emailHtml ? ' · ' : ''}${emailHtml}</div>
-      ${addressHtml}
-      ${noteHtml}
-      ${renderWorkbenchActionsHtml(b)}
-      ${b.isPending ? '' : renderWorkbenchPrepHtml(b)}
-    </article>`;
-}
-
-function renderWorkbenchSectionHtml(title, bookings, emptyMessage, { showReadyCount = false, highlightNotReady = false } = {}) {
-  const heading = workbenchSectionTitle(title, bookings, { showReadyCount });
-  const body = bookings.length
-    ? bookings.map((b) => renderWorkbenchBookingRowHtml(b, { highlightNotReady })).join('')
-    : `<p class="wb-empty">${escHtml(emptyMessage)}</p>`;
-  const warnClass = showReadyCount && bookings.some((b) => b.prepStatus !== 'ready') ? ' wb-section-warn' : '';
-  return `
-    <section class="wb-section${warnClass}">
-      <h2 class="wb-heading">${escHtml(heading)}</h2>
-      <div class="wb-list">${body}</div>
-    </section>`;
 }
 
 /** Generic refusal — no tenant name, same for unknown slug or bad key. */
@@ -3053,29 +2949,26 @@ export function renderWorkbenchRefusalPage() {
 export function renderWorkbenchPage(config, slug, key, data) {
   const displayName = escHtml(config.displayName);
   const themeCss = workbenchThemeCss(config);
-
-  const pendingSection = data.pending.length
-    ? `
-    <section class="wb-section wb-section-pending">
-      <h2 class="wb-heading">Pending mobile requests</h2>
-      <div class="wb-list">${data.pending.map((b) => renderWorkbenchBookingRowHtml(b)).join('')}</div>
-    </section>`
-    : '';
-
-  const sectionsHtml =
-    pendingSection
-    + renderWorkbenchSectionHtml('Today', data.today, 'Nothing booked today', { showReadyCount: true, highlightNotReady: true })
-    + renderWorkbenchSectionHtml('Tomorrow', data.tomorrow, 'Nothing booked tomorrow', { showReadyCount: true, highlightNotReady: true })
-    + renderWorkbenchSectionHtml('Next 7 days', data.upcoming, 'Nothing booked in the next week');
-
-  const slugJson = JSON.stringify(slug);
-  const keyJson = JSON.stringify(key);
+  const tz = config.timezone || 'Europe/London';
+  const todayIso = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const maxIso = (() => {
+    const [y, m, d] = todayIso.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + (config.maxAdvanceDays || 30))).toISOString().slice(0, 10);
+  })();
+  const cfg = {
+    displayName: config.displayName || '',
+    tz,
+    today: todayIso,
+    maxDate: maxIso,
+    regLookup: !!config.regLookup,
+  };
+  const boot = JSON.stringify({ data, cfg }).replace(/</g, '\\u003c');
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Workbench | ${displayName}</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/x-icon" href="https://neobookworm.uk/favicon.ico">
@@ -3084,417 +2977,622 @@ export function renderWorkbenchPage(config, slug, key, data) {
   <style>
     ${themeCss}
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: #fff;
-      font-family: 'DM Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.45;
+    html, body { margin: 0; padding: 0; min-height: 100%;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 82%, #fff 18%) 0%, var(--bg) 46%, color-mix(in srgb, var(--bg) 78%, #000 22%) 100%) fixed;
+      color: #fff; font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.45;
       -webkit-font-smoothing: antialiased; }
-    .biz-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
-      padding: 0.875rem 1rem; background: rgba(255,255,255,0.06);
-      border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 10; }
-    .biz-name { font-weight: 700; font-size: 1.0625rem; }
-    .biz-meta { font-size: 0.8125rem; opacity: 0.65; white-space: nowrap; }
-    .wrap { max-width: 640px; margin: 0 auto; padding: 1rem 1rem 3rem; }
-    .wb-section { margin-bottom: 1.75rem; }
-    .wb-section-pending { padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.12); }
-    .wb-heading { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.06em; opacity: 0.7; margin: 0 0 0.75rem; }
-    .wb-pending-note { font-size: 0.875rem; opacity: 0.8; margin: -0.35rem 0 0.85rem; line-height: 1.4; }
-    .wb-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .wb-empty { margin: 0; padding: 1rem 1.125rem; border-radius: 10px;
-      background: rgba(255,255,255,0.04); font-size: 0.9375rem; opacity: 0.75; }
-    .wb-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px; padding: 1rem 1.125rem; }
-    .wb-pending-row { border-color: rgba(var(--accent-rgb), 0.45); }
-    .wb-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
-    .wb-time { font-weight: 700; font-size: 1.0625rem; }
-    .wb-type { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.04em; padding: 0.2rem 0.5rem; border-radius: 4px; }
-    .wb-type-depot { background: rgba(255,255,255,0.12); }
-    .wb-type-mobile { background: rgba(var(--accent-rgb), 0.25); color: #fff; }
-    .wb-band { font-size: 0.75rem; opacity: 0.7; }
-    .wb-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.15rem; }
-    .wb-reg { font-size: 1rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.35rem;
+    button { font-family: inherit; }
+    a { color: var(--accent); }
+    .head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+      padding: 0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-top)); padding-top: max(0.7rem, env(safe-area-inset-top));
+      position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 86%, #000 14%);
+      border-bottom: 1px solid rgba(255,255,255,0.10); backdrop-filter: blur(8px); }
+    .head .biz { font-weight: 800; font-size: 1.02rem; letter-spacing: 0.01em; }
+    .head .clock { font-size: 0.78rem; opacity: 0.6; font-variant-numeric: tabular-nums; }
+    .head .sync { min-height: 40px; padding: 0.4rem 0.7rem; border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 9px; background: transparent; color: #fff; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap; }
+    .head .sync:disabled { opacity: 0.55; }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 0.9rem 0.9rem calc(6rem + env(safe-area-inset-bottom)); }
+
+    /* stat tiles */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+    .stat { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.11); border-radius: 13px;
+      padding: 0.6rem 0.4rem; text-align: center; }
+    .stat .n { font-size: 1.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat .l { font-size: 0.62rem; opacity: 0.62; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.28rem; }
+    .stat.warn { border-color: rgba(255,190,80,0.5); background: rgba(255,190,80,0.10); }
+    .stat.warn .n { color: #ffcf6b; }
+    .stat.free .n { color: var(--accent); }
+
+    /* controls row */
+    .controls { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .search { flex: 1; position: relative; }
+    .search input { width: 100%; min-height: 46px; padding: 0.6rem 0.8rem 0.6rem 2.1rem; border-radius: 11px;
+      border: 1px solid rgba(255,255,255,0.16); background: rgba(0,0,0,0.22); color: #fff; font-size: 1rem; }
+    .search input::placeholder { color: rgba(255,255,255,0.5); }
+    .search .ic { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 1rem; }
+    .add-btn { min-height: 46px; padding: 0 1rem; border: none; border-radius: 11px; background: var(--accent);
+      color: var(--accent-fg); font-size: 0.95rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .add-btn:active { background: var(--accent-h); }
+
+    .sec { margin-bottom: 1.6rem; }
+    .sec-h { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+      opacity: 0.62; margin: 0 0 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sec-h .cnt { color: #ffcf6b; opacity: 1; }
+    .sec-warn .sec-h { color: #ffcf6b; opacity: 0.95; }
+    .list { display: flex; flex-direction: column; gap: 0.65rem; }
+    .empty { margin: 0; padding: 0.9rem 1rem; border-radius: 11px; background: rgba(255,255,255,0.04);
+      font-size: 0.9rem; opacity: 0.7; }
+
+    /* free chips */
+    .free-wrap { margin-bottom: 0.8rem; }
+    .free-lab { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55; margin: 0 0 0.4rem; }
+    .free-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .free-chip { min-height: 38px; padding: 0.3rem 0.7rem; border-radius: 999px; border: 1px dashed rgba(var(--accent-rgb),0.55);
+      background: rgba(var(--accent-rgb),0.08); color: #fff; font-size: 0.85rem; font-weight: 700; cursor: pointer;
       font-variant-numeric: tabular-nums; }
-    .wb-contact { font-size: 1rem; margin-bottom: 0.25rem; }
-    .wb-link { color: var(--accent); text-decoration: none; font-weight: 600;
-      min-height: 44px; display: inline-flex; align-items: center; }
-    .wb-link:active { opacity: 0.85; }
-    .wb-address { display: block; font-size: 0.9375rem; margin-top: 0.35rem; line-height: 1.4; }
-    .wb-note { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.1);
-      font-size: 0.9375rem; opacity: 0.9; line-height: 1.4; }
-    .wb-note-label { display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; opacity: 0.55; margin-bottom: 0.2rem; }
-    .wb-card-not-ready { border-color: rgba(255, 180, 50, 0.75);
-      box-shadow: inset 4px 0 0 rgba(255, 180, 50, 0.95); background: rgba(255, 180, 50, 0.08); }
-    .wb-section-warn .wb-heading { color: #ffc857; opacity: 1; }
-    .wb-prep-row { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.12); }
-    .wb-prep-status { display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; opacity: 0.65; margin-bottom: 0.5rem; }
-    .wb-prep-actions { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
-    .wb-prep-btn { flex: 1; min-height: 48px; min-width: 140px; padding: 0.65rem 1rem; border: none;
-      border-radius: 10px; background: var(--accent); color: var(--accent-fg); font-family: inherit;
-      font-size: 1rem; font-weight: 700; cursor: pointer; touch-action: manipulation; }
-    .wb-prep-btn:active:not(:disabled) { background: var(--accent-h); }
-    .wb-prep-btn:disabled, .wb-prep-ready { opacity: 0.85; cursor: default; }
-    .wb-prep-back { min-height: 48px; padding: 0.65rem 0.85rem; border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 10px; background: transparent; color: #fff; font-family: inherit; font-size: 0.9375rem;
-      font-weight: 600; cursor: pointer; touch-action: manipulation; }
-    .wb-prep-back:active { background: rgba(255,255,255,0.08); }
-    .wb-internal-wrap { display: block; margin-top: 0.75rem; }
-    .wb-internal-label { display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; color: rgba(180, 200, 255, 0.85); margin-bottom: 0.35rem; }
-    .wb-internal-note { width: 100%; min-height: 3.5rem; padding: 0.65rem 0.75rem; border-radius: 8px;
-      border: 1px dashed rgba(180, 200, 255, 0.35); background: rgba(0, 0, 0, 0.22); color: #fff;
-      font-family: inherit; font-size: 0.9375rem; line-height: 1.4; resize: vertical; }
-    .wb-internal-note:focus { outline: 2px solid rgba(180, 200, 255, 0.5); outline-offset: 1px; }
-    .wb-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
-    .wb-action-btn { flex: 1; min-height: 48px; min-width: 120px; padding: 0.65rem 1rem; border-radius: 10px;
-      font-family: inherit; font-size: 1rem; font-weight: 700; text-align: center; text-decoration: none;
-      cursor: pointer; touch-action: manipulation; display: inline-flex; align-items: center; justify-content: center; }
-    .wb-action-confirm { border: none; background: var(--accent); color: var(--accent-fg); }
-    .wb-action-confirm:active:not(:disabled) { background: var(--accent-h); }
-    .wb-action-decline, .wb-action-cancel { border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #fff; }
-    .wb-action-decline:active:not(:disabled), .wb-action-cancel:active:not(:disabled) { background: rgba(255,255,255,0.08); }
-    .wb-action-amend { border: 1px solid rgba(var(--accent-rgb), 0.5); background: rgba(var(--accent-rgb), 0.15); color: #fff; }
-    .wb-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .wb-updated { text-align: center; font-size: 0.75rem; opacity: 0.45; margin-top: 1.5rem; }
-    .wb-reconcile-btn { min-height: 40px; padding: 0.4rem 0.85rem; border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 8px; background: transparent; color: #fff; font-family: inherit; font-size: 0.8125rem;
-      font-weight: 600; cursor: pointer; touch-action: manipulation; white-space: nowrap; }
-    .wb-reconcile-btn:active:not(:disabled) { background: rgba(255,255,255,0.08); }
-    .wb-reconcile-btn:disabled { opacity: 0.55; cursor: default; }
+    .free-chip:active { background: rgba(var(--accent-rgb),0.2); }
+
+    /* now line */
+    .nowline { display: flex; align-items: center; gap: 0.5rem; color: #ffcf6b; font-size: 0.66rem;
+      font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin: 0.15rem 0; }
+    .nowline .ln { flex: 1; height: 1px; background: linear-gradient(90deg, #ffcf6b, transparent); }
+
+    /* card */
+    .card { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.045));
+      border: 1px solid rgba(255,255,255,0.13); border-radius: 15px; padding: 0.85rem 0.95rem 0.9rem 1.05rem;
+      box-shadow: 0 6px 18px -12px rgba(0,0,0,0.55); }
+    .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: rgba(255,255,255,0.22); }
+    .card.edge-ready::before { background: #3fae6b; }
+    .card.edge-warn::before  { background: #f0a836; }
+    .card.edge-pending::before { background: var(--accent); }
+    .card.edge-done::before { background: #3fae6b; }
+    .card.edge-noshow::before { background: #d9534f; }
+    .card.dim { opacity: 0.62; }
+    .card.hide { display: none; }
+    .c-top { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.35rem; }
+    .c-time { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    .tag { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 0.15rem 0.45rem; border-radius: 5px; }
+    .tag-depot { background: rgba(255,255,255,0.14); }
+    .tag-mobile { background: rgba(var(--accent-rgb),0.28); }
+    .tag-walkin { background: rgba(120,180,255,0.22); color: #cfe3ff; }
+    .tag-out { background: rgba(255,255,255,0.12); }
+    .tag-out.done { background: rgba(63,174,107,0.25); color: #b8f0cd; }
+    .tag-out.noshow { background: rgba(217,83,79,0.28); color: #ffd0ce; }
+    .c-name { font-size: 1.12rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .plate { display: inline-flex; align-items: center; font-weight: 800; letter-spacing: 0.06em;
+      background: #f8d800; color: #111; border: 1px solid #b9a400; border-radius: 4px; padding: 2px 8px 2px 12px;
+      font-size: 0.9rem; font-variant-numeric: tabular-nums; box-shadow: inset 3px 0 0 #0a4ea8; margin-bottom: 0.35rem; }
+    .c-contact { font-size: 0.98rem; margin-bottom: 0.15rem; }
+    .lnk { color: var(--accent); text-decoration: none; font-weight: 600; min-height: 40px;
+      display: inline-flex; align-items: center; }
+    .c-addr { display: block; font-size: 0.9rem; margin-top: 0.25rem; opacity: 0.92; }
+    .c-note { margin-top: 0.55rem; padding-top: 0.55rem; border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem; opacity: 0.9; }
+    .c-note .nl { display: block; font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.05em; opacity: 0.5; margin-bottom: 0.15rem; }
+
+    .prep { margin-top: 0.75rem; padding-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.12); }
+    .prep-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .prep-pill { font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.65; }
+    .prep-btn { flex: 1; min-height: 46px; min-width: 130px; padding: 0.55rem 0.9rem; border: none; border-radius: 10px;
+      background: var(--accent); color: var(--accent-fg); font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+    .prep-btn:active:not(:disabled) { background: var(--accent-h); }
+    .prep-btn.ready { background: rgba(63,174,107,0.28); color: #d7f6e2; }
+    .prep-btn:disabled { cursor: default; }
+    .prep-back { min-height: 46px; padding: 0.55rem 0.8rem; border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px; background: transparent; color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .note-in { width: 100%; min-height: 3rem; margin-top: 0.6rem; padding: 0.6rem 0.7rem; border-radius: 9px;
+      border: 1px dashed rgba(150,190,255,0.4); background: rgba(0,0,0,0.24); color: #fff; font-family: inherit;
+      font-size: 0.92rem; line-height: 1.4; resize: vertical; }
+    .note-lab { display: block; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: rgba(160,195,255,0.85); margin-top: 0.6rem; }
+
+    .acts { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.7rem; }
+    .act { flex: 1; min-height: 46px; min-width: 110px; padding: 0.55rem 0.9rem; border-radius: 10px; font-size: 0.95rem;
+      font-weight: 800; text-align: center; text-decoration: none; cursor: pointer; display: inline-flex;
+      align-items: center; justify-content: center; }
+    .act-primary { border: none; background: var(--accent); color: var(--accent-fg); }
+    .act-primary:active { background: var(--accent-h); }
+    .act-ghost { border: 1px solid rgba(255,255,255,0.28); background: transparent; color: #fff; }
+    .act-ghost:active { background: rgba(255,255,255,0.08); }
+    .act-amend { border: 1px solid rgba(var(--accent-rgb),0.5); background: rgba(var(--accent-rgb),0.15); color: #fff; }
+    .act-sm { min-width: 0; flex: 0 0 auto; min-height: 40px; padding: 0.35rem 0.7rem; font-size: 0.82rem; font-weight: 700; }
+
+    .out-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem;
+      padding-top: 0.6rem; border-top: 1px dashed rgba(255,255,255,0.1); }
+    .out-lab { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; margin-right: 0.15rem; }
+
+    .wk-editor { margin-top: 0.7rem; padding: 0.75rem; border-radius: 11px; background: rgba(120,180,255,0.08);
+      border: 1px solid rgba(120,180,255,0.28); }
+    .wk-editor.hide { display: none; }
+    .fld { display: block; margin-bottom: 0.5rem; }
+    .fld span { display: block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-bottom: 0.2rem; }
+    .fld input, .fld textarea { width: 100%; min-height: 44px; padding: 0.5rem 0.65rem; border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.24); color: #fff; font-family: inherit; font-size: 1rem; }
+    .fld textarea { min-height: 3rem; resize: vertical; }
+    .notif { font-size: 0.72rem; margin-top: 0.4rem; }
+    .notif.sent { color: #9ff0c1; }
+    .notif.unsent { color: rgba(255,255,255,0.6); }
+
+    /* modal */
+    .modal { position: fixed; inset: 0; z-index: 60; display: none; align-items: flex-end; justify-content: center;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(2px); }
+    .modal.open { display: flex; }
+    .sheet { width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto; background: color-mix(in srgb, var(--bg) 88%, #000 12%);
+      border: 1px solid rgba(255,255,255,0.14); border-radius: 18px 18px 0 0; padding: 1.1rem 1.1rem calc(1.4rem + env(safe-area-inset-bottom)); }
+    .sheet h2 { margin: 0 0 0.3rem; font-size: 1.15rem; }
+    .sheet .sub { margin: 0 0 1rem; font-size: 0.88rem; opacity: 0.7; }
+    .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 0.45rem; margin: 0.3rem 0 0.9rem; }
+    .slot-b { min-height: 46px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.05);
+      color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; }
+    .slot-b.sel { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .slot-note { font-size: 0.85rem; opacity: 0.7; margin: 0.2rem 0 0.9rem; }
+    .sheet-acts { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .sheet-close { position: absolute; }
+    .msg { margin-top: 0.6rem; font-size: 0.9rem; }
+    .msg.ok { color: #9ff0c1; }
+    .msg.err { color: #ff9a95; }
+    .foot { text-align: center; font-size: 0.72rem; opacity: 0.4; margin-top: 1.2rem; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-  <header class="biz-header">
-    <span class="biz-name">${displayName}</span>
-    <button type="button" class="wb-reconcile-btn" id="wbReconcile" title="Check for bookings deleted in Google Calendar and free their slots">Sync calendar</button>
+  <header class="head">
+    <div>
+      <div class="biz">${displayName}</div>
+      <div class="clock" id="wbClock"></div>
+    </div>
+    <button type="button" class="sync" id="wbSync" title="Check for bookings deleted in Google Calendar and free their slots">Sync calendar</button>
   </header>
-  <main class="wrap" id="wbMain">
-    ${sectionsHtml}
-    <p class="wb-updated" id="wbUpdatedFoot" hidden></p>
-  </main>
+  <main class="wrap" id="wbMain"><p class="empty">Loading…</p></main>
+
+  <div class="modal" id="wbModal" role="dialog" aria-modal="true" aria-label="Add a phone booking">
+    <div class="sheet">
+      <h2>Add a phone booking</h2>
+      <p class="sub">Pencil someone in now — add their details and send a confirmation whenever you like.</p>
+      <label class="fld"><span>Day</span><input type="date" id="wkDate"></label>
+      <div id="wkSlotsWrap">
+        <span class="note-lab" style="color:rgba(255,255,255,0.6)">Free times</span>
+        <div class="slot-grid" id="wkSlots"></div>
+        <p class="slot-note" id="wkSlotNote"></p>
+      </div>
+      <label class="fld"><span>Name (optional)</span><input type="text" id="wkName" maxlength="80" placeholder="Phone booking" autocomplete="off"></label>
+      <label class="fld"><span>Reg (optional)</span><input type="text" id="wkReg" maxlength="10" placeholder="e.g. KV19 ABC" autocomplete="off" style="text-transform:uppercase"></label>
+      <label class="fld"><span>Phone (optional)</span><input type="tel" id="wkPhone" maxlength="30" autocomplete="off"></label>
+      <label class="fld"><span>Email (optional — needed to send a confirmation)</span><input type="email" id="wkEmail" maxlength="120" autocomplete="off"></label>
+      <label class="fld"><span>Note (optional)</span><textarea id="wkNote" maxlength="500" placeholder="Tyre size, what they need…"></textarea></label>
+      <div class="sheet-acts">
+        <button type="button" class="act act-ghost" id="wkPencil">Pencil in</button>
+        <button type="button" class="act act-primary" id="wkSend">Save &amp; send confirmation</button>
+      </div>
+      <button type="button" class="act act-ghost" id="wkCancel" style="width:100%;margin-top:0.5rem">Close</button>
+      <p class="msg" id="wkMsg"></p>
+    </div>
+  </div>
+
   <script>
 (function () {
-  var SLUG = ${slugJson};
-  var KEY = ${keyJson};
+  var BOOT = ${boot};
+  var DATA = BOOT.data || {};
+  var CFG = BOOT.cfg || {};
+  var SLUG = ${JSON.stringify(slug)};
+  var KEY = ${JSON.stringify(key)};
   var REFRESH_MS = 5 * 60 * 1000;
-  var PREP_LABELS = { new: 'New', stock_checked: 'Stock checked', ordered: 'Ordered', ready: 'Ready' };
   var PREP_ADVANCE = { new: 'Check stock', stock_checked: 'Mark ordered', ordered: 'Mark ready', ready: 'Ready' };
-  var PREP_NEXT = { new: 'stock_checked', stock_checked: 'ordered', ordered: 'ready', ready: null };
-  var PREP_PREV = { new: null, stock_checked: 'new', ordered: 'stock_checked', ready: 'ordered' };
-  var noteSaveTimers = {};
+  var PREP_LABEL = { new: 'New', stock_checked: 'Stock checked', ordered: 'Ordered', ready: 'Ready' };
+  var noteTimers = {};
+  var busy = false; // pause auto-refresh while a modal/editor is open
 
   function esc(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function el(id) { return document.getElementById(id); }
+
+  function nowWall() {
+    var p = new Intl.DateTimeFormat('en-CA', { timeZone: CFG.tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false })
+      .formatToParts(new Date()).reduce(function (a,x){ a[x.type]=x.value; return a; }, {});
+    var hh = p.hour === '24' ? '00' : p.hour;
+    return p.year+'-'+p.month+'-'+p.day+'T'+hh+':'+p.minute+':'+p.second;
   }
 
-  function sectionTitle(title, bookings, showReadyCount) {
-    if (!showReadyCount || !bookings.length) return title;
-    var notReady = bookings.filter(function (b) { return b.prepStatus !== 'ready'; }).length;
-    if (!notReady) return title;
-    return title + ' · ' + notReady + ' of ' + bookings.length + ' not ready';
+  function tickClock() {
+    var d = new Date();
+    var t = new Intl.DateTimeFormat('en-GB', { timeZone: CFG.tz, hour:'2-digit', minute:'2-digit' }).format(d);
+    var day = new Intl.DateTimeFormat('en-GB', { timeZone: CFG.tz, weekday:'long', day:'numeric', month:'long' }).format(d);
+    var c = el('wbClock'); if (c) c.textContent = t + ' · ' + day;
   }
 
-  function actionsHtml(b) {
-    if (b.isPending) {
-      return '<div class="wb-actions wb-actions-pending">' +
-        '<button type="button" class="wb-action-btn wb-action-confirm" data-wb-confirm data-id="' + esc(b.id) + '">Confirm visit</button>' +
-        '<button type="button" class="wb-action-btn wb-action-decline" data-wb-decline data-id="' + esc(b.id) + '">Decline</button></div>';
-    }
-    if (b.manageToken && b.amendUrl) {
-      var keyAttr = b.adminKey ? ' data-admin-key="' + esc(b.adminKey) + '"' : '';
-      return '<div class="wb-actions">' +
-        '<a class="wb-action-btn wb-action-amend" href="' + esc(b.amendUrl) + '">Amend</a>' +
-        '<button type="button" class="wb-action-btn wb-action-cancel" data-wb-cancel data-token="' + esc(b.manageToken) + '"' + keyAttr + '>Cancel</button></div>';
-    }
+  // ── card pieces ─────────────────────────────────────────────────────────
+  function plate(reg) { return reg ? '<span class="plate">' + esc(reg) + '</span>' : ''; }
+
+  function edgeClass(b, highlight) {
+    if (b.outcome === 'done') return 'edge-done';
+    if (b.outcome === 'no_show') return 'edge-noshow';
+    if (b.isPending) return 'edge-pending';
+    if (b.isReady) return 'edge-ready';
+    if (highlight) return 'edge-warn';
     return '';
   }
 
-  function prepHtml(b) {
-    var isReady = b.prepStatus === 'ready';
-    var advance = isReady
-      ? '<button type="button" class="wb-prep-btn wb-prep-ready" disabled aria-label="Prep complete">' + esc(b.prepLabel || PREP_LABELS.ready) + ' ✓</button>'
-      : '<button type="button" class="wb-prep-btn" data-prep-advance data-id="' + esc(b.id) + '" data-next="' + esc(b.nextPrepStatus) + '">' + esc(b.advancePrepLabel || PREP_ADVANCE[b.prepStatus] || 'Advance') + '</button>';
+  function tags(b) {
+    var out = '';
+    out += '<span class="tag ' + (b.type === 'mobile' ? 'tag-mobile' : 'tag-depot') + '">' + esc(b.typeLabel) + '</span>';
+    if (b.isWalkin) out += '<span class="tag tag-walkin">Phone</span>';
+    if (b.outcome === 'done') out += '<span class="tag tag-out done">Done ✓</span>';
+    if (b.outcome === 'no_show') out += '<span class="tag tag-out noshow">No-show</span>';
+    return out;
+  }
+
+  function contactLine(b) {
+    var parts = [];
+    if (b.telHref) parts.push('<a class="lnk" href="' + esc(b.telHref) + '">' + esc(b.phone) + '</a>');
+    else if (b.phone) parts.push('<span>' + esc(b.phone) + '</span>');
+    if (b.email) parts.push('<a class="lnk" href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a>');
+    return parts.length ? '<div class="c-contact">' + parts.join(' · ') + '</div>' : '';
+  }
+
+  function addrLine(b) {
+    if (b.type !== 'mobile' || (!b.address && !b.postcode)) return '';
+    var txt = [b.address, b.postcode].filter(Boolean).join(', ');
+    return b.mapsUrl
+      ? '<a class="lnk c-addr" href="' + esc(b.mapsUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(txt) + ' ↗</a>'
+      : '<div class="c-addr">' + esc(txt) + '</div>';
+  }
+
+  function prepBlock(b) {
+    var advance = b.isReady
+      ? '<button type="button" class="prep-btn ready" disabled>Ready ✓</button>'
+      : '<button type="button" class="prep-btn" data-prep-advance data-id="' + esc(b.id) + '" data-next="' + esc(b.nextPrepStatus) + '">' + esc(b.advancePrepLabel || PREP_ADVANCE[b.prepStatus] || 'Advance') + '</button>';
     var back = b.prevPrepStatus
-      ? '<button type="button" class="wb-prep-back" data-prep-back data-id="' + esc(b.id) + '" data-prev="' + esc(b.prevPrepStatus) + '">‹ Back</button>'
+      ? '<button type="button" class="prep-back" data-prep-back data-id="' + esc(b.id) + '" data-prev="' + esc(b.prevPrepStatus) + '">‹ Back</button>'
       : '';
     var noteVal = b.internalNote ? esc(b.internalNote) : '';
-    return '<div class="wb-prep-row"><span class="wb-prep-status" data-prep-label>' + esc(b.prepLabel || PREP_LABELS[b.prepStatus] || 'New') + '</span>' +
-      '<div class="wb-prep-actions">' + advance + back + '</div></div>' +
-      '<label class="wb-internal-wrap"><span class="wb-internal-label">Private staff note</span>' +
-      '<textarea class="wb-internal-note" data-booking-id="' + esc(b.id) + '" data-saved="' + noteVal + '" rows="2" maxlength="500" placeholder="Sizes, supplier, due date — customers never see this">' + noteVal + '</textarea></label>';
+    return '<div class="prep">' +
+      '<div class="prep-row"><span class="prep-pill">Prep · ' + esc(b.prepLabel || PREP_LABEL[b.prepStatus] || 'New') + '</span></div>' +
+      '<div class="prep-row" style="margin-top:0.5rem">' + advance + back + '</div>' +
+      '<span class="note-lab">Private staff note</span>' +
+      '<textarea class="note-in" data-note data-id="' + esc(b.id) + '" data-saved="' + noteVal + '" rows="2" maxlength="500" placeholder="In stock? Ordered from…  (customers never see this)">' + noteVal + '</textarea>' +
+      '</div>';
   }
 
-  function rowHtml(b, highlightNotReady) {
-    var typeClass = b.type === 'mobile' ? 'wb-type-mobile' : 'wb-type-depot';
-    var pendingClass = b.isPending ? ' wb-pending-row' : '';
-    var notReadyClass = (highlightNotReady && b.prepStatus !== 'ready') ? ' wb-card-not-ready' : '';
-    var regHtml = b.reg ? '<div class="wb-reg">' + esc(b.reg) + '</div>' : '';
-    var phoneHtml = b.telHref
-      ? '<a class="wb-link" href="' + esc(b.telHref) + '">' + esc(b.phone) + '</a>'
-      : (b.phone ? '<span>' + esc(b.phone) + '</span>' : '');
-    var emailHtml = b.email
-      ? '<a class="wb-link" href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a>'
-      : '';
-    var bandHtml = b.band ? '<span class="wb-band">Band ' + esc(b.band) + '</span>' : '';
-    var addressHtml = '';
-    if (b.type === 'mobile' && (b.address || b.postcode)) {
-      var addrText = [b.address, b.postcode].filter(Boolean).join(', ');
-      addressHtml = b.mapsUrl
-        ? '<a class="wb-link wb-address" href="' + esc(b.mapsUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(addrText) + '</a>'
-        : '<div class="wb-address">' + esc(addrText) + '</div>';
+  function outcomeBlock(b) {
+    if (b.isPending) return '';
+    if (b.outcome) {
+      var lab = b.outcome === 'done' ? 'Marked done' : 'Marked no-show';
+      return '<div class="out-row"><span class="out-lab">' + lab + '</span>' +
+        '<button type="button" class="act act-ghost act-sm" data-outcome data-id="' + esc(b.id) + '" data-val="">Undo</button></div>';
     }
-    var noteHtml = b.note
-      ? '<div class="wb-note"><span class="wb-note-label">Customer note</span> ' + esc(b.note) + '</div>'
-      : '';
-    var contactSep = phoneHtml && emailHtml ? ' · ' : '';
-    return '<article class="wb-card' + pendingClass + notReadyClass + '" data-booking-id="' + esc(b.id) + '">' +
-      '<div class="wb-card-top"><span class="wb-time">' + esc(b.timeLabel) + '</span>' +
-      '<span class="wb-type ' + typeClass + '">' + esc(b.typeLabel) + '</span>' + bandHtml + '</div>' +
-      '<div class="wb-name">' + esc(b.name) + '</div>' + regHtml +
-      '<div class="wb-contact">' + phoneHtml + contactSep + emailHtml + '</div>' +
-      addressHtml + noteHtml + actionsHtml(b) + (b.isPending ? '' : prepHtml(b)) + '</article>';
+    return '<div class="out-row"><span class="out-lab">After the job</span>' +
+      '<button type="button" class="act act-ghost act-sm" data-outcome data-id="' + esc(b.id) + '" data-val="done">✓ Done</button>' +
+      '<button type="button" class="act act-ghost act-sm" data-outcome data-id="' + esc(b.id) + '" data-val="no_show">No-show</button></div>';
   }
 
-  function sectionHtml(title, bookings, emptyMsg, opts) {
+  function actionsBlock(b) {
+    if (b.isPending) {
+      return '<div class="acts">' +
+        '<button type="button" class="act act-primary" data-confirm data-id="' + esc(b.id) + '">Confirm visit</button>' +
+        '<button type="button" class="act act-ghost" data-decline data-id="' + esc(b.id) + '">Decline</button></div>';
+    }
+    var out = '<div class="acts">';
+    if (b.manageToken && b.amendUrl) {
+      var keyAttr = b.adminKey ? ' data-admin-key="' + esc(b.adminKey) + '"' : '';
+      out += '<a class="act act-amend" href="' + esc(b.amendUrl) + '">Amend time</a>' +
+        '<button type="button" class="act act-ghost" data-cancel data-token="' + esc(b.manageToken) + '"' + keyAttr + '>Cancel</button>';
+    }
+    out += '</div>';
+    return out;
+  }
+
+  function walkinEditor(b) {
+    if (!b.isWalkin) return '';
+    var sent = b.notifyState === 'sent';
+    var notif = sent
+      ? '<p class="notif sent">✓ Confirmation sent to the customer</p>'
+      : '<p class="notif unsent">No confirmation sent yet</p>';
+    return '<div class="acts"><button type="button" class="act act-ghost" data-editor-toggle data-id="' + esc(b.id) + '">' + (sent ? 'Edit details' : 'Add details / send confirmation') + '</button></div>' +
+      '<div class="wk-editor hide" data-editor="' + esc(b.id) + '">' +
+        '<label class="fld"><span>Name</span><input type="text" data-ed="name" maxlength="80" value="' + (b.name && b.name !== 'Phone booking' ? esc(b.name) : '') + '" placeholder="Customer name"></label>' +
+        '<label class="fld"><span>Reg</span><input type="text" data-ed="reg" maxlength="10" value="' + esc(b.reg || '') + '" style="text-transform:uppercase"></label>' +
+        '<label class="fld"><span>Phone</span><input type="tel" data-ed="phone" maxlength="30" value="' + esc(b.phone || '') + '"></label>' +
+        '<label class="fld"><span>Email</span><input type="email" data-ed="email" maxlength="120" value="' + esc(b.email || '') + '"></label>' +
+        '<label class="fld"><span>Note (customer-facing)</span><textarea data-ed="note" maxlength="500">' + esc(b.note || '') + '</textarea></label>' +
+        '<div class="sheet-acts">' +
+          '<button type="button" class="act act-ghost" data-ed-save data-id="' + esc(b.id) + '">Save</button>' +
+          '<button type="button" class="act act-primary" data-ed-send data-id="' + esc(b.id) + '">' + (sent ? 'Save' : 'Save & send') + '</button>' +
+        '</div>' + notif +
+        '<p class="msg" data-ed-msg></p>' +
+      '</div>';
+  }
+
+  function cardHtml(b, highlight) {
+    var cls = 'card ' + edgeClass(b, highlight);
+    if (b.outcome) cls += ' dim';
+    var search = ((b.name || '') + ' ' + (b.reg || '') + ' ' + (b.phone || '')).toLowerCase();
+    var html = '<article class="' + cls + '" data-card data-id="' + esc(b.id) + '" data-search="' + esc(search) + '">' +
+      '<div class="c-top"><span class="c-time">' + esc(b.timeLabel) + '</span>' + tags(b) + '</div>' +
+      '<div class="c-name">' + esc(b.name || 'Phone booking') + '</div>' +
+      plate(b.reg) +
+      contactLine(b) + addrLine(b);
+    if (b.note && !b.isWalkin) html += '<div class="c-note"><span class="nl">Customer note</span>' + esc(b.note) + '</div>';
+    html += actionsBlock(b);
+    if (!b.isPending) html += prepBlock(b) + outcomeBlock(b) + walkinEditor(b);
+    html += '</article>';
+    return html;
+  }
+
+  // ── sections ────────────────────────────────────────────────────────────
+  function notReadyCount(list) {
+    return list.filter(function (b) { return !b.isReady && !b.outcome; }).length;
+  }
+
+  function sectionHtml(title, list, emptyMsg, opts) {
     opts = opts || {};
-    var heading = sectionTitle(title, bookings, opts.showReadyCount);
-    var warnClass = opts.showReadyCount && bookings.some(function (b) { return b.prepStatus !== 'ready'; }) ? ' wb-section-warn' : '';
-    var body = bookings.length
-      ? bookings.map(function (b) { return rowHtml(b, opts.highlightNotReady); }).join('')
-      : '<p class="wb-empty">' + esc(emptyMsg) + '</p>';
-    return '<section class="wb-section' + warnClass + '"><h2 class="wb-heading">' + esc(heading) + '</h2>' +
-      '<div class="wb-list">' + body + '</div></section>';
-  }
-
-  function applyBookingToCard(card, booking) {
-    if (!card || !booking) return;
-    var section = card.closest('.wb-section');
-    var heading = section && section.querySelector('.wb-heading');
-    var baseTitle = heading ? heading.textContent.split(' · ')[0] : '';
-    var highlight = baseTitle === 'Today' || baseTitle === 'Tomorrow';
-    var parent = card.parentNode;
-    var tmp = document.createElement('div');
-    tmp.innerHTML = rowHtml(booking, highlight && booking.prepStatus !== 'ready');
-    var fresh = tmp.firstElementChild;
-    if (fresh && parent) parent.replaceChild(fresh, card);
-    updateReadyCounts();
-  }
-
-  function updateReadyCounts() {
-    document.querySelectorAll('.wb-section').forEach(function (sec) {
-      var h = sec.querySelector('.wb-heading');
-      if (!h) return;
-      var base = h.textContent.split(' · ')[0];
-      if (base !== 'Today' && base !== 'Tomorrow') return;
-      var cards = sec.querySelectorAll('.wb-card');
-      var notReady = 0;
-      cards.forEach(function (c) {
-        if (!c.querySelector('.wb-prep-ready')) notReady++;
-      });
-      if (notReady > 0) {
-        h.textContent = base + ' · ' + notReady + ' of ' + cards.length + ' not ready';
-        sec.classList.add('wb-section-warn');
-        cards.forEach(function (c) {
-          if (!c.querySelector('.wb-prep-ready')) c.classList.add('wb-card-not-ready');
-          else c.classList.remove('wb-card-not-ready');
-        });
-      } else {
-        h.textContent = base;
-        sec.classList.remove('wb-section-warn');
-        cards.forEach(function (c) { c.classList.remove('wb-card-not-ready'); });
+    var warn = opts.count && notReadyCount(list) > 0;
+    var head = '<h2 class="sec-h">' + esc(title);
+    if (opts.count && list.length) {
+      var nr = notReadyCount(list);
+      if (nr > 0) head += ' <span class="cnt">· ' + nr + ' of ' + list.length + ' not ready</span>';
+    }
+    head += '</h2>';
+    var now = nowWall();
+    var body = '';
+    if (!list.length) {
+      body = '<p class="empty">' + esc(emptyMsg) + '</p>';
+    } else {
+      var placedNow = false;
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        if (opts.nowLine && !placedNow && b.rawSlotStart && b.rawSlotStart >= now) {
+          body += '<div class="nowline"><span>Now</span><span class="ln"></span></div>';
+          placedNow = true;
+        }
+        body += cardHtml(b, opts.highlight);
       }
-    });
-  }
-
-  async function postPrep(bookingId, prepStatus) {
-    var res = await fetch('/' + SLUG + '/workbench/prep', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: KEY, bookingId: bookingId, prepStatus: prepStatus }),
-    });
-    var data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'update_failed');
-    return data.booking;
-  }
-
-  async function saveInternalNote(textarea) {
-    var bookingId = textarea.getAttribute('data-booking-id');
-    var card = textarea.closest('.wb-card');
-    var value = textarea.value;
-    try {
-      var res = await fetch('/' + SLUG + '/workbench/prep', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: KEY, bookingId: bookingId, internalNote: value }),
-      });
-      var data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'save_failed');
-      textarea.dataset.saved = value;
-    } catch (_) {
-      textarea.style.borderColor = 'rgba(255, 100, 100, 0.8)';
-      setTimeout(function () { textarea.style.borderColor = ''; }, 2000);
     }
+    return '<section class="sec' + (warn ? ' sec-warn' : '') + '">' + head + '<div class="list">' + body + '</div></section>';
   }
 
-  async function postWorkbenchConfirm(bookingId, action) {
-    var res = await fetch('/' + SLUG + '/workbench/confirm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: KEY, bookingId: bookingId, action: action }),
-    });
-    var data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'action_failed');
-    return data.outcome;
+  function futureFree() {
+    var now = nowWall();
+    return (DATA.freeToday || []).filter(function (s) { return s.slot >= now; });
   }
 
-  async function postReconcile() {
-    var res = await fetch('/' + SLUG + '/workbench/reconcile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: KEY }),
-    });
-    var data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'reconcile_failed');
-    return data;
+  function statsHtml() {
+    var today = DATA.today || [], tomorrow = DATA.tomorrow || [], pending = DATA.pending || [];
+    var notReady = notReadyCount(today) + notReadyCount(tomorrow);
+    var mobile = pending.length + today.concat(tomorrow).filter(function (b) { return b.type === 'mobile'; }).length;
+    var free = futureFree().length;
+    function tile(n, l, cls) { return '<div class="stat ' + (cls||'') + '"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>'; }
+    return '<div class="stats">' +
+      tile(today.length, 'Today', '') +
+      tile(notReady, 'Not ready', notReady ? 'warn' : '') +
+      tile(mobile, 'Mobile', '') +
+      tile(free, 'Free today', 'free') + '</div>';
   }
 
-  async function postCancel(manageToken, adminKey) {
-    var payload = { token: manageToken };
-    if (adminKey) payload.adminKey = adminKey;
-    var res = await fetch('/' + SLUG + '/cancel', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    var data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'cancel_failed');
+  function freeChipsHtml() {
+    var free = futureFree();
+    if (!free.length) return '';
+    var chips = free.map(function (s) {
+      return '<button type="button" class="free-chip" data-freeslot="' + esc(s.slot) + '">' + esc(s.label) + '</button>';
+    }).join('');
+    return '<div class="free-wrap"><p class="free-lab">Free bench time today — tap to fill</p><div class="free-chips">' + chips + '</div></div>';
   }
 
-  function renderAll(data) {
-    var pending = '';
-    if (data.pending && data.pending.length) {
-      pending = '<section class="wb-section wb-section-pending">' +
-        '<h2 class="wb-heading">Pending mobile requests</h2>' +
-        '<div class="wb-list">' + data.pending.map(function (b) { return rowHtml(b, false); }).join('') + '</div></section>';
+  function render() {
+    var pending = DATA.pending || [];
+    var html = statsHtml() +
+      '<div class="controls">' +
+        '<div class="search"><span class="ic">⌕</span><input type="search" id="wbSearch" placeholder="Search reg, name or phone" autocomplete="off"></div>' +
+        '<button type="button" class="add-btn" id="wbAdd">+ Phone booking</button>' +
+      '</div>';
+    if (pending.length) {
+      html += '<section class="sec sec-warn"><h2 class="sec-h">Waiting on your yes</h2><div class="list">' +
+        pending.map(function (b) { return cardHtml(b, false); }).join('') + '</div></section>';
     }
-    return pending +
-      sectionHtml('Today', data.today || [], 'Nothing booked today', { showReadyCount: true, highlightNotReady: true }) +
-      sectionHtml('Tomorrow', data.tomorrow || [], 'Nothing booked tomorrow', { showReadyCount: true, highlightNotReady: true }) +
-      sectionHtml('Next 7 days', data.upcoming || [], 'Nothing booked in the next week');
+    html += freeChipsHtml();
+    html += sectionHtml('Today', DATA.today || [], 'Nothing booked today', { count: true, highlight: true, nowLine: true });
+    html += sectionHtml('Tomorrow', DATA.tomorrow || [], 'Nothing booked tomorrow', { count: true, highlight: true });
+    html += sectionHtml('Next 7 days', DATA.upcoming || [], 'Nothing booked in the next week', {});
+    html += '<p class="foot" id="wbFoot">' + (DATA.updatedAt ? 'Updated ' + new Date(DATA.updatedAt).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '') + '</p>';
+    el('wbMain').innerHTML = html;
+    wireSearch();
   }
 
-  async function refresh() {
-    try {
-      var res = await fetch('/' + SLUG + '/workbench/data?key=' + encodeURIComponent(KEY), { cache: 'no-store' });
-      var data = await res.json();
-      if (!data.ok) return;
-      document.getElementById('wbMain').innerHTML = renderAll(data) +
-        '<p class="wb-updated" id="wbUpdatedFoot"' + (data.updatedAt ? '' : ' hidden') + '>' +
-        (data.updatedAt ? 'Updated ' + new Date(data.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '') +
-        '</p>';
-    } catch (_) { /* silent — keep last good render */ }
-  }
-
-  var reconcileBtn = document.getElementById('wbReconcile');
-  if (reconcileBtn) {
-    reconcileBtn.addEventListener('click', function () {
-      var original = reconcileBtn.textContent;
-      reconcileBtn.disabled = true;
-      reconcileBtn.textContent = 'Syncing…';
-      postReconcile().then(function (r) {
-        reconcileBtn.textContent = r.freed > 0 ? 'Freed ' + r.freed : 'Up to date';
-        refresh();
-        setTimeout(function () { reconcileBtn.textContent = original; reconcileBtn.disabled = false; }, 2500);
-      }).catch(function () {
-        reconcileBtn.textContent = 'Sync failed';
-        setTimeout(function () { reconcileBtn.textContent = original; reconcileBtn.disabled = false; }, 2500);
+  function wireSearch() {
+    var s = el('wbSearch');
+    if (s) s.addEventListener('input', function () {
+      var q = s.value.trim().toLowerCase();
+      document.querySelectorAll('[data-card]').forEach(function (c) {
+        var hit = !q || (c.getAttribute('data-search') || '').indexOf(q) !== -1;
+        c.classList.toggle('hide', !hit);
       });
     });
+    var add = el('wbAdd');
+    if (add) add.addEventListener('click', function () { openModal(CFG.today, null); });
   }
+
+  // ── API ─────────────────────────────────────────────────────────────────
+  function post(path, payload) {
+    return fetch('/' + SLUG + '/workbench/' + path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ key: KEY }, payload)),
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) throw new Error(d.error || 'failed'); return d;
+    });
+  }
+
+  function refresh() {
+    if (busy) return;
+    fetch('/' + SLUG + '/workbench/data?key=' + encodeURIComponent(KEY), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d.ok) { DATA = d; render(); } })
+      .catch(function () {});
+  }
+
+  // ── walk-in modal ─────────────────────────────────────────────────────────
+  var selectedSlot = null;
+
+  function openModal(dateIso, preSlot) {
+    busy = true;
+    selectedSlot = preSlot || null;
+    el('wkDate').value = dateIso || CFG.today;
+    el('wkDate').min = CFG.today;
+    el('wkDate').max = CFG.maxDate;
+    el('wkName').value = ''; el('wkReg').value = ''; el('wkPhone').value = ''; el('wkEmail').value = ''; el('wkNote').value = '';
+    el('wkMsg').textContent = '';
+    el('wbModal').classList.add('open');
+    loadSlots(dateIso || CFG.today);
+  }
+  function closeModal() { busy = false; el('wbModal').classList.remove('open'); }
+
+  function loadSlots(dateIso) {
+    var wrap = el('wkSlots'); var note = el('wkSlotNote');
+    wrap.innerHTML = ''; note.textContent = 'Checking free times…';
+    fetch('/' + SLUG + '/workbench/slots?key=' + encodeURIComponent(KEY) + '&date=' + encodeURIComponent(dateIso), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.ok) { note.textContent = 'Could not load times — ' + (d.error || 'try again'); return; }
+        var slots = d.slots || [];
+        if (!slots.length) { note.textContent = 'No free times that day.'; return; }
+        note.textContent = '';
+        wrap.innerHTML = slots.map(function (s) {
+          var sel = s.slot === selectedSlot ? ' sel' : '';
+          return '<button type="button" class="slot-b' + sel + '" data-slot="' + esc(s.slot) + '">' + esc(s.label) + '</button>';
+        }).join('');
+      })
+      .catch(function () { note.textContent = 'Could not load times — try again.'; });
+  }
+
+  function submitWalkin(sendNotify) {
+    var msg = el('wkMsg'); msg.className = 'msg'; msg.textContent = '';
+    if (!selectedSlot) { msg.className = 'msg err'; msg.textContent = 'Pick a time first.'; return; }
+    var email = el('wkEmail').value.trim();
+    if (sendNotify && !email) { msg.className = 'msg err'; msg.textContent = 'Add an email to send a confirmation, or use “Pencil in”.'; return; }
+    el('wkPencil').disabled = true; el('wkSend').disabled = true;
+    post('walkin', {
+      slot: selectedSlot,
+      name: el('wkName').value.trim(),
+      reg: el('wkReg').value.trim(),
+      phone: el('wkPhone').value.trim(),
+      email: email,
+      note: el('wkNote').value.trim(),
+      sendNotify: !!sendNotify,
+    }).then(function () {
+      closeModal(); refresh();
+    }).catch(function (e) {
+      msg.className = 'msg err';
+      msg.textContent = e.message === 'slot_taken' ? 'That slot was just taken — pick another.' : 'Could not save — ' + e.message;
+      el('wkPencil').disabled = false; el('wkSend').disabled = false;
+    });
+  }
+
+  // ── events ─────────────────────────────────────────────────────────────
+  el('wbSync').addEventListener('click', function () {
+    var btn = el('wbSync'); var orig = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Syncing…';
+    post('reconcile', {}).then(function (r) {
+      btn.textContent = r.freed > 0 ? 'Freed ' + r.freed : 'Up to date';
+      refresh();
+      setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 2500);
+    }).catch(function () {
+      btn.textContent = 'Sync failed';
+      setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 2500);
+    });
+  });
+
+  el('wkCancel').addEventListener('click', closeModal);
+  el('wkPencil').addEventListener('click', function () { submitWalkin(false); });
+  el('wkSend').addEventListener('click', function () { submitWalkin(true); });
+  el('wkDate').addEventListener('change', function () { selectedSlot = null; loadSlots(el('wkDate').value); });
+  el('wbModal').addEventListener('click', function (e) { if (e.target === el('wbModal')) closeModal(); });
 
   document.addEventListener('click', function (e) {
-    var confirmBtn = e.target.closest('[data-wb-confirm]');
-    if (confirmBtn) {
-      e.preventDefault();
-      if (!confirm('Confirm this mobile visit? The customer will receive their confirmation email.')) return;
-      var cid = confirmBtn.getAttribute('data-id');
-      confirmBtn.disabled = true;
-      postWorkbenchConfirm(cid, 'confirm').then(function () { refresh(); }).catch(function () {
-        confirmBtn.disabled = false;
-      });
+    var slotBtn = e.target.closest('[data-slot]');
+    if (slotBtn) {
+      selectedSlot = slotBtn.getAttribute('data-slot');
+      document.querySelectorAll('#wkSlots .slot-b').forEach(function (b) { b.classList.toggle('sel', b === slotBtn); });
       return;
     }
-    var declineBtn = e.target.closest('[data-wb-decline]');
-    if (declineBtn) {
-      e.preventDefault();
-      if (!confirm('Decline this request? The time will be freed and the customer will be emailed.')) return;
-      var did = declineBtn.getAttribute('data-id');
-      declineBtn.disabled = true;
-      postWorkbenchConfirm(did, 'decline').then(function () { refresh(); }).catch(function () {
-        declineBtn.disabled = false;
-      });
-      return;
-    }
-    var cancelBtn = e.target.closest('[data-wb-cancel]');
-    if (cancelBtn) {
-      e.preventDefault();
-      if (!confirm('Cancel this booking? The customer will be notified.')) return;
-      var token = cancelBtn.getAttribute('data-token');
-      var adminKey = cancelBtn.getAttribute('data-admin-key') || null;
-      cancelBtn.disabled = true;
-      postCancel(token, adminKey).then(function () { refresh(); }).catch(function () {
-        cancelBtn.disabled = false;
-      });
-      return;
-    }
+    var freeChip = e.target.closest('[data-freeslot]');
+    if (freeChip) { openModal(CFG.today, freeChip.getAttribute('data-freeslot')); return; }
+
     var adv = e.target.closest('[data-prep-advance]');
-    if (adv) {
-      e.preventDefault();
-      var id = adv.getAttribute('data-id');
-      var next = adv.getAttribute('data-next');
-      var card = adv.closest('.wb-card');
-      adv.disabled = true;
-      postPrep(id, next).then(function (booking) {
-        applyBookingToCard(card, booking);
-      }).catch(function () {
-        adv.disabled = false;
-      });
+    if (adv) { adv.disabled = true; post('prep', { bookingId: adv.getAttribute('data-id'), prepStatus: adv.getAttribute('data-next') }).then(refresh).catch(function () { adv.disabled = false; }); return; }
+    var back = e.target.closest('[data-prep-back]');
+    if (back) { back.disabled = true; post('prep', { bookingId: back.getAttribute('data-id'), prepStatus: back.getAttribute('data-prev') }).then(refresh).catch(function () { back.disabled = false; }); return; }
+
+    var oc = e.target.closest('[data-outcome]');
+    if (oc) {
+      var val = oc.getAttribute('data-val');
+      if (val === 'no_show' && !confirm('Mark this booking as a no-show?')) return;
+      oc.disabled = true;
+      post('outcome', { bookingId: oc.getAttribute('data-id'), outcome: val }).then(refresh).catch(function () { oc.disabled = false; });
       return;
     }
-    var back = e.target.closest('[data-prep-back]');
-    if (back) {
-      e.preventDefault();
-      var bid = back.getAttribute('data-id');
-      var prev = back.getAttribute('data-prev');
-      var bcard = back.closest('.wb-card');
-      back.disabled = true;
-      postPrep(bid, prev).then(function (booking) {
-        applyBookingToCard(bcard, booking);
-      }).catch(function () {
-        back.disabled = false;
-      });
+
+    var cf = e.target.closest('[data-confirm]');
+    if (cf) { if (!confirm('Confirm this mobile visit? The customer gets their confirmation email.')) return; cf.disabled = true; post('confirm', { bookingId: cf.getAttribute('data-id'), action: 'confirm' }).then(refresh).catch(function () { cf.disabled = false; }); return; }
+    var dc = e.target.closest('[data-decline]');
+    if (dc) { if (!confirm('Decline this request? The time is freed and the customer is emailed.')) return; dc.disabled = true; post('confirm', { bookingId: dc.getAttribute('data-id'), action: 'decline' }).then(refresh).catch(function () { dc.disabled = false; }); return; }
+    var cn = e.target.closest('[data-cancel]');
+    if (cn) {
+      if (!confirm('Cancel this booking? The customer will be notified.')) return;
+      cn.disabled = true;
+      var payload = { token: cn.getAttribute('data-token') };
+      var ak = cn.getAttribute('data-admin-key'); if (ak) payload.adminKey = ak;
+      fetch('/' + SLUG + '/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { if (!d.ok) throw new Error(d.error); refresh(); })
+        .catch(function () { cn.disabled = false; });
+      return;
+    }
+
+    var tog = e.target.closest('[data-editor-toggle]');
+    if (tog) {
+      var ed = document.querySelector('[data-editor="' + tog.getAttribute('data-id') + '"]');
+      if (ed) { var opening = ed.classList.contains('hide'); ed.classList.toggle('hide'); busy = opening; }
+      return;
+    }
+    var save = e.target.closest('[data-ed-save]');
+    var send = e.target.closest('[data-ed-send]');
+    if (save || send) {
+      var btn = save || send; var id = btn.getAttribute('data-id');
+      var box = document.querySelector('[data-editor="' + id + '"]');
+      var emsg = box.querySelector('[data-ed-msg]'); emsg.className = 'msg'; emsg.textContent = '';
+      function edv(k) { var i = box.querySelector('[data-ed="' + k + '"]'); return i ? i.value.trim() : undefined; }
+      var wantSend = !!send;
+      if (wantSend && !edv('email')) { emsg.className = 'msg err'; emsg.textContent = 'Add an email to send a confirmation.'; return; }
+      btn.disabled = true;
+      post('details', { bookingId: id, name: edv('name'), reg: edv('reg'), phone: edv('phone'), email: edv('email'), note: edv('note'), sendNotify: wantSend })
+        .then(function () { busy = false; refresh(); })
+        .catch(function (err) { emsg.className = 'msg err'; emsg.textContent = 'Could not save — ' + err.message; btn.disabled = false; });
+      return;
     }
   });
 
+  // Save internal staff note on blur.
   document.addEventListener('focusout', function (e) {
     var ta = e.target;
-    if (!ta.matches || !ta.matches('.wb-internal-note')) return;
-    if (ta.dataset.saved === ta.value) return;
-    clearTimeout(noteSaveTimers[ta.getAttribute('data-booking-id')]);
-    noteSaveTimers[ta.getAttribute('data-booking-id')] = setTimeout(function () {
-      saveInternalNote(ta).then(function () { ta.dataset.saved = ta.value; });
+    if (!ta.matches || !ta.matches('[data-note]')) return;
+    if (ta.getAttribute('data-saved') === ta.value) return;
+    var id = ta.getAttribute('data-id');
+    clearTimeout(noteTimers[id]);
+    noteTimers[id] = setTimeout(function () {
+      post('prep', { bookingId: id, internalNote: ta.value })
+        .then(function () { ta.setAttribute('data-saved', ta.value); })
+        .catch(function () { ta.style.borderColor = 'rgba(255,120,120,0.8)'; setTimeout(function () { ta.style.borderColor = ''; }, 2000); });
     }, 300);
   });
 
+  render();
+  tickClock();
+  setInterval(tickClock, 30 * 1000);
   setInterval(refresh, REFRESH_MS);
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') refresh();
-  });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refresh(); });
 })();
   <\/script>
 </body>
