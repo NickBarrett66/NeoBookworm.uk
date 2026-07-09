@@ -123,6 +123,8 @@
 
   /* hero */
   .hero{background:radial-gradient(120% 120% at 80% -10%,#1c3357 0%,var(--navy) 45%,var(--ink) 100%);color:#eaf0f8;padding:clamp(48px,7vw,88px) 0 clamp(56px,8vw,96px);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;top:-70px;left:-70px;width:420px;height:420px;background:url('/tyretrust/images/logo-mark-480.webp') no-repeat center/contain;opacity:.07;pointer-events:none;z-index:0}
+  @media(max-width:640px){.hero::after{display:none}}
   .hero::after{content:"";position:absolute;right:-140px;bottom:-160px;width:460px;height:460px;border-radius:50%;
     background:repeating-radial-gradient(circle,rgba(255,255,255,.05) 0 8px,transparent 8px 20px);opacity:.5;pointer-events:none}
   .hero-grid{display:grid;grid-template-columns:.86fr 1.14fr;gap:clamp(28px,4vw,56px);align-items:center;position:relative;z-index:1}
@@ -299,7 +301,10 @@
   /* proof */
   .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
   .me-card{margin:0 auto;max-width:380px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow-sm)}
-  .me-card img{display:block;width:100%;height:auto;border-radius:10px}
+  .photo-wrap{position:relative}
+  .me-card img.photo{display:block;width:100%;height:auto;border-radius:10px}
+  .proof-stamp{position:absolute;right:-14px;bottom:-14px;width:72px;height:72px;border-radius:50%;box-shadow:0 6px 14px rgba(0,0,0,.3)}
+  @media(max-width:480px){.proof-stamp{width:56px;height:56px;right:-10px;bottom:-10px}}
   .me-card figcaption{padding:12px 8px 4px;font-size:.9rem;color:var(--muted);text-align:center}
 
   /* FAQ */
@@ -341,6 +346,8 @@
 
   footer.site{background:var(--ink);color:#8ea0b8;padding:36px 0;font-size:.9rem}
   .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+  .foot-brand{display:flex;align-items:center;gap:10px}
+  .foot-brand img{display:block;height:26px;width:26px;flex:none}
   footer.site a{color:#c3d0e2}
   .foot-note{margin:16px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);font-size:.82rem;color:#6d7f97;text-align:center}
 
@@ -365,7 +372,7 @@
 <header class="site">
   <div class="container nav">
     <a class="brand" href="/tyretrust/" aria-label="TyreTrust — websites for tyre fitters">
-      <img class="mark" src="/tyretrust/images/logo-shield.svg"
+      <img class="mark" src="/tyretrust/images/logo-mark-120.webp"
            width="40" height="40" alt="TyreTrust" decoding="async" fetchpriority="high">
       Tyre<b>Trust</b>
     </a>
@@ -617,10 +624,14 @@
       </div>
       <div>
         <figure class="me-card">
-          <img src="/tyretrust/images/nick-794.webp"
-               srcset="/tyretrust/images/nick-480.webp 480w, /tyretrust/images/nick-794.webp 794w"
-               sizes="(max-width:860px) 86vw, 380px"
-               width="794" height="1024" alt="Nick Barrett — TyreTrust" loading="lazy" decoding="async">
+          <div class="photo-wrap">
+            <img class="photo" src="/tyretrust/images/nick-794.webp"
+                 srcset="/tyretrust/images/nick-480.webp 480w, /tyretrust/images/nick-794.webp 794w"
+                 sizes="(max-width:860px) 86vw, 380px"
+                 width="794" height="1024" alt="Nick Barrett — TyreTrust" loading="lazy" decoding="async">
+            <img class="proof-stamp" src="/tyretrust/images/logo-mark-160.webp"
+                 width="160" height="160" alt="" loading="lazy" decoding="async">
+          </div>
           <figcaption>Nick — TyreTrust, Swindon. When you email, this is who replies — not a ticket queue.</figcaption>
         </figure>
       </div>
@@ -806,7 +817,10 @@
 
 <footer class="site">
   <div class="container foot">
-    <div>© <span id="yr"></span> TyreTrust — websites built only for tyre fitters. Based in Swindon.</div>
+    <div class="foot-brand">
+      <img src="/tyretrust/images/logo-mark-120.webp" width="120" height="120" alt="TyreTrust" loading="lazy" decoding="async">
+      <span>© <span id="yr"></span> TyreTrust — websites built only for tyre fitters. Based in Swindon.</span>
+    </div>
     <div><a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
   </div>
   <div class="container">
