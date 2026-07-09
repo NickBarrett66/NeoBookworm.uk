@@ -239,12 +239,41 @@
   .board-tag{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#e7f6ef;color:var(--green);white-space:nowrap}
   .board-tag.pend{background:#fff3e0;color:var(--orange-dk)}
 
-  /* phone mock for reminders */
-  .phone{max-width:280px;margin:6px auto 0;background:#0c1219;border-radius:26px;padding:12px;box-shadow:var(--shadow)}
-  .phone-screen{background:#e9eef4;border-radius:16px;padding:16px;min-height:180px}
-  .bubble{background:#fff;border-radius:14px;padding:12px 14px;font-size:.9rem;color:#1d2733;box-shadow:0 2px 6px rgba(0,0,0,.06);margin-bottom:10px;overflow-wrap:anywhere}
-  .bubble .from{font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:3px}
-  .bubble a{color:var(--orange-dk);font-weight:700;word-break:break-all}
+  /* reminder email mock + inline "manage booking" simulation */
+  .email-mock{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+  .email-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .email-avatar{flex:none;width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+  .email-meta{flex:1;min-width:0}
+  .email-from{font-weight:800;color:var(--navy);font-size:.92rem}
+  .email-addr{font-weight:400;color:var(--muted);font-size:.8rem;margin-left:4px}
+  .email-subject{font-size:.88rem;color:var(--body);margin-top:2px;overflow-wrap:anywhere}
+  .email-time{flex:none;font-size:.78rem;color:var(--muted);white-space:nowrap}
+  .email-body{padding:18px 20px}
+  .email-body p{margin:0 0 12px;font-size:.95rem;color:var(--body);line-height:1.6}
+  .email-slot{background:var(--mist);border-radius:9px;padding:11px 14px;font-weight:800;color:var(--navy);margin:0 0 12px;line-height:1.4}
+  .email-link{background:none;border:0;padding:0;margin:0 0 12px;display:inline-block;color:var(--orange-dk);font-weight:700;text-decoration:underline;cursor:pointer;font:inherit;font-size:.95rem}
+  .email-link:hover{color:var(--orange)}
+  .email-sign{color:var(--muted);margin:0}
+  .manage-mock{margin:4px 20px 20px;border-radius:10px;overflow:hidden;box-shadow:0 10px 26px -12px rgba(16,21,29,.4)}
+  .mm-body{background:var(--navy);color:#fff;padding:20px}
+  .mm-header{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#a9bad2;margin-bottom:14px}
+  .mm-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+  .mm-card-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#a9bad2;margin-bottom:4px}
+  .mm-card-slot{font-size:1.05rem;font-weight:800}
+  .mm-card-biz{font-size:.85rem;color:#c3d0e2;margin-top:3px}
+  .mm-actions{display:flex;flex-direction:column;gap:10px}
+  .mm-actions.frame-hidden{display:none}
+  .mm-btn-reschedule{background:var(--orange);color:#fff;border:0;border-radius:9px;padding:12px;font:inherit;font-weight:800;cursor:pointer}
+  .mm-btn-reschedule:hover{background:var(--orange-dk)}
+  .mm-btn-cancel{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:9px;padding:11px;font:inherit;font-weight:600;cursor:pointer}
+  .mm-btn-cancel:hover{background:rgba(255,255,255,.08)}
+  .mm-slots{margin-top:14px}
+  .mm-hint{font-size:.85rem;color:#c3d0e2;margin:0 0 10px}
+  #remindRescheduleFrame{width:100%;height:560px;border:0;border-radius:10px;background:var(--mist);display:block}
+  .mm-result{margin:14px 0 0;background:rgba(18,160,106,.16);border:1px solid rgba(18,160,106,.4);border-radius:9px;padding:11px 14px;font-size:.9rem;line-height:1.4}
+  .mm-result.mm-cancel{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+  .mm-reset{margin-top:12px;background:none;border:0;color:#a9bad2;font:inherit;font-size:.84rem;text-decoration:underline;cursor:pointer;padding:0}
+  .mm-reset:hover{color:#fff}
 
   /* star rating widget */
   .stars{color:#f5a623;font-size:1.3rem;letter-spacing:2px}
@@ -540,13 +569,70 @@
       <!-- Section 2: Reminders -->
       <div class="tier-section">
         <div>
-          <h4>Reminders &amp; reschedule links <small style="font-weight:400;color:var(--muted)">(email — text upgrade in The Full Bay)</small></h4>
-          <p class="desc">The night before, every customer gets a "see you at 10:15" by email, with a one-tap reschedule link. Fewer no-shows, and an empty bay quietly becomes a rebook.</p>
+          <h4>Reminders &amp; reschedule links</h4>
+          <p class="desc">The night before, every customer gets a friendly reminder by email, with a link to change or cancel it themselves — no phone call needed either way.</p>
+          <div class="who-cols">
+            <div>
+              <span class="who-label">For your customer</span>
+              <ul class="benefit">
+                <li>A friendly reminder the night before — nothing to forget</li>
+                <li>Changes or cancels it themselves, no phone call needed</li>
+                <li>Picking a new time takes seconds</li>
+              </ul>
+            </div>
+            <div>
+              <span class="who-label">For you</span>
+              <ul class="benefit">
+                <li>Fewer no-shows leaving a bay empty</li>
+                <li>A cancellation quietly becomes a rebook instead of a gap</li>
+                <li>Nobody's ringing you just to move an appointment</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="bubble"><div class="from">HE Tyres</div>See you tomorrow at 10:15 for your 2 front tyres 👍 Can't make it? Rebook here: <a href="#see-it">hetyres.co.uk/rebook</a></div>
-            <div class="bubble"><div class="from">You → empty bay saved</div>Customer tapped rebook, moved to Thursday. Bay filled.</div>
+        <div>
+          <p style="color:var(--muted);font-size:.94rem;margin:0 4px 12px">This is exactly what your customer gets — go ahead and click the link. It's a safe mock-up: nothing here touches a real booking.</p>
+          <div class="email-mock">
+            <div class="email-head">
+              <div class="email-avatar">HE</div>
+              <div class="email-meta">
+                <div class="email-from">HE Tyres <span class="email-addr">&lt;bookings@hetyres.co.uk&gt;</span></div>
+                <div class="email-subject">Reminder: you're booked in tomorrow at 10:30am</div>
+              </div>
+              <div class="email-time">20:02</div>
+            </div>
+            <div class="email-body">
+              <p>Hi Sarah,</p>
+              <p>Just a reminder — you're booked in:</p>
+              <p class="email-slot" id="remindEmailSlot">Thursday, 10 July<br>10:30am — 2 front tyres, depot</p>
+              <p>Need to change or cancel?</p>
+              <button type="button" class="email-link" id="remindManageBtn">Manage this booking →</button>
+              <p class="email-sign">— HE Tyres</p>
+            </div>
+            <div class="manage-mock frame-hidden" id="remindManage">
+              <div class="browser-bar">
+                <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+                <span class="browser-url">hetyres.co.uk/manage</span>
+              </div>
+              <div class="mm-body">
+                <div class="mm-header">HE Tyres · Manage booking</div>
+                <div class="mm-card">
+                  <div class="mm-card-label">Your booking</div>
+                  <div class="mm-card-slot" id="remindSlot">Thursday, 10 July · 10:30am</div>
+                  <div class="mm-card-biz">2 front tyres — depot</div>
+                </div>
+                <div class="mm-actions" id="remindActions">
+                  <button type="button" class="mm-btn-reschedule" id="remindReschedule">Reschedule</button>
+                  <button type="button" class="mm-btn-cancel" id="remindCancel">Cancel booking</button>
+                </div>
+                <div class="mm-slots frame-hidden" id="remindSlots">
+                  <p class="mm-hint">Pick any date and time below — it's the exact same calendar your customers use.</p>
+                  <iframe id="remindRescheduleFrame" title="Reschedule demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+                </div>
+                <p class="mm-result frame-hidden" id="remindResult"></p>
+                <button type="button" class="mm-reset frame-hidden" id="remindReset">↺ Reset the demo</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -904,6 +990,80 @@
       setOpen(false);
       toggle.scrollIntoView({behavior:'smooth',block:'center'});
     });
+  })();
+
+  // Reminder-email "manage booking" mock. The reschedule step embeds the real
+  // tyretrust-demo booking iframe (same one used in the Booking Engine demo above)
+  // so it's the exact calendar customers actually see — not an invented picker.
+  // Everything else is local DOM toggling; no fetch, no real manage token, so
+  // nothing here can ever touch a real booking.
+  (function(){
+    var openBtn=document.getElementById('remindManageBtn'),
+        manage=document.getElementById('remindManage'),
+        actions=document.getElementById('remindActions'),
+        slots=document.getElementById('remindSlots'),
+        result=document.getElementById('remindResult'),
+        resetBtn=document.getElementById('remindReset'),
+        slotText=document.getElementById('remindSlot'),
+        emailSlot=document.getElementById('remindEmailSlot'),
+        rescheduleFrame=document.getElementById('remindRescheduleFrame');
+    if(!openBtn||!manage) return;
+
+    // Evergreen date: always the next working day (HE Tyres is closed Sundays).
+    function nextWorkingDayLabel(){
+      var d=new Date();
+      d.setDate(d.getDate()+1);
+      if(d.getDay()===0){ d.setDate(d.getDate()+1); }
+      return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    }
+    var dayLabel=nextWorkingDayLabel();
+    if(emailSlot) emailSlot.innerHTML=dayLabel+'<br>10:30am — 2 front tyres, depot';
+    slotText.textContent=dayLabel+' · 10:30am';
+    var origSlot=slotText.textContent;
+
+    function reset(){
+      manage.classList.add('frame-hidden');
+      actions.classList.remove('frame-hidden');
+      slots.classList.add('frame-hidden');
+      result.classList.add('frame-hidden');
+      result.classList.remove('mm-cancel');
+      resetBtn.classList.add('frame-hidden');
+      slotText.textContent=origSlot;
+    }
+
+    openBtn.addEventListener('click',function(){
+      manage.classList.remove('frame-hidden');
+      manage.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+
+    document.getElementById('remindReschedule').addEventListener('click',function(){
+      actions.classList.add('frame-hidden');
+      slots.classList.remove('frame-hidden');
+      if(rescheduleFrame && !rescheduleFrame.src){ rescheduleFrame.src=rescheduleFrame.dataset.src; }
+    });
+
+    document.getElementById('remindCancel').addEventListener('click',function(){
+      actions.classList.add('frame-hidden');
+      result.textContent='Cancelled — a confirmation would be sent by email. Nothing here has touched a real booking.';
+      result.classList.add('mm-cancel');
+      result.classList.remove('frame-hidden');
+      resetBtn.classList.remove('frame-hidden');
+    });
+
+    // The real booking widget posts window.parent.postMessage('booking-confirmed','*')
+    // on a successful booking (see workers/booking/src/ui.js). Listen for that exact
+    // signal — scoped to our own iframe via event.source, so the separate Booking
+    // Engine demo iframe higher up the page can't trigger this by mistake.
+    window.addEventListener('message',function(ev){
+      if(ev.data==='booking-confirmed' && rescheduleFrame && ev.source===rescheduleFrame.contentWindow){
+        slots.classList.add('frame-hidden');
+        result.textContent='✓ Rebooked — HE Tyres notified automatically. That slot’s filled again instead of sitting empty.';
+        result.classList.remove('frame-hidden');
+        resetBtn.classList.remove('frame-hidden');
+      }
+    });
+
+    resetBtn.addEventListener('click',reset);
   })();
 
   // Sample data for the look-up demos (illustrative — the real thing calls DVLA/postcode services)
