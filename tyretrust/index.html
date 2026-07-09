@@ -170,6 +170,18 @@
   .book-wrap{padding:18px}
   #bookFrame{width:100%;height:680px;border:0;border-radius:10px;background:var(--mist)}
   .frame-hidden{display:none}
+  /* clickable, toggleable live-booking panel */
+  .try-head{width:100%;background:var(--ink);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;cursor:pointer;font:inherit;font-weight:700;text-align:left}
+  .try-head:hover{background:#0c1219}
+  .try-head-l{display:flex;align-items:center;gap:10px}
+  .try-head-cta{font-size:.9rem;color:var(--amber);white-space:nowrap}
+  .book-close{margin:14px 0 2px;width:100%;background:var(--mist);border:1px solid var(--line);color:var(--navy);border-radius:9px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
+  .book-close:hover{background:var(--line)}
+  /* dual-benefit columns (for your customer / for you) */
+  .who-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px 26px;margin:2px 0}
+  .who-label{display:block;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--orange-dk);margin-bottom:8px}
+  .who-cols .benefit{margin:0}
+  @media(max-width:520px){.who-cols{grid-template-columns:1fr;gap:14px}}
 
   /* feature menu */
   .feat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:34px}
@@ -447,21 +459,36 @@
       <!-- Section 1: Online booking + live demo -->
       <div class="tier-section" id="see-it">
         <div>
-          <h4>Online booking — day or night</h4>
-          <p class="desc">This is the same booking system running live for HE Tyres — try it for yourself, pick a slot as if you were a customer with a nail in your tyre. Customers choose depot or mobile, and every booking is one less call to answer with your hands full.</p>
-          <ul class="benefit">
-            <li>Depot slot or mobile visit, customer's choice</li>
-            <li>Already-booked times disappear automatically</li>
-            <li>Books itself while you're fitting</li>
-            <li>Lands straight in your calendar, with an email to you</li>
-          </ul>
-          <button class="btn btn-dark" id="bookOpen" type="button">Open the live booking demo ↓</button>
+          <h4>Online booking — depot or mobile, day or night</h4>
+          <p class="desc">This is the real system, live for HE Tyres — not a mock-up. Have a go as if you'd just picked up a nail on the school run: grab a slot at the depot, or choose <b>mobile</b> and have them come to you. It takes under a minute, and it works the same at 11pm as it does at 11am.</p>
+          <div class="who-cols">
+            <div>
+              <span class="who-label">For your customer</span>
+              <ul class="benefit">
+                <li>Books in a minute, any hour — no waiting for you to pick up</li>
+                <li>Depot or "come to me" — their choice</li>
+                <li>Instant confirmation, so they know it's sorted</li>
+              </ul>
+            </div>
+            <div>
+              <span class="who-label">For you</span>
+              <ul class="benefit">
+                <li>Jobs land while your hands are full — no calls to break off for</li>
+                <li>Booked times vanish, so you're never double-booked</li>
+                <li>Drops into your calendar with an email heads-up</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="try-panel">
-          <div class="head"><span class="pulse"></span> Live booking — HE Tyres</div>
-          <div class="book-wrap">
-            <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 14px">Tap the button and a real booking calendar loads here. It won't charge you or book a real slot for you to worry about — it's a working demo you can play with.</p>
+        <div class="try-panel" id="bookPanel">
+          <button class="try-head" id="bookToggle" type="button" aria-expanded="false" aria-controls="bookBody">
+            <span class="try-head-l"><span class="pulse"></span> Live booking demo</span>
+            <span class="try-head-cta" id="bookToggleCta">Tap to try it →</span>
+          </button>
+          <div class="book-wrap" id="bookBody">
+            <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 12px">A real, working calendar — nothing charges you and no real slot gets booked. Try a <b>depot</b> slot, then pick <b>mobile</b> to see both journeys.</p>
             <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+            <button class="book-close frame-hidden" id="bookClose" type="button">✕ Close the demo</button>
           </div>
         </div>
       </div>
@@ -699,16 +726,30 @@
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
-  // Lazy-load live booking iframe
+  // Live booking demo — click-to-load iframe with open/close toggle
   (function(){
-    var btn=document.getElementById('bookOpen'),fr=document.getElementById('bookFrame'),hint=document.getElementById('bookHint');
-    if(btn){btn.addEventListener('click',function(){
-      if(!fr.src){fr.src=fr.dataset.src;}
-      fr.classList.remove('frame-hidden');
-      hint.style.display='none';
-      btn.textContent='Booking demo loaded above ↑';
-      fr.scrollIntoView({behavior:'smooth',block:'center'});
-    });}
+    var toggle=document.getElementById('bookToggle'),
+        cta=document.getElementById('bookToggleCta'),
+        fr=document.getElementById('bookFrame'),
+        closeBtn=document.getElementById('bookClose');
+    if(!toggle) return;
+    var isOpen=false;
+    function setOpen(open){
+      isOpen=open;
+      if(open && !fr.src){ fr.src=fr.dataset.src; }
+      fr.classList.toggle('frame-hidden',!open);
+      closeBtn.classList.toggle('frame-hidden',!open);
+      toggle.setAttribute('aria-expanded',open?'true':'false');
+      cta.textContent=open?'Close ✕':'Tap to try it →';
+    }
+    toggle.addEventListener('click',function(){
+      setOpen(!isOpen);
+      if(isOpen){ fr.scrollIntoView({behavior:'smooth',block:'center'}); }
+    });
+    closeBtn.addEventListener('click',function(){
+      setOpen(false);
+      toggle.scrollIntoView({behavior:'smooth',block:'center'});
+    });
   })();
 
   // Lead form — POSTs into the same landing-enquiry pipeline as the trade pages

@@ -915,6 +915,15 @@ async function handleMobileRequest(slug, req, env, ctx) {
     date, arrivalWindow, postcode, name, email, phone, note, reg, vehicleSummary, address,
   } = validated;
 
+  // Demo tenants are fully ephemeral: return a realistic mobile-request success
+  // without placing a slot, writing a booking row, touching Google Calendar or
+  // sending holding/confirm emails (mirrors handleBook's demoMode short-circuit).
+  // The IP rate-limit above still guards against abuse.
+  if (config.demoMode) {
+    const arrivalLabel = formatArrivalWindowLabel(date, arrivalWindow, config.timezone);
+    return jsonResponse({ ok: true, name, arrivalLabel, date, arrivalWindow });
+  }
+
   let placement;
   try {
     placement = await validateAndPlaceMobileWindow(env, date, arrivalWindow, postcode, config);
