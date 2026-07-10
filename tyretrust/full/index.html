@@ -230,14 +230,53 @@
   .tier-section .benefit{margin-bottom:16px}
   .tier-section .demo-box{margin-top:0}
   @media(max-width:860px){.tier-section{grid-template-columns:1fr;gap:20px}}
-  /* job-board mock */
-  .board-mock{background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .board-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px;font-size:.9rem}
-  .board-row:last-child{margin-bottom:0}
-  .board-time{font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
-  .board-job{flex:1;color:var(--body);min-width:0}
-  .board-tag{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#e7f6ef;color:var(--green);white-space:nowrap}
-  .board-tag.pend{background:#fff3e0;color:var(--orange-dk)}
+  /* "Your day" workbench (Bench mode) mock — faithful to the real staff dashboard */
+  .bench-mock{border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 26px -12px rgba(16,21,29,.4);border:1px solid var(--line)}
+  .bench-body{background:var(--navy);color:#fff;padding:16px}
+  .bench-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+  .bench-biz{font-weight:800;font-size:.98rem}
+  .bench-clock{font-size:.76rem;opacity:.6;font-variant-numeric:tabular-nums}
+  .bench-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+  .bstat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:8px 3px;text-align:center}
+  .bstat .n{font-size:1.35rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+  .bstat .l{font-size:.56rem;opacity:.62;text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+  .bstat.warn{border-color:rgba(255,190,80,.5);background:rgba(255,190,80,.10)}
+  .bstat.warn .n{color:#ffcf6b}
+  .bstat.free .n{color:var(--orange)}
+  .bflash{background:rgba(18,160,106,.16);border:1px solid rgba(18,160,106,.4);border-radius:9px;padding:9px 12px;font-size:.86rem;line-height:1.4;margin-bottom:12px}
+  .bsec{margin-bottom:14px}
+  .bsec:last-of-type{margin-bottom:0}
+  .bsec-h{font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;opacity:.62;margin:0 0 8px}
+  .bsec-warn .bsec-h{color:#ffcf6b;opacity:.95}
+  .bcard{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:12px 12px 12px 15px;margin-bottom:9px}
+  .bcard:last-child{margin-bottom:0}
+  .bcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(255,255,255,.22)}
+  .bcard.edge-ready::before,.bcard.edge-done::before{background:#3fae6b}
+  .bcard.edge-pending::before{background:var(--orange)}
+  .bcard.dim{opacity:.58}
+  .bc-top{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:5px}
+  .bc-time{font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums}
+  .btag{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:5px}
+  .btag-depot{background:rgba(255,255,255,.14)}
+  .btag-mobile{background:rgba(245,135,42,.28)}
+  .btag-done{background:rgba(63,174,107,.25);color:#b8f0cd}
+  .bc-name{font-size:1.02rem;font-weight:700;margin-bottom:5px}
+  .bplate{display:inline-flex;font-weight:800;letter-spacing:.06em;background:#f8d800;color:#111;border:1px solid #b9a400;border-radius:4px;padding:2px 8px 2px 12px;font-size:.82rem;box-shadow:inset 3px 0 0 #0a4ea8;margin-bottom:6px;font-variant-numeric:tabular-nums}
+  .bc-info{font-size:.9rem;opacity:.9}
+  .bprep{margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .bprep-pill{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.65;flex:none}
+  .bbtn{border:0;border-radius:9px;background:var(--orange);color:#fff;font:inherit;font-weight:800;font-size:.86rem;padding:9px 14px;cursor:pointer}
+  .bbtn:hover{background:var(--orange-dk)}
+  .bbtn.ready{background:rgba(63,174,107,.28);color:#d7f6e2;cursor:default}
+  .bprep .bbtn{flex:1;min-width:120px}
+  .bbtn-ghost{border:1px solid rgba(255,255,255,.28);background:transparent;color:#fff;border-radius:9px;font:inherit;font-weight:700;font-size:.82rem;padding:8px 12px;cursor:pointer}
+  .bbtn-ghost:hover{background:rgba(255,255,255,.08)}
+  .bacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .bacts .bbtn{flex:1;min-width:120px}
+  .bout{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px dashed rgba(255,255,255,.1)}
+  .bout-lab{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;opacity:.5}
+  .bench-reset{margin-top:12px;background:none;border:0;color:#a9bad2;font:inherit;font-size:.84rem;text-decoration:underline;cursor:pointer;padding:0}
+  .bench-reset:hover{color:#fff}
 
   /* reminder email mock + inline "manage booking" simulation */
   .email-mock{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
@@ -533,7 +572,7 @@
       <div class="tier-section" id="see-it">
         <div>
           <h4>Online booking — depot or mobile, day or night</h4>
-          <p class="desc">This is the real system, live for HE Tyres — not a mock-up. Have a go as if you'd just picked up a nail on the school run: grab a slot at the depot, or choose <b>mobile</b> and have them come to you. It takes under a minute, and it works the same at 11pm as it does at 11am.</p>
+          <p class="desc">This is the real booking system — not a mock-up. Have a go as if you'd just picked up a nail on the school run: grab a slot at the depot, or choose <b>mobile</b> and have them come to you. It takes under a minute, and it works the same at 11pm as it does at 11am.</p>
           <div class="who-cols">
             <div>
               <span class="who-label">For your customer</span>
@@ -555,12 +594,12 @@
         </div>
         <div class="try-panel" id="bookPanel">
           <button class="try-head" id="bookToggle" type="button" aria-expanded="false" aria-controls="bookBody">
-            <span class="try-head-l"><span class="pulse"></span> Live booking demo</span>
+            <span class="try-head-l"><span class="pulse"></span> Booking demo</span>
             <span class="try-head-cta" id="bookToggleCta">Tap to try it →</span>
           </button>
           <div class="book-wrap" id="bookBody">
             <p id="bookHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 12px">A real, working calendar — nothing charges you and no real slot gets booked. Try a <b>depot</b> slot, then pick <b>mobile</b> to see both journeys.</p>
-            <iframe id="bookFrame" class="frame-hidden" title="Live booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+            <iframe id="bookFrame" class="frame-hidden" title="Booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
             <button class="book-close frame-hidden" id="bookClose" type="button">✕ Close the demo</button>
           </div>
         </div>
@@ -590,49 +629,56 @@
             </div>
           </div>
         </div>
-        <div>
-          <p style="color:var(--muted);font-size:.94rem;margin:0 4px 12px">This is exactly what your customer gets — go ahead and click the link. It's a safe mock-up: nothing here touches a real booking.</p>
-          <div class="email-mock">
-            <div class="email-head">
-              <div class="email-avatar">HE</div>
-              <div class="email-meta">
-                <div class="email-from">HE Tyres <span class="email-addr">&lt;bookings@hetyres.co.uk&gt;</span></div>
-                <div class="email-subject">Reminder: you're booked in tomorrow at 10:30am</div>
-              </div>
-              <div class="email-time">20:02</div>
-            </div>
-            <div class="email-body">
-              <p>Hi Sarah,</p>
-              <p>Just a reminder — you're booked in:</p>
-              <p class="email-slot" id="remindEmailSlot">Thursday, 10 July<br>10:30am — 2 front tyres, depot</p>
-              <p>Need to change or cancel?</p>
-              <button type="button" class="email-link" id="remindManageBtn">Manage this booking →</button>
-              <p class="email-sign">— HE Tyres</p>
-            </div>
-            <div class="manage-mock frame-hidden" id="remindManage">
-              <div class="browser-bar">
-                <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-                <span class="browser-url">hetyres.co.uk/manage</span>
-              </div>
-              <div class="mm-body">
-                <div class="mm-header">HE Tyres · Manage booking</div>
-                <div class="mm-card">
-                  <div class="mm-card-label">Your booking</div>
-                  <div class="mm-card-slot" id="remindSlot">Thursday, 10 July · 10:30am</div>
-                  <div class="mm-card-biz">2 front tyres — depot</div>
+        <div class="try-panel" id="remindPanel">
+          <button class="try-head" id="remindDemoToggle" type="button" aria-expanded="false" aria-controls="remindDemoBody">
+            <span class="try-head-l"><span class="pulse"></span> Reminder demo</span>
+            <span class="try-head-cta" id="remindDemoCta">Tap to try it →</span>
+          </button>
+          <div class="book-wrap" id="remindDemoBody">
+            <p id="remindDemoHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 12px">This is exactly what your customer gets the night before — open it and click the link to change the booking yourself. A safe mock-up: nothing here touches a real booking.</p>
+            <div class="email-mock frame-hidden" id="remindEmailMock">
+              <div class="email-head">
+                <div class="email-avatar">B4</div>
+                <div class="email-meta">
+                  <div class="email-from">Bay 4 Tyres <span class="email-addr">&lt;bookings@bay4tyres.co.uk&gt;</span></div>
+                  <div class="email-subject">Reminder: you're booked in tomorrow at 10:30am</div>
                 </div>
-                <div class="mm-actions" id="remindActions">
-                  <button type="button" class="mm-btn-reschedule" id="remindReschedule">Reschedule</button>
-                  <button type="button" class="mm-btn-cancel" id="remindCancel">Cancel booking</button>
+                <div class="email-time">20:02</div>
+              </div>
+              <div class="email-body">
+                <p>Hi Sarah,</p>
+                <p>Just a reminder — you're booked in:</p>
+                <p class="email-slot" id="remindEmailSlot">Thursday, 10 July<br>10:30am — 2 front tyres, depot</p>
+                <p>Need to change or cancel?</p>
+                <button type="button" class="email-link" id="remindManageBtn">Manage this booking →</button>
+                <p class="email-sign">— Bay 4 Tyres</p>
+              </div>
+              <div class="manage-mock frame-hidden" id="remindManage">
+                <div class="browser-bar">
+                  <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+                  <span class="browser-url">bay4tyres.co.uk/manage</span>
                 </div>
-                <div class="mm-slots frame-hidden" id="remindSlots">
-                  <p class="mm-hint">Pick any date and time below — it's the exact same calendar your customers use.</p>
-                  <iframe id="remindRescheduleFrame" title="Reschedule demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+                <div class="mm-body">
+                  <div class="mm-header">Bay 4 Tyres · Manage booking</div>
+                  <div class="mm-card">
+                    <div class="mm-card-label">Your booking</div>
+                    <div class="mm-card-slot" id="remindSlot">Thursday, 10 July · 10:30am</div>
+                    <div class="mm-card-biz">2 front tyres — depot</div>
+                  </div>
+                  <div class="mm-actions" id="remindActions">
+                    <button type="button" class="mm-btn-reschedule" id="remindReschedule">Reschedule</button>
+                    <button type="button" class="mm-btn-cancel" id="remindCancel">Cancel booking</button>
+                  </div>
+                  <div class="mm-slots frame-hidden" id="remindSlots">
+                    <p class="mm-hint">Pick any date and time below — it's the exact same calendar your customers use.</p>
+                    <iframe id="remindRescheduleFrame" title="Reschedule demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
+                  </div>
+                  <p class="mm-result frame-hidden" id="remindResult"></p>
+                  <button type="button" class="mm-reset frame-hidden" id="remindReset">↺ Reset the demo</button>
                 </div>
-                <p class="mm-result frame-hidden" id="remindResult"></p>
-                <button type="button" class="mm-reset frame-hidden" id="remindReset">↺ Reset the demo</button>
               </div>
             </div>
+            <button class="book-close frame-hidden" id="remindDemoClose" type="button">✕ Close the demo</button>
           </div>
         </div>
       </div>
@@ -641,18 +687,42 @@
       <div class="tier-section">
         <div>
           <h4>Your day, on one page</h4>
-          <p class="desc">A simple job board for today and the week ahead — who's booked, what they need, where each job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
-          <ul class="benefit">
-            <li>Today &amp; this week at a glance</li>
-            <li>See where each job is in the flow</li>
-            <li>Pending mobile requests pinned to the top</li>
-            <li>Built for you and whoever does the books</li>
-          </ul>
+          <p class="desc">One screen for the whole day — who's booked, what they need, and where every job's up to. No more flicking between the diary, texts and sticky notes on the toolbox.</p>
+          <div class="who-cols">
+            <div>
+              <span class="who-label">For your customer</span>
+              <ul class="benefit">
+                <li>Their tyres are in and ready when they arrive — nothing forgotten</li>
+                <li>No hanging about — a day that runs to time</li>
+                <li>A quick yes when they ask for a mobile visit</li>
+              </ul>
+            </div>
+            <div>
+              <span class="who-label">For you</span>
+              <ul class="benefit">
+                <li>Every job in one place — depot and mobile, today and the week</li>
+                <li>Track each set from ordered to ready, so nothing slips</li>
+                <li>Say yes to mobile requests and pencil in phone bookings in seconds</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="board-mock">
-          <div class="board-row"><span class="board-time">09:00</span><span class="board-job">Two front tyres — depot</span><span class="board-tag">Ready</span></div>
-          <div class="board-row"><span class="board-time">10:15</span><span class="board-job">Puncture repair — mobile, SN5</span><span class="board-tag pend">Pending</span></div>
-          <div class="board-row"><span class="board-time">13:30</span><span class="board-job">Full set — depot</span><span class="board-tag">Ordered</span></div>
+        <div class="try-panel" id="benchPanel">
+          <button class="try-head" id="benchToggle" type="button" aria-expanded="false" aria-controls="benchDemoBody">
+            <span class="try-head-l"><span class="pulse"></span> Bench demo</span>
+            <span class="try-head-cta" id="benchCta">Tap to try it →</span>
+          </button>
+          <div class="book-wrap" id="benchDemoBody">
+            <p id="benchHint" style="color:var(--muted);font-size:.94rem;margin:6px 4px 12px">The screen your team works from — pending requests up top, prep status on every job, and mark them done as you go. Open it and have a play. A safe mock-up with made-up jobs.</p>
+            <div class="bench-mock frame-hidden" id="benchMock">
+              <div class="browser-bar">
+                <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+                <span class="browser-url">bay4tyres.co.uk/bench</span>
+              </div>
+              <div class="bench-body" id="benchBody"></div>
+            </div>
+            <button class="book-close frame-hidden" id="benchClose" type="button">✕ Close the demo</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1009,7 +1079,7 @@
         rescheduleFrame=document.getElementById('remindRescheduleFrame');
     if(!openBtn||!manage) return;
 
-    // Evergreen date: always the next working day (HE Tyres is closed Sundays).
+    // Evergreen date: always the next working day (Bay 4 Tyres is closed Sundays).
     function nextWorkingDayLabel(){
       var d=new Date();
       d.setDate(d.getDate()+1);
@@ -1057,13 +1127,137 @@
     window.addEventListener('message',function(ev){
       if(ev.data==='booking-confirmed' && rescheduleFrame && ev.source===rescheduleFrame.contentWindow){
         slots.classList.add('frame-hidden');
-        result.textContent='✓ Rebooked — HE Tyres notified automatically. That slot’s filled again instead of sitting empty.';
+        result.textContent='✓ Rebooked — Bay 4 Tyres notified automatically. That slot’s filled again instead of sitting empty.';
         result.classList.remove('frame-hidden');
         resetBtn.classList.remove('frame-hidden');
       }
     });
 
     resetBtn.addEventListener('click',reset);
+  })();
+
+  // "Your day" workbench mock — a faithful, fully local recreation of the real
+  // Bench-mode staff dashboard (workers/booking/src/ui.js). No network, no real
+  // data: advance a job's prep to Ready, confirm a pending request, mark a job done.
+  (function(){
+    var body=document.getElementById('benchBody');
+    if(!body) return;
+    var PREP=['New','Stock checked','Ordered','Ready'];
+    var ADVANCE=['Check stock','Mark ordered','Mark ready'];
+    function seed(){
+      return { touched:false, flash:'', jobs:[
+        {id:'p1',pending:true,type:'mobile',name:'Dave Nolan',reg:'WV12 KRT',info:'Wroughton SN4 · asked for an afternoon slot',t:900,prep:0,outcome:null},
+        {id:'j1',type:'depot',name:'Sarah Price',reg:'HE12 TYR',info:'2 front tyres',t:540,prep:0,outcome:null},
+        {id:'j2',type:'depot',name:'Tom Reeves',reg:'YT19 CAR',info:'Full set + tracking',t:630,prep:1,outcome:null},
+        {id:'j3',type:'mobile',name:'Jo Adams',reg:'LT68 VAN',info:'Chiseldon SN4',t:810,prep:3,outcome:null}
+      ]};
+    }
+    var state=seed();
+    function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+    function fmt(t){ var h=Math.floor(t/60),m=t%60,ap=h<12?'am':'pm',h12=h%12||12; return h12+':'+(m<10?'0'+m:m)+ap; }
+    function first(n){ return n.split(' ')[0]; }
+    function today(){ return state.jobs.filter(function(j){return !j.pending;}).sort(function(a,b){return a.t-b.t;}); }
+    function pending(){ return state.jobs.filter(function(j){return j.pending;}); }
+    function notReady(){ return today().filter(function(j){return j.prep<3 && !j.outcome;}).length; }
+    function mobileCount(){ return state.jobs.filter(function(j){return j.type==='mobile' && !j.outcome;}).length; }
+    function get(id){ for(var i=0;i<state.jobs.length;i++){ if(state.jobs[i].id===id) return state.jobs[i]; } return null; }
+
+    function stat(n,l,cls){ return '<div class="bstat '+(cls||'')+'"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+    function tags(j){
+      var t='<span class="btag '+(j.type==='mobile'?'btag-mobile':'btag-depot')+'">'+(j.type==='mobile'?'Mobile':'Depot')+'</span>';
+      if(j.outcome==='done') t+='<span class="btag btag-done">Done ✓</span>';
+      return t;
+    }
+    function prep(j){
+      if(j.outcome) return '';
+      var btn=j.prep>=3
+        ? '<button class="bbtn ready" type="button" disabled>Ready ✓</button>'
+        : '<button class="bbtn" type="button" data-act="advance" data-id="'+j.id+'">'+ADVANCE[j.prep]+'</button>';
+      return '<div class="bprep"><span class="bprep-pill">Prep · '+PREP[j.prep]+'</span>'+btn+'</div>';
+    }
+    function out(j){
+      if(j.outcome==='done') return '<div class="bout"><span class="bout-lab">Marked done</span><button class="bbtn-ghost" type="button" data-act="undo" data-id="'+j.id+'">Undo</button></div>';
+      return '<div class="bout"><span class="bout-lab">After the job</span><button class="bbtn-ghost" type="button" data-act="done" data-id="'+j.id+'">✓ Done</button></div>';
+    }
+    function jobCard(j){
+      var edge=j.outcome==='done'?'edge-done':(j.prep>=3?'edge-ready':'');
+      return '<article class="bcard '+edge+(j.outcome?' dim':'')+'">'+
+        '<div class="bc-top"><span class="bc-time">'+fmt(j.t)+'</span>'+tags(j)+'</div>'+
+        '<div class="bc-name">'+esc(j.name)+'</div>'+
+        '<span class="bplate">'+esc(j.reg)+'</span>'+
+        '<div class="bc-info">'+esc(j.info)+'</div>'+prep(j)+out(j)+'</article>';
+    }
+    function pendCard(j){
+      return '<article class="bcard edge-pending">'+
+        '<div class="bc-top"><span class="btag btag-mobile">Mobile request</span></div>'+
+        '<div class="bc-name">'+esc(j.name)+'</div>'+
+        '<span class="bplate">'+esc(j.reg)+'</span>'+
+        '<div class="bc-info">'+esc(j.info)+'</div>'+
+        '<div class="bacts"><button class="bbtn" type="button" data-act="confirm" data-id="'+j.id+'">Confirm visit</button>'+
+        '<button class="bbtn-ghost" type="button" data-act="decline" data-id="'+j.id+'">Decline</button></div></article>';
+    }
+    function clock(){ return new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+    function render(){
+      var p=pending(),t=today(),nr=notReady();
+      var h='<div class="bench-top"><span class="bench-biz">Bay 4 Tyres · Bench</span><span class="bench-clock">'+clock()+'</span></div>';
+      h+='<div class="bench-stats">'+stat(t.length,'Today','')+stat(nr,'Not ready',nr?'warn':'')+stat(mobileCount(),'Mobile','')+stat(2,'Free','free')+'</div>';
+      if(state.flash) h+='<div class="bflash">'+esc(state.flash)+'</div>';
+      if(p.length) h+='<div class="bsec bsec-warn"><div class="bsec-h">Waiting on your yes</div>'+p.map(pendCard).join('')+'</div>';
+      h+='<div class="bsec"><div class="bsec-h">Today'+(nr?' · '+nr+' not ready':'')+'</div>'+t.map(jobCard).join('')+'</div>';
+      if(state.touched) h+='<button class="bench-reset" type="button" data-act="reset">↺ Reset the demo</button>';
+      body.innerHTML=h;
+    }
+    body.addEventListener('click',function(e){
+      var btn=e.target.closest('[data-act]'); if(!btn) return;
+      var act=btn.getAttribute('data-act'), j=get(btn.getAttribute('data-id'));
+      if(act==='reset'){ state=seed(); render(); return; }
+      state.touched=true;
+      if(act==='advance'&&j){ j.prep=Math.min(3,j.prep+1); state.flash=''; }
+      else if(act==='done'&&j){ j.outcome='done'; state.flash=''; }
+      else if(act==='undo'&&j){ j.outcome=null; state.flash=''; }
+      else if(act==='confirm'&&j){ j.pending=false; j.prep=0; state.flash='✓ Confirmed — '+first(j.name)+' is in at '+fmt(j.t)+', and gets a confirmation email automatically.'; }
+      else if(act==='decline'&&j){ state.jobs=state.jobs.filter(function(x){return x.id!==j.id;}); state.flash='Declined — '+first(j.name)+' gets a quick note back, so nothing’s left hanging.'; }
+      render();
+    });
+    render();
+  })();
+
+  // Reminder-demo facade — tap-to-try gate over the email mock (same pattern as the booking demo)
+  (function(){
+    var toggle=document.getElementById('remindDemoToggle'),
+        cta=document.getElementById('remindDemoCta'),
+        mock=document.getElementById('remindEmailMock'),
+        closeBtn=document.getElementById('remindDemoClose');
+    if(!toggle) return;
+    var open=false;
+    function set(o){
+      open=o;
+      mock.classList.toggle('frame-hidden',!o);
+      closeBtn.classList.toggle('frame-hidden',!o);
+      toggle.setAttribute('aria-expanded',o?'true':'false');
+      cta.textContent=o?'Close ✕':'Tap to try it →';
+    }
+    toggle.addEventListener('click',function(){ set(!open); if(open) mock.scrollIntoView({behavior:'smooth',block:'center'}); });
+    closeBtn.addEventListener('click',function(){ set(false); toggle.scrollIntoView({behavior:'smooth',block:'center'}); });
+  })();
+
+  // Bench-demo facade — tap-to-try gate over the Bench dashboard
+  (function(){
+    var toggle=document.getElementById('benchToggle'),
+        cta=document.getElementById('benchCta'),
+        mock=document.getElementById('benchMock'),
+        closeBtn=document.getElementById('benchClose');
+    if(!toggle) return;
+    var open=false;
+    function set(o){
+      open=o;
+      mock.classList.toggle('frame-hidden',!o);
+      closeBtn.classList.toggle('frame-hidden',!o);
+      toggle.setAttribute('aria-expanded',o?'true':'false');
+      cta.textContent=o?'Close ✕':'Tap to try it →';
+    }
+    toggle.addEventListener('click',function(){ set(!open); if(open) mock.scrollIntoView({behavior:'smooth',block:'center'}); });
+    closeBtn.addEventListener('click',function(){ set(false); toggle.scrollIntoView({behavior:'smooth',block:'center'}); });
   })();
 
   // Sample data for the look-up demos (illustrative — the real thing calls DVLA/postcode services)
