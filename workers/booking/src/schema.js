@@ -95,6 +95,8 @@ export const CONFIG_SCHEMA = [
     hint: 'Adds the depot / mobile chooser and the mobile arrival-window request flow (HE Tyres). Turning this off hides the chooser.' },
   { key: 'mobileEnquiryUrl', label: 'Mobile enquiry fallback URL', type: 'url', scope: 'nick', phase: 'mobile', nullable: true,
     hint: 'Legacy: if set while mobile booking is off, the chooser still shows and the mobile side routes to this enquiry form.' },
+  { key: 'demoMode', label: 'Demo mode (no real bookings)', type: 'bool', scope: 'nick', phase: 'demo', default: false,
+    hint: 'Runs the full booking flow with NO side effects — no calendar event, no database row, no email. For pitch/demo tenants only. Leave OFF for real clients.' },
   { key: 'workbenchEnabled', label: 'Staff workbench', type: 'bool', scope: 'nick', phase: 'workbench', default: false,
     hint: 'Enables the read-only day-view page for staff (bookmark URL with ?key=…).' },
   { key: 'workbenchToken', label: 'Workbench link token', type: 'text', scope: 'nick', phase: 'workbench', nullable: true, min: 32, max: 128, secret: true,
