@@ -116,7 +116,7 @@ function renderMobileHoldingEmail({ name, arrivalLabel, businessName }) {
     '',
     `Thanks — we've received your mobile fitting request for ${arrivalLabel}.`,
     '',
-    "Howie will confirm your visit shortly. You'll get another email once it's firmed up.",
+    "We will confirm your visit shortly. You'll get another email once it's firmed up.",
     '',
     'If you need to reach us sooner, call 01793 876 969.',
     '',

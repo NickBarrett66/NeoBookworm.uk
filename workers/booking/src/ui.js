@@ -923,7 +923,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
     <div id="view-chooser" class="view">
       <div class="chooser-wrap">
         <p class="chooser-heading">Where would you like your tyres fitted?</p>
-        <p class="chooser-sub">Depot slots are confirmed instantly. Mobile visits are requested — Howie confirms before your visit.</p>
+        <p class="chooser-sub">Depot slots are confirmed instantly. Mobile visits are requested — we confirm before your visit.</p>
         <div class="chooser-btns" role="group" aria-label="Fitting location">
           <button type="button" class="chooser-btn" id="choose-depot">
             <span class="chooser-icon" aria-hidden="true">&#128295;</span>
@@ -2009,7 +2009,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
               var res = await fetch('https://neobookworm.uk/api/reg-lookup?reg=' + encodeURIComponent(val));
               var data = await res.json();
               if (data.error || !data.vehicle) {
-                setMobVehicleCard2('miss', "— Not recognised — we'll confirm when Howie calls");
+                setMobVehicleCard2('miss', "— Not recognised — we'll confirm the details with you");
                 return;
               }
               var v = data.vehicle;
@@ -2068,7 +2068,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
             var successH2 = document.querySelector('#view-success h2');
             if (successH2) successH2.textContent = 'Request received';
             var successP = document.querySelector('#view-success .success-wrap > p');
-            if (successP) successP.textContent = 'Howie will confirm your visit shortly — watch for a confirmation email.';
+            if (successP) successP.textContent = 'We will confirm your visit shortly — watch for a confirmation email.';
             if (icsBtn) icsBtn.hidden = true;
             showView('success');
             try { window.parent.postMessage('booking-confirmed', '*'); } catch (e) {}
