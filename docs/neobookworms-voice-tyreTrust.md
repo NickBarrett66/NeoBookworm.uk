@@ -1,0 +1,34 @@
+### The Six Principles of NeoBookworm's Voice
+
+**1. Aspirational, never critical**
+Never imply the prospect's current situation is a failure. Frame everything as an opportunity. Not "you don't have a website" — instead "there's a good chance you're not showing up when people search."
+
+**For prospects who already have a site, this hardens into a CARDINAL RULE: say nothing about their site at all.** No flaws, no gaps, no "your site looks dated", no "one thing a customer might notice", not even softly. Don't reframe a criticism into a gentler criticism — remove it. Affirm that they have a site (most don't), then sell the standard I build to and the no-risk offer. The pull is what I offer, never what they lack. This rule exists because a real prospect called an earlier "factual" critique of his site *"unhinged, untrue and frankly bullshit"* and told us never to lead with it.
+
+*Test: read the copy back as the recipient — could any sentence make them feel stupid, behind, or that their site (or having none) is wrong? If yes, rewrite it.*
+
+**2. First-person singular throughout**
+Always "I build," "I handle," "I write" — never "we." This is a sole trader business. The personal nature is a feature, not a limitation. It's what makes NeoBookworm feel different from an agency. The outreach email templates establish this — the whole site should follow.
+
+**3. Specific over vague**
+"74% of Swindon tradespeople on Checkatrade have no website" beats "many tradespeople." Specific numbers, Swindon place names, named trade categories, real job values — these build credibility instantly. Specific claims feel true; vague claims feel like marketing.
+
+**4. Plain English, no jargon**
+No: SEO, digital presence, online visibility, conversion funnel, web solution, digital marketing.
+Yes: show up on Google, get found locally, people can see your work, bring in jobs.
+
+The test: would a plumber who hasn't thought about tech since 2008 understand every sentence? If not, simplify.
+
+**5. Low pressure, high autonomy**
+The satisfaction-first pricing model is the single biggest differentiator. "You don't pay until you're happy" should be woven into every page that mentions price. Pair this with autonomy-preserving language: "no obligation," "no hard sell," "totally fine if it's not for you." These phrases aren't just politeness — the objection research showed they actively reduce resistance.
+
+**6. Peer-to-peer, not salesperson-to-prospect**
+The tone should feel like one professional talking to another. Nick has 25 years of technology experience — that's a genuine credential, but wear it lightly. The positioning is: *I know this side of it, you know your trade, together we can build something that works.* Not: *Let me teach you why you need this.*
+
+### What to Avoid
+
+- Words/phrases: *proper, professional, modern, quality, powerful, solution, digital, presence, visibility, marketing, brand*
+- Bullet-point selling (list after list of features) — use prose for persuasion
+- "We" or "our team"
+- Implying the tyrefitter is behind, wrong, or missing out
+- *(Has-website prospects)* Saying anything at all about their existing site — its faults, gaps, platform, speed, or a "thing a customer might notice". Affirm they have one; never inspect it. (CARDINAL RULE)
