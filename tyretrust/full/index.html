@@ -944,15 +944,15 @@
       </details>
       <details class="faq-item">
         <summary>What happens if I want to cancel?</summary>
-        <div class="faq-a"><p>No exit fee either way, just a month's notice. For The Site, that's simple — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. Booking and the look-up tools are different: they run on systems I host — the calendar connection, the DVLA and tyre-size services — so those switch off when you cancel rather than transferring as files. Your site itself keeps working; you just lose that extra machinery.</p></div>
+        <div class="faq-a"><p id="faqCancel">No exit fee either way, just a month's notice. For The Site, that's simple — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. Booking and the look-up tools are different: they run on systems I host — the calendar connection, the DVLA and tyre-size services — so those switch off when you cancel rather than transferring as files. Your site itself keeps working; you just lose that extra machinery.</p></div>
       </details>
       <details class="faq-item">
         <summary>How long does this take?</summary>
-        <div class="faq-a"><p>I build a first version from what I can find about your business, usually within a few days of you getting in touch. You look it over and tell me what to change, and we go back and forth until it's right — there's no meeting to book first — just a short form with a few details to get started.</p></div>
+        <div class="faq-a"><p id="faqHowLong">I build a first version from what I can find about your business, usually within a few days of you getting in touch. You look it over and tell me what to change, and we go back and forth until it's right — there's no meeting to book first — just a short form with a few details to get started.</p></div>
       </details>
       <details class="faq-item">
         <summary>What do you actually need from me?</summary>
-        <div class="faq-a"><p>To get started: your business name and town. I'll see what I can find online for a first draft — but tyre fitters aren't always easy to research from scratch, especially if you're not on Google or Facebook much. If there's not enough out there, I'll come back with a couple of quick questions rather than guess — what you do, what you don't, roughly what you charge. Photos of your van, your bay or your work help too, but nothing's required just to get going.</p></div>
+        <div class="faq-a"><p id="faqNeed">To get started: your business name and town. I'll see what I can find online for a first draft — but tyre fitters aren't always easy to research from scratch, especially if you're not on Google or Facebook much. If there's not enough out there, I'll come back with a couple of quick questions rather than guess — what you do, what you don't, roughly what you charge. Photos of your van, your bay or your work help too, but nothing's required just to get going.</p></div>
       </details>
       <details class="faq-item">
         <summary>I'm not techy — will I be able to keep it going?</summary>
@@ -1487,6 +1487,10 @@
       var pp1=document.getElementById('proofP1');
       if(pp1) pp1.innerHTML='HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one — live at <b>hetyres.co.uk</b> if you want to see it for yourself.';
       setTxt('proofP2','Yours is the next one. I’d rather get a second good tyre business online and out there working than keep polishing sites on my own — which is exactly why you set the build price.');
+      // FAQ: the first version is already built for this prospect.
+      setTxt('faqHowLong','For you, the first version’s already built — it’s the site at the top of this page. From here it’s quick: have a proper look, tell me what to change, and we go back and forth until it’s right. There’s no meeting to book and nothing to wait for — the starting point is already in front of you.');
+      setTxt('faqNeed','For yours, the first draft’s already done — I built it from what I could find about your business. What I need now is your eye on it: tell me what’s wrong, what’s missing, what to change. Photos of your van, your bay or your work help me make it properly yours, and anything I couldn’t find — what you do, what you don’t, roughly what you charge — just send over. Nothing’s required to get going; it’s already going.');
+      setTxt('faqCancel','No exit fee either way, just a month’s notice. The site is yours — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. If you ever take booking on top (and plenty of fitters won’t), that part’s different: it runs on a calendar connection I host, so it switches off when you cancel rather than transferring as files. Either way the site itself keeps working.');
       setTxt('heroFormTitle','Like your site? Let’s make it yours.');
       setTxt('finalLead','Happy with it? Pop your details in below and I’ll get it live. Want the colours, words or layout tweaked first? Just tell me — a few sensible changes are all part of it. Free to look, pay only if you keep it.');
       setTxt('emailHint','— I’ll reply here');
