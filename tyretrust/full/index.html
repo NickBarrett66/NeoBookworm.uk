@@ -850,7 +850,7 @@
       <h2>Pick a plan. Add the clever bit when you're ready. You set the build price.</h2>
       <div class="accent-bar"></div>
       <p class="lead center" style="margin:18px auto 0">Both plans work the same way: I build it first, you pay what you think it's worth to keep it, then a small monthly to stay live — cancel any time, and your web address and files are always yours to keep.</p>
-      <p class="lead center" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
+      <p class="lead center" id="pricingWhy" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
     </div>
 
     <div class="plans">
@@ -921,7 +921,7 @@
     </div>
 
     <div class="center" style="margin-top:30px">
-      <a class="btn btn-primary" href="#see-yours">Get yours built — free to look</a>
+      <a class="btn btn-primary" id="pricingCta" href="#see-yours">Get yours built — free to look</a>
     </div>
 
     <p class="tiers-note">Not sure? Start with The Site — you can add booking, then the Full Bay look-ups, any time, no rebuild needed.</p>
@@ -1363,7 +1363,7 @@
       })
       .catch(function(err){
         submitBtn.disabled=false;
-        submitBtn.textContent='Get yours built — free to look →';
+        submitBtn.textContent=submitBtn.dataset.label||'Get yours built — free to look →';
         errBox.hidden=false;
         if(window.console&&console.warn) console.warn(err);
       });
@@ -1490,6 +1490,11 @@
       setTxt('faqHowLong','For you, the first version’s already built — it’s the site at the top of this page. From here it’s quick: have a proper look, tell me what to change, and we go back and forth until it’s right. There’s no meeting to book and nothing to wait for — the starting point is already in front of you.');
       setTxt('faqNeed','For yours, the first draft’s already done — I built it from what I could find about your business. What I need now is your eye on it: tell me what’s wrong, what’s missing, what to change. Photos of your van, your bay or your work help me make it properly yours, and anything I couldn’t find — what you do, what you don’t, roughly what you charge — just send over. Nothing’s required to get going; it’s already going.');
       setTxt('faqCancel','No exit fee either way, just a month’s notice. The site is yours — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. If you ever take booking on top (and plenty of fitters won’t), that part’s different: it runs on a calendar connection I host, so it switches off when you cancel rather than transferring as files. Either way the site itself keeps working.');
+      // Pricing "why so generous" → personal to this reader; CTAs reflect that theirs is already built.
+      setTxt('pricingWhy','Why so generous? I’m getting my first few tyre sites live, and I’d rather ' + d.business + '’s was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — and since I’ve already built yours, you’re right at the front of that queue.');
+      setTxt('pricingCta','Make it yours — free to look');
+      var subBtn=document.getElementById('ltSubmit');
+      if(subBtn){ subBtn.textContent='Make it yours — free to look →'; subBtn.dataset.label='Make it yours — free to look →'; }
       setTxt('heroFormTitle','Like your site? Let’s make it yours.');
       setTxt('finalLead','Happy with it? Pop your details in below and I’ll get it live. Want the colours, words or layout tweaked first? Just tell me — a few sensible changes are all part of it. Free to look, pay only if you keep it.');
       setTxt('emailHint','— I’ll reply here');
