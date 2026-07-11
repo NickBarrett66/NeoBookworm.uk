@@ -377,8 +377,9 @@
   .lf-card .field{margin-bottom:16px}
   .lf-card label{display:block;font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:6px}
   .lf-hint{font-weight:400;color:var(--muted);font-size:.82rem}
-  .lf-card input,.lf-card select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font:inherit;font-size:1rem;background:#fff;color:var(--body)}
-  .lf-card input:focus,.lf-card select:focus{outline:2px solid var(--orange);outline-offset:1px}
+  .lf-card input,.lf-card select,.lf-card textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font:inherit;font-size:1rem;background:#fff;color:var(--body)}
+  .lf-card textarea{resize:vertical;min-height:74px}
+  .lf-card input:focus,.lf-card select:focus,.lf-card textarea:focus{outline:2px solid var(--orange);outline-offset:1px}
   .lf-submit{width:100%;justify-content:center;margin-top:6px}
   .lf-note{font-size:.85rem;color:var(--muted);text-align:center;margin:14px 0 0}
   .lf-error{background:#fdecea;border:1px solid #f3b7ae;color:#8a2e22;border-radius:9px;padding:12px 14px;margin-top:14px;font-size:.9rem}
@@ -535,6 +536,7 @@
         <span class="price-tag">Steps up to <b>The Booking Engine</b> · £19.99/mo</span>
         <h3>A booking system that runs itself</h3>
         <p>Everything in The Site, plus the machinery that turns your website into a member of staff — taking bookings, chasing reminders, and keeping your day straight.</p>
+        <p id="bookingAside" hidden>Not for every depot — plenty of walk-in businesses never need this, and that's fine. It's here if your day ever changes.</p>
       </div>
 
       <!-- Section 1: Online booking + live demo -->
@@ -743,7 +745,7 @@
     <div class="plans">
 
       <!-- Plan 1 -->
-      <div class="tier">
+      <div class="tier" id="planSite">
         <div class="tnum">Plan 1</div>
         <div class="tname">The Site</div>
         <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
@@ -758,8 +760,8 @@
       </div>
 
       <!-- Plan 2 (featured) -->
-      <div class="tier featured">
-        <span class="pop">My pick for most fitters</span>
+      <div class="tier featured" id="planBooking">
+        <span class="pop" id="planPop">My pick for most fitters</span>
         <div class="tnum">Plan 2</div>
         <div class="tname">The Booking Engine</div>
         <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
@@ -853,6 +855,10 @@
         <div class="field">
           <label for="ltEmail">Email address <span class="lf-hint" id="emailHint">— I'll send your finished site here</span></label>
           <input id="ltEmail" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field" id="changeWrap" hidden>
+          <label for="ltChanges">Anything you'd change? <span class="lf-hint">— optional. Colours, wording, photos, anything</span></label>
+          <textarea id="ltChanges" name="changes" rows="3"></textarea>
         </div>
         <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Get yours built — free to look →</button>
         <p class="lf-note" id="lfNote">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
@@ -1135,12 +1141,15 @@
       submitBtn.disabled=true;
       submitBtn.textContent='Sending…';
 
+      var changesEl=document.getElementById('ltChanges');
+      var changes=changesEl?changesEl.value.trim():'';
       var payload={
         fullName: document.getElementById('ltName').value.trim(),
         bizName:  document.getElementById('ltBiz').value.trim(),
         email:    document.getElementById('ltEmail').value.trim(),
         startOption: 'leave_it_with_me',
-        details:  'Town: '+document.getElementById('ltTown').value.trim()+'\nWhat they do: '+document.getElementById('ltWhat').value,
+        details:  'Town: '+document.getElementById('ltTown').value.trim()+'\nWhat they do: '+document.getElementById('ltWhat').value
+                  +(changes?'\nChanges requested: '+changes:''),
         source:   'tyretrust-landing'
       };
 
@@ -1191,7 +1200,7 @@
       "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
       "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
       "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
-      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"",built:true,url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage"},
+      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"Jiri",built:true,focus:"site",url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage"},
       "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
       "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
       "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
@@ -1212,9 +1221,9 @@
     var townInBiz = d.business.toLowerCase().indexOf(d.town.toLowerCase()) !== -1;
     var hi = d.first ? d.first + ' — ' : '';
 
-    // --- Personalised banner (built = reveal; otherwise = offer) ---
+    // --- Personalised banner (built = reveal, referencing the letter; otherwise = offer) ---
     var text = d.built
-      ? hi + 'I’ve already built one for ' + d.business + ' in ' + d.town + ' — this is it. Have a look around.'
+      ? (d.first ? d.first + ' — you’ve' : 'You’ve') + ' got my letter — I’ve already built ' + d.business + '’s website' + (townInBiz ? '' : ' in ' + d.town) + ', and this is it. Have a look around.'
       : (d.first ? 'Thanks for stopping by, ' + d.first + ' — ' : 'Thanks for stopping by — ')
         + 'I’d love to build a website like this one for ' + d.business + ' in ' + d.town + '.';
     var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
@@ -1282,6 +1291,22 @@
       setTxt('lfNote','I’ll get your site live — or make any changes you’ve asked for — within a few days. No calls unless you want one.');
       var thanksMsg=document.getElementById('lfThanksMsg');
       if(thanksMsg) thanksMsg.innerHTML='I’ll get your site live — or make any changes you’ve asked for — within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>';
+      // Built prospects are invited to ask for changes — give that a box of its own.
+      var changeWrap=document.getElementById('changeWrap');
+      if(changeWrap) changeWrap.hidden=false;
+    }
+
+    // --- Site-focused prospect: the page recommends The Site, not the Booking Engine ---
+    if(d.focus==='site'){
+      var pSite=document.getElementById('planSite'), pBook=document.getElementById('planBooking'), pop=document.getElementById('planPop');
+      if(pSite && pBook && pop){
+        pBook.classList.remove('featured');
+        pSite.classList.add('featured');
+        pSite.insertBefore(pop,pSite.firstChild);
+        pop.textContent='Where yours starts';
+      }
+      var aside=document.getElementById('bookingAside');
+      if(aside) aside.hidden=false;
     }
 
     // Pre-fill the lead form with what the mailshot already knows — still fully editable,
