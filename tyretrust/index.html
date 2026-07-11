@@ -708,8 +708,8 @@
       <div>
         <span class="eyebrow">Who you'd be dealing with</span>
         <h2>It started with one good tyre business.</h2>
-        <p>HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one. It's the site at the top of this page — live at <b>hetyres.co.uk</b> if you want to see it for yourself.</p>
-        <p>They're now trying out the online booking alongside it — early days, but working. I'd rather get a second business running it for real than keep tweaking it on my own, which is exactly why you set the build price.</p>
+        <p id="proofP1">HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one. It's the site at the top of this page — live at <b>hetyres.co.uk</b> if you want to see it for yourself.</p>
+        <p id="proofP2">They're now trying out the online booking alongside it — early days, but working. I'd rather get a second business running it for real than keep tweaking it on my own, which is exactly why you set the build price.</p>
         <p>I'm Nick — I'm building my thing the same way you built yours: one honest job at a time. I'm based in Swindon — a name and a place, not a faceless agency in a call centre.</p>
       </div>
       <div>
@@ -1264,6 +1264,10 @@
       // The Site example → the prospect's own site; move the HE Tyres reference to the booking tier (that's what it is now).
       setTxt('siteExample','The site at the top of this page is exactly this — a tidy one-page site I’ve built for ' + d.business + '.');
       var bookEx=document.getElementById('bookExampleBox'); if(bookEx) bookEx.hidden=false;
+      // Proof section: HE Tyres is no longer "the site at the top" (that's the prospect's now), and drop the booking pitch (Site-only).
+      var pp1=document.getElementById('proofP1');
+      if(pp1) pp1.innerHTML='HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one — live at <b>hetyres.co.uk</b> if you want to see it for yourself.';
+      setTxt('proofP2','Yours is the next one. I’d rather get a second good tyre business online and out there working than keep polishing sites on my own — which is exactly why you set the build price.');
       setTxt('heroFormTitle','Like your site? Let’s make it yours.');
       setTxt('finalLead','Happy with it? Pop your details in below and I’ll get it live. Want the colours, words or layout tweaked first? Just tell me — a few sensible changes are all part of it. Free to look, pay only if you keep it.');
       setTxt('emailHint','— I’ll reply here');
