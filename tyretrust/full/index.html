@@ -459,6 +459,10 @@
   </div>
 </header>
 
+<div class="pbanner" id="pbanner" hidden>
+  <div class="container"><span id="pbannerText"></span></div>
+</div>
+
 <main id="main">
 
 <!-- HERO -->
@@ -466,10 +470,10 @@
   <div class="container hero-grid">
     <div>
       <span class="eyebrow">For tyre fitters — and only tyre fitters</span>
-      <h1>The website that <em>works</em> while you're under the car.</h1>
-      <p class="hero-sub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your business name.</p>
+      <h1 id="heroTitle">The website that <em>works</em> while you're under the car.</h1>
+      <p class="hero-sub" id="heroSub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your business name.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#see-yours">Get yours built — free to look</a>
+        <a class="btn btn-primary" id="heroCta" href="#see-yours">Get yours built — free to look</a>
       </div>
       <a class="hero-secondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
@@ -482,13 +486,13 @@
       <div class="browser">
         <div class="browser-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="browser-url">hetyres.co.uk</span>
+          <span class="browser-url" id="heroUrl">hetyres.co.uk</span>
           <span class="mock-tag">Live site</span>
         </div>
         <div class="browser-view">
           <picture>
-            <source media="(max-width:860px)" srcset="/tyretrust/images/hero-hetyres-mobile-485.webp">
-            <img class="browser-poster"
+            <source id="heroShotSource" media="(max-width:860px)" srcset="/tyretrust/images/hero-hetyres-mobile-485.webp">
+            <img class="browser-poster" id="heroShot"
                  src="/tyretrust/images/hero-hetyres-900.webp"
                  srcset="/tyretrust/images/hero-hetyres-480.webp 480w, /tyretrust/images/hero-hetyres-900.webp 900w"
                  sizes="560px"
@@ -496,7 +500,7 @@
           </picture>
         </div>
       </div>
-      <p style="font-size:.85rem;color:#9fb0c7;text-align:center;margin:12px 0 0">A real, working site I built for HE Tyres in Swindon, live at <b>hetyres.co.uk</b> — up the road from you.</p>
+      <p id="heroCaption" style="font-size:.85rem;color:#9fb0c7;text-align:center;margin:12px 0 0">A real, working site I built for HE Tyres in Swindon, live at <b>hetyres.co.uk</b> — up the road from you.</p>
     </div>
   </div>
 </section>
@@ -506,10 +510,10 @@
   <div class="container">
     <span class="eyebrow">How this works</span>
     <h2>No meetings. No sales pitch. Just have a look.</h2>
-    <p class="lead">You've been cold-called by "web people" before. This isn't that. I build your site first, then send you the finished thing to look over — a real, working site for your tyre business. Your only job is to decide whether you like it.</p>
+    <p class="lead" id="howLead">You've been cold-called by "web people" before. This isn't that. I build your site first, then send you the finished thing to look over — a real, working site for your tyre business. Your only job is to decide whether you like it.</p>
     <div class="how">
-      <div class="how-card"><div class="n">01</div><h3>I build it first</h3><p>I put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you pay a penny.</p></div>
-      <div class="how-card"><div class="n">02</div><h3>You have a look</h3><p>Try it on your phone. Book a fake slot. Change your mind about the colours. It's yours to shape — words, photos, layout.</p></div>
+      <div class="how-card"><div class="n">01</div><h3 id="howCard1Title">I build it first</h3><p id="howCard1Body">I put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you pay a penny.</p></div>
+      <div class="how-card"><div class="n">02</div><h3>You have a look</h3><p id="howCard2Body">Try it on your phone. Book a fake slot. Change your mind about the colours. It's yours to shape — words, photos, layout.</p></div>
       <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p>If you want to keep it, pay me what you think it's worth to build, then from £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
     </div>
   </div>
@@ -556,7 +560,7 @@
             </div>
           </div>
         </div>
-        <div class="demo-box"><label>See a live example</label><p style="margin:0;font-size:.95rem;color:var(--body)">A real one is live at <b>hetyres.co.uk</b> — the tyre fitters this whole project started with.</p></div>
+        <div class="demo-box"><label id="siteExampleLabel">See a live example</label><p id="siteExample" style="margin:0;font-size:.95rem;color:var(--body)">A real one is live at <b>hetyres.co.uk</b> — the tyre fitters this whole project started with.</p></div>
       </div>
     </div>
 
@@ -592,6 +596,8 @@
             </div>
           </div>
         </div>
+        <div class="book-right">
+        <div class="demo-box" id="bookExampleBox" style="margin:0 0 18px" hidden><label>See it running live</label><p style="margin:0;font-size:.95rem;color:var(--body)">HE Tyres in Swindon are running this for real — see it at <b>hetyres.co.uk</b>, with booking bolted straight onto their site.</p></div>
         <div class="try-panel" id="bookPanel">
           <button class="try-head" id="bookToggle" type="button" aria-expanded="false" aria-controls="bookBody">
             <span class="try-head-l"><span class="pulse"></span> Booking demo</span>
@@ -602,6 +608,7 @@
             <iframe id="bookFrame" class="frame-hidden" title="Booking demo" data-src="https://neobookworm-booking.nickbarrett.workers.dev/tyretrust-demo" loading="lazy"></iframe>
             <button class="book-close frame-hidden" id="bookClose" type="button">✕ Close the demo</button>
           </div>
+        </div>
         </div>
       </div>
 
@@ -959,8 +966,8 @@
 <section class="final" id="see-yours">
   <div class="container">
     <span class="eyebrow" style="color:var(--amber)">Your move</span>
-    <h2>Want to see one wearing your business name?</h2>
-    <p class="lead center">Give me your details below. I'll build you a real site — like the HE Tyres one above — and email you a link. Free to look. Pay only if you like it.</p>
+    <h2 id="heroFormTitle">Want to see one wearing your business name?</h2>
+    <p class="lead center" id="finalLead">Give me your details below. I'll build you a real site — like the HE Tyres one above — and email you a link. Free to look. Pay only if you like it.</p>
 
     <div class="lf-card">
       <form id="leadForm">
@@ -989,16 +996,16 @@
           </div>
         </div>
         <div class="field">
-          <label for="ltEmail">Email address <span class="lf-hint">— I'll send your finished site here</span></label>
+          <label for="ltEmail">Email address <span class="lf-hint" id="emailHint">— I'll send your finished site here</span></label>
           <input id="ltEmail" name="email" type="email" autocomplete="email" required>
         </div>
         <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Get yours built — free to look →</button>
-        <p class="lf-note">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
+        <p class="lf-note" id="lfNote">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
         <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@neobookworm.uk">email me directly</a>.</p>
       </form>
       <div class="lf-thanks" id="ltThanks" hidden>
         <h3>Done — I'm on it.</h3>
-        <p>I'll build your site and email you a link within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
+        <p id="lfThanksMsg">I'll build your site and email you a link within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
       </div>
     </div>
 
@@ -1381,6 +1388,120 @@
     }
     b.addEventListener('click',go);
     inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+  })();
+
+  // Personalised banner + hero — matches ?p= mailshot code to a business/town (and first name, once known)
+  (function(){
+    var MAILSHOT={
+      "kingswood-tyre-service":{business:"Kingswood Tyre & Service",town:"Bristol",first:""},
+      "pav-s-mobile-tyres":{business:"Pav's Mobile Tyres",town:"Bristol",first:""},
+      "sinan-s-tyre":{business:"Sinan's Tyre",town:"Bristol",first:""},
+      "js-automotive":{business:"JS Automotive Repairs Centre",town:"Bristol",first:""},
+      "ford-rapid-fit-bath":{business:"Ford Rapid Fit (Bath)",town:"Bath",first:""},
+      "farmborough-tyres-service":{business:"Farmborough Tyres Service",town:"Bath",first:""},
+      "spraytech-mechanics":{business:"Spraytech Mechanics",town:"Bath",first:""},
+      "turner-brace-tyres-clevedon":{business:"Turner Brace Tyres (Clevedon)",town:"Clevedon",first:""},
+      "heathend-garage":{business:"Heathend Garage",town:"Wotton-under-Edge",first:""},
+      "mobile-tyres-oxford":{business:"Mobile Tyres Services Oxford Ltd 24/7",town:"Oxford",first:""},
+      "urgent-fast-reading":{business:"Urgent Fast Tyre Fitting Reading 24/7",town:"Reading",first:""},
+      "premier-mobile-tyres":{business:"Premier Mobile Tyres",town:"Reading",first:""},
+      "city-tyres-reading":{business:"City Tyres & Auto Centre",town:"Reading",first:""},
+      "mobile-tyre-woodley":{business:"Mobile Tyre Repair Response Woodley",town:"Reading",first:""},
+      "smh-mobile-tyres":{business:"SMH Mobile Tyres 24/7",town:"Reading",first:""},
+      "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
+      "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
+      "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
+      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"",built:true,url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage"},
+      "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
+      "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
+      "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
+      "mobile-fast-tyre-fitting":{business:"Mobile Fast Tyre Fitting",town:"Basingstoke",first:""},
+      "tyre-fitting-near-you":{business:"Tyre Fitting Near You",town:"Basingstoke",first:""},
+      "oakley-car-repairs":{business:"Oakley Car Repairs",town:"Basingstoke",first:""},
+      "whitchurch-service":{business:"Whitchurch Service & Repairs",town:"Whitchurch",first:""},
+      "haytov-sons":{business:"Haytov & Sons Auto Repairs",town:"Whitchurch",first:""},
+      "gs-tyres":{business:"G&S Tyres",town:"Chippenham",first:""},
+      "mobile-salisbury":{business:"Mobile Salisbury",town:"Salisbury",first:""}
+    };
+    var code=new URLSearchParams(window.location.search).get('p');
+    if(!code) return;
+    var d=MAILSHOT[code.toLowerCase()];
+    if(!d) return;
+    function escHtml(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+    // Skip the "in [Town]" tail when the town is already inside the business name (avoids "Oxford … in Oxford").
+    var townInBiz = d.business.toLowerCase().indexOf(d.town.toLowerCase()) !== -1;
+    var hi = d.first ? d.first + ' — ' : '';
+
+    // --- Personalised banner (built = reveal; otherwise = offer) ---
+    var text = d.built
+      ? hi + 'I’ve already built one for ' + d.business + ' in ' + d.town + ' — this is it. Have a look around.'
+      : (d.first ? 'Thanks for stopping by, ' + d.first + ' — ' : 'Thanks for stopping by — ')
+        + 'I’d love to build a website like this one for ' + d.business + ' in ' + d.town + '.';
+    var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
+    span.textContent = text;
+    banner.hidden=false;
+
+    // --- Hero headline: safe town swap (never inlines the business name) ---
+    var h1=document.getElementById('heroTitle');
+    if(h1) h1.innerHTML = 'The website that <em>works</em> while you’re under the car'
+      + (townInBiz ? '' : ' in ' + escHtml(d.town)) + '.';
+
+    // --- Hero subhead: business name only ever appears as a label, so odd names still parse ---
+    var sub=document.getElementById('heroSub');
+    if(sub) sub.textContent = d.built
+      ? 'This is a real, finished website I’ve built for ' + d.business + ' — not a mock-up, the actual pages. Have a proper click around, then tell me what you’d change. It only goes live when you’re happy with it.'
+      : 'Here’s a real tyre site, live and taking bookings right now. Picture the same thing wearing the ' + d.business + ' name — I’ll build it for you, free to look at.';
+
+    // --- Optional form heading tailoring ---
+    var formTitle=document.getElementById('heroFormTitle');
+    if(formTitle && !d.built) formTitle.textContent = 'Want to see one wearing the ' + d.business + ' name?';
+
+    // --- Built prospect: point the whole hero preview at THEIR site ---
+    if(d.built && d.url){
+      var cta=document.getElementById('heroCta');
+      if(cta){ cta.setAttribute('href',d.url); cta.setAttribute('target','_blank'); cta.setAttribute('rel','noopener'); cta.textContent='See your site →'; }
+      var urlEl=document.getElementById('heroUrl');
+      if(urlEl && d.urlLabel) urlEl.textContent=d.urlLabel;
+      if(d.shot){
+        var base='/tyretrust/images/'+d.shot;
+        var shot=document.getElementById('heroShot'), source=document.getElementById('heroShotSource');
+        if(shot){ shot.src=base+'-900.webp'; shot.srcset=base+'-480.webp 480w, '+base+'-900.webp 900w'; if(d.alt) shot.alt=d.alt; }
+        if(source) source.srcset=base+'-mobile-485.webp';
+      }
+      var cap=document.getElementById('heroCaption');
+      if(cap) cap.innerHTML='A real, finished site I’ve built for '+escHtml(d.business)+' — click <b>See your site</b> to open it.';
+    }
+
+    // --- Built prospect: neutralise the "I'll build you one" future tense through the body ---
+    if(d.built){
+      var setTxt=function(id,txt){ var el=document.getElementById(id); if(el) el.textContent=txt; };
+      setTxt('howLead','You’ve been cold-called by “web people” before. This isn’t that. Yours is already built — a real, finished site for your tyre business, sitting at the top of this page ready to look over. Have a proper look, and if you’d change the colours, the wording or the layout, just say — that’s what the next step is for.');
+      setTxt('howCard1Title','Yours is already built');
+      setTxt('howCard1Body','I’ve put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you’ve paid a penny.');
+      // Site-only pitch: drop the "book a fake slot" instruction (that's the booking tier, not The Site).
+      setTxt('howCard2Body','Try it on your phone. Read it like one of your customers would. Change your mind about the colours. It’s yours to shape — words, photos, layout.');
+      // The Site example → the prospect's own site; move the HE Tyres reference to the booking tier (that's what it is now).
+      setTxt('siteExample','The site at the top of this page is exactly this — a tidy one-page site I’ve built for ' + d.business + '.');
+      var bookEx=document.getElementById('bookExampleBox'); if(bookEx) bookEx.hidden=false;
+      setTxt('heroFormTitle','Like your site? Let’s make it yours.');
+      setTxt('finalLead','Happy with it? Pop your details in below and I’ll get it live. Want the colours, words or layout tweaked first? Just tell me — a few sensible changes are all part of it. Free to look, pay only if you keep it.');
+      setTxt('emailHint','— I’ll reply here');
+      setTxt('lfNote','I’ll get your site live — or make any changes you’ve asked for — within a few days. No calls unless you want one.');
+      var thanksMsg=document.getElementById('lfThanksMsg');
+      if(thanksMsg) thanksMsg.innerHTML='I’ll get your site live — or make any changes you’ve asked for — within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>';
+    }
+
+    // Pre-fill the lead form with what the mailshot already knows — still fully editable,
+    // in case the letter's details are wrong or out of date.
+    var bizField=document.getElementById('ltBiz'), townField=document.getElementById('ltTown'), nameField=document.getElementById('ltName');
+    if(bizField && !bizField.value) bizField.value=d.business;
+    if(townField && !townField.value) townField.value=d.town;
+    if(nameField && d.first && !nameField.value) nameField.value=d.first;
+    // gtag is set up by the deferred cookieconsent module, which hasn't run yet at this
+    // point in page load — wait for 'load' so consented returning visitors are tracked.
+    window.addEventListener('load',function(){
+      if(typeof window.gtag==='function'){window.gtag('event','mailshot_view',{mailshot_code:code.toLowerCase(),business:d.business,town:d.town});}
+    });
   })();
 
 </script>
