@@ -1400,7 +1400,7 @@
       })
       .catch(function(err){
         submitBtn.disabled=false;
-        submitBtn.textContent=submitBtn.dataset.label||'Get yours built — free to look →';
+        submitBtn.innerHTML=submitBtn.dataset.label||'Get yours built — free to look →';
         errBox.hidden=false;
         if(window.console&&console.warn) console.warn(err);
       });
@@ -1533,9 +1533,11 @@
       setTxt('faqCancel','No exit fee either way, just a month’s notice. The site is yours — the pages, words and photos are sent over and your web address is transferred into your name if I registered it. If you ever take booking on top (and plenty of fitters won’t), that part’s different: it runs on a calendar connection I host, so it switches off when you cancel rather than transferring as files. Either way the site itself keeps working.');
       // Pricing "why so generous" → personal to this reader; CTAs reflect that theirs is already built.
       setTxt('pricingWhy','Why so generous? I’m getting my first few tyre sites live, and I’d rather ' + d.business + '’s was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — and since I’ve already built yours, you’re right at the front of that queue.');
-      setTxt('pricingCta','Changes or go-ahead — just say');
+      var pCta=document.getElementById('pricingCta');
+      if(pCta) pCta.innerHTML='<span><span style="white-space:nowrap">Changes or go-ahead</span> <span style="white-space:nowrap">&mdash; just say</span></span>';
+      var ltHtml='<span><span style="white-space:nowrap">Changes or go-ahead</span> <span style="white-space:nowrap">&mdash; just say &rarr;</span></span>';
       var subBtn=document.getElementById('ltSubmit');
-      if(subBtn){ subBtn.textContent='Changes or go-ahead — just say →'; subBtn.dataset.label='Changes or go-ahead — just say →'; }
+      if(subBtn){ subBtn.innerHTML=ltHtml; subBtn.dataset.label=ltHtml; }
       setTxt('heroFormTitle','Like your site? Let’s make it yours.');
       setTxt('finalLead','Happy with it? Pop your details in below and I’ll get it live. Want the colours, words or layout tweaked first? Just tell me — a few sensible changes are all part of it. Nothing to pay unless you keep it.');
       setTxt('emailHint','— I’ll reply here');
