@@ -26,6 +26,34 @@ export default {
     const url = new URL(request.url);
     const p   = url.pathname;
 
+    // ── TyreTrust: serve natively at tyretrust.uk (Worker custom domain) ─────
+    // Same files that already serve neobookworm.uk/tyretrust/* — internal
+    // links there use absolute paths (/tyretrust/images/..., /fonts.css,
+    // /privacy.html) which resolve correctly under either hostname, so only
+    // the clean top-level routes need mapping down to the real files.
+    if (url.hostname === 'tyretrust.uk' || url.hostname === 'www.tyretrust.uk') {
+      // Targets use the assets binding's own clean-URL form (trailing slash
+      // for a directory index, no extension for a standalone page) — the
+      // literal *.html path works too, but the assets layer then 307s it
+      // back to the clean form, and that redirect is host-relative, so it
+      // never actually reaches this rewrite.
+      const TYRETRUST_ROUTES = {
+        '/':            '/tyretrust/',
+        '/full':        '/tyretrust/full/',
+        '/full/':       '/tyretrust/full/',
+        '/proposal':    '/tyretrust/proposal',
+        '/proposal/':   '/tyretrust/proposal',
+        '/robots.txt':  '/tyretrust/robots.txt',
+        '/sitemap.xml': '/tyretrust/sitemap.xml',
+      };
+      const rewrite = TYRETRUST_ROUTES[p];
+      if (rewrite) {
+        const assetUrl = new URL(request.url);
+        assetUrl.pathname = rewrite;
+        return env.ASSETS.fetch(new Request(assetUrl, request));
+      }
+    }
+
     // ── Font CORS — booking widget loads fonts cross-origin from this domain ──
     // Browsers enforce CORS on @font-face src URLs; ASSETS binding doesn't add
     // the header automatically, so we intercept and attach it here.

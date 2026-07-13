@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TyreTrust — Websites built only for tyre fitters</title>
 <meta name="description" content="A working website made only for tyre fitters. See a real one running for HE Tyres, try the booking and reg look-up live, then pay me what you think it's worth. Take a look.">
-<link rel="canonical" href="https://neobookworm.uk/tyretrust/full/">
+<link rel="canonical" href="https://tyretrust.uk/full/">
 <meta name="robots" content="noindex, nofollow">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://neobookworm.uk/tyretrust/full/">
+<meta property="og:url" content="https://tyretrust.uk/full/">
 <meta property="og:title" content="TyreTrust — Websites built only for tyre fitters">
 <meta property="og:description" content="See a real, working website for a tyre fitter. Try the booking and reg look-up yourself. Pay what you think it's worth.">
-<meta property="og:image" content="https://neobookworm.uk/tyretrust/og.webp">
+<meta property="og:image" content="https://tyretrust.uk/tyretrust/og.webp">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <link rel="icon" type="image/x-icon" href="/tyretrust/images/favicon.ico">
@@ -476,7 +476,7 @@
       <div class="hero-actions">
         <a class="btn btn-primary" id="heroCta" href="#see-yours">Get yours built — free to look</a>
       </div>
-      <a class="hero-secondary" href="#see-it">See it working →</a>
+      <a class="hero-secondary" id="heroSecondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
         <span><i class="tick">✓</i> £0 to build — pay what you think it's worth</span>
         <span><i class="tick">✓</i> from £9.99/mo, cancel at any time</span>
@@ -1007,16 +1007,16 @@
         </div>
         <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Get yours built — free to look →</button>
         <p class="lf-note" id="lfNote">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
-        <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@neobookworm.uk">email me directly</a>.</p>
+        <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@tyretrust.uk">email me directly</a>.</p>
       </form>
       <div class="lf-thanks" id="ltThanks" hidden>
         <h3>Done — I'm on it.</h3>
-        <p id="lfThanksMsg">I'll build your site and email you a link within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a></p>
+        <p id="lfThanksMsg">I'll build your site and email you a link within a few days. Questions in the meantime? <a href="mailto:nick@tyretrust.uk">nick@tyretrust.uk</a></p>
       </div>
     </div>
 
     <div class="final-actions">
-      <a class="btn btn-ghost" href="mailto:nick@neobookworm.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Prefer email? Send me a message ✉️</a>
+      <a class="btn btn-ghost" href="mailto:nick@tyretrust.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Prefer email? Send me a message ✉️</a>
     </div>
   </div>
 </section>
@@ -1029,7 +1029,7 @@
       <img src="/tyretrust/images/logo-mark-120.webp" width="120" height="120" alt="TyreTrust" loading="lazy" decoding="async">
       <span>© <span id="yr"></span> TyreTrust — websites built only for tyre fitters. Based in Swindon.</span>
     </div>
-    <div><a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+    <div><a href="mailto:nick@tyretrust.uk">nick@tyretrust.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
   </div>
   <div class="container">
     <p class="foot-note">TyreTrust is a NeoBookworm project — same Nick, same inbox, this one just builds for tyre fitters.</p>
@@ -1038,7 +1038,7 @@
 
 <!-- JSON-LD -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://neobookworm.uk/tyretrust/","email":"nick@neobookworm.uk"}
+{"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://tyretrust.uk/full/","email":"nick@tyretrust.uk"}
 </script>
 
 <!-- TyreTrust runs its own GA4 property, separate from the main NeoBookworm site -->
@@ -1442,7 +1442,7 @@
 
     // --- Personalised banner (built = reveal, referencing the letter; otherwise = offer) ---
     var text = d.built
-      ? (d.first ? d.first + ' — you’ve' : 'You’ve') + ' got my letter — I’ve already built ' + d.business + '’s website' + (townInBiz ? '' : ' in ' + d.town) + ', and this is it. Have a look around.'
+      ? (d.first ? d.first + ' — you’ve' : 'You’ve') + ' got my letter — I’ve already built ' + d.business + '’s website' + (townInBiz ? '' : ' in ' + d.town) + ' — there’s a link for it below. Have a look around.'
       : (d.first ? 'Thanks for stopping by, ' + d.first + ' — ' : 'Thanks for stopping by — ')
         + 'I’d love to build a website like this one for ' + d.business + ' in ' + d.town + '.';
     var banner=document.getElementById('pbanner'), span=document.getElementById('pbannerText');
@@ -1468,6 +1468,7 @@
     if(d.built && d.url){
       var cta=document.getElementById('heroCta');
       if(cta){ cta.setAttribute('href',d.url); cta.setAttribute('target','_blank'); cta.setAttribute('rel','noopener'); cta.textContent='See your site →'; }
+      var heroSec=document.getElementById('heroSecondary'); if(heroSec) heroSec.style.display='none';
       var urlEl=document.getElementById('heroUrl');
       if(urlEl && d.urlLabel) urlEl.textContent=d.urlLabel;
       if(d.shot){
@@ -1509,7 +1510,7 @@
       setTxt('emailHint','— I’ll reply here');
       setTxt('lfNote','I’ll get your site live — or make any changes you’ve asked for — within a few days. No calls unless you want one.');
       var thanksMsg=document.getElementById('lfThanksMsg');
-      if(thanksMsg) thanksMsg.innerHTML='I’ll get your site live — or make any changes you’ve asked for — within a few days. Questions in the meantime? <a href="mailto:nick@neobookworm.uk">nick@neobookworm.uk</a>';
+      if(thanksMsg) thanksMsg.innerHTML='I’ll get your site live — or make any changes you’ve asked for — within a few days. Questions in the meantime? <a href="mailto:nick@tyretrust.uk">nick@tyretrust.uk</a>';
       // Built prospects are invited to ask for changes — give that a box of its own.
       var changeWrap=document.getElementById('changeWrap');
       if(changeWrap) changeWrap.hidden=false;
