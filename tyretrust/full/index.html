@@ -1447,7 +1447,7 @@
       "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
       "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
       "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
-      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"Jiri",built:true,focus:"site",url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage"},
+      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"Jiri",built:true,focus:"site",url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage",what:"Depot only"},
       "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
       "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
       "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
@@ -1467,6 +1467,9 @@
     // Skip the "in [Town]" tail when the town is already inside the business name (avoids "Oxford … in Oxford").
     var townInBiz = d.business.toLowerCase().indexOf(d.town.toLowerCase()) !== -1;
     var hi = d.first ? d.first + ' — ' : '';
+
+    // --- Optional per-prospect "what you do" default (e.g. depot-only fitters) ---
+    if(d.what){ var whatEl=document.getElementById('ltWhat'); if(whatEl) whatEl.value=d.what; }
 
     // --- Personalised banner (built = reveal, referencing the letter; otherwise = offer) ---
     var text = d.built
