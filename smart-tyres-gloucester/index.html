@@ -142,10 +142,25 @@
 
     /* ── find us ── */
     .find-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-    .find-map{border-radius:var(--radius);overflow:hidden;border:1px solid #e5ddd2;aspect-ratio:4/3}
-    .find-map iframe{width:100%;height:100%;border:0;display:block}
-    .find-details p{margin-bottom:10px;color:#4a4640}
-    .find-details strong{display:block;color:#231f1c;margin-bottom:2px}
+    .find-map-box{border-radius:var(--radius);overflow:hidden;border:1px solid #3a3226;aspect-ratio:4/3.3;position:relative;isolation:isolate;z-index:0;background:#1c2330}
+    #depotMap{width:100%;height:100%}
+    .find-details p{margin-bottom:10px;color:#c7bfb4}
+    .find-details strong{display:block;color:#fff;margin-bottom:2px}
+    .find-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}
+    .find-step{background:rgba(255,255,255,.05);border:1px solid #3a3226;border-radius:var(--radius);padding:20px}
+    .find-step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--orange);color:#fff;border-radius:50%;font-weight:700;font-size:.85rem;margin-bottom:12px}
+    .find-step p{font-size:.92rem;line-height:1.55;color:#c7bfb4;margin:0}
+    .find-step strong{color:#fff}
+    .find-foot{text-align:center;margin-top:28px}
+    .find-legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:12px;font-size:.85rem;color:#c7bfb4}
+    .find-legend span{display:inline-flex;align-items:center;gap:8px}
+    .find-legend i{display:inline-block;width:22px;height:0;border-top-width:3px;border-top-style:dashed}
+    .find-legend .leg-short i{border-color:var(--orange)}
+    .find-legend .leg-long i{border-color:#8b93a3}
+    .leaflet-tooltip.depot-tip{background:#fff;color:var(--ink);font-weight:700;font-size:.72rem;letter-spacing:.02em;padding:2px 7px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.3);white-space:nowrap;border:none}
+    .leaflet-tooltip.depot-tip::before{display:none}
+    .leaflet-tooltip.depot-tip.dest{background:var(--orange);color:#fff}
+    .leaflet-container{background:#1c2330;font-family:inherit}
 
     /* ── faq ── */
     .faq-list{max-width:760px}
@@ -177,6 +192,8 @@
 
     @media (max-width:760px){
       .find-grid,.contact-grid{grid-template-columns:1fr}
+      .find-steps{grid-template-columns:1fr}
+      .find-map-box{aspect-ratio:1/1.15}
       .trust-inner{gap:14px;font-size:.85rem}
     }
   </style>
@@ -333,20 +350,48 @@
     <div class="container">
       <div class="title-block">
         <h2 class="section-title">Find us</h2>
+        <p class="section-sub">Unit 1, 28 Hempsted Lane — first time on the estate can be fiddly, so here's the route in</p>
         <div class="accent-bar"></div>
       </div>
       <div class="find-grid">
-        <div class="find-map">
-          <iframe title="Map showing Smart Tyres Gloucester, Hempsted Lane" loading="lazy"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=-2.2790%2C51.8446%2C-2.2510%2C51.8646&layer=mapnik&marker=51.8546%2C-2.2650"></iframe>
+        <div>
+          <div class="find-map-box">
+            <div id="depotMap" role="img" aria-label="Zoomed street map showing two routes into Marina Junction roundabout to Unit 1, 28 Hempsted Lane — a short route from Secunda Way in the south, and a longer one-way loop from Hempsted Lane in the north"></div>
+          </div>
+          <div class="find-legend">
+            <span class="leg-short"><i></i> From the south (short)</span>
+            <span class="leg-long"><i></i> From the north (one-way loop)</span>
+          </div>
         </div>
         <div class="find-details">
           <p><strong>Address</strong>Unit 1, 28 Hempsted Lane, Hempsted, Gloucester GL2 5JA</p>
           <p><strong>Phone</strong><a href="tel:01452690710">01452 690710</a></p>
           <p><strong>Opening hours</strong>Monday–Friday 9:00am–6:00pm · Saturday 9:00am–4:30pm</p>
-          <p><strong>Getting here</strong>Just off the Hempsted Lane industrial units, a few
+          <p><strong>Getting here</strong>Just off the Hempsted Lane, a few
             minutes from Gloucester city centre.</p>
         </div>
+      </div>
+      <!-- Pin confirmed by Nick from Google Maps (right-click coordinates) 13 Jul 2026. Both routes traced
+           point-for-point from OpenStreetMap geometry, respecting the real oneway tags on Marina Junction
+           roundabout, Hempsted Lane and Secunda Way (all part of the A430 South-West Bypass gyratory).
+           The final ~90m from the roundabout exit to the unit frontage isn't a mapped road — short straight
+           finish, same as the rest of these illustrative maps. See CLAUDE.md build notes. -->
+      <div class="find-steps">
+        <div class="find-step">
+          <div class="find-step-num">↘</div>
+          <p><strong>From the south (Secunda Way)</strong> follow the road round and exit onto the service road for Smart Tyres.</p>
+        </div>
+        <div class="find-step">
+          <div class="find-step-num">↻</div>
+          <p><strong>From the north (Hempsted Lane)</strong> follow the one way system and exit onto the service road for Smart Tyres.</p>
+        </div>
+        <div class="find-step">
+          <div class="find-step-num">📍</div>
+          <p><strong>Either way</strong>, look for the Smart Tyres sign just off the roundabout, past Buildit Gloucester.</p>
+        </div>
+      </div>
+      <div class="find-foot">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Unit+1+28+Hempsted+Lane+Gloucester+GL2+5JA" target="_blank" rel="noopener" class="btn btn-primary">Open in Google Maps ↗</a>
       </div>
     </div>
   </section>
@@ -482,6 +527,130 @@
       form.classList.add('hidden');
       success.classList.add('show');
     });
+  }
+})();
+</script>
+
+<script>
+// Depot directions map — Leaflet, lazy-loaded when it nears the viewport (same pattern as he-tyres/index.html)
+(function () {
+  var depotEl = document.getElementById('depotMap');
+  if (!depotEl) return;
+
+  var leafletReady = null;
+  var depotDone = false;
+  var TILE_URL = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+
+  function loadLeafletCss() {
+    if (document.getElementById('leaflet-css')) return;
+    var l = document.createElement('link');
+    l.id = 'leaflet-css';
+    l.rel = 'stylesheet';
+    l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(l);
+  }
+
+  function ensureLeaflet() {
+    if (leafletReady) return leafletReady;
+    loadLeafletCss();
+    leafletReady = new Promise(function (resolve) {
+      if (typeof L !== 'undefined') { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      s.async = true;
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+    return leafletReady;
+  }
+
+  function initDepotMap() {
+    if (depotDone) return;
+    depotDone = true;
+    ensureLeaflet().then(function () {
+      var ORANGE = '#1f6fe6';
+      var GREY = '#8b93a3';
+      var INK = '#0c0f16';
+      // Pin given by Nick direct from Google Maps (right-click > coordinates) 13 Jul 2026 — sits right
+      // on OSM's Marina Junction roundabout, confirming this is a genuine oneway gyratory (A430 South-
+      // West Bypass). Both routes traced point-for-point from real OpenStreetMap geometry, respecting
+      // the real oneway tags on the roundabout, Hempsted Lane and Secunda Way. The final stretch uses
+      // the real unnamed service road (way 884965622) that runs almost exactly past the unit frontage —
+      // only the ~30m gap linking it to the roundabout arc isn't itself a separately-mapped junction.
+      // Corrected 13 Jul 2026 per Nick's Street View check: the north approach now uses way 1330032720
+      // (the near/Sainsbury's-side lane), not 1330032718 (a different lane that cuts away too early);
+      // both routes now exit onto the service road instead of the Hempsted Lane village-road connector.
+      // See CLAUDE.md build notes for this prospect.
+      var unit1 = [51.85749383914298, -2.26206922869118];
+      var exitToUnit = [[51.8574162, -2.2613703], [51.8575133, -2.2617533], [51.8574725, -2.2618867], [51.8574954, -2.2620153], unit1];
+      // Short route — arriving from the south on Secunda Way: joins the roundabout and exits onto the service road.
+      var routeShort = [
+        [51.8559489, -2.2615470], [51.8560741, -2.2616263], [51.8561152, -2.2616474], [51.8562106, -2.2616758],
+        [51.8563047, -2.2616900], [51.8563700, -2.2616900], [51.8564328, -2.2616778], [51.8564968, -2.2616595],
+        [51.8565408, -2.2616595], [51.8565696, -2.2616697], [51.8566035, -2.2616921], [51.8566723, -2.2617499],
+        [51.8566936, -2.2618156], [51.8567244, -2.2618730], [51.8567730, -2.2619202], [51.8568156, -2.2619391],
+        [51.8568586, -2.2619431], [51.8568910, -2.2619298], [51.8569062, -2.2619236], [51.8569514, -2.2618807],
+        [51.8569806, -2.2618463], [51.8570384, -2.2617780], [51.8571386, -2.2616476], [51.8572139, -2.2615650]
+      ].concat(exitToUnit);
+      // Long route — arriving from the north on Hempsted Lane (the near/Sainsbury's-side lane, way
+      // 1330032720): the oneway system doesn't let you turn off early, so it's almost a full lap of the
+      // roundabout before reaching the same exit.
+      var routeLong = [
+        [51.8580746, -2.2606528], [51.8578845, -2.2606854], [51.8577888, -2.2606975], [51.8577124, -2.2607138],
+        [51.8577064, -2.2607074], [51.8576863, -2.2607007], [51.8576569, -2.2606966], [51.8576289, -2.2607071],
+        [51.8576013, -2.2607204], [51.8575666, -2.2607499], [51.8575232, -2.2608062], [51.8574802, -2.2608761],
+        [51.8573564, -2.2610862], [51.8572946, -2.2611871], [51.8572650, -2.2612227], [51.8572083, -2.2612795],
+        [51.8571567, -2.2613213], [51.8570690, -2.2613678], [51.8569935, -2.2613943], [51.8569754, -2.2613985],
+        [51.8569532, -2.2614014], [51.8568613, -2.2614070], [51.8567947, -2.2614059], [51.8567632, -2.2614059],
+        [51.8567429, -2.2614126], [51.8567201, -2.2614301], [51.8567025, -2.2614518], [51.8566838, -2.2614852],
+        [51.8566752, -2.2615186], [51.8566642, -2.2615798], [51.8566630, -2.2616219], [51.8566640, -2.2616692],
+        [51.8566723, -2.2617499], [51.8566936, -2.2618156], [51.8567244, -2.2618730], [51.8567730, -2.2619202],
+        [51.8568156, -2.2619391], [51.8568586, -2.2619431], [51.8568910, -2.2619298], [51.8569062, -2.2619236],
+        [51.8569514, -2.2618807], [51.8569806, -2.2618463], [51.8570384, -2.2617780], [51.8571386, -2.2616476],
+        [51.8572139, -2.2615650]
+      ].concat(exitToUnit);
+      var map = L.map('depotMap', {
+        zoomControl: false, attributionControl: false,
+        dragging: false, scrollWheelZoom: false,
+        doubleClickZoom: false, touchZoom: false, preferCanvas: true
+      });
+      L.tileLayer(TILE_URL, { maxZoom: 18 }).addTo(map);
+      var lineLong = L.polyline(routeLong, { color: GREY, weight: 4, opacity: 0.8, dashArray: '2, 9', lineCap: 'round' }).addTo(map);
+      var lineShort = L.polyline(routeShort, { color: ORANGE, weight: 5, opacity: 0.9, dashArray: '12, 8', lineCap: 'round' }).addTo(map);
+      var combinedBounds = lineLong.getBounds().extend(lineShort.getBounds());
+      map.fitBounds(combinedBounds, { padding: [30, 30] });
+
+      requestAnimationFrame(function () {
+        map.invalidateSize();
+        map.fitBounds(combinedBounds, { padding: [30, 30] });
+        L.circleMarker(unit1, { radius: 10, color: '#fff', weight: 3, fillColor: ORANGE, fillOpacity: 1 })
+          .addTo(map).bindTooltip('Unit 1 — Smart Tyres', { permanent: true, direction: 'bottom', className: 'depot-tip dest', offset: [-40, 12] });
+        L.circleMarker(routeShort[0], { radius: 6, color: '#fff', weight: 2, fillColor: INK, fillOpacity: 1 })
+          .addTo(map).bindTooltip('From Secunda Way (south)', { permanent: true, direction: 'bottom', className: 'depot-tip', offset: [0, 8] });
+        L.circleMarker(routeLong[0], { radius: 6, color: '#fff', weight: 2, fillColor: INK, fillOpacity: 1 })
+          .addTo(map).bindTooltip('From Hempsted Lane (north)', { permanent: true, direction: 'top', className: 'depot-tip', offset: [0, -8] });
+      });
+
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () {
+          map.invalidateSize();
+          map.fitBounds(combinedBounds, { padding: [30, 30] });
+        }, 200);
+      }, { passive: true });
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      obs.disconnect();
+      initDepotMap();
+    }, { threshold: 0, rootMargin: '0px 0px 100px 0px' });
+    obs.observe(depotEl);
+  } else {
+    initDepotMap();
   }
 })();
 </script>
