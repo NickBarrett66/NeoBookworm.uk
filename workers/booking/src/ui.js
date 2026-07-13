@@ -133,6 +133,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
       font-size: 16px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ── Header band ─────────────────────────────── */
@@ -381,7 +382,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
 
     .cal-dow-row {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       margin-bottom: 0.25rem;
     }
 
@@ -399,7 +400,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
 
     .cal-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 2px;
     }
 
@@ -418,6 +419,7 @@ export function renderBookingPage(config, slug, rescheduleToken = null, adminKey
       cursor: pointer;
       transition: background 0.12s;
       min-height: 36px;
+      min-width: 0;
     }
 
     .cal-cell.cal-empty {
