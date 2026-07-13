@@ -330,11 +330,14 @@
   .tier .pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:5px 15px;border-radius:999px;text-transform:uppercase;white-space:nowrap}
   .tier .tnum{font-size:.76rem;font-weight:700;color:var(--orange);letter-spacing:.12em;text-transform:uppercase}
   .tier .tname{font-family:'DM Sans',sans-serif;font-weight:800;color:var(--navy);font-size:1.34rem;margin:2px 0 0}
-  .tier .price{margin:16px 0 2px;display:flex;align-items:baseline;gap:6px}
-  .tier .price .mo{font-family:'DM Sans',sans-serif;font-size:2.15rem;font-weight:900;color:var(--navy);line-height:1}
-  .tier .price .per{color:var(--muted);font-size:.95rem}
-  .tier .setup{font-size:.9rem;color:var(--muted);margin:0 0 18px;padding-bottom:16px;border-bottom:1px solid var(--mist)}
-  .tier .setup b{color:var(--navy)}
+  .tier .split{display:flex;gap:16px;margin:16px 0 18px;padding-bottom:16px;border-bottom:1px solid var(--mist)}
+  .tier .split-col{flex:1;min-width:0}
+  .tier .split-div{width:1px;background:var(--line)}
+  .tier .split-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .tier .split-build{font-family:'DM Sans',sans-serif;font-size:1.15rem;font-weight:900;color:var(--orange-dk);line-height:1.2}
+  .tier .split-mo{font-family:'DM Sans',sans-serif;font-size:1.75rem;font-weight:900;color:var(--navy);line-height:1}
+  .tier .split-mo .per{font-size:.8rem;font-weight:400;color:var(--muted)}
+  .tier .split-sub{font-size:.76rem;color:var(--muted);margin-top:5px}
   .tier ul{list-style:none;padding:0;margin:0 0 22px;flex:1}
   .tier ul li{position:relative;padding-left:25px;margin-bottom:9px;font-size:.94rem;color:var(--body)}
   .tier ul li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900}
@@ -344,7 +347,6 @@
   .tier ul li.allow::before{content:"★";color:var(--amber)}
   .tier .btn{width:100%;justify-content:center}
   /* pay-as-you-go packs (Tier 3) */
-  .tier .price .payg{font-family:'DM Sans',sans-serif;font-size:1.6rem;font-weight:900;color:var(--navy);line-height:1}
   .pack{background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:12px}
   .pack-opt{border-style:dashed}
   .pack-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
@@ -855,7 +857,7 @@
       <span class="eyebrow">The offer</span>
       <h2>Pick a plan. Add the clever bit when you're ready. You set the build price.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Both plans work the same way: I build it first, you pay what you think it's worth to keep it, then a small monthly to stay live — cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" style="margin:18px auto 0">Both plans work the same way: I build it first, then you decide what to pay — less if money's tight, or if you honestly don't think it's worth it, I won't argue. After that, just a small monthly fee to keep it live. Cancel any time, and your web address and files are always yours to keep.</p>
       <p class="lead center" id="pricingWhy" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
     </div>
 
@@ -865,8 +867,19 @@
       <div class="tier" id="planSite">
         <div class="tnum">Plan 1</div>
         <div class="tname">The Site</div>
-        <div class="price"><span class="mo">£9.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — but pay less if money's tight, or if you honestly don't think it's worth that. I won't argue.</div>
+        <div class="split">
+          <div class="split-col">
+            <div class="split-label">To build</div>
+            <div class="split-build">Pay what it's worth</div>
+            <div class="split-sub">guide: £150–£300</div>
+          </div>
+          <div class="split-div"></div>
+          <div class="split-col">
+            <div class="split-label">To keep live</div>
+            <div class="split-mo">£9.99<span class="per">/mo</span></div>
+            <div class="split-sub">cancel any time</div>
+          </div>
+        </div>
         <ul>
           <li class="head">Your own tyre website</li>
           <li>Services, tyre brands, reviews &amp; contact</li>
@@ -881,8 +894,19 @@
         <span class="pop" id="planPop">My pick for most fitters</span>
         <div class="tnum">Plan 2</div>
         <div class="tname">The Booking Engine</div>
-        <div class="price"><span class="mo">£19.99</span><span class="per">/month</span></div>
-        <div class="setup">To build: <b>pay what you think it's worth.</b> As a guide, £150–£300 is a fair starting point — but pay less if money's tight, or if you honestly don't think it's worth that. I won't argue.</div>
+        <div class="split">
+          <div class="split-col">
+            <div class="split-label">To build</div>
+            <div class="split-build">Pay what it's worth</div>
+            <div class="split-sub">guide: £150–£300</div>
+          </div>
+          <div class="split-div"></div>
+          <div class="split-col">
+            <div class="split-label">To keep live</div>
+            <div class="split-mo">£19.99<span class="per">/mo</span></div>
+            <div class="split-sub">cancel any time</div>
+          </div>
+        </div>
         <ul>
           <li class="head">Everything in The Site, plus…</li>
           <li>Online booking — depot &amp; mobile, day or night</li>
