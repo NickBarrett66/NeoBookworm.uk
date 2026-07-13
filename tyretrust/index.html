@@ -417,6 +417,12 @@
     .demo-btn{width:100%;padding:12px 18px}
     .price-tag{border-radius:12px}
   }
+  @media(max-width:640px){
+    .demo-fullscreen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:0;margin:0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+    .demo-fullscreen .book-close{position:sticky;top:0;z-index:2;margin-top:0;margin-bottom:14px}
+    .demo-fullscreen #bookFrame,.demo-fullscreen #remindRescheduleFrame{height:calc(100vh - 160px)}
+    body.demo-lock-scroll{overflow:hidden}
+  }
 </style>
 </head>
 <body>
@@ -936,6 +942,7 @@
     var toggle=document.getElementById('bookToggle'),
         cta=document.getElementById('bookToggleCta'),
         fr=document.getElementById('bookFrame'),
+        wrap=document.getElementById('bookBody'),
         closeBtn=document.getElementById('bookClose');
     if(!toggle) return;
     var isOpen=false;
@@ -944,6 +951,8 @@
       if(open && !fr.src){ fr.src=fr.dataset.src; }
       fr.classList.toggle('frame-hidden',!open);
       closeBtn.classList.toggle('frame-hidden',!open);
+      wrap.classList.toggle('demo-fullscreen',open);
+      document.body.classList.toggle('demo-lock-scroll',open);
       toggle.setAttribute('aria-expanded',open?'true':'false');
       cta.textContent=open?'Close ✕':'Tap to try it →';
     }
@@ -1122,6 +1131,7 @@
     var toggle=document.getElementById('remindDemoToggle'),
         cta=document.getElementById('remindDemoCta'),
         mock=document.getElementById('remindEmailMock'),
+        wrap=document.getElementById('remindDemoBody'),
         closeBtn=document.getElementById('remindDemoClose');
     if(!toggle) return;
     var open=false;
@@ -1129,6 +1139,8 @@
       open=o;
       mock.classList.toggle('frame-hidden',!o);
       closeBtn.classList.toggle('frame-hidden',!o);
+      wrap.classList.toggle('demo-fullscreen',o);
+      document.body.classList.toggle('demo-lock-scroll',o);
       toggle.setAttribute('aria-expanded',o?'true':'false');
       cta.textContent=o?'Close ✕':'Tap to try it →';
     }
@@ -1141,6 +1153,7 @@
     var toggle=document.getElementById('benchToggle'),
         cta=document.getElementById('benchCta'),
         mock=document.getElementById('benchMock'),
+        wrap=document.getElementById('benchDemoBody'),
         closeBtn=document.getElementById('benchClose');
     if(!toggle) return;
     var open=false;
@@ -1148,6 +1161,8 @@
       open=o;
       mock.classList.toggle('frame-hidden',!o);
       closeBtn.classList.toggle('frame-hidden',!o);
+      wrap.classList.toggle('demo-fullscreen',o);
+      document.body.classList.toggle('demo-lock-scroll',o);
       toggle.setAttribute('aria-expanded',o?'true':'false');
       cta.textContent=o?'Close ✕':'Tap to try it →';
     }
