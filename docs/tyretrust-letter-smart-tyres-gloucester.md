@@ -121,7 +121,7 @@ into the screenshot:
 
 > **The build.** Already done. Pay what you think it was worth — or nothing, and I'll take it down.
 >
-> **Keeping it live.** £9.99 a month. Cancel anytime; the web address and files are yours.
+> **Keeping it live.** £9.99 a month, cancel anytime — walk away with the web address and files, no questions asked.
 >
 > **Changes.** Colours, wording, photos — tell me what's wrong and I'll fix it before it goes live.
 
