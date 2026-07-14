@@ -1039,6 +1039,10 @@
           <label for="ltChanges">Anything you'd change? <span class="lf-hint">— optional. Colours, wording, photos, anything</span></label>
           <textarea id="ltChanges" name="changes" rows="3"></textarea>
         </div>
+        <div class="field" id="priceWrap" hidden>
+          <label for="ltPrice">What would you pay to build it? <span class="lf-hint">— optional. As a guide, I'd say £150–£300 is a fair price for a site like this — but it's genuinely your call, and I won't argue.</span></label>
+          <input id="ltPrice" name="price" type="text" autocomplete="off">
+        </div>
         <button type="submit" class="btn btn-primary lf-submit" id="ltSubmit">Get yours built — free to look →</button>
         <p class="lf-note" id="lfNote">I'll build your site and email you a link within a few days. No calls unless you want one.</p>
         <p class="lf-error" id="ltError" hidden>Something went wrong — please try again, or <a href="mailto:nick@tyretrust.uk">email me directly</a>.</p>
@@ -1386,13 +1390,16 @@
 
       var changesEl=document.getElementById('ltChanges');
       var changes=changesEl?changesEl.value.trim():'';
+      var priceEl=document.getElementById('ltPrice');
+      var price=priceEl?priceEl.value.trim():'';
       var payload={
         fullName: document.getElementById('ltName').value.trim(),
         bizName:  document.getElementById('ltBiz').value.trim(),
         email:    document.getElementById('ltEmail').value.trim(),
         startOption: 'leave_it_with_me',
         details:  'Town: '+document.getElementById('ltTown').value.trim()+'\nWhat they do: '+document.getElementById('ltWhat').value
-                  +(changes?'\nChanges requested: '+changes:''),
+                  +(changes?'\nChanges requested: '+changes:'')
+                  +(price?'\nBuild price offered: '+price:''),
         source:   'tyretrust-landing-full'
       };
 
@@ -1568,6 +1575,8 @@
       // Built prospects are invited to ask for changes — give that a box of its own.
       var changeWrap=document.getElementById('changeWrap');
       if(changeWrap) changeWrap.hidden=false;
+      var priceWrap=document.getElementById('priceWrap');
+      if(priceWrap) priceWrap.hidden=false;
     }
 
     // --- Site-focused prospect: the page recommends The Site, not the Booking Engine ---
