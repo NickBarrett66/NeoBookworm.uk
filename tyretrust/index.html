@@ -151,14 +151,28 @@
   .browser-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
   .mock-tag{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;color:#8ea0b8;font-size:.72rem;font-weight:700;letter-spacing:.03em;white-space:nowrap}
   .mock-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
-  /* live-site facade: the prospect's own site, loaded inside the mock so they never leave this page */
-  .browser-view.live{aspect-ratio:10/13}
-  .browser-view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  /* live-site facade: the poster invites the tap, the site itself opens full-screen (see .siteover) */
   .hero-play{position:absolute;inset:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;color:#fff;font:inherit;font-weight:700;background:linear-gradient(180deg,rgba(11,18,26,.35),rgba(11,18,26,.78))}
   .hero-play[hidden]{display:none}
   .hero-play span{font-size:.95rem;text-shadow:0 1px 8px rgba(0,0,0,.5)}
   .hero-play small{font-weight:500;font-size:.78rem;color:#cfdaea}
   .hero-play .play-ring{width:56px;height:56px;border-radius:50%;background:var(--amber);color:#0b121a;display:grid;place-items:center;font-size:1.3rem;box-shadow:0 6px 22px rgba(0,0,0,.4)}
+
+  /* full-screen viewer for the prospect's own site — real width, real size, but never leaves this page */
+  .siteover{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;background:var(--navy)}
+  .siteover[hidden]{display:none}
+  .siteover-bar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,20px);background:#0c1219;border-bottom:1px solid rgba(255,255,255,.1);color:#e7eefb}
+  .siteover-bar .so-mark{width:26px;height:26px;flex:0 0 auto}
+  .siteover-bar b{font-size:.95rem;font-weight:800}
+  .siteover-bar .so-sub{flex:1;min-width:0;color:#9fb0c7;font-size:.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .so-close{flex:0 0 auto;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:.88rem;padding:10px 16px;border-radius:9px;background:var(--amber);color:#0b121a}
+  .so-close:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .siteover iframe{flex:1 1 auto;width:100%;border:0;background:#fff}
+  @media(max-width:520px){
+    .siteover-bar .so-sub{display:none}
+    .so-close{padding:10px 13px}
+  }
+  body.so-open{overflow:hidden}
 
   /* section shells */
   section{padding:clamp(52px,7vw,88px) 0}
@@ -495,8 +509,8 @@
           </picture>
           <button type="button" class="hero-play" id="heroPlay" hidden>
             <span class="play-ring" aria-hidden="true">▶</span>
-            <span>Tap to open your site here</span>
-            <small>It loads right here — you won't lose this page</small>
+            <span>Tap to open your site</span>
+            <small>Opens full screen — one tap brings you back here</small>
           </button>
         </div>
       </div>
@@ -962,6 +976,16 @@
   </div>
 </footer>
 
+<!-- Full-screen viewer for a built prospect's own site (populated + shown by the MAILSHOT script) -->
+<div class="siteover" id="siteOver" hidden role="dialog" aria-modal="true" aria-label="Your website">
+  <div class="siteover-bar">
+    <img class="so-mark" src="/tyretrust/images/logo-mark-120.webp" width="120" height="120" alt="" loading="lazy" decoding="async">
+    <b id="soTitle">Your site</b>
+    <span class="so-sub" id="soSub">Have a proper look around — nothing here is live until you say so.</span>
+    <button type="button" class="so-close" id="soClose">← Back to the offer</button>
+  </div>
+</div>
+
 <!-- JSON-LD -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebDesigner","name":"TyreTrust","description":"Websites built only for tyre fitters. Pay what you think it's worth, then £9.99/month.","areaServed":"South West England and Thames Valley","url":"https://tyretrust.uk/","email":"nick@tyretrust.uk"}
@@ -1343,22 +1367,35 @@
 
     // --- Built prospect: point the whole hero preview at THEIR site ---
     if(d.built && d.url){
-      // Their site loads INSIDE the hero mock — a new tab is a one-way door away from the offer.
-      var heroView=document.getElementById('heroView'), heroPlay=document.getElementById('heroPlay');
-      var frameLoaded=false;
+      // Their site opens FULL-SCREEN over this page — at the reader's own width, so it isn't
+      // crushed into the hero column, but a new tab never takes them away from the offer.
+      var over=document.getElementById('siteOver'), soClose=document.getElementById('soClose'),
+          heroPlay=document.getElementById('heroPlay'), lastFocus=null, overFrame=null;
+      var soTitle=document.getElementById('soTitle');
+      if(soTitle) soTitle.textContent=d.business;
+
+      var closeSite=function(){
+        if(!over || over.hidden) return;
+        over.hidden=true;
+        document.body.classList.remove('so-open');
+        if(lastFocus && lastFocus.focus) lastFocus.focus();
+      };
       var loadSite=function(){
-        if(frameLoaded || !heroView) return;
-        frameLoaded=true;
-        if(heroPlay) heroPlay.hidden=true;
-        heroView.classList.add('live');
-        var f=document.createElement('iframe');
-        f.src=d.url;
-        f.title=d.business+' — the website I built for you';
-        f.loading='lazy';
-        heroView.appendChild(f);
-        heroView.scrollIntoView({behavior:'smooth',block:'center'});
+        if(!over) return;
+        lastFocus=(document.activeElement && document.activeElement!==document.body) ? document.activeElement : heroPlay;
+        if(!overFrame){
+          overFrame=document.createElement('iframe');
+          overFrame.src=d.url;
+          overFrame.title=d.business+' — the website I built for you';
+          over.appendChild(overFrame);
+        }
+        over.hidden=false;
+        document.body.classList.add('so-open');
+        if(soClose) soClose.focus();
       };
       if(heroPlay){ heroPlay.hidden=false; heroPlay.addEventListener('click',loadSite); }
+      if(soClose) soClose.addEventListener('click',closeSite);
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSite(); });
 
       var cta=document.getElementById('heroCta');
       if(cta){ cta.setAttribute('href','#heroView'); cta.textContent='See your site →';
@@ -1377,7 +1414,7 @@
         if(source) source.srcset=base+'-mobile-485.webp';
       }
       var cap=document.getElementById('heroCaption');
-      if(cap) cap.innerHTML='A real, finished site I’ve built for '+escHtml(d.business)+' — it opens right here, so you keep this page.';
+      if(cap) cap.innerHTML='A real, finished site I’ve built for '+escHtml(d.business)+' — tap it to open it full screen, then come straight back.';
     }
 
     // --- Built prospect: neutralise the "I'll build you one" future tense through the body ---
