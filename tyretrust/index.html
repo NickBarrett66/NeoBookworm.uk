@@ -137,6 +137,8 @@
   .hero-secondary:hover{color:#fff}
   .hero-trust{display:flex;flex-wrap:wrap;gap:16px;font-size:.92rem;color:#a9bad2}
   .hero-trust span{display:inline-flex;align-items:center;gap:6px}
+  /* the component's own display would otherwise beat the [hidden] attribute */
+  .hero-trust span[hidden]{display:none}
   .tick{color:var(--green);font-weight:900}
 
   /* browser mock */
@@ -157,6 +159,8 @@
   .band-mist{background:var(--mist)}
   .lead{font-size:1.12rem;color:var(--muted);max-width:60ch}
   .band-dark .lead{color:#b8c6dc}
+  /* the How-it-works intro is a full-width lead-in above the cards, not a column of body text */
+  #how .lead{max-width:none}
 
   /* how it works strip */
   .how{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:14px}
@@ -497,7 +501,7 @@
     <div class="how">
       <div class="how-card"><div class="n">01</div><h3 id="howCard1Title">I build it first</h3><p id="howCard1Body">I put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you pay a penny.</p></div>
       <div class="how-card"><div class="n">02</div><h3>You have a look</h3><p id="howCard2Body">Try it on your phone. Book a fake slot. Change your mind about the colours. It's yours to shape — words, photos, layout.</p></div>
-      <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p>If you want to keep it, pay me what you think it's worth to build, then from £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
+      <div class="how-card"><div class="n">03</div><h3>Pay what it's worth</h3><p id="howCard3Body">If you want to keep it, pay me what you think it's worth to build, then from £9.99 a month to keep it live. Don't like it? No problem, no bill.</p></div>
     </div>
   </div>
 </section>
@@ -521,8 +525,8 @@
       </div>
       <div class="tier-section">
         <div>
-          <h4>A proper one-page site, built around your business</h4>
-          <p class="desc">Your services, the tyre brands you fit, real reviews, your area and a contact form — all on one tidy page, built to turn up when someone Googles "tyre fitting near me".</p>
+          <h4>A proper website, built around your business</h4>
+          <p class="desc">Your services, the tyre brands you fit, real reviews, your area and a contact form — all in one tidy place, built to turn up when someone Googles "tyre fitting near me".</p>
           <div class="who-cols">
             <div>
               <span class="who-label">For your customer</span>
@@ -835,7 +839,7 @@
     <div class="faq-list">
       <details class="faq-item">
         <summary>I've already got a Facebook page — why do I need a website too?</summary>
-        <div class="faq-a"><p>Facebook's good for photos and quick updates, but you don't own that page — Facebook does, and its algorithm decides who sees your posts. A website is yours, it's what turns up when someone Googles "tyre fitting near [your town]" rather than searches Facebook, and it still works for the customers who don't have an account. Most fitters end up running both — the website's usually what a stranger finds first.</p></div>
+        <div class="faq-a"><p id="faqFacebook">Facebook's good for photos and quick updates, but you don't own that page — Facebook does, and its algorithm decides who sees your posts. A website is yours, it's what turns up when someone Googles "tyre fitting near <span id="faqTown">your town</span>" rather than searches Facebook, and it still works for the customers who don't have an account. Most fitters end up running both — the website's usually what a stranger finds first.</p></div>
       </details>
       <details class="faq-item">
         <summary>What happens if I want to cancel?</summary>
@@ -1275,6 +1279,10 @@
     var townInBiz = d.business.toLowerCase().indexOf(d.town.toLowerCase()) !== -1;
     var hi = d.first ? d.first + ' — ' : '';
 
+    // --- FAQ: name their actual town in the Google-search example ---
+    var faqTown=document.getElementById('faqTown');
+    if(faqTown && d.town) faqTown.textContent=d.town;
+
     // --- Optional per-prospect "what you do" default (e.g. depot-only fitters) ---
     if(d.what){ var whatEl=document.getElementById('ltWhat'); if(whatEl) whatEl.value=d.what; }
 
@@ -1337,7 +1345,7 @@
       // Site-only pitch: drop the "book a fake slot" instruction (that's the booking tier, not The Site).
       setTxt('howCard2Body','Try it on your phone. Read it like one of your customers would. Change your mind about the colours. It’s yours to shape — words, photos, layout.');
       // The Site example → the prospect's own site; move the HE Tyres reference to the booking tier (that's what it is now).
-      setTxt('siteExample','The site at the top of this page is exactly this — a tidy one-page site I’ve built for ' + d.business + '.');
+      setTxt('siteExample','The site at the top of this page is exactly this — a tidy, proper website I’ve built for ' + d.business + '.');
       var bookEx=document.getElementById('bookExampleBox'); if(bookEx) bookEx.hidden=false;
       // Proof section: HE Tyres is no longer "the site at the top" (that's the prospect's now), and drop the booking pitch (Site-only).
       var pp1=document.getElementById('proofP1');
@@ -1390,6 +1398,8 @@
       if(bBlock) bBlock.style.display='none';
       var bookEx2=document.getElementById('bookExampleBox');
       if(bookEx2) bookEx2.hidden=true;
+      // Only one plan on this page, so there's no "from".
+      so('howCard3Body','If you want to keep it, pay me what you think it’s worth to build, then £9.99 a month to keep it live. Don’t like it? No problem, no bill.');
       so('menuTitle','What’s on your site.');
       so('menuLead','Everything below is already built into the site at the top of this page — have a look through, then tell me what you’d change.');
       // Pricing: one plan, centred, no tier language.
