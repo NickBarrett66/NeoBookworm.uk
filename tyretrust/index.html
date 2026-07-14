@@ -151,6 +151,14 @@
   .browser-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
   .mock-tag{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;color:#8ea0b8;font-size:.72rem;font-weight:700;letter-spacing:.03em;white-space:nowrap}
   .mock-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+  /* live-site facade: the prospect's own site, loaded inside the mock so they never leave this page */
+  .browser-view.live{aspect-ratio:10/13}
+  .browser-view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  .hero-play{position:absolute;inset:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;color:#fff;font:inherit;font-weight:700;background:linear-gradient(180deg,rgba(11,18,26,.35),rgba(11,18,26,.78))}
+  .hero-play[hidden]{display:none}
+  .hero-play span{font-size:.95rem;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+  .hero-play small{font-weight:500;font-size:.78rem;color:#cfdaea}
+  .hero-play .play-ring{width:56px;height:56px;border-radius:50%;background:var(--amber);color:#0b121a;display:grid;place-items:center;font-size:1.3rem;box-shadow:0 6px 22px rgba(0,0,0,.4)}
 
   /* section shells */
   section{padding:clamp(52px,7vw,88px) 0}
@@ -476,7 +484,7 @@
           <span class="browser-url" id="heroUrl">hetyres.co.uk</span>
           <span class="mock-tag">Live site</span>
         </div>
-        <div class="browser-view">
+        <div class="browser-view" id="heroView">
           <picture>
             <source id="heroShotSource" media="(max-width:860px)" srcset="/tyretrust/images/hero-hetyres-mobile-485.webp">
             <img class="browser-poster" id="heroShot"
@@ -485,6 +493,11 @@
                  sizes="560px"
                  width="900" height="844" alt="HE Tyres website homepage" loading="eager" fetchpriority="high" decoding="async">
           </picture>
+          <button type="button" class="hero-play" id="heroPlay" hidden>
+            <span class="play-ring" aria-hidden="true">▶</span>
+            <span>Tap to open your site here</span>
+            <small>It loads right here — you won't lose this page</small>
+          </button>
         </div>
       </div>
       <p id="heroCaption" style="font-size:.85rem;color:#9fb0c7;text-align:center;margin:12px 0 0">A real, working site I built for HE Tyres in Swindon, live at <b>hetyres.co.uk</b> — up the road from you.</p>
@@ -840,6 +853,18 @@
       <details class="faq-item">
         <summary>I've already got a Facebook page — why do I need a website too?</summary>
         <div class="faq-a"><p id="faqFacebook">Facebook's good for photos and quick updates, but you don't own that page — Facebook does, and its algorithm decides who sees your posts. A website is yours, it's what turns up when someone Googles "tyre fitting near <span id="faqTown">your town</span>" rather than searches Facebook, and it still works for the customers who don't have an account. Most fitters end up running both — the website's usually what a stranger finds first.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Will this put me at the top of Google?</summary>
+        <div class="faq-a"><p>Not overnight, and I won't pretend otherwise. It's a climb, not a switch. What the site does is give Google what it wants from a local business — your address, your hours, fast on a phone, no clutter — so you're eligible for "tyres near me" in a way a Facebook page isn't. Give it a few weeks and it starts doing that quiet work for you, and it keeps building the longer it's up.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Who owns it — and what happens to my web address?</summary>
+        <div class="faq-a"><p>You do, both of them. Your web address is registered in your name from day one — not mine — so even if you stop working with me, you keep it. Same with the site: the pages, words and photos are yours, and they're sent over if you ever leave. Nothing here is rented to you.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>How do I actually pay you?</summary>
+        <div class="faq-a"><p>Once you're happy with the site and you've told me what it's worth, I'll email you a payment link. You fill in your bank details once and it sets up a Direct Debit — the build price you decided comes out first, then £9.99 a month after that, so there's no invoice to remember and nothing to pay by hand. It's the same Direct Debit you'd set up for any supplier, and you can cancel it at any time, with me or through your bank. Nothing at all is taken until you say yes.</p></div>
       </details>
       <details class="faq-item">
         <summary>What happens if I want to cancel?</summary>
@@ -1318,9 +1343,28 @@
 
     // --- Built prospect: point the whole hero preview at THEIR site ---
     if(d.built && d.url){
+      // Their site loads INSIDE the hero mock — a new tab is a one-way door away from the offer.
+      var heroView=document.getElementById('heroView'), heroPlay=document.getElementById('heroPlay');
+      var frameLoaded=false;
+      var loadSite=function(){
+        if(frameLoaded || !heroView) return;
+        frameLoaded=true;
+        if(heroPlay) heroPlay.hidden=true;
+        heroView.classList.add('live');
+        var f=document.createElement('iframe');
+        f.src=d.url;
+        f.title=d.business+' — the website I built for you';
+        f.loading='lazy';
+        heroView.appendChild(f);
+        heroView.scrollIntoView({behavior:'smooth',block:'center'});
+      };
+      if(heroPlay){ heroPlay.hidden=false; heroPlay.addEventListener('click',loadSite); }
+
       var cta=document.getElementById('heroCta');
-      if(cta){ cta.setAttribute('href',d.url); cta.setAttribute('target','_blank'); cta.setAttribute('rel','noopener'); cta.textContent='See your site →'; }
-      var heroSec=document.getElementById('heroSecondary'); if(heroSec) heroSec.style.display='none';
+      if(cta){ cta.setAttribute('href','#heroView'); cta.textContent='See your site →';
+        cta.addEventListener('click',function(e){ e.preventDefault(); loadSite(); }); }
+      var heroSec=document.getElementById('heroSecondary');
+      if(heroSec){ heroSec.setAttribute('href',d.url); heroSec.setAttribute('target','_blank'); heroSec.setAttribute('rel','noopener'); heroSec.textContent='Open it full size ↗'; }
       // Price note sits directly under the CTA; drop the duplicate line from the trust strip below.
       var note=document.getElementById('heroNote'); if(note) note.hidden=false;
       var trustBuild=document.getElementById('heroTrustBuild'); if(trustBuild) trustBuild.hidden=true;
@@ -1333,7 +1377,7 @@
         if(source) source.srcset=base+'-mobile-485.webp';
       }
       var cap=document.getElementById('heroCaption');
-      if(cap) cap.innerHTML='A real, finished site I’ve built for '+escHtml(d.business)+' — click <b>See your site</b> to open it.';
+      if(cap) cap.innerHTML='A real, finished site I’ve built for '+escHtml(d.business)+' — it opens right here, so you keep this page.';
     }
 
     // --- Built prospect: neutralise the "I'll build you one" future tense through the body ---
