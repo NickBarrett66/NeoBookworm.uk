@@ -456,8 +456,8 @@
       </div>
       <a class="hero-secondary" id="heroSecondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
-        <span><i class="tick">✓</i> £0 to build — pay what you think it's worth</span>
-        <span><i class="tick">✓</i> from £9.99/mo, cancel at any time</span>
+        <span><i class="tick">✓</i> You set the price — pay what you think it's worth</span>
+        <span id="heroTrustMo"><i class="tick">✓</i> from £9.99/mo, cancel at any time</span>
         <span><i class="tick">✓</i> No agency, no jargon</span>
       </div>
     </div>
@@ -1284,12 +1284,18 @@
     // --- Hero subhead: business name only ever appears as a label, so odd names still parse ---
     var sub=document.getElementById('heroSub');
     if(sub) sub.textContent = d.built
-      ? 'This is a real, finished website I’ve built for ' + d.business + ' — not a mock-up, the actual pages. Have a proper click around, then tell me what you’d change. It only goes live when you’re happy with it.'
+      ? 'This is a real, finished website I’ve built for ' + d.business + ' — not a mock-up, the actual pages. Have a proper click around, then tell me what you’d change. It only goes live if you’re happy with it.'
       : 'Here’s a real tyre site, live and taking bookings right now. Picture the same thing wearing the ' + d.business + ' name — I’ll build it for you, free to look at.';
 
     // --- Optional form heading tailoring ---
     var formTitle=document.getElementById('heroFormTitle');
     if(formTitle && !d.built) formTitle.textContent = 'Want to see one wearing the ' + d.business + ' name?';
+
+    // --- Site-focus prospects: the site plan is the only price, so no "from" ---
+    if(d.focus==='site'){
+      var trustMo=document.getElementById('heroTrustMo');
+      if(trustMo) trustMo.innerHTML='<i class="tick">✓</i> £9.99/mo, cancel at any time';
+    }
 
     // --- Built prospect: point the whole hero preview at THEIR site ---
     if(d.built && d.url){
