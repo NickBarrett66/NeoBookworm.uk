@@ -132,6 +132,7 @@
   .hero h1 em{font-style:normal;color:var(--amber);font-weight:900}
   .hero-sub{font-size:1.16rem;color:#c3d0e2;max-width:33ch}
   .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 14px}
+  .hero-note{color:var(--amber);font-size:.95rem;font-weight:700;margin:0 0 18px}
   .hero-secondary{display:inline-block;color:#c3d0e2;font-size:.95rem;font-weight:700;margin:0 0 18px}
   .hero-secondary:hover{color:#fff}
   .hero-trust{display:flex;flex-wrap:wrap;gap:16px;font-size:.92rem;color:#a9bad2}
@@ -454,9 +455,10 @@
       <div class="hero-actions">
         <a class="btn btn-primary" id="heroCta" href="#see-yours">Get yours built — free to look</a>
       </div>
+      <p class="hero-note" id="heroNote" hidden>You set the build price — pay what you think it's worth.</p>
       <a class="hero-secondary" id="heroSecondary" href="#see-it">See it working →</a>
       <div class="hero-trust">
-        <span><i class="tick">✓</i> You set the price — pay what you think it's worth</span>
+        <span id="heroTrustBuild"><i class="tick">✓</i> You set the price — pay what you think it's worth</span>
         <span id="heroTrustMo"><i class="tick">✓</i> from £9.99/mo, cancel at any time</span>
         <span><i class="tick">✓</i> No agency, no jargon</span>
       </div>
@@ -1309,6 +1311,9 @@
       var cta=document.getElementById('heroCta');
       if(cta){ cta.setAttribute('href',d.url); cta.setAttribute('target','_blank'); cta.setAttribute('rel','noopener'); cta.textContent='See your site →'; }
       var heroSec=document.getElementById('heroSecondary'); if(heroSec) heroSec.style.display='none';
+      // Price note sits directly under the CTA; drop the duplicate line from the trust strip below.
+      var note=document.getElementById('heroNote'); if(note) note.hidden=false;
+      var trustBuild=document.getElementById('heroTrustBuild'); if(trustBuild) trustBuild.hidden=true;
       var urlEl=document.getElementById('heroUrl');
       if(urlEl && d.urlLabel) urlEl.textContent=d.urlLabel;
       if(d.shot){
