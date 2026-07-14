@@ -161,16 +161,18 @@
   /* full-screen viewer for the prospect's own site — real width, real size, but never leaves this page */
   .siteover{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;background:var(--navy)}
   .siteover[hidden]{display:none}
-  .siteover-bar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,20px);background:#0c1219;border-bottom:1px solid rgba(255,255,255,.1);color:#e7eefb}
-  .siteover-bar .so-mark{width:26px;height:26px;flex:0 0 auto}
-  .siteover-bar b{font-size:.95rem;font-weight:800}
-  .siteover-bar .so-sub{flex:1;min-width:0;color:#9fb0c7;font-size:.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .so-close{flex:0 0 auto;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:.88rem;padding:10px 16px;border-radius:9px;background:var(--amber);color:#0b121a}
+  .siteover-bar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:5px clamp(10px,3vw,18px);background:#0c1219;border-bottom:1px solid rgba(255,255,255,.1);color:#e7eefb}
+  .siteover-bar .so-mark{width:20px;height:20px;flex:0 0 auto}
+  .siteover-bar b{font-size:.85rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .siteover-bar .so-sub{flex:1;min-width:0;color:#9fb0c7;font-size:.78rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .so-close{position:relative;flex:0 0 auto;margin-left:auto;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:.82rem;line-height:1.2;padding:7px 13px;border-radius:7px;background:var(--amber);color:#0b121a}
+  /* the bar stays slim, but the thumb target doesn't: extend the hit area past the button box */
+  .so-close::after{content:"";position:absolute;inset:-8px -6px}
   .so-close:focus-visible{outline:3px solid #fff;outline-offset:2px}
   .siteover iframe{flex:1 1 auto;width:100%;border:0;background:#fff}
   @media(max-width:520px){
     .siteover-bar .so-sub{display:none}
-    .so-close{padding:10px 13px}
+    .so-close{padding:7px 11px}
   }
   body.so-open{overflow:hidden}
 
