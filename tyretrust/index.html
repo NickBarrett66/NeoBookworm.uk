@@ -347,6 +347,8 @@
   .tiers-note{text-align:center;margin:24px auto 0;color:var(--muted);font-size:.93rem;max-width:60ch}
   @media(max-width:860px){.tiers{grid-template-columns:1fr}}
   @media(max-width:620px){.plans{grid-template-columns:1fr}}
+  /* Site-only prospects: one plan, centred */
+  .plans.plans-single{grid-template-columns:1fr;max-width:400px}
 
   /* proof */
   .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
@@ -505,9 +507,9 @@
   <div class="container">
     <div class="center">
       <span class="eyebrow">Feature by feature</span>
-      <h2>Everything a tyre fitter needs — nothing they don't.</h2>
+      <h2 id="menuTitle">Everything a tyre fitter needs — nothing they don't.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Here's what you get, plan by plan — starting simple and building up. The booking demo is live, so have a play.</p>
+      <p class="lead center" id="menuLead" style="margin:18px auto 0">Here's what you get, plan by plan — starting simple and building up. The booking demo is live, so have a play.</p>
     </div>
 
     <!-- THE SITE -->
@@ -545,7 +547,7 @@
     </div>
 
     <!-- THE BOOKING ENGINE -->
-    <div class="tier-block">
+    <div class="tier-block" id="bookingBlock">
       <div class="tier-block-head">
         <span class="price-tag">Steps up to <b>The Booking Engine</b> · £19.99/mo</span>
         <h3>A booking system that runs itself</h3>
@@ -750,9 +752,9 @@
   <div class="container">
     <div class="center">
       <span class="eyebrow">The offer</span>
-      <h2>Pick a plan. You set the build price.</h2>
+      <h2 id="pricingTitle">Pick a plan. You set the build price.</h2>
       <div class="accent-bar"></div>
-      <p class="lead center" style="margin:18px auto 0">Both plans work the same way: I build it first, then you decide what to pay — less if money's tight, or if you honestly don't think it's worth it, I won't argue. After that, just a small monthly fee to keep it live. Cancel any time, and your web address and files are always yours to keep.</p>
+      <p class="lead center" id="pricingLead" style="margin:18px auto 0">Both plans work the same way: I build it first, then you decide what to pay — less if money's tight, or if you honestly don't think it's worth it, I won't argue. After that, just a small monthly fee to keep it live. Cancel any time, and your web address and files are always yours to keep.</p>
       <p class="lead center" id="pricingWhy" style="margin:14px auto 0">Why so generous? I'm getting my first few tyre sites live, and I'd rather yours was out there working than sitting on my server. Once those first sites are up and speaking for themselves, new builds move to fixed prices — if you're reading this from my letter, you're early.</p>
     </div>
 
@@ -818,7 +820,7 @@
       <a class="btn btn-primary" id="pricingCta" href="#see-yours">Get yours built — free to look</a>
     </div>
 
-    <p class="tiers-note">Not sure? Start with The Site — you can add booking any time, no rebuild needed.</p>
+    <p class="tiers-note" id="tiersNote">Not sure? Start with The Site — you can add booking any time, no rebuild needed.</p>
   </div>
 </section>
 
@@ -1252,7 +1254,7 @@
       "tyre-fit-uk":{business:"Tyre Fit UK",town:"Gloucester",first:""},
       "emergency-tyres-24-7":{business:"Emergency Tyres 24/7",town:"Gloucester",first:""},
       "247-mobile-tyres-glos":{business:"24/7 Mobile Tyres Gloucestershire",town:"Cheltenham",first:""},
-      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"Jiri",built:true,focus:"site",url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage",what:"Depot only"},
+      "smart-tyres-gloucester":{business:"Smart Tyres Gloucester",town:"Gloucester",first:"Jiri",built:true,focus:"site",siteOnly:true,url:"/smart-tyres-gloucester/",urlLabel:"smart-tyres-gloucester",shot:"hero-smarttyres",alt:"Smart Tyres Gloucester website homepage",what:"Depot only"},
       "greatfield-tyres":{business:"Greatfield Tyres",town:"Cheltenham",first:""},
       "get-grip-tyres":{business:"Get Grip Tyres and Auto Body Repairs",town:"Cheltenham",first:""},
       "cheltenham-truck-tyres":{business:"Cheltenham Truck Tyre Services",town:"Cheltenham",first:""},
@@ -1376,6 +1378,33 @@
       }
       var aside=document.getElementById('bookingAside');
       if(aside) aside.hidden=false;
+    }
+
+    // --- Site-only prospect: one offer on the page. The Booking Engine is removed entirely
+    // (block, demos and plan card) and survives as a single "you can add it later" line.
+    // Runs last so it overrides the built/focus copy above. ---
+    if(d.siteOnly){
+      var so=function(id,txt){ var el=document.getElementById(id); if(el) el.textContent=txt; };
+      // Feature menu: drop the whole Booking Engine tier (booking, reminders and bench demos).
+      var bBlock=document.getElementById('bookingBlock');
+      if(bBlock) bBlock.style.display='none';
+      var bookEx2=document.getElementById('bookExampleBox');
+      if(bookEx2) bookEx2.hidden=true;
+      so('menuTitle','What’s on your site.');
+      so('menuLead','Everything below is already built into the site at the top of this page — have a look through, then tell me what you’d change.');
+      // Pricing: one plan, centred, no tier language.
+      var pBook2=document.getElementById('planBooking');
+      if(pBook2) pBook2.style.display='none';
+      var plans=document.querySelector('.plans');
+      if(plans) plans.classList.add('plans-single');
+      var tnum=document.querySelector('#planSite .tnum');
+      if(tnum) tnum.style.display='none';
+      var pop2=document.getElementById('planPop');
+      if(pop2) pop2.textContent='Yours';
+      so('pricingTitle','One site. You set the build price.');
+      so('pricingLead','I build it first, then you decide what to pay — less if money’s tight, or if you honestly don’t think it’s worth it, I won’t argue. After that, £9.99 a month to keep it live. Cancel any time, and your web address and files are always yours to keep.');
+      so('tiersNote','If you ever want customers booking online, that can be bolted on later — no rebuild needed. Plenty of walk-in depots never need it, and that’s fine.');
+      so('faqCancel','No exit fee, just a month’s notice. The site is yours — the pages, words and photos are sent over, and your web address is transferred into your name if I registered it.');
     }
 
     // Pre-fill the lead form with what the mailshot already knows — still fully editable,
