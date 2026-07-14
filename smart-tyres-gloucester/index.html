@@ -89,13 +89,8 @@
     .btn-outline{border:1.5px solid #58514a;color:#fff}
     .btn-outline:hover{border-color:var(--orange);color:var(--orange)}
 
-    /* mobile-only hero proof tiles + short copy (see @media below) */
-    .show-sm,.hero-proof,.btn-directions{display:none}
-    .hero-proof{grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
-    .hero-proof div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
-      border-radius:12px;padding:12px 14px}
-    .hero-proof b{display:block;font-size:1.15rem;color:#fff;line-height:1.2}
-    .hero-proof span{display:block;margin-top:3px;font-size:.78rem;color:#c9c1b7;font-weight:600}
+    /* mobile-only short copy (see @media below) */
+    .show-sm,.btn-directions{display:none}
 
     /* ── trust strip ── */
     .trust{background:var(--orange);color:#fff}
@@ -214,7 +209,6 @@
       .hero-ctas{margin-top:18px;gap:10px}
       .hero-ctas .btn{flex:1 1 100%;justify-content:center;padding:14px 18px}
       .btn-directions{display:inline-flex}
-      .hero-proof{display:grid}
     }
   </style>
 </head>
@@ -243,10 +237,6 @@
         <p class="hero-sub"><span class="hide-sm">Over a thousand part-worn tyres in stock, fully checked before they
           go on your car, alongside new tyres if that's what you're after. Drop in to the depot
           on Hempsted Lane — no appointment needed for most jobs.</span><span class="show-sm">Checked before they go on your car. Drop in to the depot on Hempsted Lane — no appointment needed for most jobs.</span></p>
-        <div class="hero-proof">
-          <div><b>⭐ 4.9</b><span>184 Google reviews</span></div>
-          <div><b>1,000+</b><span>Part-worn tyres in stock</span></div>
-        </div>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="tel:01452690710">📞 Call 01452 690710</a>
           <a class="btn btn-outline btn-directions" href="#find-us">📍 Directions to the depot</a>
