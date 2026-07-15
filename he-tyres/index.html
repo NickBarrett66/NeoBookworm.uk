@@ -1494,6 +1494,9 @@
   <!-- Cookie banner + GA4 — idle load so it does not compete with first paint -->
   <script defer>
     (function () {
+      // HE Tyres' own GA4 property — must be set before /cookieconsent-config.js
+      // (which imports analytics-consent.js) evaluates, or it falls back to NeoBookworm's.
+      window.__NB_GA_ID = 'G-BZZZSZPZCB';
       function loadCookies() {
         var s = document.createElement('script');
         s.type = 'module';
