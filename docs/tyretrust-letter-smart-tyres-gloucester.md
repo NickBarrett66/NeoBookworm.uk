@@ -77,7 +77,7 @@ Here's the deal, and I've made it as easy to say yes to as I know how:
 
 **It's already built.** Turn this page over, point your phone camera at the code, and look it over right now. Your site's at the top of the page it opens, with what it costs underneath. If it's not for you, close the tab — no bill, no obligation.
 
-**You set the price.** If you want to keep it, you decide what the build was worth. As a guide, £150–£300 is a fair starting point — but pay less if money's tight, or if you honestly don't think it's worth that. I won't argue. To keep it live on your own web address, it's £9.99 a month, cancel anytime, and the address and the files are yours to walk away with.
+**You set the price.** If you want to keep it, you decide what the build was worth. As a guide, £150–£300 is a fair starting point — but pay less if money's tight, or if you honestly don't think it's worth that. I won't argue. That build is a one-off payment, made once you're happy; then it's £9.99 a month to keep it live on your own web address, cancel anytime. The address and the files are yours to walk away with.
 
 Regards,
 Nick Barrett
@@ -121,7 +121,7 @@ into the screenshot:
 
 > **The build.** Already done. Pay what you think it was worth — or nothing, and I'll take it down.
 >
-> **Keeping it live.** £9.99 a month, cancel anytime — walk away with the web address and files, no questions asked.
+> **Keeping it live.** A one-off payment for the build (you set it), then £9.99 a month, cancel anytime — walk away with the web address and files, no questions asked.
 >
 > **Changes.** Colours, wording, photos — tell me what's wrong and I'll fix it before it goes live.
 
