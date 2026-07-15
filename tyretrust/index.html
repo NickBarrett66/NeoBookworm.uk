@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TyreTrust — Websites built only for tyre fitters</title>
-<meta name="description" content="A working website made only for tyre fitters. See a real one running for HE Tyres, try the booking and reg look-up live, then pay me what you think it's worth. Take a look.">
+<meta name="description" content="A working website made only for tyre fitters. See a real one I built for HE Tyres in Swindon, try the live booking demo, then pay me what you think it's worth. Take a look.">
 <link rel="canonical" href="https://tyretrust.uk/">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tyretrust.uk/">
 <meta property="og:title" content="TyreTrust — Websites built only for tyre fitters">
-<meta property="og:description" content="See a real, working website for a tyre fitter. Try the booking and reg look-up yourself. Pay what you think it's worth.">
+<meta property="og:description" content="See a real, working website I built for a tyre fitter. Try the live booking demo yourself. Pay what you think it's worth.">
 <meta property="og:image" content="https://tyretrust.uk/tyretrust/og.webp">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -481,7 +481,7 @@
     <div>
       <span class="eyebrow">For tyre fitters — and only tyre fitters</span>
       <h1 id="heroTitle">The website that <em>works</em> while you're under the car.</h1>
-      <p class="hero-sub" id="heroSub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and taking bookings right now. Try it, then imagine it wearing your business name.</p>
+      <p class="hero-sub" id="heroSub">Tyre fitting is what I've specialised in — proper websites built around how your trade actually works. Here's a real one, live and working right now. Try it, then imagine it wearing your business name.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" id="heroCta" href="#see-yours">Get yours built — free to look</a>
       </div>
@@ -613,7 +613,7 @@
           </div>
         </div>
         <div class="book-right">
-        <div class="demo-box" id="bookExampleBox" style="margin:0 0 18px" hidden><label>See it running live</label><p style="margin:0;font-size:.95rem;color:var(--body)">HE Tyres in Swindon are running this for real — see it at <b>hetyres.co.uk</b>, with booking bolted straight onto their site.</p></div>
+        <div class="demo-box" id="bookExampleBox" style="margin:0 0 18px" hidden><label>See it working</label><p style="margin:0;font-size:.95rem;color:var(--body)">This is the real booking system — the same one you'd get. Have a go with the live demo just below; nothing here books a real slot.</p></div>
         <div class="try-panel" id="bookPanel">
           <button class="try-head" id="bookToggle" type="button" aria-expanded="false" aria-controls="bookBody">
             <span class="try-head-l"><span class="pulse"></span> Booking demo</span>
@@ -760,7 +760,7 @@
         <span class="eyebrow">Who you'd be dealing with</span>
         <h2>It started with one good tyre business.</h2>
         <p id="proofP1">HE Tyres in Swindon are my first tyre customer, and the reason TyreTrust exists. I walked in as a customer and got looked after properly — coffee on, comfy lounge, a screen showing me exactly what was happening with my car. A business run that well deserved a website to match, so I built them one. It's the site at the top of this page — live at <b>hetyres.co.uk</b> if you want to see it for yourself.</p>
-        <p id="proofP2">They're now trying out the online booking alongside it — early days, but working. I'd rather get a second business running it for real than keep tweaking it on my own, which is exactly why you set the build price.</p>
+        <p id="proofP2">I'd rather get a second good tyre business online and out there working than keep polishing sites on my own — which is exactly why, for these first few, you set the build price yourself.</p>
         <p>I'm Nick — I'm building my thing the same way you built yours: one honest job at a time. I'm based in Swindon — a name and a place, not a faceless agency in a call centre.</p>
       </div>
       <div>
@@ -1355,7 +1355,7 @@
     var sub=document.getElementById('heroSub');
     if(sub) sub.textContent = d.built
       ? 'This is a real, finished website I’ve built for ' + d.business + ' — not a mock-up, the actual pages. Have a proper click around, then tell me what you’d change. It only goes live if you’re happy with it.'
-      : 'Here’s a real tyre site, live and taking bookings right now. Picture the same thing wearing the ' + d.business + ' name — I’ll build it for you, free to look at.';
+      : 'Here’s a real tyre site, live and working right now. Picture the same thing wearing the ' + d.business + ' name — I’ll build it for you, free to look at.';
 
     // --- Optional form heading tailoring ---
     var formTitle=document.getElementById('heroFormTitle');
@@ -1427,7 +1427,7 @@
       setTxt('howCard1Body','I’ve put together a real site for your tyre business — services, brands, reviews, contact, the lot — before you’ve paid a penny.');
       // Site-only pitch: drop the "book a fake slot" instruction (that's the booking tier, not The Site).
       setTxt('howCard2Body','Try it on your phone. Read it like one of your customers would. Change your mind about the colours. It’s yours to shape — words, photos, layout.');
-      // The Site example → the prospect's own site; move the HE Tyres reference to the booking tier (that's what it is now).
+      // The Site example → the prospect's own site. The booking box just points at the live demo (no real site runs booking yet).
       setTxt('siteExample','The site at the top of this page is exactly this — a tidy, proper website I’ve built for ' + d.business + '.');
       var bookEx=document.getElementById('bookExampleBox'); if(bookEx) bookEx.hidden=false;
       // Proof section: HE Tyres is no longer "the site at the top" (that's the prospect's now), and drop the booking pitch (Site-only).
