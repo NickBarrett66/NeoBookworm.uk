@@ -151,8 +151,6 @@
     }
     .hero-pill-hot  { background: var(--orange); color: var(--navy); border-color: var(--orange); }
     .hero-pill-hot:hover { background: var(--orange-h); border-color: var(--orange-h); }
-    .hero-pill-mid  { background: #fff; color: var(--navy); border-color: #fff; }
-    .hero-pill-mid:hover { background: #edf0f4; border-color: #edf0f4; }
     .hero-pill-cool { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
     .hero-pill-cool:hover { border-color: #fff; }
 
@@ -559,118 +557,6 @@
     .faq-item[open] .chev { transform: rotate(180deg); }
     .faq-a { padding: 0 1.5rem 1.25rem; color: var(--muted); font-size: .95rem; }
 
-    /* ══════════════ BOOK ══════════════ */
-    #book { scroll-margin-top: 4.75rem; }
-    .book { padding: 5rem 1.25rem; background: #fff; }
-    .book-trigger-wrap { text-align: center; padding-top: 1rem; }
-    .book-embed {
-      display: none; width: min(80vw, 100%);
-      margin: 1.5rem auto 0; border-radius: 10px; overflow: hidden;
-      border: 1.5px solid var(--border);
-    }
-    #bookIframe {
-      display: block; width: 100%; height: 70vh; max-height: calc(100dvh - 10rem);
-      border: 0;
-    }
-    .book-embed.open { display: block; animation: bookFadeIn .35s ease; }
-    /* Desktop: when calendar is open, fit heading + full Koalendar in one viewport */
-    @media (min-width: 901px) {
-      #book.is-open {
-        padding: 1rem 1.25rem .75rem;
-        height: calc(100dvh - 4.75rem);
-        max-height: calc(100dvh - 4.75rem);
-        box-sizing: border-box;
-      }
-      #book.is-open .container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-      }
-      #book.is-open .title-block {
-        margin-bottom: .35rem;
-        flex-shrink: 0;
-      }
-      #book.is-open .title-block .section-sub,
-      #book.is-open .title-block .accent-bar,
-      #book.is-open .book-trigger-wrap { display: none; }
-      #book.is-open .book-embed.open {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: none;
-        margin: 0;
-      }
-      #book.is-open #bookIframe {
-        flex: 1;
-        height: 100%;
-        min-height: 0;
-        max-height: none;
-      }
-    }
-    /* Mobile: full-viewport calendar — avoids Koalendar sitting below the fold on iPhone */
-    @media (max-width: 900px) {
-      body.book-calendar-open { overflow: hidden; }
-      #book.is-open {
-        position: fixed;
-        inset: 0;
-        z-index: 1100;
-        padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
-        height: 100dvh;
-        max-height: 100dvh;
-        box-sizing: border-box;
-        overflow: hidden;
-        scroll-margin-top: 0;
-      }
-      #book.is-open .container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        max-width: none;
-        padding: 0;
-      }
-      #book.is-open .title-block,
-      #book.is-open .book-trigger-wrap { display: none; }
-      #book.is-open .book-embed.open {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: none;
-        margin: 0;
-        border-radius: 0;
-        border: none;
-      }
-      #book.is-open #bookIframe {
-        flex: 1;
-        height: 100%;
-        min-height: 0;
-        max-height: none;
-      }
-    }
-    @keyframes bookFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    .book-close-btn {
-      display: flex; align-items: center; justify-content: flex-end; gap: .4rem;
-      width: 100%; background: var(--light); border: none; border-bottom: 1px solid var(--border);
-      padding: .65rem 1.1rem; font-family: 'Open Sans', sans-serif; font-size: .85rem;
-      font-weight: 600; color: var(--muted); cursor: pointer;
-    }
-    .book-close-btn:hover { color: var(--navy); background: var(--border); }
-    .book-success {
-      display: none; text-align: center; padding: 2.5rem 2rem; background: var(--orange-soft);
-      border: 2px solid var(--orange); border-radius: 10px; margin-top: 2rem;
-    }
-    .book-success.show { display: block; }
-    .book-success .success-icon { font-size: 2.5rem; line-height: 1; margin-bottom: .75rem; }
-    .book-success p { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 1.25rem; }
-    .book-note { text-align: center; margin-top: 1.25rem; font-size: .9rem; color: var(--muted); }
-    .book-note a { color: var(--navy); text-decoration: none; font-weight: 600; }
-    .book-note a:hover { text-decoration: underline; }
-
     /* ══════════════ FOOTER ══════════════ */
     footer { background: var(--navy-deep); color: #c7cdd8; padding: 2.5rem 1.25rem; border-top: 3px solid var(--orange); }
     .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
@@ -705,7 +591,7 @@
     @media (max-width: 639px) { .nb-credit { display: none; } }
 
     /* Skip layout work for below-fold sections until they scroll near */
-    .services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us {
+    .services, .brands, .lounge, .gallery, .team, .reviews, .coverage, .find-us {
       content-visibility: auto;
       contain-intrinsic-size: auto 480px;
     }
@@ -758,12 +644,11 @@
         <a href="#services">Services</a>
         <a href="#brands">Brands</a>
         <a href="#lounge">HEhub</a>
-        <a href="#book">Book</a>
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
       </nav>
       <a href="tel:01793876969" class="header-phone">01793 876 969</a>
-      <a href="#book" class="btn-header" data-open-book>Book fitting</a>
+      <a href="tel:01793876969" class="btn-header">Call now</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -785,7 +670,6 @@
           </p>
           <div class="hero-ctas">
             <a href="tel:01793876969" class="hero-pill hero-pill-hot">📞 Call 01793 876 969</a>
-            <a href="#book" class="hero-pill hero-pill-mid" data-open-book>📅 Book fitting</a>
             <a href="#contact" class="hero-pill hero-pill-cool" data-select-enquiry="general">💬 Get a quote</a>
           </div>
         </div>
@@ -799,7 +683,6 @@
         <span class="trust-item"><span aria-hidden="true">🛞</span> Continental &amp; Bridgestone stockist</span>
         <span class="trust-item"><span aria-hidden="true">🚐</span> Mobile + depot</span>
         <span class="trust-item"><span aria-hidden="true">📡</span> TPMS specialists</span>
-        <span class="trust-item"><span aria-hidden="true">📅</span> Book online — depot or mobile</span>
       </div>
     </div>
 
@@ -825,7 +708,7 @@
             <img src="images/lounge-icon.webp" alt="" class="service-img" width="800" height="800" loading="lazy" aria-hidden="true">
             <div class="svc-body">
               <h3>Depot fitting + HEhub</h3>
-              <p>Drop in to our Westmead depot, relax in the HEhub with a coffee and watch the work on the screen. Book your slot online in seconds.</p>
+              <p>Drop in to our Westmead depot, relax in the HEhub with a coffee and watch the work on the screen. Give us a call and we'll fit you in.</p>
               <span class="service-more">See more →</span>
             </div>
           </button>
@@ -883,36 +766,7 @@
           <div class="accent-bar"></div>
           <p>Most tyre places hide the work away in a back room. We don't. Settle into the HEhub, help yourself to a coffee, and watch your car on the workshop screen while we fit your tyres.</p>
           <p>You see what we see. We explain what we find and why — so you drive away knowing the job was done properly. It's the way we'd want to be treated ourselves.</p>
-          <a href="#book" class="btn-orange" style="margin-top:1.75rem;display:inline-block;" data-open-book>Book fitting</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ BOOK ══ -->
-    <section class="book" id="book" aria-labelledby="book-heading">
-      <div class="container">
-        <div class="title-block">
-          <h2 class="section-title" id="book-heading">Book your fitting</h2>
-          <p class="section-sub">Depot slot or mobile visit — pick what suits you. Depot slots are confirmed instantly; we'll call to arrange mobile.</p>
-          <div class="accent-bar"></div>
-        </div>
-        <div class="book-trigger-wrap">
-          <button class="btn-orange" id="bookOpenBtn">Book fitting →</button>
-          <p class="book-note">Rather call? Ring <a href="tel:01793876969">01793 876 969</a> and Ema will sort a time that suits.</p>
-        </div>
-        <div class="book-embed" id="bookEmbed" aria-hidden="true">
-          <button class="book-close-btn" id="bookCloseBtn" aria-label="Close booking calendar">✕ Close booking calendar</button>
-          <iframe
-            id="bookIframe"
-            title="Book fitting"
-            src="about:blank"
-            data-src="https://neobookworm-booking.nickbarrett.workers.dev/hetyres">
-          </iframe>
-        </div>
-        <div class="book-success" id="bookSuccess" aria-live="polite">
-          <div class="success-icon" aria-hidden="true">✅</div>
-          <p>Booked! We'll see you at the depot. Check your email for the confirmation and calendar invite.</p>
-          <button class="btn-orange" id="bookAnotherBtn">Book another slot</button>
+          <a href="tel:01793876969" class="btn-orange" style="margin-top:1.75rem;display:inline-block;">Call to book — 01793 876 969</a>
         </div>
       </div>
     </section>
@@ -1065,10 +919,6 @@
         </div>
         <div class="faq-list">
           <details class="faq-item">
-            <summary class="faq-q">Can I book a depot appointment online? <span class="chev" aria-hidden="true">▾</span></summary>
-            <div class="faq-a">Yes — use the booking calendar on this page to pick a half-hour slot. You'll get an instant confirmation and a calendar invite straight to your phone. If you'd rather just call, Ema is on 01793 876 969.</div>
-          </details>
-          <details class="faq-item">
             <summary class="faq-q">Do you come to me? <span class="chev" aria-hidden="true">▾</span></summary>
             <div class="faq-a">Yes — our mobile service covers around 15 miles of Swindon. We'll fit at your home, your workplace or at the roadside. Prefer to drop in? You're very welcome at the depot.</div>
           </details>
@@ -1124,7 +974,7 @@
 
         <div class="contact-form">
           <h3>Ask a question</h3>
-          <p class="lead">Ready to book? Use <a href="#book" data-open-book>Book fitting</a> above — it covers both depot and mobile visits. Just after a price or have a question first? Send it here and we'll get straight back.</p>
+          <p class="lead">Ready to book? Give us a call on <a href="tel:01793876969">01793 876 969</a> and we'll sort a time that suits. Just after a price or have a question first? Send it here and we'll get straight back.</p>
           <form id="enquiryForm" novalidate>
             <div class="form-hp" aria-hidden="true">
               <label for="enquiry-website">Website</label>
@@ -1179,7 +1029,6 @@
           <a href="#services">Services</a>
           <a href="#brands">Brands</a>
           <a href="#lounge">HEhub</a>
-          <a href="#book">Book</a>
           <a href="#reviews">Reviews</a>
           <a href="#contact">Contact</a>
           <a href="/he-tyres/privacy.html">Privacy</a>
@@ -1210,7 +1059,7 @@
         <li>Punctures, replacements and runflats</li>
         <li>TPMS checked and reset on the spot</li>
       </ul>
-      <div class="svc-foot"><a href="#book" class="btn-orange" data-close data-open-book>Book mobile fitting</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close data-select-enquiry="general" style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
     </div>
   </dialog>
   <dialog class="svc" id="m-depot">
@@ -1228,7 +1077,7 @@
         <li>We talk you through what we find and why</li>
         <li>Quick turnaround, fair prices</li>
       </ul>
-      <div class="svc-foot"><a href="#book" class="btn-orange" data-close data-open-book>Book a depot slot</a><a href="tel:01793876969" class="btn-ghost" style="color:var(--navy);border-color:var(--border)">Call 01793 876 969</a></div>
+      <div class="svc-foot"><a href="tel:01793876969" class="btn-orange">Call 01793 876 969</a><a href="#contact" class="btn-ghost" data-close data-select-enquiry="general" style="color:var(--navy);border-color:var(--border)">Get a quote</a></div>
     </div>
   </dialog>
   <dialog class="svc" id="m-tpms">
@@ -1464,7 +1313,7 @@
     // not its real height. A scrollIntoView() aimed at a target below several un-rendered
     // sections is calculated against those placeholders and lands short. Force real layout on
     // them first, then scroll — this also lets "auto" remember the correct size afterwards.
-    var lazySections = document.querySelectorAll('.services, .brands, .lounge, .gallery, .team, .reviews, .book, .coverage, .find-us');
+    var lazySections = document.querySelectorAll('.services, .brands, .lounge, .gallery, .team, .reviews, .coverage, .find-us');
     function smoothJumpTo(target) {
       if (!target) return;
       lazySections.forEach(el => { el.style.contentVisibility = 'visible'; });
@@ -1475,8 +1324,8 @@
     }
 
     // Header/footer nav links and "Get a quote" links — replace the native anchor jump with
-    // the fix above. Links with data-open-book keep their own dedicated handler below.
-    document.querySelectorAll('a[href^="#"]:not([data-open-book])').forEach(a => {
+    // the fix above.
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
       const id = a.getAttribute('href').slice(1);
       if (!id || id === 'main') return; // leave the skip link native
       a.addEventListener('click', e => {
@@ -1487,70 +1336,6 @@
         smoothJumpTo(target);
       });
     });
-
-    // ── Book a depot slot — toggle + lazy-load + postMessage collapse ──
-    (function () {
-      const bookSection = document.getElementById('book');
-      const openBtn    = document.getElementById('bookOpenBtn');
-      const closeBtn   = document.getElementById('bookCloseBtn');
-      const anotherBtn = document.getElementById('bookAnotherBtn');
-      const embed      = document.getElementById('bookEmbed');
-      const iframe     = document.getElementById('bookIframe');
-      const success    = document.getElementById('bookSuccess');
-      if (!openBtn || !embed || !iframe || !bookSection) return;
-
-      const mobileBookMq = window.matchMedia('(max-width: 900px)');
-
-      function setBookScrollLock(on) {
-        document.body.classList.toggle('book-calendar-open', on && mobileBookMq.matches);
-      }
-
-      function openCalendar() {
-        // Lazy-load: swap src on first open only
-        if (iframe.src === 'about:blank' || iframe.src === window.location.href) {
-          iframe.src = iframe.dataset.src;
-        }
-        embed.classList.add('open');
-        embed.setAttribute('aria-hidden', 'false');
-        bookSection.classList.add('is-open');
-        success.classList.remove('show');
-        setBookScrollLock(true);
-        // Mobile uses a fixed full-screen panel; desktop scrolls the section into view
-        if (!mobileBookMq.matches) {
-          setTimeout(() => bookSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-        }
-      }
-
-      function closeCalendar() {
-        embed.classList.remove('open');
-        embed.setAttribute('aria-hidden', 'true');
-        bookSection.classList.remove('is-open');
-        setBookScrollLock(false);
-      }
-
-      function showSuccess() {
-        closeCalendar();
-        success.classList.add('show');
-        setTimeout(() => success.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
-      }
-
-      openBtn.addEventListener('click', openCalendar);
-      closeBtn.addEventListener('click', closeCalendar);
-      if (anotherBtn) anotherBtn.addEventListener('click', openCalendar);
-
-      // Any link with data-open-book skips the two-click journey and opens directly
-      document.querySelectorAll('[data-open-book]').forEach(function(el) {
-        el.addEventListener('click', function(e) {
-          e.preventDefault();
-          openCalendar();
-        });
-      });
-
-      // Booking widget fires postMessage('booking-confirmed') on success
-      window.addEventListener('message', function (e) {
-        if (e.data === 'booking-confirmed') showSuccess();
-      });
-    })();
 
     // ── Contact form → /api/he-tyres-enquiry (Vercel SMTP) ──
     (function () {
