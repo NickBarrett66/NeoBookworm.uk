@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JD Tyres Chippenham | Tyres, Wheel Alignment &amp; Mobile Fitting — 5.0★</title>
   <meta name="description" content="JD Tyres Chippenham — 5.0★ rated, 238 reviews. New tyres, wheel alignment, brakes, exhausts, batteries and mobile fitting across Chippenham. No appointment needed. Call 01249 490498.">
-  <link rel="canonical" href="https://neobookworm.uk/jd-tyres">
+  <link rel="canonical" href="https://tyretrust.uk/jd-tyres">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://neobookworm.uk/jd-tyres">
+  <meta property="og:url" content="https://tyretrust.uk/jd-tyres">
   <meta property="og:title" content="JD Tyres Chippenham | Tyres, Alignment &amp; Mobile Fitting">
   <meta property="og:description" content="5.0★ rated across 238 reviews. New tyres, wheel alignment, brakes, exhausts, batteries and mobile fitting across Chippenham. No appointment needed.">
-  <meta property="og:image" content="https://neobookworm.uk/jd-tyres/images/og.webp">
+  <meta property="og:image" content="https://tyretrust.uk/jd-tyres/images/og.webp">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
 
@@ -34,7 +34,7 @@
     "@type": "AutomotiveBusiness",
     "name": "JD Tyres Chippenham",
     "description": "New tyres, wheel alignment, wheel balancing, brakes, exhausts, batteries and mobile tyre fitting in Chippenham, Wiltshire.",
-    "url": "https://neobookworm.uk/jd-tyres",
+    "url": "https://tyretrust.uk/jd-tyres",
     "telephone": "+441249490498",
     "slogan": "The Joy of Driving",
     "address": {
@@ -140,6 +140,9 @@
     .service-card h3{font-size:1.18rem;margin-bottom:8px}
     .service-card p{color:var(--muted);font-size:.95rem}
     .featured-tag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:10px}
+    .service-card-featured{padding-top:0;overflow:hidden}
+    .service-card-featured .service-photo{width:calc(100% + 48px);height:auto;margin:0 -24px 16px;aspect-ratio:16/10;object-fit:cover;display:block}
+    .service-card-featured .featured-tag{margin-top:0}
     .service-more{display:block;margin-top:14px;color:var(--gold-dk);font-weight:800;font-size:.9rem}
 
     dialog.modal{border:none;border-radius:16px;padding:0;max-width:520px;width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.4)}
@@ -147,6 +150,7 @@
     .modal-inner{padding:30px}
     .modal-inner h3{font-size:1.4rem;margin-bottom:14px}
     .modal-inner p{color:#413f3a;margin-bottom:10px}
+    .modal-photo{width:100%;border-radius:10px;margin-bottom:16px;aspect-ratio:16/11;object-fit:cover}
     .modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#8a8177;line-height:1}
 
     /* ── gallery ── */
@@ -313,9 +317,9 @@
           <p>All budgets, plus premium brands — Michelin, Pirelli, Continental. New only, no part-worn. We'll even fit tyres you've sourced yourself.</p>
           <span class="service-more">See more →</span>
         </button>
-        <button class="service-card" data-modal="m-align">
+        <button class="service-card service-card-featured" data-modal="m-align">
+          <img class="service-photo" src="images/card-alignment.webp" alt="A car on the 4-post alignment ramp at JD Tyres" width="460" height="453" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <span class="featured-tag">Our speciality</span>
-          <span class="ic">📏</span>
           <h3>Wheel alignment</h3>
           <p>New 4-post ramp and digital alignment. Over 1,000 wheels aligned. Come in for a <b>free check</b> — no charge if it doesn't need doing.</p>
           <span class="service-more">See more →</span>
@@ -617,6 +621,7 @@
 </div></dialog>
 <dialog class="modal" id="m-align"><div class="modal-inner">
   <button class="modal-close" data-close-modal aria-label="Close">✕</button>
+  <img class="modal-photo" src="images/modal-alignment.webp" alt="A car up on the 4-post ramp mid wheel-alignment at JD Tyres" width="520" height="512" loading="lazy" decoding="async" onerror="this.style.display='none'">
   <h3>Wheel alignment</h3>
   <p>Our new digital 4-post alignment system has aligned over 1,000 wheels since we opened. Misaligned wheels wear
     your tyres out faster and pull the car to one side — getting it right saves you money and drives better.</p>
