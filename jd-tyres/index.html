@@ -176,6 +176,25 @@
     .areas{margin-top:18px;font-size:.95rem;color:var(--muted-d)}
     .areas b{color:#fff}
 
+    /* ── coverage map ── */
+    .coverage-stack{max-width:920px;margin:48px auto 0}
+    .map-box{width:100%;max-width:680px;aspect-ratio:1/1;margin:0 auto;border-radius:var(--radius);
+      background:#1c1d23;position:relative;overflow:hidden;isolation:isolate;z-index:0;border:1px solid #2c2d34}
+    #areaMap{width:100%;height:100%;background:#1c1d23;border-radius:var(--radius)}
+    .map-key{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.55rem 1.5rem;margin:20px 0 0;padding:0}
+    .map-key li{font-size:.92rem;color:var(--muted-d);display:flex;align-items:center;gap:.65rem}
+    .key-code{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:40px;
+      padding:.2rem .45rem;background:var(--gold);color:var(--ink);font-weight:800;font-size:.72rem;
+      letter-spacing:.03em;border-radius:5px}
+    .key-code.depot{background:#fff;color:var(--ink)}
+    .coverage-foot{text-align:center;margin-top:22px}
+    .coverage-note{font-size:.9rem;color:#8f8b83;margin-bottom:14px}
+    .leaflet-tooltip.jd-town{background:var(--gold);border:none;color:var(--ink);font-weight:800;font-size:10px;
+      letter-spacing:.03em;padding:1px 5px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.3);white-space:nowrap}
+    .leaflet-tooltip.jd-town::before{display:none}
+    .leaflet-tooltip.jd-town.depot{background:#fff;color:var(--ink)}
+    .leaflet-container{background:#1c1d23;font-family:inherit}
+
     /* ── find us ── */
     .find-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
     .find-photo{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;border:1px solid #2c2d34}
@@ -444,10 +463,30 @@
             <li><span class="tick">✓</span><span>Supply &amp; fit at your convenience — <b>call and we'll always try to help.</b></span></li>
           </ul>
           <p class="areas">Covering roughly 20 miles of Chippenham, including
-            <b>Malmesbury, Swindon, Calne, Devizes and Melksham</b>. Outside that? Give us a shout anyway.</p>
+            <b>Malmesbury, Swindon, Calne, Devizes, Melksham, Bath and Marlborough</b>. Outside that? Give us a shout anyway.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="tel:07721401382">📞 Call the mobile 07721 401382</a>
           </div>
+        </div>
+      </div>
+
+      <div class="coverage-stack">
+        <div class="map-box">
+          <div id="areaMap" role="img" aria-label="Map of the JD Tyres mobile coverage area — roughly 20 miles around Chippenham, covering Malmesbury, Swindon, Calne, Devizes, Melksham, Bath and Marlborough"></div>
+        </div>
+        <ul class="map-key" aria-label="Map key — towns we cover">
+          <li><span class="key-code depot">JD</span> JD Tyres (Chippenham)</li>
+          <li><span class="key-code">MAL</span> Malmesbury</li>
+          <li><span class="key-code">SWI</span> Swindon</li>
+          <li><span class="key-code">CAL</span> Calne</li>
+          <li><span class="key-code">DEV</span> Devizes</li>
+          <li><span class="key-code">MEL</span> Melksham</li>
+          <li><span class="key-code">BAT</span> Bath</li>
+          <li><span class="key-code">MAR</span> Marlborough</li>
+        </ul>
+        <div class="coverage-foot">
+          <p class="coverage-note">Not sure if we reach you? Give us a call — if you're a little further out, just ask.</p>
+          <a href="tel:07721401382" class="btn btn-primary">📞 Call the mobile 07721 401382</a>
         </div>
       </div>
     </div>
@@ -513,8 +552,8 @@
         </details>
         <details class="faq-item">
           <summary>How far does the mobile van cover?</summary>
-          <div class="faq-a"><p>Roughly 20 miles of Chippenham, including Malmesbury, Swindon, Calne, Devizes
-            and Melksham. If you're just outside that, call us anyway — we'll always try to help.</p></div>
+          <div class="faq-a"><p>Roughly 20 miles of Chippenham, including Malmesbury, Swindon, Calne, Devizes,
+            Melksham, Bath and Marlborough. If you're just outside that, call us anyway — we'll always try to help.</p></div>
         </details>
       </div>
     </div>
@@ -616,8 +655,8 @@
   <h3>Mobile tyre fitting</h3>
   <p>Our mobile van comes to you — the roadside if you've broken down, or your home or work for convenience. We can
     repair a puncture or fit a new tyre on the spot, at fair prices.</p>
-  <p>We cover roughly 20 miles of Chippenham, including Malmesbury, Swindon, Calne, Devizes and Melksham. Call the
-    mobile on <b>07721 401382</b> — if in doubt, give us a shout.</p>
+  <p>We cover roughly 20 miles of Chippenham, including Malmesbury, Swindon, Calne, Devizes, Melksham, Bath and
+    Marlborough. Call the mobile on <b>07721 401382</b> — if in doubt, give us a shout.</p>
 </div></dialog>
 
 <script>
@@ -644,6 +683,97 @@
       form.classList.add('hidden');
       success.classList.add('show');
     });
+  }
+})();
+</script>
+
+<script>
+// Coverage area map — Leaflet, lazy-loaded when it nears the viewport (same pattern as he-tyres/index.html)
+(function () {
+  var areaEl = document.getElementById('areaMap');
+  if (!areaEl) return;
+
+  var leafletReady = null;
+  var areaDone = false;
+  var TILE_URL = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+
+  function loadLeafletCss() {
+    if (document.getElementById('leaflet-css')) return;
+    var l = document.createElement('link');
+    l.id = 'leaflet-css';
+    l.rel = 'stylesheet';
+    l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(l);
+  }
+
+  function ensureLeaflet() {
+    if (leafletReady) return leafletReady;
+    loadLeafletCss();
+    leafletReady = new Promise(function (resolve) {
+      if (typeof L !== 'undefined') { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      s.async = true;
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+    return leafletReady;
+  }
+
+  function initAreaMap() {
+    if (areaDone) return;
+    areaDone = true;
+    ensureLeaflet().then(function () {
+      var GOLD = '#e8a723';
+      var GOLD_FILL = 'rgba(232,167,35,0.16)';
+      var depot = [51.4585, -2.1160]; // Chippenham (Unit B7, Methuen Park)
+      var radiusMetres = 20 * 1609.34;
+      var map = L.map('areaMap', {
+        zoomControl: false, attributionControl: false,
+        dragging: false, scrollWheelZoom: false, preferCanvas: true
+      }).fitBounds(L.latLng(depot).toBounds(radiusMetres * 1.78), { padding: [18, 18] });
+      L.tileLayer(TILE_URL, { maxZoom: 16 }).addTo(map);
+      L.circle(depot, { radius: radiusMetres, color: GOLD, weight: 2.5, fillColor: GOLD_FILL, fillOpacity: 1 }).addTo(map);
+
+      requestAnimationFrame(function () {
+        map.invalidateSize();
+        if (window.matchMedia('(min-width: 901px)').matches) {
+          var towns = [
+            { n: 'MAL', c: [51.5824, -2.0997] },
+            { n: 'SWI', c: [51.5558, -1.7797] },
+            { n: 'CAL', c: [51.4416, -1.9975] },
+            { n: 'DEV', c: [51.3629, -1.9968] },
+            { n: 'MEL', c: [51.3814, -2.1418] },
+            { n: 'BAT', c: [51.3811, -2.3590] },
+            { n: 'MAR', c: [51.4214, -1.7286] }
+          ];
+          towns.forEach(function (t) {
+            var dir = t.c[1] < depot[1] ? 'right' : 'left';
+            L.circleMarker(t.c, { radius: 5, color: '#fff', weight: 2, fillColor: GOLD, fillOpacity: 1 }).addTo(map)
+              .bindTooltip(t.n, { permanent: true, direction: dir, className: 'jd-town', offset: [0, 0] });
+          });
+        }
+        L.circleMarker(depot, { radius: 7, color: '#fff', fillColor: '#111114', fillOpacity: 1, weight: 2 }).addTo(map)
+          .bindTooltip('JD', { permanent: true, direction: 'right', className: 'jd-town depot', offset: [8, 0] });
+      });
+
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () { map.invalidateSize(); }, 200);
+      }, { passive: true });
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      obs.disconnect();
+      initAreaMap();
+    }, { threshold: 0, rootMargin: '0px 0px 100px 0px' });
+    obs.observe(areaEl);
+  } else {
+    initAreaMap();
   }
 })();
 </script>
