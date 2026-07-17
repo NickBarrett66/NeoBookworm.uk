@@ -210,6 +210,19 @@
     .find-badge{display:inline-block;background:var(--gold);color:var(--ink);font-weight:800;font-size:.8rem;padding:6px 14px;border-radius:999px;margin-bottom:18px}
     .find-foot{margin-top:24px}
 
+    /* ── route map ── */
+    .route-stack{max-width:920px;margin:36px auto 0}
+    .find-map-box{border-radius:var(--radius);overflow:hidden;border:1px solid #2c2d34;aspect-ratio:4/3.3;position:relative;isolation:isolate;z-index:0;background:#1c1d23;max-width:680px;margin:0 auto}
+    #depotMap{width:100%;height:100%;background:#1c1d23}
+    .leaflet-tooltip.jd-route{background:#fff;color:var(--ink);font-weight:800;font-size:.72rem;letter-spacing:.02em;padding:2px 8px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.3);white-space:nowrap;border:none}
+    .leaflet-tooltip.jd-route::before{display:none}
+    .leaflet-tooltip.jd-route.dest{background:var(--gold);color:var(--ink)}
+    .find-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+    .find-step{background:rgba(255,255,255,.05);border:1px solid #2c2d34;border-radius:var(--radius);padding:20px}
+    .find-step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--gold);color:var(--ink);border-radius:50%;font-weight:800;font-size:.85rem;margin-bottom:12px}
+    .find-step p{font-size:.92rem;line-height:1.55;color:var(--muted-d);margin:0}
+    .find-step strong{color:#fff}
+
     /* ── faq ── */
     .faq-list{max-width:760px}
     .faq-item{border-bottom:1px solid #e7e2d8;padding:18px 0}
@@ -249,6 +262,8 @@
       .trust-inner{gap:14px;font-size:.85rem}
       .hero-ctas .btn{flex:1 1 100%;justify-content:center}
       .contact-call a.tel.alt{margin-left:0;margin-top:10px}
+      .find-map-box{aspect-ratio:1/1.15}
+      .find-steps{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -490,6 +505,26 @@
           </div>
         </div>
       </div>
+
+      <div class="route-stack">
+        <div class="find-map-box">
+          <div id="depotMap" role="img" aria-label="Street map showing the route off Bath Road, round the Methuen Park roundabout, and down to Unit B7, Ashville Court"></div>
+        </div>
+        <div class="find-steps">
+          <div class="find-step">
+            <div class="find-step-num">1</div>
+            <p><strong>Off Bath Road, into Methuen Park</strong> — round the small roundabout and follow the road south.</p>
+          </div>
+          <div class="find-step">
+            <div class="find-step-num">2</div>
+            <p><strong>Past TK Maxx and Aldi</strong> — TK Maxx on your right, then Aldi on your left, up the hill a little.</p>
+          </div>
+          <div class="find-step">
+            <div class="find-step-num">3</div>
+            <p><strong>First right onto Ashville Court</strong> — past Kellaway Building Supplies, JD Tyres is on your left at Unit B7. Look for the gold sign.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -691,7 +726,7 @@
     ensureLeaflet().then(function () {
       var GOLD = '#e8a723';
       var GOLD_FILL = 'rgba(232,167,35,0.16)';
-      var depot = [51.4585, -2.1160]; // Chippenham (Unit B7, Methuen Park)
+      var depot = [51.445224535796974, -2.1450215486127364]; // Unit B7, Ashville Court, Methuen Park — pin confirmed by Nick from Google Maps (right-click coordinates) 17 Jul 2026. Was previously a rough guess (51.4585,-2.1160), ~2km off.
       var radiusMetres = 20 * 1609.34;
       var map = L.map('areaMap', {
         zoomControl: false, attributionControl: false,
@@ -739,6 +774,115 @@
     obs.observe(areaEl);
   } else {
     initAreaMap();
+  }
+})();
+</script>
+
+<script>
+// Depot directions map — Leaflet, lazy-loaded when it nears the viewport (same pattern as
+// he-tyres/index.html and smart-tyres-gloucester/index.html's "Finding the depot" maps).
+(function () {
+  var depotEl = document.getElementById('depotMap');
+  if (!depotEl) return;
+
+  var leafletReady = null;
+  var depotDone = false;
+  var TILE_URL = 'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png';
+
+  function loadLeafletCss() {
+    if (document.getElementById('leaflet-css')) return;
+    var l = document.createElement('link');
+    l.id = 'leaflet-css';
+    l.rel = 'stylesheet';
+    l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(l);
+  }
+
+  function ensureLeaflet() {
+    if (leafletReady) return leafletReady;
+    loadLeafletCss();
+    leafletReady = new Promise(function (resolve) {
+      if (typeof L !== 'undefined') { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      s.async = true;
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+    return leafletReady;
+  }
+
+  function initDepotMap() {
+    if (depotDone) return;
+    depotDone = true;
+    ensureLeaflet().then(function () {
+      var GOLD = '#e8a723';
+      var INK = '#111114';
+      // DRAFT — traced from real OpenStreetMap road geometry (Overpass API, 17 Jul 2026). Depot pin is
+      // Nick's ground-truth Google Maps right-click coordinate. Route enters off Bath Road, round the
+      // small "Methuen Park" roundabout, south past Aldi/Costa, then down Methuen Park to Ashville Court.
+      // Nick confirmed the roundabout-to-Methuen-Park stretch is right; corrected 17 Jul 2026 per his
+      // annotated screenshot: the final approach was a straight cut-through, not the real curve — now
+      // follows the actual service road (way 1307757128/1307757129) south then round past Kellaway
+      // Building Supplies before the last ~45m unmapped stretch onto the unit frontage.
+      var depot = [51.445224535796974, -2.1450215486127364];
+      var route = [
+        [51.4482493, -2.1450058], [51.4482404, -2.1450608], [51.4482303, -2.1451122],
+        [51.4481932, -2.1453014], [51.4480234, -2.1456678], [51.4479412, -2.1457366],
+        [51.4478683, -2.1457498], [51.4478191, -2.1457577], [51.4477533, -2.1457578],
+        [51.4477128, -2.1457562], [51.447681,  -2.145755],  [51.4476315, -2.1457298],
+        [51.4475843, -2.145697],  [51.4474974, -2.1455867], [51.4474112, -2.1455857],
+        [51.4473584, -2.1455842], [51.4473083, -2.1455758], [51.4472605, -2.1455613],
+        [51.4472025, -2.1455346], [51.447146,  -2.145506],  [51.4470789, -2.1454662],
+        [51.4470211, -2.145418],  [51.4469577, -2.145369],  [51.4468772, -2.1452898],
+        [51.4467433, -2.1451672], [51.4465867, -2.1450271], [51.4464652, -2.1449145],
+        [51.4463482, -2.1448025], [51.4460481, -2.1444386], [51.4455077, -2.1453716],
+        [51.4453632, -2.1456274], [51.4452653, -2.1457986], [51.4451973, -2.145844],
+        [51.4451731, -2.1458892], [51.444812,  -2.145341]
+      ];
+      var map = L.map('depotMap', {
+        zoomControl: false, attributionControl: false,
+        dragging: false, scrollWheelZoom: false,
+        doubleClickZoom: false, touchZoom: false, preferCanvas: true
+      });
+      L.tileLayer(TILE_URL, { maxZoom: 18 }).addTo(map);
+      // Line stops one waypoint short of the true depot pin — the final dash was overlapping the label.
+      // Marker + label sit at that same last waypoint (not the exact `depot` pin) so they read as the
+      // end of the visible line rather than floating in a gap — illustrative, same as the rest of this map.
+      var markerPos = route[route.length - 1];
+      var line = L.polyline(route, { color: GOLD, weight: 5, opacity: 0.9, dashArray: '12, 8', lineCap: 'round' }).addTo(map);
+      var bounds = line.getBounds();
+      map.fitBounds(bounds, { padding: [26, 26] });
+
+      requestAnimationFrame(function () {
+        map.invalidateSize();
+        map.fitBounds(bounds, { padding: [26, 26] });
+        L.circleMarker(markerPos, { radius: 9, color: '#fff', weight: 3, fillColor: GOLD, fillOpacity: 1 })
+          .addTo(map).bindTooltip('JD Tyres — Unit B7', { permanent: true, direction: 'right', className: 'jd-route dest', offset: [8, -6] });
+        L.circleMarker(route[0], { radius: 6, color: '#fff', weight: 2, fillColor: INK, fillOpacity: 1 })
+          .addTo(map).bindTooltip('Off Bath Road', { permanent: true, direction: 'top', className: 'jd-route', offset: [0, -8] });
+      });
+
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () {
+          map.invalidateSize();
+          map.fitBounds(bounds, { padding: [26, 26] });
+        }, 200);
+      }, { passive: true });
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      obs.disconnect();
+      initDepotMap();
+    }, { threshold: 0, rootMargin: '0px 0px 100px 0px' });
+    obs.observe(depotEl);
+  } else {
+    initDepotMap();
   }
 })();
 </script>
