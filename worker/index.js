@@ -38,13 +38,17 @@ export default {
       // back to the clean form, and that redirect is host-relative, so it
       // never actually reaches this rewrite.
       const TYRETRUST_ROUTES = {
-        '/':            '/tyretrust/',
-        '/full':        '/tyretrust/full/',
-        '/full/':       '/tyretrust/full/',
-        '/proposal':    '/tyretrust/proposal',
-        '/proposal/':   '/tyretrust/proposal',
-        '/robots.txt':  '/tyretrust/robots.txt',
-        '/sitemap.xml': '/tyretrust/sitemap.xml',
+        '/':               '/tyretrust/',
+        '/full':           '/tyretrust/full/',
+        '/full/':          '/tyretrust/full/',
+        '/proposal':       '/tyretrust/proposal',
+        '/proposal/':      '/tyretrust/proposal',
+        '/robots.txt':     '/tyretrust/robots.txt',
+        '/sitemap.xml':    '/tyretrust/sitemap.xml',
+        // JD Tyres Chippenham — real client site + its personalised offer page.
+        '/jd-tyres':       '/jd-tyres/',
+        '/jd-tyres/':      '/jd-tyres/',
+        '/jd-tyres-offer': '/tyretrust/jd-tyres-offer',
       };
       const rewrite = TYRETRUST_ROUTES[p];
       if (rewrite) {

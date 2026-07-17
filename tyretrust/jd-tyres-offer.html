@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your new website, JD Tyres | TyreTrust</title>
+<meta name="description" content="I've already built JD Tyres Chippenham a proper website, no charge for the build. Have a look, then it's £9.99/month to keep it live — cancel any time.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://tyretrust.uk/jd-tyres-offer">
+
+<link rel="icon" type="image/x-icon" href="/tyretrust/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/tyretrust/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/tyretrust/images/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/tyretrust/images/apple-touch-icon.png">
+
+<!-- Self-hosted fonts, non-blocking -->
+<link rel="preload" href="/fonts/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/fonts.css"></noscript>
+
+<style>
+  :root{
+    --ink:#10151d; --navy:#14243f; --navy-2:#1c3357;
+    --orange:#f5872a; --orange-dk:#d86f18; --amber:#f5a623;
+    --gold:#e8a723; /* borrowed JD gold, used sparingly as a distinct accent from the mailshot page */
+    --paper:#ffffff; --mist:#f3f6fa; --mist-2:#e7edf4; --line:#d9e1ec;
+    --body:#26313f; --muted:#5d6b7d; --radius:16px;
+    --shadow:0 18px 50px -18px rgba(16,21,29,.45);
+    --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  img{max-width:100%;height:auto}
+  body{margin:0;font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--body);background:var(--paper);line-height:1.62;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:'DM Sans',system-ui,sans-serif;color:var(--navy);line-height:1.14;margin:0 0 .4em;letter-spacing:-0.02em}
+  h1{font-size:clamp(2rem,4.8vw,3rem);font-weight:900}
+  h2{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:800}
+  h3{font-size:1.2rem;font-weight:700}
+  p{margin:0 0 1rem}
+  a{color:var(--orange-dk)}
+  .container{max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,4vw,32px)}
+  .skip-link{position:absolute;left:-999px;top:0;background:var(--orange);color:#fff;padding:10px 16px;border-radius:8px;z-index:200}
+  .skip-link:focus{left:12px;top:12px}
+  .eyebrow{display:inline-block;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .accent-bar{width:64px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--amber));margin:16px 0 0}
+  .center{text-align:center}
+  .center .accent-bar{margin-left:auto;margin-right:auto}
+
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:1.02rem;padding:15px 28px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s ease,box-shadow .2s ease}
+  .btn-primary{background:linear-gradient(180deg,var(--gold),#c6871a);color:var(--ink);box-shadow:0 10px 26px -10px rgba(198,135,26,.6)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
+  .btn-ghost:hover{background:rgba(255,255,255,.1)}
+
+  header.site{position:sticky;top:0;z-index:100;background:rgba(16,21,29,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:1.32rem;color:#fff;text-decoration:none}
+  .brand .mark{width:40px;height:40px;flex:0 0 40px}
+  .brand b{color:var(--orange)}
+
+  .hero{background:linear-gradient(160deg,var(--ink),var(--navy) 68%);color:#fff;padding:56px 0 60px}
+  .hero .container{text-align:center}
+  .hero h1{color:#fff;max-width:16ch;margin:0 auto .5em}
+  .hero h1 em{color:var(--gold);font-style:normal}
+  .hero-sub{max-width:56ch;margin:0 auto;font-size:1.1rem;color:#d3dbe8}
+  .hero-actions{margin-top:26px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  .browser{margin:34px auto 0;max-width:760px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.12)}
+  .browser-bar{display:flex;align-items:center;gap:6px;background:#1a212c;padding:10px 14px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+  .browser-url{margin-left:10px;font-size:.82rem;color:#9fb0c7;background:#0e131b;padding:4px 12px;border-radius:6px}
+  .browser-frame{aspect-ratio:16/10;background:#fff}
+  .browser-frame iframe{width:100%;height:100%;border:0;display:block}
+
+  section{padding:60px 0}
+  .band-mist{background:var(--mist)}
+
+  .plan-card{max-width:520px;margin:0 auto;background:#fff;border:2px solid var(--gold);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);text-align:left}
+  .plan-card .pill{display:inline-block;background:var(--gold);color:var(--ink);font-weight:800;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:14px}
+  .plan-price{font-size:2.1rem;font-weight:900;color:var(--navy)}
+  .plan-price span{font-size:1.05rem;font-weight:600;color:var(--muted)}
+  .plan-build{margin-top:6px;font-weight:700;color:#0f8a52}
+  .plan-card ul{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px}
+  .plan-card li{display:flex;gap:10px;align-items:flex-start;color:var(--body)}
+  .plan-card li::before{content:'✓';color:#0f8a52;font-weight:800;flex:none}
+
+  .faq-list{max-width:720px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--line);padding:18px 0}
+  .faq-item summary{cursor:pointer;font-weight:700;font-size:1.03rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{content:'+';font-size:1.4rem;color:var(--orange-dk);flex:none}
+  .faq-item[open] summary::after{content:'–'}
+  .faq-a{margin-top:12px;color:var(--body)}
+
+  .final{background:var(--navy);color:#fff;text-align:center}
+  .final .lead{max-width:52ch;margin:0 auto 26px;color:#d3dbe8}
+  .final-note{margin-top:18px;font-size:.92rem;color:#9fb0c7}
+
+  footer.site{padding:34px 0;background:var(--ink);color:#9fb0c7;font-size:.88rem}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
+  .foot a{color:#c8d3e2}
+
+  @media (max-width:640px){ .hero-actions,.final-actions{flex-direction:column} }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="container nav">
+    <a class="brand" href="/tyretrust/" aria-label="TyreTrust — websites for tyre fitters">
+      <img class="mark" src="/tyretrust/images/logo-mark-120.webp" width="40" height="40" alt="TyreTrust" decoding="async" fetchpriority="high">
+      <span>Tyre<b>Trust</b></span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow">A website for JD Tyres, Chippenham</span>
+      <h1>Julian — here's your new site, <em>already built</em>.</h1>
+      <p class="hero-sub">No charge for putting this together — I wanted you to see the finished thing, not a
+        pitch. Have a proper look, on your phone if that's easier, and see what you think.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/jd-tyres" target="_blank" rel="noopener">Open your site full-size ↗</a>
+      </div>
+      <div class="browser">
+        <div class="browser-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="browser-url">tyretrust.uk/jd-tyres</span>
+        </div>
+        <div class="browser-frame">
+          <iframe src="/jd-tyres" title="JD Tyres Chippenham website preview" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-mist">
+    <div class="container">
+      <div class="center" style="margin-bottom:32px">
+        <span class="eyebrow">What it costs</span>
+        <h2>The build's on me. Nothing to pay to get it live.</h2>
+        <div class="accent-bar"></div>
+      </div>
+      <div class="plan-card">
+        <span class="pill">The Site</span>
+        <div class="plan-price">£9.99<span>/mo</span></div>
+        <p class="plan-build">Free to build — no charge, nothing to pay up front.</p>
+        <p style="margin-top:14px;color:var(--muted);font-size:.95rem">Once you're happy and want it live, it's just
+          £9.99 a month to keep it running — cancel any time, no exit fee, just a month's notice.</p>
+        <ul>
+          <li>Your services, brands and reviews, all in one place</li>
+          <li>Turns up when someone searches "tyres near me" in Chippenham</li>
+          <li>Works properly on a phone, not just a desktop</li>
+          <li>A proper place to send word-of-mouth and van/flyer traffic</li>
+          <li>I make changes for you — no dashboard to learn</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="center" style="margin-bottom:20px">
+        <span class="eyebrow">Before you say yes</span>
+        <h2>The questions I'd ask, in your shoes</h2>
+        <div class="accent-bar"></div>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Why free? What's the catch?</summary>
+          <div class="faq-a"><p>No catch — I specialise in websites for tyre fitters, and yours is one of the
+            first I've built. I'd rather you had a working site to judge than a sales pitch. The only thing that
+            isn't free is keeping it live once you're happy — that's the £9.99/mo.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>I've already got a website (Google Sites) — why would I switch?</summary>
+          <div class="faq-a"><p>You've already taken the step most fitters haven't — getting online at all.
+            This one's built specifically around a tyre business: your reviews, your brands, your coverage area,
+            fast on a phone, and set up so it turns up on Google searches the current one doesn't. No pressure
+            either way — have a look and decide for yourself.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Who owns it — and what happens to the web address?</summary>
+          <div class="faq-a"><p>You do — the site and the web address. Right now it's sitting on a temporary web
+            address just so you can look it over, so there's nothing to lose if it's not for you. Once you say
+            yes, it moves to its own proper web address registered in your name, and the pages, words and photos
+            are always yours to keep.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>How do I actually pay the £9.99/mo?</summary>
+          <div class="faq-a"><p>Once you're happy and ready to go live, I'll send a single secure card link that
+            sets up the monthly payment — no invoices to remember, nothing paid by hand. Nothing is taken until
+            you say yes, and the site only goes live once that's set up.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>What if I want changes?</summary>
+          <div class="faq-a"><p>Just email me — small wording or photo changes are usually 15–30 minutes and
+            covered as part of getting things right early on. For anything bigger — new pages, new features, a
+            proper rethink of a section — I'll quote it at £25 an hour before I start, so you always know the
+            cost upfront. Either way, you're not logging into a dashboard or learning software.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>What if I want to cancel?</summary>
+          <div class="faq-a"><p>No exit fee, just a month's notice. The pages, words and photos are sent over, and
+            since the web address is already in your name, it stays with you either way.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="container">
+      <span class="eyebrow" style="color:var(--amber)">Your move</span>
+      <h2>Like it? Let's put it live.</h2>
+      <p class="lead">Reply to my letter, give me a call, or drop me an email — whichever's easiest. If you want
+        changes first, just tell me what and I'll sort it.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="mailto:nick@tyretrust.uk?subject=JD%20Tyres%20website%20-%20let's%20go%20live">Email nick@tyretrust.uk</a>
+        <a class="btn btn-ghost" href="/jd-tyres" target="_blank" rel="noopener">Open the site again ↗</a>
+      </div>
+      <p class="final-note">No rush — have a proper look first. It'll still be here when you're ready.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="container foot">
+    <span>© <span id="yr"></span> TyreTrust — websites built only for tyre fitters. Based in Swindon.</span>
+    <div><a href="mailto:nick@tyretrust.uk">nick@tyretrust.uk</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+  </div>
+</footer>
+
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>
