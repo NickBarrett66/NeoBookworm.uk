@@ -133,17 +133,18 @@
     .band-dark .section-sub{color:var(--muted-d)}
 
     /* ── services ── */
-    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-    .service-card{background:#fff;border:1px solid #e7e2d8;border-radius:var(--radius);padding:24px;text-align:left;cursor:pointer;font:inherit;color:inherit;position:relative;transition:border-color .15s,transform .15s}
+    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+    .service-card{display:flex;flex-direction:column;align-items:stretch;background:#fff;border:1px solid #e7e2d8;border-radius:var(--radius);padding:24px;text-align:left;cursor:pointer;font:inherit;color:inherit;position:relative;transition:border-color .15s,transform .15s}
     .service-card:hover{border-color:var(--gold);transform:translateY(-2px)}
     .service-card .ic{font-size:1.5rem;margin-bottom:10px;display:block}
     .service-card h3{font-size:1.18rem;margin-bottom:8px}
     .service-card p{color:var(--muted);font-size:.95rem}
     .featured-tag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:10px}
     .service-card-featured{padding-top:0;overflow:hidden}
-    .service-card-featured .service-photo{width:calc(100% + 48px);height:auto;margin:0 -24px 16px;aspect-ratio:16/10;object-fit:cover;display:block}
+    .service-card-featured .service-photo-wrap{width:calc(100% + 48px);margin:0 -24px 16px;aspect-ratio:16/10;overflow:hidden;display:block}
+    .service-card-featured .service-photo-wrap .service-photo{width:100%;height:100%;object-fit:cover;display:block}
     .service-card-featured .featured-tag{margin-top:0}
-    .service-more{display:block;margin-top:14px;color:var(--gold-dk);font-weight:800;font-size:.9rem}
+    .service-more{display:block;margin-top:auto;padding-top:14px;color:var(--gold-dk);font-weight:800;font-size:.9rem}
 
     dialog.modal{border:none;border-radius:16px;padding:0;max-width:520px;width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.4)}
     dialog.modal::backdrop{background:rgba(10,10,12,.62)}
@@ -312,76 +313,42 @@
       </div>
       <div class="services-grid">
         <button class="service-card service-card-featured" data-modal="m-tyres">
-          <img class="service-photo" src="/jd-tyres/images/card-tyres.webp" alt="A new Firemax tyre at JD Tyres Chippenham" width="460" height="258" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-tyres.webp" alt="A new Firemax tyre at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
           <h3>Tyres</h3>
           <p>All budgets, plus premium brands — Michelin, Pirelli, Continental. New only, no part-worn. We'll even fit tyres you've sourced yourself.</p>
           <span class="service-more">See more →</span>
         </button>
         <button class="service-card service-card-featured" data-modal="m-align">
-          <img class="service-photo" src="/jd-tyres/images/card-alignment.webp" alt="A car on the 4-post alignment ramp at JD Tyres" width="460" height="453" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-alignment.webp" alt="A car on the 4-post alignment ramp at JD Tyres" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
           <span class="featured-tag">Our speciality</span>
           <h3>Wheel alignment</h3>
           <p>New 4-post ramp and digital alignment. Over 1,000 wheels aligned. Come in for a <b>free check</b> — no charge if it doesn't need doing.</p>
           <span class="service-more">See more →</span>
         </button>
         <button class="service-card service-card-featured" data-modal="m-balance">
-          <img class="service-photo" src="/jd-tyres/images/card-balance.webp" alt="JD balancing a wheel at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-balance.webp" alt="JD balancing a wheel at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
           <h3>Wheel balancing</h3>
           <p>Balanced properly so the ride is smooth and your tyres wear evenly.</p>
           <span class="service-more">See more →</span>
         </button>
         <button class="service-card service-card-featured" data-modal="m-brakes">
-          <img class="service-photo" src="/jd-tyres/images/card-brakes.webp" alt="A brake disc and caliper at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-brakes.webp" alt="A brake disc and caliper at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
           <h3>Brakes</h3>
           <p>Pads and discs supplied and fitted with quality parts. Free brake checks — honest advice on whether they need doing.</p>
           <span class="service-more">See more →</span>
         </button>
-        <button class="service-card" data-modal="m-exhaust">
-          <span class="ic">🔧</span>
-          <h3>Exhausts</h3>
-          <p>Exhaust repairs and replacements at competitive prices, quality parts only.</p>
+        <button class="service-card service-card-featured" data-modal="m-exhaust">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-exhaust.webp" alt="A car up on the ramp with its exhaust tips visible at JD Tyres" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
+          <h3>Exhausts &amp; batteries</h3>
+          <p>Exhaust repairs and replacements at competitive prices, quality parts only. Batteries supplied and fitted while you wait.</p>
           <span class="service-more">See more →</span>
         </button>
-        <button class="service-card" data-modal="m-battery">
-          <span class="ic">🔋</span>
-          <h3>Batteries</h3>
-          <p>Batteries supplied and fitted while you wait.</p>
-          <span class="service-more">See more →</span>
-        </button>
-        <button class="service-card" data-modal="m-puncture">
-          <span class="ic">🩹</span>
+        <button class="service-card service-card-featured" data-modal="m-puncture">
+          <div class="service-photo-wrap"><img class="service-photo" src="/jd-tyres/images/card-puncture.webp" alt="JD with a wheel at JD Tyres Chippenham" width="460" height="288" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'"></div>
           <h3>Puncture repair</h3>
           <p>Where a tyre can safely be saved, we'll repair it rather than sell you a new one.</p>
           <span class="service-more">See more →</span>
         </button>
-        <button class="service-card" data-modal="m-mobile">
-          <span class="featured-tag">We come to you</span>
-          <span class="ic">🚐</span>
-          <h3>Mobile fitting</h3>
-          <p>Broken down or stuck at home? Our mobile van covers ~20 miles of Chippenham.</p>
-          <span class="service-more">See more →</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── ALIGNMENT / GALLERY (dark) ── -->
-  <section class="band-dark" id="gallery">
-    <div class="container">
-      <div class="title-block">
-        <h2 class="section-title">The workshop</h2>
-        <p class="section-sub">Real kit, real work — Unit B7, Methuen Park.</p>
-        <div class="accent-bar"></div>
-      </div>
-      <div class="gallery-grid">
-        <div class="ph" data-ph="Photo: 4-post alignment ramp — images/gallery-ramp.webp">
-          <img src="/jd-tyres/images/gallery-ramp.webp" alt="Car on the 4-post wheel alignment ramp at JD Tyres" width="900" height="658" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-        <div class="ph" data-ph="Photo: JD at the Fasep alignment screen — images/gallery-alignment.webp">
-          <img src="/jd-tyres/images/gallery-alignment.webp" alt="JD reading the digital wheel alignment screen" width="597" height="330" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-        <div class="ph" data-ph="Photo: brakes / discs — images/gallery-brakes.webp">
-          <img src="/jd-tyres/images/gallery-brakes.webp" alt="Brake disc and pad replacement at JD Tyres" width="361" height="297" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
-        <div class="ph" data-ph="Photo: JD in action — images/gallery-tyres.webp">
-          <img src="/jd-tyres/images/gallery-tyres.webp" alt="JD at work on a car at JD Tyres Chippenham" width="900" height="606" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>
       </div>
     </div>
   </section>
@@ -613,7 +580,7 @@
 <!-- ══ Service modals ══ -->
 <dialog class="modal" id="m-tyres"><div class="modal-inner">
   <button class="modal-close" data-close-modal aria-label="Close">✕</button>
-  <img class="modal-photo" src="/jd-tyres/images/modal-tyres.webp" alt="A new tyre ready for fitting at JD Tyres Chippenham" width="520" height="292" loading="lazy" decoding="async" onerror="this.style.display='none'">
+  <img class="modal-photo" src="/jd-tyres/images/modal-tyres.webp" alt="A new tyre ready for fitting at JD Tyres Chippenham" width="520" height="358" loading="lazy" decoding="async" onerror="this.style.display='none'">
   <h3>Tyres</h3>
   <p>We stock a wide range to suit all budgets, and can source hard-to-find, commercial and specialist tyres too.
     Premium brands like Michelin, Pirelli and Continental are no problem.</p>
@@ -622,7 +589,7 @@
 </div></dialog>
 <dialog class="modal" id="m-align"><div class="modal-inner">
   <button class="modal-close" data-close-modal aria-label="Close">✕</button>
-  <img class="modal-photo" src="/jd-tyres/images/modal-alignment.webp" alt="A car up on the 4-post ramp mid wheel-alignment at JD Tyres" width="520" height="512" loading="lazy" decoding="async" onerror="this.style.display='none'">
+  <img class="modal-photo" src="/jd-tyres/images/modal-alignment.webp" alt="A car up on the 4-post ramp mid wheel-alignment at JD Tyres" width="520" height="358" loading="lazy" decoding="async" onerror="this.style.display='none'">
   <h3>Wheel alignment</h3>
   <p>Our new digital 4-post alignment system has aligned over 1,000 wheels since we opened. Misaligned wheels wear
     your tyres out faster and pull the car to one side — getting it right saves you money and drives better.</p>
@@ -644,27 +611,17 @@
 </div></dialog>
 <dialog class="modal" id="m-exhaust"><div class="modal-inner">
   <button class="modal-close" data-close-modal aria-label="Close">✕</button>
-  <h3>Exhausts</h3>
+  <img class="modal-photo" src="/jd-tyres/images/modal-exhaust.webp" alt="A car up on the ramp with its exhaust tips visible at JD Tyres" width="520" height="358" loading="lazy" decoding="async" onerror="this.style.display='none'">
+  <h3>Exhausts &amp; batteries</h3>
   <p>Exhaust repairs and full replacements at competitive prices. We only use excellent-quality parts, so the repair lasts.</p>
-</div></dialog>
-<dialog class="modal" id="m-battery"><div class="modal-inner">
-  <button class="modal-close" data-close-modal aria-label="Close">✕</button>
-  <h3>Batteries</h3>
   <p>Flat battery? We supply and fit car batteries while you wait — quick, and no appointment needed.</p>
 </div></dialog>
 <dialog class="modal" id="m-puncture"><div class="modal-inner">
   <button class="modal-close" data-close-modal aria-label="Close">✕</button>
+  <img class="modal-photo" src="/jd-tyres/images/modal-puncture.webp" alt="JD with a wheel at JD Tyres Chippenham" width="520" height="358" loading="lazy" decoding="async" onerror="this.style.display='none'">
   <h3>Puncture repair</h3>
   <p>Where a tyre can safely be repaired, we'll repair it rather than sell you a new one. If it's not safe to save,
     we'll tell you straight.</p>
-</div></dialog>
-<dialog class="modal" id="m-mobile"><div class="modal-inner">
-  <button class="modal-close" data-close-modal aria-label="Close">✕</button>
-  <h3>Mobile tyre fitting</h3>
-  <p>Our mobile van comes to you — the roadside if you've broken down, or your home or work for convenience. We can
-    repair a puncture or fit a new tyre on the spot, at fair prices.</p>
-  <p>We cover roughly 20 miles of Chippenham, including Malmesbury, Swindon, Calne, Devizes, Melksham, Bath and
-    Marlborough. Call the mobile on <b>07721 401382</b> — if in doubt, give us a shout.</p>
 </div></dialog>
 
 <script>
