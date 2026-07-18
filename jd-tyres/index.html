@@ -267,8 +267,13 @@
          too-tall phantom space on real WebKit devices (iPhone Chrome + Edge), not reproducible in this
          session's Chromium tooling. flex-direction is a far simpler, more universally reliable property. */
       .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:26px 0 28px}
-      .hero-textcol{justify-content:flex-start}
-      .hero-photo{aspect-ratio:16/9}
+      /* Reset flex-grow entirely for mobile — .hero-textcol/.hero-photo carry flex:1.05/.95 from the
+         desktop (row) layout, meant as horizontal-space ratios. In a column flex container those same
+         values become vertical grow factors, and combined with flex-basis:0 + aspect-ratio this is a
+         known troublesome combination on WebKit. flex:none removes all grow/shrink arithmetic so both
+         items just take their natural content height — the simplest, least ambiguous behaviour. */
+      .hero-textcol{flex:none;justify-content:flex-start}
+      .hero-photo{flex:none;aspect-ratio:16/9}
       .hero h1{max-width:none}
       .services-grid{grid-template-columns:1fr}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
