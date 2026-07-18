@@ -135,7 +135,10 @@
     .band-dark .section-sub{color:var(--muted-d)}
 
     /* ── services ── */
-    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+    /* Explicit column counts, not repeat(auto-fit,minmax()) — that combination has a WebKit track-
+       sizing bug where the resulting column can render wider than the actual container, pushing card
+       content off the right edge of the screen on iPhone (Chrome/Edge, both WebKit under the hood). */
+    .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
     .service-card{display:flex;flex-direction:column;align-items:stretch;background:#fff;border:1px solid #e7e2d8;border-radius:var(--radius);padding:0;text-align:left;cursor:pointer;font:inherit;color:inherit;position:relative;overflow:hidden;transition:border-color .15s,transform .15s}
     .service-card:hover{border-color:var(--gold);transform:translateY(-2px)}
     .service-body{flex:1;min-width:0;display:flex;flex-direction:column;padding:20px 24px 24px}
@@ -259,12 +262,15 @@
     .foot-inner a{color:#8f8b83;text-decoration:none}
 
     @media (max-width:820px){
+      /* Natural DOM order (.hero-textcol, then .hero-photo) — deliberately not using display:contents
+         or grid-area reordering here. Both were tried and both left the text vertically centred in a
+         too-tall phantom space on real WebKit devices (iPhone Chrome + Edge), not reproducible in this
+         session's Chromium tooling. flex-direction is a far simpler, more universally reliable property. */
       .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:26px 0 28px}
-      .hero-textcol{display:contents}
-      .hero-lead{order:1}
-      .hero-photo{order:2;aspect-ratio:16/9}
-      .hero-tail{order:3}
+      .hero-textcol{justify-content:flex-start}
+      .hero-photo{aspect-ratio:16/9}
       .hero h1{max-width:none}
+      .services-grid{grid-template-columns:1fr}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
       .trust-inner{gap:14px;font-size:.85rem}
       .hero-ctas .btn{flex:1 1 100%;justify-content:center}
