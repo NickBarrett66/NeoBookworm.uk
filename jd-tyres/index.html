@@ -266,15 +266,23 @@
          or grid-area reordering here. Both were tried and both left the text vertically centred in a
          too-tall phantom space on real WebKit devices (iPhone Chrome + Edge), not reproducible in this
          session's Chromium tooling. flex-direction is a far simpler, more universally reliable property. */
-      .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:26px 0 28px}
-      /* Reset flex-grow entirely for mobile — .hero-textcol/.hero-photo carry flex:1.05/.95 from the
-         desktop (row) layout, meant as horizontal-space ratios. In a column flex container those same
-         values become vertical grow factors, and combined with flex-basis:0 + aspect-ratio this is a
-         known troublesome combination on WebKit. flex:none removes all grow/shrink arithmetic so both
-         items just take their natural content height — the simplest, least ambiguous behaviour. */
+      /* THE actual gap fix (found on the 5th look): .hero is a <section>, so the generic
+         section{padding:64px 0} rule stacked ON TOP of .hero-inner's own padding — 64+26 = 90px of dead
+         space above the eyebrow. Four earlier fixes all adjusted .hero-inner and never touched the
+         section's 64px. Kill it on mobile (desktop keeps it — the double padding reads as intentional
+         there, absorbed into the centred-photo look Nick's happy with). */
+      .hero{padding:0}
+      /* Keep the 24px horizontal padding (matches every other mobile section) — the earlier
+         `padding:26px 0 28px` shorthand had been zeroing it, leaving hero text flush to the screen edge. */
+      .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:22px 24px 26px}
       .hero-textcol{flex:none;justify-content:flex-start}
       .hero-photo{flex:none;aspect-ratio:16/9}
       .hero h1{max-width:none}
+      /* Keep the rating on one line on mobile: no wrap, smaller stars, shorter gap. */
+      .hero-rating{flex-wrap:nowrap;gap:8px;margin-top:16px}
+      .hero-rating .stars{font-size:1.05rem;letter-spacing:1px}
+      .hero-rating b{font-size:1rem}
+      .hero-rating .rr-sub{font-size:.8rem;white-space:nowrap}
       .services-grid{grid-template-columns:1fr}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
       .trust-inner{gap:14px;font-size:.85rem}
