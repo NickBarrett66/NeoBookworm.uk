@@ -105,10 +105,11 @@
     .hero h1{font-size:clamp(2.05rem,4.6vw,3.2rem);color:#fff;max-width:15ch}
     .hero h1 em{color:var(--gold);font-style:normal}
     .hero-sub{margin-top:18px;font-size:1.1rem;color:#d6d3cc;max-width:48ch}
-    .hero-rating{display:flex;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
-    .hero-rating .stars{color:var(--gold);font-size:1.25rem;letter-spacing:2px}
-    .hero-rating b{font-size:1.15rem}
-    .hero-rating .rr-sub{color:#b7b3aa;font-size:.92rem}
+    /* rating as a gold-bordered trust pill (both viewports) */
+    .hero-rating{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:rgba(255,255,255,.04);border:1.5px solid var(--gold);border-radius:999px;padding:8px 15px}
+    .hero-rating .stars{color:var(--gold);font-size:1rem;letter-spacing:1px}
+    .hero-rating b{color:#fff;font-size:1rem}
+    .hero-rating .rr-sub{color:var(--muted-d);font-size:.82rem;white-space:nowrap}
     .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
     .btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;padding:14px 24px;border-radius:999px;text-decoration:none;font-size:.98rem;cursor:pointer;border:none;transition:transform .15s,background .15s}
     .btn-primary{background:var(--gold);color:var(--ink)}
@@ -118,6 +119,10 @@
     .hero-photo{flex:.95;min-width:0;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3.4;box-shadow:0 24px 60px -24px rgba(0,0,0,.7);border:1px solid #2c2d34}
     .hero-photo .ph{width:100%;height:100%}
     .hero-badge{position:absolute;left:16px;bottom:16px;z-index:2;background:var(--gold);color:var(--ink);font-weight:800;font-size:.82rem;padding:8px 14px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+    /* Portrait-led hero: a second, in-flow photo shown only on mobile (between the rating and the
+       subhead). Hidden on desktop, where .hero-photo--d fills the right column. Two elements instead of
+       DOM reordering — the reorder tricks (grid-area/order/display:contents) all broke on WebKit. */
+    .hero-photo--m{display:none}
 
     /* ── trust strip ── */
     .trust{background:var(--gold);color:var(--ink)}
@@ -276,17 +281,19 @@
          `padding:26px 0 28px` shorthand had been zeroing it, leaving hero text flush to the screen edge. */
       .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:22px 24px 26px}
       .hero-textcol{flex:none;justify-content:flex-start}
-      .hero-photo{flex:none;aspect-ratio:16/9}
       .hero h1{max-width:none}
-      /* Keep the rating on one line on mobile: no wrap, smaller stars, shorter gap. */
-      .hero-rating{flex-wrap:nowrap;gap:8px;margin-top:16px}
-      .hero-rating .stars{font-size:1.05rem;letter-spacing:1px}
-      .hero-rating b{font-size:1rem}
-      .hero-rating .rr-sub{font-size:.8rem;white-space:nowrap}
+      /* Portrait-led: show the in-flow mobile photo (between rating and subhead), hide the desktop one. */
+      .hero-photo--d{display:none}
+      .hero-photo--m{display:block;flex:none;aspect-ratio:16/10;margin-top:14px}
+      .hero-photo--m .ph img{object-position:center 20%}
       .services-grid{grid-template-columns:1fr}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
       .trust-inner{gap:14px;font-size:.85rem}
+      .hero-sub{font-size:1rem;line-height:1.4;margin-top:14px}
       .hero-ctas .btn{flex:1 1 100%;justify-content:center}
+      /* hero now has a single CTA — keep it left-aligned at natural width, not stretched full width
+         (scoped to .hero-tail so the mobile-fitting section's button keeps its full-width treatment) */
+      .hero-tail .hero-ctas .btn{flex:0 0 auto}
       .contact-call a.tel.alt{margin-left:0;margin-top:10px}
       .find-map-box{aspect-ratio:1/1.15}
       .find-steps{grid-template-columns:1fr}
@@ -317,24 +324,31 @@
     <div class="container hero-inner">
       <div class="hero-textcol">
         <div class="hero-lead">
-          <span class="eyebrow">Chippenham · Tyres &amp; Wheel Alignment Specialists</span>
+          <span class="eyebrow">Chippenham · Tyres &amp; Wheel Alignment</span>
           <h1>The tyre shop Chippenham <em>keeps coming back to</em>.</h1>
           <div class="hero-rating">
             <span class="stars">★★★★★</span>
             <b>5.0</b>
-            <span class="rr-sub">from 238 Google reviews</span>
+            <span class="rr-sub">· 238 Google reviews</span>
           </div>
         </div>
+        <!-- Mobile-only photo — sits between the rating and the subhead so JD's face lands high on the
+             fold (portrait-led). Hidden on desktop, where .hero-photo--d fills the right column. -->
+        <div class="hero-photo hero-photo--m">
+          <div class="ph" data-ph="Photo: JD (thumbs-up portrait) — images/hero-jd.webp">
+            <img src="/jd-tyres/images/hero-jd.webp" alt="JD, owner of JD Tyres Chippenham" width="900" height="588"
+                 loading="eager" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
+          </div>
+          <span class="hero-badge">20+ years' experience</span>
+        </div>
         <div class="hero-tail">
-          <p class="hero-sub">New tyres, wheel alignment, brakes, exhausts and batteries — fitted properly
-            by JD, a motor mechanic and tyre fitter of over 20 years. No appointment needed.</p>
+          <p class="hero-sub">New tyres, alignment, brakes and more — fitted properly by JD. No appointment needed.</p>
           <div class="hero-ctas">
-            <a class="btn btn-primary" href="tel:01249490498">📞 Call 01249 490498</a>
-            <a class="btn btn-outline" href="#find-us">📍 Find the workshop</a>
+            <a class="btn btn-primary" href="#find-us">📍 Find the workshop</a>
           </div>
         </div>
       </div>
-      <div class="hero-photo">
+      <div class="hero-photo hero-photo--d">
         <div class="ph" data-ph="Photo: JD (thumbs-up portrait) — images/hero-jd.webp">
           <img src="/jd-tyres/images/hero-jd.webp" alt="JD, owner of JD Tyres Chippenham" width="900" height="588"
                loading="eager" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
