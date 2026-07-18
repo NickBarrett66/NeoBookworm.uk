@@ -98,7 +98,10 @@
     /* ── hero ── */
     .hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
     .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(1100px 500px at 78% -10%,rgba(232,167,35,.16),transparent 60%);z-index:0}
-    .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:60px 0 66px}
+    .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;
+      grid-template-areas:"lead photo" "tail photo";gap:0 40px;align-items:center;padding:60px 0 66px}
+    .hero-lead{grid-area:lead}
+    .hero-tail{grid-area:tail}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
     .hero h1{font-size:clamp(2.05rem,4.6vw,3.2rem);color:#fff;max-width:15ch}
     .hero h1 em{color:var(--gold);font-style:normal}
@@ -113,7 +116,7 @@
     .btn-primary:hover{background:var(--gold-lite);transform:translateY(-2px)}
     .btn-outline{border:1.5px solid #4a4b53;color:#fff;background:transparent}
     .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-    .hero-photo{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3.4;box-shadow:0 24px 60px -24px rgba(0,0,0,.7);border:1px solid #2c2d34}
+    .hero-photo{grid-area:photo;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3.4;box-shadow:0 24px 60px -24px rgba(0,0,0,.7);border:1px solid #2c2d34}
     .hero-photo .ph{width:100%;height:100%}
     .hero-badge{position:absolute;left:16px;bottom:16px;z-index:2;background:var(--gold);color:var(--ink);font-weight:800;font-size:.82rem;padding:8px 14px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.4)}
 
@@ -255,8 +258,8 @@
     .foot-inner a{color:#8f8b83;text-decoration:none}
 
     @media (max-width:820px){
-      .hero-inner{grid-template-columns:1fr;gap:28px;padding:34px 0 40px}
-      .hero-photo{aspect-ratio:16/11;order:-1}
+      .hero-inner{grid-template-columns:1fr;grid-template-areas:"lead" "photo" "tail";gap:16px;padding:26px 0 28px}
+      .hero-photo{aspect-ratio:16/9}
       .hero h1{max-width:none}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
       .trust-inner{gap:14px;font-size:.85rem}
@@ -264,6 +267,11 @@
       .contact-call a.tel.alt{margin-left:0;margin-top:10px}
       .find-map-box{aspect-ratio:1/1.15}
       .find-steps{grid-template-columns:1fr}
+    }
+
+    @media (max-width:480px){
+      /* Logo mark + wordmark + call pill no longer fit one row on small phones — drop the mark. */
+      .brand .mark-tyres{display:none}
     }
   </style>
 </head>
@@ -284,19 +292,13 @@
 
   <section class="hero">
     <div class="container hero-inner">
-      <div class="hero-text">
+      <div class="hero-lead">
         <span class="eyebrow">Chippenham · Tyres &amp; Wheel Alignment Specialists</span>
         <h1>The tyre shop Chippenham <em>keeps coming back to</em>.</h1>
-        <p class="hero-sub">New tyres, wheel alignment, brakes, exhausts and batteries — fitted properly
-          by JD, a motor mechanic and tyre fitter of over 20 years. No appointment needed.</p>
         <div class="hero-rating">
           <span class="stars">★★★★★</span>
           <b>5.0</b>
           <span class="rr-sub">from 238 Google reviews</span>
-        </div>
-        <div class="hero-ctas">
-          <a class="btn btn-primary" href="tel:01249490498">📞 Call 01249 490498</a>
-          <a class="btn btn-outline" href="#find-us">📍 Find the workshop</a>
         </div>
       </div>
       <div class="hero-photo">
@@ -305,6 +307,14 @@
                loading="eager" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
         </div>
         <span class="hero-badge">20+ years' experience</span>
+      </div>
+      <div class="hero-tail">
+        <p class="hero-sub">New tyres, wheel alignment, brakes, exhausts and batteries — fitted properly
+          by JD, a motor mechanic and tyre fitter of over 20 years. No appointment needed.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="tel:01249490498">📞 Call 01249 490498</a>
+          <a class="btn btn-outline" href="#find-us">📍 Find the workshop</a>
+        </div>
       </div>
     </div>
   </section>
