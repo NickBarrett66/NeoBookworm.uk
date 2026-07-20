@@ -95,6 +95,11 @@
     .brand .wm span{font-size:.56rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-top:3px}
     .head-call{background:var(--gold);color:var(--ink);font-weight:800;padding:10px 18px;border-radius:999px;text-decoration:none;font-size:.92rem;white-space:nowrap}
     .head-call:hover{background:var(--gold-lite)}
+    .nav-links{display:flex;align-items:center;gap:22px;margin-left:auto;margin-right:26px}
+    .nav-links a{color:#d6d3cc;text-decoration:none;font-size:.92rem;font-weight:700;white-space:nowrap}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;margin-left:14px;flex:none}
+    .nav-toggle span{display:block;width:24px;height:3px;background:#fff;margin:5px 0;border-radius:2px}
 
     /* ── hero ── */
     .hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
@@ -262,11 +267,39 @@
     .form-success.show{display:block}
     #enquiryForm.hidden{display:none}
 
+    /* ── news & offers strip (rotating) ── */
+    .offers-strip{position:relative;background:var(--ink);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .offers-track{min-height:200px}
+    .offer-slide{display:flex;align-items:stretch}
+    .offer-media{flex:0 0 42%;position:relative;overflow:hidden}
+    .offer-media .ph{width:100%;height:100%;min-height:200px}
+    .offer-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .offer-body{flex:1;min-width:0;padding:26px 30px;display:flex;flex-direction:column;justify-content:center;color:#fff}
+    .offer-tag{align-self:flex-start;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--gold);padding:4px 11px;border-radius:999px;margin-bottom:12px}
+    .offer-title{font-size:clamp(1.25rem,2.4vw,1.55rem);color:#fff;margin-bottom:8px}
+    .offer-text{color:var(--muted-d);font-size:1rem;line-height:1.55;margin-bottom:16px;max-width:44ch}
+    .offer-cta{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-weight:800;font-size:.98rem;text-decoration:none}
+    .offer-cta:hover{color:var(--gold-lite)}
+    .offer-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid #3a3b42;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;z-index:2}
+    .offer-nav:hover{border-color:var(--gold);color:var(--gold)}
+    .offer-prev{left:10px}
+    .offer-next{right:10px}
+    .offer-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+    .offer-dot{width:9px;height:9px;padding:0;border:none;border-radius:50%;background:#4a4b53;cursor:pointer}
+    .offer-dot[aria-current="true"]{background:var(--gold)}
+
     footer{background:var(--ink);color:#8f8b83;padding:30px 0;font-size:.88rem}
     .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
     .foot-inner a{color:#8f8b83;text-decoration:none}
 
     @media (max-width:820px){
+      .nav-links{display:none}
+      header.nav-open .nav-links{
+        display:flex;flex-direction:column;align-items:flex-start;gap:14px;
+        position:absolute;top:100%;left:0;right:0;background:var(--ink);
+        border-bottom:1px solid var(--line);padding:16px 24px 20px;margin:0
+      }
+      .nav-toggle{display:block}
       /* Natural DOM order (.hero-textcol, then .hero-photo) — deliberately not using display:contents
          or grid-area reordering here. Both were tried and both left the text vertically centred in a
          too-tall phantom space on real WebKit devices (iPhone Chrome + Edge), not reproducible in this
@@ -282,14 +315,20 @@
       .hero-inner{flex-direction:column;align-items:stretch;gap:16px;padding:22px 24px 26px}
       .hero-textcol{flex:none;justify-content:flex-start}
       .hero h1{max-width:none}
+      /* Tighter mobile hero type — the base eyebrow letter-spacing and h1 clamp are sized for desktop;
+         on a narrow phone they wrapped to 2 and 4 lines respectively. Scoped to .hero-lead so the
+         mobile-fitting section's own eyebrow ("We come to you") is untouched. */
+      .hero-lead .eyebrow{font-size:.68rem;letter-spacing:.06em;margin-bottom:8px;white-space:normal}
+      .hero-lead h1{font-size:clamp(1.55rem,6.4vw,2rem);line-height:1.2}
+      .hero-rating{margin-top:10px;padding:6px 13px}
       /* Portrait-led: show the in-flow mobile photo (between rating and subhead), hide the desktop one. */
       .hero-photo--d{display:none}
-      .hero-photo--m{display:block;flex:none;aspect-ratio:16/10;margin-top:14px}
+      .hero-photo--m{display:block;flex:none;aspect-ratio:16/10;margin-top:10px}
       .hero-photo--m .ph img{object-position:center 20%}
       .services-grid{grid-template-columns:1fr}
       .mobile-grid,.find-grid,.contact-grid{grid-template-columns:1fr}
       .trust-inner{gap:14px;font-size:.85rem}
-      .hero-sub{font-size:1rem;line-height:1.4;margin-top:14px}
+      .hero-sub{font-size:1rem;line-height:1.4;margin-top:10px}
       .hero-ctas .btn{flex:1 1 100%;justify-content:center}
       /* hero now has a single CTA — keep it left-aligned at natural width, not stretched full width
          (scoped to .hero-tail so the mobile-fitting section's button keeps its full-width treatment) */
@@ -297,24 +336,41 @@
       .contact-call a.tel.alt{margin-left:0;margin-top:10px}
       .find-map-box{aspect-ratio:1/1.15}
       .find-steps{grid-template-columns:1fr}
+      .offer-slide{flex-direction:column}
+      .offer-media{flex:none;aspect-ratio:16/10}
+      .offer-media .ph{min-height:0}
+      .offer-body{padding:22px 22px 34px}
+      .offer-prev,.offer-next{display:none}
     }
 
     @media (max-width:480px){
-      /* Logo mark + wordmark + call pill no longer fit one row on small phones — drop the mark. */
+      /* Logo mark + wordmark + call pill + nav toggle no longer fit one row on small phones —
+         drop the mark, and drop the tagline (its heavy letter-spacing was wrapping onto 3 lines
+         once the row got squeezed further by the added nav-toggle button). */
       .brand .mark-tyres{display:none}
+      .brand .wm span{display:none}
     }
   </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header>
+<header id="siteHeader">
   <div class="head-inner">
     <a class="brand" href="#" aria-label="JD Tyres Chippenham home">
       <img class="mark-tyres" src="/jd-tyres/images/logo-tyres.webp" alt="" width="326" height="203" decoding="async">
       <span class="wm"><b>JD<em> Tyres</em></b><span>The Joy of Driving</span></span>
     </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#services">What we do</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#offers">Offers</a>
+      <a href="#mobile">Mobile fitting</a>
+      <a href="#find-us">Find us</a>
+      <a href="#contact">Contact</a>
+    </nav>
     <a class="head-call" href="tel:01249490498">📞 01249 490498</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -489,6 +545,36 @@
       </div>
       <div class="rev-foot">
         <a class="btn btn-primary" href="https://g.page/r/CXcgv6Vct9a6EB0/review" target="_blank" rel="noopener">Read all 238 reviews on Google ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEWS & OFFERS (rotating strip) ── -->
+  <section id="offers">
+    <div class="container">
+      <div class="title-block">
+        <h2 class="section-title">News &amp; offers</h2>
+        <p class="section-sub">What's on at JD Tyres right now — plus the odd local tip worth passing on.</p>
+        <div class="accent-bar"></div>
+      </div>
+
+      <div class="offers-strip" id="offersStrip" aria-roledescription="carousel" aria-label="News and offers">
+        <div class="offers-track" id="offersTrack">
+          <div class="offer-slide">
+            <div class="offer-media">
+              <img src="/jd-tyres/images/car-hire.webp" alt="A Chippenham Car Hire rental car" loading="lazy" decoding="async" onerror="this.style.display='none'">
+            </div>
+            <div class="offer-body">
+              <span class="offer-tag">Local tip</span>
+              <h3 class="offer-title">Car off the road? A local firm we rate</h3>
+              <p class="offer-text">If you're stuck for a car while yours is being sorted, Chippenham Car Hire are worth a call — local, no deposit, and happy to hire to 21&ndash;24s with a UK licence.</p>
+              <a class="offer-cta" href="https://www.facebook.com/Chippenhamcarhire" target="_blank" rel="noopener">See Chippenham Car Hire on Facebook →</a>
+            </div>
+          </div>
+        </div>
+        <button class="offer-nav offer-prev" id="offerPrev" type="button" aria-label="Previous">‹</button>
+        <button class="offer-nav offer-next" id="offerNext" type="button" aria-label="Next">›</button>
+        <div class="offer-dots" id="offerDots"></div>
       </div>
     </div>
   </section>
@@ -833,6 +919,101 @@
   } else {
     initAreaMap();
   }
+})();
+</script>
+
+<script>
+// Mobile nav toggle (class toggle — matches he-tyres/index.html's pattern).
+(function () {
+  var header = document.getElementById('siteHeader');
+  var toggle = document.getElementById('navToggle');
+  var links = document.querySelector('.nav-links');
+  if (!header || !toggle || !links) return;
+  toggle.addEventListener('click', function () {
+    var open = header.classList.toggle('nav-open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  links.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (window.innerWidth <= 820) {
+        header.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+})();
+</script>
+
+<script>
+// News & offers strip — rotating slides. First slide (car hire) is in static HTML so it shows
+// without JS; this takes over on load, adds JD's own offers, and wires arrows + dots + auto-rotate.
+// To edit: change the SLIDES array below. Keep it tyre-first — car hire is a local recommendation,
+// not the main event.
+(function () {
+  var track = document.getElementById('offersTrack');
+  var dotsEl = document.getElementById('offerDots');
+  if (!track || !dotsEl) return;
+
+  var SLIDES = [
+    { tag: 'Local tip', title: 'Car off the road? A local firm we rate',
+      text: "If you're stuck for a car while yours is being sorted, Chippenham Car Hire are worth a call — local, no deposit, and happy to hire to 21–24s with a UK licence.",
+      cta: 'See Chippenham Car Hire on Facebook →',
+      href: 'https://www.facebook.com/Chippenhamcarhire', external: true,
+      img: '/jd-tyres/images/car-hire.webp', alt: 'A Chippenham Car Hire rental car' },
+    { tag: 'Any time', title: 'Free tyre check, no appointment',
+      text: "Not sure your tyres are legal? Pop in and we'll check tread and pressures free — and we'll never change a tyre that doesn't need changing.",
+      cta: 'Find us on Methuen Park →', href: '#find-us', external: false,
+      img: '/jd-tyres/images/card-tyres.webp', alt: 'A new tyre at JD Tyres Chippenham' },
+    { tag: 'We come to you', title: "Can't get to us? We'll come to you",
+      text: 'Mobile tyre fitting across Chippenham and roughly 20 miles around — at the roadside, your home or your work.',
+      cta: 'Call the mobile 07721 401382 →', href: 'tel:07721401382', external: false,
+      img: '/jd-tyres/images/van.webp', alt: 'The JD Tyres mobile tyre fitting van' }
+  ];
+
+  var i = 0, timer;
+
+  function media(s) {
+    if (s.img) {
+      return '<div class="offer-media"><img src="' + s.img + '" alt="' + s.alt +
+        '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'"></div>';
+    }
+    return '<div class="offer-media"><div class="ph" data-ph="' + s.ph + '"></div></div>';
+  }
+
+  function render() {
+    var s = SLIDES[i];
+    track.innerHTML = '<div class="offer-slide">' + media(s) +
+      '<div class="offer-body">' +
+      '<span class="offer-tag">' + s.tag + '</span>' +
+      '<h3 class="offer-title">' + s.title + '</h3>' +
+      '<p class="offer-text">' + s.text + '</p>' +
+      '<a class="offer-cta" href="' + s.href + '"' +
+        (s.external ? ' target="_blank" rel="noopener"' : '') + '>' + s.cta + '</a>' +
+      '</div></div>';
+    var dots = '';
+    for (var d = 0; d < SLIDES.length; d++) {
+      dots += '<button class="offer-dot" type="button" role="tab" aria-label="Offer ' + (d + 1) +
+        '"' + (d === i ? ' aria-current="true"' : '') + ' data-i="' + d + '"></button>';
+    }
+    dotsEl.innerHTML = dots;
+  }
+
+  function go(n) { i = (i + n + SLIDES.length) % SLIDES.length; render(); }
+  function restart() { clearInterval(timer); timer = setInterval(function () { go(1); }, 5500); }
+
+  document.getElementById('offerPrev').addEventListener('click', function () { go(-1); restart(); });
+  document.getElementById('offerNext').addEventListener('click', function () { go(1); restart(); });
+  dotsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.offer-dot');
+    if (!b) return;
+    i = +b.dataset.i; render(); restart();
+  });
+  var strip = document.getElementById('offersStrip');
+  strip.addEventListener('mouseenter', function () { clearInterval(timer); });
+  strip.addEventListener('mouseleave', restart);
+
+  render();
+  restart();
 })();
 </script>
 
