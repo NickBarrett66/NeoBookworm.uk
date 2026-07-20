@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<style>
+  @font-face{
+    font-family:'DM Sans';
+    font-weight:300 900;
+    font-style:normal;
+    src:url('dmsans.woff2') format('woff2');
+  }
+  /* A6 landscape 148x105mm + 3mm bleed all round = 154x111mm */
+  @page{ size:154mm 111mm; margin:0; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ font-family:'DM Sans',sans-serif; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page{
+    position:relative;
+    width:154mm; height:111mm;
+    overflow:hidden;
+    break-after:page;
+  }
+  .page:last-child{ break-after:auto; }
+
+  /* ---- trim/safe reference (not printed): trim edge is 3mm in; safe is 8mm in ---- */
+
+  /* ============ FRONT ============ */
+  .front{ background:#10151d; }
+  .front .photo{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover; object-position:center 28%;
+  }
+  .front .grad{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg,rgba(16,21,29,0) 38%,rgba(16,21,29,.55) 62%,rgba(16,21,29,.94) 100%);
+  }
+  .front .copy{
+    position:absolute; left:8mm; right:44mm; bottom:8mm;
+    color:#fff;
+  }
+  .front .eyebrow{
+    font-size:8pt; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+    color:#e8a723; margin-bottom:3mm;
+  }
+  .front h1{
+    font-size:19pt; font-weight:900; line-height:1.1; letter-spacing:-.01em;
+  }
+  .front h1 em{ color:#e8a723; font-style:normal; }
+  /* QR tile bottom-right on the white-wall part of the photo */
+  .front .qrtile{
+    position:absolute; right:8mm; bottom:8mm;
+    width:32mm; background:#fff; border-radius:3mm;
+    padding:2.6mm 2.6mm 2mm; text-align:center;
+    box-shadow:0 2mm 6mm rgba(0,0,0,.35);
+  }
+  .front .qrtile img{ width:100%; display:block; }
+  .front .qrtile .lab{
+    font-size:6.6pt; font-weight:700; color:#10151d; margin-top:1.4mm; letter-spacing:.01em;
+  }
+  .front .qrtile .scan{
+    font-size:6.6pt; font-weight:800; color:#d86f18; text-transform:uppercase; letter-spacing:.06em;
+    margin-bottom:1.6mm;
+  }
+
+  /* ============ BACK ============ */
+  .back{ background:#ffffff; color:#26313f; }
+  .back .msg{
+    position:absolute; left:8mm; top:8mm; bottom:8mm;
+    width:82mm;
+    display:flex; flex-direction:column;
+  }
+  .back .hi{ font-size:12pt; font-weight:800; color:#14243f; margin-bottom:2.4mm; }
+  .back p{ font-size:8.6pt; line-height:1.5; margin-bottom:2.2mm; }
+  .back .sign{ font-size:8.6pt; font-weight:800; color:#14243f; margin-top:1mm; }
+  .back .contact{ font-size:7.6pt; color:#5d6b7d; margin-top:.6mm; }
+  .back .qrow{
+    display:flex; align-items:center; gap:3mm; margin-top:auto;
+  }
+  .back .qrow img{ width:20mm; height:20mm; display:block; }
+  .back .qrow .qtx .s{ font-size:7.6pt; font-weight:800; color:#d86f18; text-transform:uppercase; letter-spacing:.05em; }
+  .back .qrow .qtx .u{ font-size:9pt; font-weight:800; color:#14243f; }
+  /* brand mark, bottom of message column */
+  .back .brand{ position:absolute; left:8mm; bottom:6mm; display:flex; align-items:center; gap:2mm; }
+  .back .brand img{ width:6mm; height:6mm; }
+  .back .brand b{ font-size:8pt; font-weight:800; color:#14243f; }
+  .back .brand b span{ color:#f5872a; }
+  /* right side is intentionally clear for the mailing address (Stannp overlays it) */
+</style>
+</head>
+<body>
+
+  <!-- ============ PAGE 1: FRONT ============ -->
+  <div class="page front">
+    <img class="photo" src="card1-front-jd-portrait.jpg" alt="">
+    <div class="grad"></div>
+    <div class="copy">
+      <div class="eyebrow">JD Tyres · Chippenham</div>
+      <h1>Your website's still built &mdash; and still <em>nothing to pay to look</em>.</h1>
+    </div>
+    <div class="qrtile">
+      <div class="scan">Scan &rarr;</div>
+      <img src="jd-offer-qr-print.png" alt="">
+      <div class="lab">tyretrust.uk/jd-offer</div>
+    </div>
+  </div>
+
+  <!-- ============ PAGE 2: BACK ============ -->
+  <div class="page back">
+    <div class="msg">
+      <div class="hi">Julian &mdash;</div>
+      <p>No idea if my letter landed or ended up under a stack of tyre invoices. Either way, the site I built for JD Tyres is still there &mdash; and it still costs nothing to have a look.</p>
+      <p>Two minutes on your phone whenever you get a quiet one: point the camera at the code and it opens straight up. A link to your site's at the top.</p>
+      <p>If it's not for you, no worries at all. Keep up the brilliant work either way.</p>
+      <div class="sign">Nick &mdash; TyreTrust</div>
+      <div class="contact">07494 653018 &middot; nick@tyretrust.uk</div>
+      <div class="qrow">
+        <img src="jd-offer-qr-print.png" alt="">
+        <div class="qtx">
+          <div class="s">Scan to see your site</div>
+          <div class="u">tyretrust.uk/jd-offer</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand">
+      <img src="tt-logo.png" alt="">
+      <b>Tyre<span>Trust</span></b>
+    </div>
+  </div>
+
+</body>
+</html>
