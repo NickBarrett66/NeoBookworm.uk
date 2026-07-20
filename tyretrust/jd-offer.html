@@ -85,6 +85,13 @@
   .plan-card li{display:flex;gap:10px;align-items:flex-start;color:var(--body)}
   .plan-card li::before{content:'✓';color:#0f8a52;font-weight:800;flex:none}
 
+  .news-highlight{max-width:720px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:flex;gap:22px;align-items:center;box-shadow:var(--shadow)}
+  .news-highlight img{width:220px;height:auto;border-radius:10px;flex:0 0 220px;object-fit:cover}
+  .news-highlight-body span.eyebrow{margin-bottom:8px}
+  .news-highlight-body h3{margin-bottom:8px}
+  .news-highlight-body p{margin-bottom:0;color:var(--muted)}
+  @media(max-width:560px){ .news-highlight{flex-direction:column;text-align:center} .news-highlight img{width:100%;flex:none} }
+
   .faq-list{max-width:720px;margin:0 auto}
   .faq-item{border-bottom:1px solid var(--line);padding:18px 0}
   .faq-item summary{cursor:pointer;font-weight:700;font-size:1.03rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
@@ -124,10 +131,10 @@
 
 <header class="site">
   <div class="container nav">
-    <a class="brand" href="/tyretrust/" aria-label="TyreTrust — websites for tyre fitters">
-      <img class="mark" src="/tyretrust/images/logo-mark-120.webp" width="40" height="40" alt="TyreTrust" decoding="async" fetchpriority="high">
+    <div class="brand" role="img" aria-label="TyreTrust — websites for tyre fitters">
+      <img class="mark" src="/tyretrust/images/logo-mark-120.webp" width="40" height="40" alt="" decoding="async" fetchpriority="high">
       <span>Tyre<b>Trust</b></span>
-    </a>
+    </div>
   </div>
 </header>
 
@@ -178,6 +185,21 @@
     </div>
   </section>
 
+  <section>
+    <div class="container">
+      <div class="news-highlight">
+        <img src="/tyretrust/images/jd-offer-newsoffers.webp" width="220" height="138" alt="Chippenham Car Hire — one of the entries already on your News &amp; Offers section" loading="lazy" decoding="async">
+        <div class="news-highlight-body">
+          <span class="eyebrow">One thing I think you'll like</span>
+          <h3>A News &amp; Offers section, already set up</h3>
+          <p>It's already got your Chippenham Car Hire mention sitting in it. Whenever you want to post a
+            holiday notice or a shout-out, just send me the line — no logging in, no dashboard, I put it up
+            for you. It's part of the £9.99/mo, not an extra.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="faq">
     <div class="container">
       <div class="center" style="margin-bottom:20px">
@@ -195,10 +217,12 @@
         <details class="faq-item">
           <summary>I've already got a website (Google Sites) — why would I switch?</summary>
           <div class="faq-a"><p>You've already taken the step most fitters haven't — getting online at all.
-            This one really showcases your fabulous tyre business: your amazing 5* reviews, the coverage for
-            your mobile van, clear directions to your slightly tricky to find unit, fast on a phone, and set up
-            so it turns up on Google searches. No pressure either way — have a look and decide for yourself if
-            its worth £9.99 a month.</p></div>
+            This one adds a few things Google Sites doesn't do easily: it's already got a News &amp; Offers
+            section set up with a mention for Chippenham Car Hire in it, so when you want to post a holiday
+            notice or a shout-out, you just send me the line and I put it up — no logging in, no fiddling. On
+            top of that it's fast on a phone, shows your 5* reviews and coverage clearly, and is set up so it
+            turns up on Google searches. No pressure either way — have a look and decide for yourself if it's
+            worth £9.99 a month.</p></div>
         </details>
         <details class="faq-item">
           <summary>Who owns it — and what happens to the web address?</summary>
@@ -237,6 +261,7 @@
         changes first, just tell me what and I'll sort it.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="mailto:nick@tyretrust.uk?subject=JD%20Tyres%20website%20-%20let's%20go%20live">Email nick@tyretrust.uk</a>
+        <a class="btn btn-ghost" href="tel:07494653018">📞 Call 07494 653018</a>
         <a class="btn btn-ghost" id="finalSee" href="/jd-tyres">See the site again →</a>
       </div>
       <p class="final-note">No rush — have a proper look first. It'll still be here when you're ready.</p>
