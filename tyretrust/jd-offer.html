@@ -6,7 +6,7 @@
 <title>Your new website, JD Tyres | TyreTrust</title>
 <meta name="description" content="I've already built JD Tyres Chippenham a proper website, no charge for the build. Have a look, then it's £9.99/month to keep it live — cancel any time.">
 <meta name="robots" content="noindex, nofollow">
-<link rel="canonical" href="https://tyretrust.uk/jd-tyres-offer">
+<link rel="canonical" href="https://tyretrust.uk/jd-offer">
 
 <link rel="icon" type="image/x-icon" href="/tyretrust/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/tyretrust/images/favicon-32x32.png">
@@ -101,7 +101,22 @@
   .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
   .foot a{color:#c8d3e2}
 
-  @media (max-width:640px){ .hero-actions,.final-actions{flex-direction:column} }
+  @media (max-width:640px){ .hero-actions,.final-actions{flex-direction:column} .browser{display:none} }
+
+  /* Full-screen viewer for JD's own site — opens over this page at the reader's own
+     width (never squashed), with a persistent bar back to the offer. No new tab. */
+  .siteover{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;background:var(--navy)}
+  .siteover[hidden]{display:none}
+  .siteover-bar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:6px clamp(10px,3vw,18px);background:var(--ink);border-bottom:1px solid rgba(255,255,255,.1);color:#e7eefb}
+  .siteover-bar .so-mark{width:22px;height:22px;flex:0 0 auto}
+  .siteover-bar b{font-size:.85rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .siteover-bar .so-sub{flex:1;min-width:0;color:#9fb0c7;font-size:.78rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .so-close{position:relative;flex:0 0 auto;margin-left:auto;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:.82rem;line-height:1.2;padding:8px 14px;border-radius:8px;background:var(--gold);color:var(--ink)}
+  .so-close::after{content:"";position:absolute;inset:-8px -6px} /* bigger thumb target than the slim bar */
+  .so-close:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .siteover iframe{flex:1 1 auto;width:100%;border:0;background:#fff}
+  @media(max-width:520px){ .siteover-bar .so-sub{display:none} .so-close{padding:8px 12px} }
+  body.so-open{overflow:hidden}
 </style>
 </head>
 <body>
@@ -125,7 +140,7 @@
       <p class="hero-sub">No charge for putting this together — I wanted you to see the finished thing, not a
         pitch. Have a proper look, on your phone if that's easier, and see what you think.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/jd-tyres" target="_blank" rel="noopener">Open your site full-size ↗</a>
+        <a class="btn btn-primary" id="heroSee" href="/jd-tyres">See your site →</a>
       </div>
       <div class="browser">
         <div class="browser-bar">
@@ -180,9 +195,10 @@
         <details class="faq-item">
           <summary>I've already got a website (Google Sites) — why would I switch?</summary>
           <div class="faq-a"><p>You've already taken the step most fitters haven't — getting online at all.
-            This one's built specifically around your tyre business: your reviews, your brands, your coverage
-            area, clear directions to your unit, fast on a phone, and set up so it turns up on Google searches.
-            No pressure either way — have a look and decide for yourself.</p></div>
+            This one really showcases your fabulous tyre business: your amazing 5* reviews, the coverage for
+            your mobile van, clear directions to your slightly tricky to find unit, fast on a phone, and set up
+            so it turns up on Google searches. No pressure either way — have a look and decide for yourself if
+            its worth £9.99 a month.</p></div>
         </details>
         <details class="faq-item">
           <summary>Who owns it — and what happens to the web address?</summary>
@@ -193,14 +209,14 @@
         </details>
         <details class="faq-item">
           <summary>How do I actually pay the £9.99/mo?</summary>
-          <div class="faq-a"><p>Once you're happy and ready to go live, I'll send a single secure card link that
+          <div class="faq-a"><p>Once you're happy and ready to go live, I'll send a single secure link that
             sets up the monthly payment — no invoices to remember, nothing paid by hand. Nothing is taken until
             you say yes, and the site only goes live once that's set up.</p></div>
         </details>
         <details class="faq-item">
           <summary>What if I want changes?</summary>
           <div class="faq-a"><p>Just email me — small wording or photo changes are usually 15–30 minutes and
-            covered as part of getting things right early on. For anything bigger — new pages, new features, a
+            covered as part of your monthly fee. For anything bigger — new pages, new features, a
             proper rethink of a section — I'll quote it at £25 an hour before I start, so you always know the
             cost upfront. Either way, you're not logging into a dashboard or learning software.</p></div>
         </details>
@@ -221,13 +237,23 @@
         changes first, just tell me what and I'll sort it.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="mailto:nick@tyretrust.uk?subject=JD%20Tyres%20website%20-%20let's%20go%20live">Email nick@tyretrust.uk</a>
-        <a class="btn btn-ghost" href="/jd-tyres" target="_blank" rel="noopener">Open the site again ↗</a>
+        <a class="btn btn-ghost" id="finalSee" href="/jd-tyres">See the site again →</a>
       </div>
       <p class="final-note">No rush — have a proper look first. It'll still be here when you're ready.</p>
     </div>
   </section>
 
 </main>
+
+<!-- Full-screen viewer for JD's site — opens over this page, always a way back. -->
+<div class="siteover" id="siteOver" hidden role="dialog" aria-modal="true" aria-label="Your JD Tyres website">
+  <div class="siteover-bar">
+    <img class="so-mark" src="/tyretrust/images/logo-mark-120.webp" width="120" height="120" alt="" loading="lazy" decoding="async">
+    <b>JD Tyres — your site</b>
+    <span class="so-sub">Have a proper look around — nothing's live until you say so.</span>
+    <button type="button" class="so-close" id="soClose">← Back to the offer</button>
+  </div>
+</div>
 
 <footer class="site">
   <div class="container foot">
@@ -236,7 +262,46 @@
   </div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // JD's site opens FULL-SCREEN over this page — real width, so it isn't squashed on a
+  // phone, but there's always a bar back to the offer (no stranded new tab).
+  (function(){
+    var over    = document.getElementById('siteOver'),
+        soClose = document.getElementById('soClose'),
+        lastFocus = null, frame = null;
+    var SITE_URL = '/jd-tyres';
+
+    function closeSite(){
+      if(!over || over.hidden) return;
+      over.hidden = true;
+      document.body.classList.remove('so-open');
+      if(lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    function openSite(e){
+      if(e) e.preventDefault();
+      if(!over) return;
+      lastFocus = (document.activeElement && document.activeElement !== document.body) ? document.activeElement : null;
+      if(!frame){
+        frame = document.createElement('iframe');
+        frame.src = SITE_URL;
+        frame.title = 'JD Tyres Chippenham — the website I built for you';
+        over.appendChild(frame);
+      }
+      over.hidden = false;
+      document.body.classList.add('so-open');
+      if(soClose) soClose.focus();
+    }
+
+    ['heroSee','finalSee'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('click', openSite);
+    });
+    if(soClose) soClose.addEventListener('click', closeSite);
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeSite(); });
+  })();
+</script>
 
 </body>
 </html>

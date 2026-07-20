@@ -48,7 +48,7 @@ export default {
         // JD Tyres Chippenham — real client site + its personalised offer page.
         '/jd-tyres':       '/jd-tyres/',
         '/jd-tyres/':      '/jd-tyres/',
-        '/jd-tyres-offer': '/tyretrust/jd-tyres-offer',
+        '/jd-offer':       '/tyretrust/jd-offer',
       };
       const rewrite = TYRETRUST_ROUTES[p];
       if (rewrite) {
