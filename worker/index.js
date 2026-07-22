@@ -43,6 +43,10 @@ export default {
         '/full/':          '/tyretrust/full/',
         '/proposal':       '/tyretrust/proposal',
         '/proposal/':      '/tyretrust/proposal',
+        '/privacy':        '/tyretrust/privacy',
+        '/privacy/':       '/tyretrust/privacy',
+        '/terms':          '/tyretrust/terms',
+        '/terms/':         '/tyretrust/terms',
         '/robots.txt':     '/tyretrust/robots.txt',
         '/sitemap.xml':    '/tyretrust/sitemap.xml',
         // JD Tyres Chippenham — real client site + its personalised offer page.
