@@ -1,5 +1,6 @@
-// api/_lib/vdg.js
+// worker/_lib/vdg.js
 // Vehicle Data Global (VDG) UK lookup — VehicleDetails + TyreDetails packages.
+// Ported from api/_lib/vdg.js (Vercel) — pure fetch-based logic, Worker-safe as-is.
 
 const VDG_BASE_URL = 'https://uk.api.vehicledataglobal.com/r2/lookup';
 
@@ -85,7 +86,7 @@ async function fetchPackage(apiKey, reg, packageName) {
   };
 }
 
-async function lookupVehicleAndTyres(apiKey, regInput) {
+export async function lookupVehicleAndTyres(apiKey, regInput) {
   const reg = normalizeReg(regInput);
   if (!reg) {
     return { ok: false, status: 400, error: 'reg parameter required' };
@@ -151,8 +152,4 @@ async function lookupVehicleAndTyres(apiKey, regInput) {
   };
 }
 
-module.exports = {
-  VDG_BASE_URL,
-  normalizeReg,
-  lookupVehicleAndTyres,
-};
+export { VDG_BASE_URL, normalizeReg };

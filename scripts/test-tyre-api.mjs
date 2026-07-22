@@ -2,9 +2,7 @@
 // Usage: set VDG_API_KEY=your-key && node scripts/test-tyre-api.mjs [VRM]
 // Example: node scripts/test-tyre-api.mjs AB12CDE
 
-const { createRequire } = await import('module');
-const require = createRequire(import.meta.url);
-const { lookupVehicleAndTyres } = require('../api/_lib/vdg');
+import { lookupVehicleAndTyres } from '../worker/_lib/vdg.js';
 
 const apiKey = process.env.VDG_API_KEY;
 const vrm = process.argv[2];

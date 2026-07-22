@@ -3,6 +3,7 @@
 // Unmatched paths fall through to env.ASSETS.fetch(request) for static files.
 
 import * as regLookup    from './routes/reg-lookup.js';
+import * as vdgLookup    from './routes/vdg-lookup.js';
 import * as bookingAsset from './routes/booking-asset.js';
 import * as portal       from './routes/portal.js';
 import * as portalAction from './routes/portal-action.js';
@@ -78,6 +79,7 @@ export default {
     // ── API routes ──────────────────────────────────────────────────────────
 
     if (p === '/api/reg-lookup')    return regLookup.handle(request, env, ctx, url);
+    if (p === '/api/vdg-lookup')    return vdgLookup.handle(request, env, ctx, url);
     if (p === '/api/booking-asset') return bookingAsset.handle(request, env, ctx, url);
 
     // Phase 5:

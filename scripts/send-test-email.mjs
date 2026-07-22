@@ -1,21 +1,35 @@
 // Fire one real J1-E1 send to a +test alias.
 //
-// Reads credentials from env: GW_SMTP_USER, GW_SMTP_PASS, CF_API_TOKEN.
-// All three must be set in your shell before running.
+// Reads credentials from env: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
+// GMAIL_REFRESH_TOKEN, CF_API_TOKEN. All four must be set in your shell
+// before running (same values as the neobookworm-uk Worker secrets — see
+// `npx wrangler secret list --name neobookworm-uk`, or re-mint the Gmail
+// values per docs/gmail-api-bridge-migration.md if you don't have them).
 //
 // Usage:
-//   $env:GW_SMTP_USER="nick@neobookworm.uk"; $env:GW_SMTP_PASS="..."; $env:CF_API_TOKEN="..."
+//   $env:GMAIL_CLIENT_ID="..."; $env:GMAIL_CLIENT_SECRET="..."; $env:GMAIL_REFRESH_TOKEN="..."; $env:CF_API_TOKEN="..."
 //   node scripts/send-test-email.mjs
 //   node scripts/send-test-email.mjs nick+test@neobookworm.uk
 //
 // A successful run prints "✓ Sent" and writes an email_log row with status='sent'.
-// A forced SMTP failure (e.g. wrong password) prints the error and exits 1
-// without throwing — check D1 email_log for status='failed' row.
+// A forced send failure (e.g. wrong/expired refresh token) prints the error
+// and exits 1 without throwing — check D1 email_log for a status='failed' row.
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import { sendTemplated } from '../worker/_lib/email.js';
 
-const { sendTemplated } = require('../api/_lib/email.js');
+const env = {
+  GMAIL_CLIENT_ID:     process.env.GMAIL_CLIENT_ID,
+  GMAIL_CLIENT_SECRET: process.env.GMAIL_CLIENT_SECRET,
+  GMAIL_REFRESH_TOKEN: process.env.GMAIL_REFRESH_TOKEN,
+  CF_API_TOKEN:        process.env.CF_API_TOKEN,
+};
+
+for (const [key, value] of Object.entries(env)) {
+  if (!value) {
+    console.error(`Set ${key} in the environment (same value as the neobookworm-uk Worker secret).`);
+    process.exit(1);
+  }
+}
 
 const to = process.argv[2] || 'nick+test@neobookworm.uk';
 
@@ -28,7 +42,7 @@ const vars = {
 
 console.log(`Sending J1-E1 → ${to} …`);
 
-const result = await sendTemplated({
+const result = await sendTemplated(env, {
   slug: 'hart-plumbing-test',
   templateId: 'J1-E1',
   vars,
