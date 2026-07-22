@@ -1068,7 +1068,7 @@
     </div>
 
     <div class="final-actions">
-      <a class="btn btn-ghost" href="mailto:nick@tyretrust.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Prefer email? Send me a message ✉️</a>
+      <a class="btn btn-ghost" id="finalEmailLink" href="mailto:nick@tyretrust.uk?subject=Build%20me%20a%20TyreTrust%20site&amp;body=Hi%20Nick%2C%20here%27s%20my%20tyre%20business%3A%0A%0ABusiness%20name%3A%0ATown%3A%0AWhat%20I%20do%20(depot%2Fmobile%2Fboth)%3A%0A%0AShow%20me%20what%20you%27d%20build.">Prefer email? Send me a message ✉️</a>
     </div>
   </div>
 </section>
@@ -1506,6 +1506,22 @@
 
     // --- Optional per-prospect "what you do" default (e.g. depot-only fitters) ---
     if(d.what){ var whatEl=document.getElementById('ltWhat'); if(whatEl) whatEl.value=d.what; }
+
+    // --- Mirror the same details into the "prefer email" mailto link, so it isn't half-blank ---
+    var emailLink=document.getElementById('finalEmailLink');
+    if(emailLink){
+      var whatLine = d.what || 'Both depot & mobile';
+      var nameLine = d.first ? 'Name: '+d.first+'\n' : '';
+      var closing = d.built ? 'Changes or go-ahead — just say.' : 'Show me what you’d build.';
+      var subj = d.built ? 'My '+d.business+' website' : 'Build me a TyreTrust site';
+      var body = 'Hi Nick, here’s my tyre business:\n\n'
+        + nameLine
+        + 'Business name: '+d.business+'\n'
+        + 'Town: '+d.town+'\n'
+        + 'What I do (depot/mobile/both): '+whatLine+'\n\n'
+        + closing;
+      emailLink.href = 'mailto:nick@tyretrust.uk?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+    }
 
     // --- Personalised banner (built = reveal, referencing the letter; otherwise = offer) ---
     var text = d.built
