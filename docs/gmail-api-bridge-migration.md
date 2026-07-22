@@ -1,6 +1,6 @@
 # Migrating the SMTP bridge off Vercel → Gmail API
 
-**Status:** Plan only — not yet implemented. Written 1 Jul 2026.
+**Status:** Implemented and verified in production, 22 Jul 2026. Written 1 Jul 2026. All email now sends via the Gmail API directly from the Cloudflare Worker — see `docs/vercel-retirement-plan.md` for which stages are done (Stages 1–4 complete; only Stage 5 teardown remains).
 **Goal:** Remove the dependency on the Vercel SMTP bridge (`api/send-email.js` at
 `bridge.neobookworm.uk`) by sending onboarding email directly from the Cloudflare
 Worker over the **Gmail HTTP API**, keeping the same `nick@neobookworm.uk` identity

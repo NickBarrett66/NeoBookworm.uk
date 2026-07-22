@@ -10,8 +10,9 @@
  * Bindings required:
  *   DB            — D1 database (neobookworm-enquiries)
  * Secrets (set via `wrangler secret put`):
- *   NOTIFY_SECRET             — shared secret for /api/notify-landing-enquiry on Vercel
- *   ONBOARDING_INTAKE_SECRET  — shared secret for /api/onboarding-intake on Vercel (S6)
+ *   NOTIFY_SECRET             — shared secret for neobookworm.uk/api/notify-landing-enquiry
+ *                               (served by the neobookworm-uk Worker via the Gmail API)
+ *   ONBOARDING_INTAKE_SECRET  — shared secret for neobookworm.uk/api/onboarding-intake (S6)
  */
 
 import { corsHeaders, handleOptions, isAllowedOrigin } from './cors.js';

@@ -1,6 +1,6 @@
 # Retiring Vercel completely — full runbook
 
-**Status:** Plan / runbook. Not started. Written 1 Jul 2026.
+**Status:** Stages 1–4 complete and verified live in production (22 Jul 2026) — all five email endpoints send via the Gmail API from the Cloudflare Worker, and the `.co.uk` redirect no longer touches Vercel. Only **Stage 5 (teardown)** remains: delete `api/` + `vercel.json`, remove the now-unused `VERCEL_BRIDGE_URL`/`BRIDGE_SECRET` Worker secrets, and delete the Vercel project itself. Written 1 Jul 2026.
 **Goal:** Remove the last dependencies on Vercel so `neobookworm.uk` and all of its
 email run entirely on Cloudflare + Google Workspace. Email moves from SMTP (via the
 Vercel bridge) to the **Gmail HTTP API**, sending as `nick@neobookworm.uk`.

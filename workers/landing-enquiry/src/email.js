@@ -1,9 +1,10 @@
 /**
  * Email notification for landing-enquiry Worker.
  *
- * Workers cannot open TCP connections to SMTP ports (587, 465).
- * Instead, POST to the thin Vercel function /api/notify-landing-enquiry
- * which uses iCloud SMTP via Nodemailer.
+ * POSTs to neobookworm.uk/api/notify-landing-enquiry, which is served
+ * natively by the neobookworm-uk Cloudflare Worker (worker/routes/
+ * notify-landing-enquiry.js) and sends via the Gmail API — no Vercel,
+ * no SMTP involved.
  *
  * Exported:
  *   sendNotifyEmail(fields, env) → { ok: true } | throws

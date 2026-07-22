@@ -3,7 +3,16 @@
 Cloudflare Worker that receives landing page enquiries from `plumbers.html`,
 `plumbers-switch.html`, and the electrician landing pages, validates them,
 saves them to D1, and then — in the background — sends a notification email
-to Nick via the Vercel `/api/notify-landing-enquiry` endpoint.
+to Nick via `neobookworm.uk/api/notify-landing-enquiry`.
+
+> **Update, 22 Jul 2026:** that notify endpoint is now served natively by the
+> `neobookworm-uk` Cloudflare Worker (`worker/routes/notify-landing-enquiry.js`),
+> sending via the **Gmail API** — not Vercel. The `api/notify-landing-enquiry.js`
+> file on Vercel is a dormant duplicate (part of the wider Gmail-API migration,
+> see `docs/gmail-api-bridge-migration.md` / `docs/vercel-retirement-plan.md`).
+> References to "Vercel" below describe the architecture as it was at Phase 4
+> cutover (14 May 2026) and are historical, not current — see `CLAUDE.md` →
+> Deployment for the current picture.
 
 **Notion is retired (Session 0, 25 May 2026).** D1 is the single source of
 truth. The Worker no longer writes to the Notion Client Sites database. The
@@ -32,7 +41,7 @@ failed-sync digest (`0 8 * * *`).
 | **Phase 4 deployed** | 14 May 2026 — `plumbers.html` + `plumbers-switch.html` live on Worker ✅ |
 | **Notion retired** | 25 May 2026 — Session 0. `NOTION_API_KEY` secret may be removed from the Worker; it is no longer read by any code path. |
 | **Secrets set** | `NOTIFY_SECRET` ✅ |
-| **Vercel notify endpoint** | `api/notify-landing-enquiry.js` deployed ✅ |
+| **Vercel notify endpoint** | ~~`api/notify-landing-enquiry.js` deployed~~ — superseded 22 Jul 2026 by `worker/routes/notify-landing-enquiry.js` (Gmail API, no Vercel) |
 | **Vercel landing-enquiry** | Deprecated — returns `410 Gone` as of Phase 4 cutover |
 
 ### Phase 1 test results (14 May 2026)

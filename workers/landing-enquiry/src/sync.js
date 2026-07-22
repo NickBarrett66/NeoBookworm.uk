@@ -5,11 +5,13 @@
  * never changes the HTTP response.
  *
  * Notion is retired (Session 0). The only background leg is the email
- * notification to Nick via the Vercel /api/notify-landing-enquiry endpoint.
+ * notification to Nick via the neobookworm.uk /api/notify-landing-enquiry
+ * endpoint — served natively by the neobookworm-uk Cloudflare Worker via the
+ * Gmail API (worker/routes/notify-landing-enquiry.js). No Vercel involved.
  *
  * Steps:
  *   1. Load the full D1 row by id (parse payload_json for field data)
- *   2. POST to Vercel /api/notify-landing-enquiry → update D1
+ *   2. POST to neobookworm.uk/api/notify-landing-enquiry → update D1
  *      email_status / email_error / email_attempts
  *
  * Exported:
